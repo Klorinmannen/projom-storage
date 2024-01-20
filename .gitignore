@@ -1,0 +1,18 @@
+# Block everything.
+/*
+
+# White-list files.
+!.gitignore
+!README.md
+!composer.json
+!composer.lock
+
+# White-list entire directories.
+!src/
+
+# Ignore crap files.
+**/*.*~
+**/*#*
+
+# Ignore test file
+src/test.php

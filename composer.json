@@ -1,0 +1,14 @@
+{
+    "name": "klorinmannen/projom-storage",
+    "description": "Projom storage module",
+    "autoload": {
+        "psr-4": {
+            "Projom\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jonatan Fransson"
+        }
+    ]
+}
