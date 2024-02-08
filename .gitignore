@@ -3,6 +3,7 @@
 
 # White-list files.
 !.gitignore
+!.gitattributes
 !README.md
 !composer.json
 !composer.lock
