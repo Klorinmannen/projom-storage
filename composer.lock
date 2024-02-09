@@ -4,8 +4,44 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c86e384195cd8d4ef871d3ea50f2b8a8",
-    "packages": [],
+    "content-hash": "5626fcfba5b450fc0ad8246918b23224",
+    "packages": [
+        {
+            "name": "klorinmannen/projom-util",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:Klorinmannen/projom-util.git",
+                "reference": "c4c5d7fd57d8bf09357f1e7cacbf7834b1a1d678"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Klorinmannen/projom-util/zipball/c4c5d7fd57d8bf09357f1e7cacbf7834b1a1d678",
+                "reference": "c4c5d7fd57d8bf09357f1e7cacbf7834b1a1d678",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Projom\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Jonatan Fransson"
+                }
+            ],
+            "description": "Projom util module",
+            "support": {
+                "source": "https://github.com/Klorinmannen/projom-util/tree/0.1.0",
+                "issues": "https://github.com/Klorinmannen/projom-util/issues"
+            },
+            "time": "2024-02-07T12:10:19+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "myclabs/deep-copy",

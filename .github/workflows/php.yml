@@ -28,6 +28,8 @@ jobs:
 
       - name: Install PHPUnit with Composer
         uses: php-actions/composer@v6
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.PROJOM_READ_ONLY_TOKEN }}"} }'
 
       - name: Run coverage report
         run: ./vendor/bin/phpunit --coverage-text="phpunit_coverage.txt"
