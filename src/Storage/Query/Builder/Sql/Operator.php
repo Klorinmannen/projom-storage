@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Query\Sql;
+namespace Projom\Storage\Query\Builder\Sql;
 
 class Operator
 {
@@ -41,7 +41,7 @@ class Operator
             case 'in':
                 return static::IN;
             default:
-                throw new \Exception("Internal server error: query\sql\operator::format $operator");
+                throw new \Exception("Internal server error: sql\operator::format $operator");
         }
     }
 }

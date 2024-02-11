@@ -7,7 +7,7 @@ namespace Tests\Unit\Storage;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Dsn;
+use Projom\Storage\Source\DSN;
 
 class DsnTest extends TestCase
 {
@@ -28,7 +28,7 @@ class DsnTest extends TestCase
 	#[DataProvider('provider_test_createString')]
 	public function test_createString(array $config, string $expected): void
 	{
-		$this->assertEquals($expected, Dsn::createString($config));
+		$this->assertEquals($expected, DSN::createString($config));
 	}
 
 	public static function provider_test_parseConfig(): array
@@ -52,7 +52,7 @@ class DsnTest extends TestCase
 	#[DataProvider('provider_test_parseConfig')]
 	public function test_parseConfig(array $config, array $expected): void
 	{
-		$this->assertEquals($expected, Dsn::parseConfig($config));
+		$this->assertEquals($expected, DSN::parseConfig($config));
 	}
 
 	public static function provider_test_buildDsn(): array
@@ -74,7 +74,7 @@ class DsnTest extends TestCase
 		string $databaseName,
 		string $expected
 	): void {
-		$actual = Dsn::buildDsn($serverHost, $serverPort, $databaseName);
+		$actual = DSN::buildDsn($serverHost, $serverPort, $databaseName);
 		$this->assertEquals($expected, $actual);
 	}
 }

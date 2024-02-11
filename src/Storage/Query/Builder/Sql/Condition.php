@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Query\Sql;
+namespace Projom\Storage\Query\Builder\Sql;
 
-use Projom\Storage\Query\Sql\Util;
-use Projom\Storage\Query\Sql\Operator;
+use Projom\Storage\Query\Builder\Sql\Util;
+use Projom\Storage\Query\Builder\Sql\Operator;
 
 class Condition
 {
@@ -36,7 +36,7 @@ class Condition
                 return static::condition($condition);
 
             default:
-                throw new \Exception("Internal server error: query\condition::build $operator", 500);
+                throw new \Exception("Internal server error: condition::build $operator", 500);
         }
     }
 

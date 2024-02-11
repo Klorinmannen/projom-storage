@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Query\Sql;
+namespace Projom\Storage\Query\Builder\Sql;
 
 class Predicate
 {
@@ -23,7 +23,7 @@ class Predicate
             case '&':
                 return static::AND;
             default:
-                throw new \Exception("Internal server error: query\sql\predicate::format $predicate");
+                throw new \Exception("Internal server error: sql\predicate::format $predicate");
         }
     }
 }

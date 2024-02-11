@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Query\Sql;
+namespace Projom\Storage\Query\Builder\Sql;
 
 class Sort
 {
@@ -17,7 +17,7 @@ class Sort
             case static::DESC:
                 return $sort;
             default:
-                throw new \Exception("Internal server error: query\sql\sort::format $sort");
+                throw new \Exception("Internal server error: sql\sort::format $sort");
         }
     }
 }

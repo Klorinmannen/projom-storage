@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage;
+namespace Projom\Storage\Source;
 
-class Dsn
+class DSN
 {
     public static function createString(array $config): string
     {
@@ -18,7 +18,7 @@ class Dsn
         return [
             $config['server_host'],
             $config['server_port'],
-            $config['name']
+            $config['database_name']
         ];
     }
 
