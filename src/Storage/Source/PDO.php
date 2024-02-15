@@ -20,22 +20,31 @@ class PDO
 		return static::$PDO;
 	}
 
-	public static function set(array $config): void
+	public static function init(array $config, array $options = []): void
 	{
-		static::$PDO = static::create($config);
-	}
-
-	public static function create(array $config): \PDO	
-	{
-		$dsn = DSN::createString($config);
-		$options = static::DEFAULT_PDO_OPTIONS;
-		$pdo = new \PDO(
-			$dsn,
+		static::$PDO = new \PDO(
+			DSN::createString($config),
 			$config['username'],
 			$config['password'],
-			$options
+			static::DEFAULT_PDO_OPTIONS + $options
 		);
+	}
 
-		return $pdo;
+	public static function validateConfig(array $config): void
+	{
+		if (!$server_host = $config['server_host'] ?? '')
+			throw new \Exception('Missing server host.', 500);
+
+		if (!$server_port = $config['server_port'] ?? '')
+			throw new \Exception('Missing server port.', 500);
+
+		if (!$database_name = $config['database_name'] ?? '')
+			throw new \Exception('Missing database name.', 500);
+
+		if (!$username = $config['username'] ?? '')
+			throw new \Exception('Missing username.', 500);
+
+		if (!$password = $config['password'] ?? '')
+			throw new \Exception('Missing password.', 500);
 	}
 }

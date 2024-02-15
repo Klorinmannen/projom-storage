@@ -15,8 +15,10 @@ class Bootstrap
 			throw new \Exception('Configuration file is not readable.', 500);
 
 		if (!$config = File::parse($fullConfigFilePath))
-			throw new \Exception('Configuration file is not valid.', 500);
+			throw new \Exception('Failed to parse configuration file.', 500);
 
-		PDO::set($config);
+		PDO::validateConfig($config);
+		
+		PDO::init($config);
 	}
 }

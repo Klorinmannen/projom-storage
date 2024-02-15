@@ -12,12 +12,7 @@ enum Driver {
 
 class Query
 {
-	public static function simple(string $query): mixed
-	{
-		return static::exec($query, null, Driver::PDO);
-	}
-
-	public static function pdo(string $query, ?array $params = null): mixed
+	public static function sql(string $query, ?array $params = null): mixed
 	{
 		return static::exec($query, $params, Driver::PDO);
 	}
