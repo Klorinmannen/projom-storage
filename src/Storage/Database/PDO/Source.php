@@ -13,14 +13,14 @@ trait Source
 {
 	use DSN;
 
-	public PDO|null $PDO = null;
+	protected PDO|null $PDO = null;
 
 	const DEFAULT_PDO_OPTIONS = [
 		PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 		PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 	];
 
-	public function connect(array $config, array $options = [])
+	protected function connect(array $config, array $options = [])
 	{
 		$this->PDO = new PDO(
 			static::DSN($config),
