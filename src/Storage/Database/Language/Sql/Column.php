@@ -7,25 +7,28 @@ namespace Projom\Storage\Database\Language\Sql;
 class Column
 {
 	private string $raw;
-	private string $column;
+	private string $columns;
 
 	public function __construct(array|string $column)
 	{
 		$this->raw = $column;
-		$this->column = $this->format($column);
+		$this->columns = $this->format($column);
 	}
 
-	public function format(array|string $columnList): string
+	public function format(array|string $columns): string
     {
-        if (is_string($columnList))
-            $columnList = [ $columnList ];
+	    if (is_string($columns)) 
+			if (strpos($columns, ',') !== false)
+				$columns = explode(',', $columns);
+			else
+            	$columns = [ $columns ];
 
-        $quotedColumnList = array_map(
+        $quotedColumns = array_map(
             [ Column::class, 'quote'],
-            $columnList
+            $columns
         );
        
-		$quotedString = static::join($quotedColumnList);
+		$quotedString = static::join($quotedColumns);
         
 		return $quotedString;
     }
@@ -47,11 +50,16 @@ class Column
 
 	public function get(): string
 	{
-		return $this->column;
+		return $this->columns;
 	}
 
 	public function raw(): string
 	{
 		return $this->raw;
+	}
+
+	public static function create(array|string $column): Column
+	{
+		return new Column($column);
 	}
 }

@@ -15,50 +15,24 @@ enum ValueType
 
 class Value
 {
-	private mixed $raw;
-	private mixed $value;
-	private ValueType $type;
+	private mixed $value = [];
+	private ValueType $type = ValueType::NONE;
 
 	public function __construct(mixed $value)
 	{
-		$this->raw = $value;
-		$this->type = $this->setType($value);
-		$this->value = $this->format($value);
+		$this->value = $value;
+		$this->type = $this->type($value);
 	}
 
-	public function setType(mixed $value): ValueType
+	public function type(mixed $value): ValueType
 	{
-		if (is_string($value))
-			return ValueType::STRING;
-
-		if (is_bool($value))
-			return ValueType::BOOL;
-
-		if (is_numeric($value))
-			return ValueType::NUMERIC;
-
-		if (is_null($value))
-			return ValueType::NULL;
-
-		return ValueType::NONE;
-	}
-
-	public function format(mixed $value): string|null
-	{
-		switch ($this->type) {
-			case ValueType::NULL:
-			case ValueType::STRING:
-				return $value;
-
-			case ValueType::BOOL:
-				return (string)(int)$value;
-			
-			case ValueType::NUMERIC:
-				return (string)$value;
-
-			case ValueType::NONE:
-				return '';
-		}
+		return match (true) {
+			is_string($value) => ValueType::STRING,
+			is_bool($value) => ValueType::BOOL,
+			is_numeric($value) => ValueType::NUMERIC,
+			is_null($value) => ValueType::NULL,
+			default => ValueType::NONE
+		};
 	}
 
 	public function get(): string|null
@@ -66,12 +40,7 @@ class Value
 		return $this->value;
 	}
 
-	public function raw(): mixed
-	{
-		return $this->raw;
-	}
-
-	public function type(): ValueType
+	public function getType(): ValueType
 	{
 		return $this->type;
 	}
@@ -84,5 +53,15 @@ class Value
 	public function empty(): bool
 	{
 		return $this->type === ValueType::NONE;
+	}
+
+	public function asString(): string
+	{
+		return (string)$this->value;
+	}
+
+	public static function create(mixed $value): Value
+	{
+		return new Value($value);
 	}
 }

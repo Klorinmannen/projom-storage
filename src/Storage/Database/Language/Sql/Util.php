@@ -11,10 +11,8 @@ class Util
         return str_pad($subject, strlen($subject) + 2, ' ', STR_PAD_BOTH);
     }
 
-    public static function stringToList(
-        array|string $subject,
-        string $delimeter = ','
-    ): array {
+    public static function stringToList(array|string $subject, string $delimeter = ','): array 
+    {
         $list = $subject;
         if (!is_array($list))
             $list = explode($delimeter, static::cleanString($list));

@@ -10,14 +10,26 @@ class Select
 {
     public static function build(array|string $columnList): string
     {
-        if (is_string($columnList))
+        if (!is_array($columnList))
             $columnList = [ $columnList ];
 
-        $quotedColumnList = array_map(
-            [ Column::class, 'quote'],
+        $quotedFields = array_map(
+            [ Select::class, 'quote'],
             $columnList
         );
-        $quotedString = Column::join($quotedColumnList);
+
+        $quotedString = static::join($quotedFields);
+
         return "SELECT $quotedString";
+    }
+
+    public static function quote(string $column): string
+    {
+        return "`$column`";
+    }
+
+    public static function join(array $quotedFields): string
+    {
+        return implode(', ', $quotedFields);
     }
 }

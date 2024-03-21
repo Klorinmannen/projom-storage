@@ -12,57 +12,75 @@ class Condition
 {
     private Column $column;
     private Value $value;
-    private Operator $operator; 
-    private string $namedCondition = '';
-    private array|null $namedParamater = null;
+    private Operator $operator;
+    private string $condition = '';
+    private string $parameterName = '';
+    private array|null $parameter = null;
 
     public function __construct(Column $column, Value $value, Operator $operator)
     {
         $this->column = $column;
         $this->value = $value;
         $this->operator = $operator;
-        $this->format();
     }
 
-    public function format(): void
+    public function format(): Condition
     {
         if ($this->value->empty())
-            return;
+            return $this;
 
-        if ($this->value->isNull())
-            return $this->nullCondition($this->column->get(), $this->operator->nullString());
-
-        $namedParameter = static::namedParameter($this->column->raw());
-        $this->namedCondition = $this->namedCondition($this->column->get(), $this->operator->get(), $namedParameter);
-
-        $this->namedParamater = [ 
-            $namedParameter => $this->value->get()
+        $this->parameterName = $this->parameterName();
+        $this->condition = $this->condition();
+        $this->parameter = [ 
+            $this->parameterName => $this->value->get()
         ];
+
+        return $this;
     }
 
-    public function namedCondition(string $column, string $operator, string $namedParameter): string
+    public function condition(): string
     {        
+        $column = $this->column->get();
+        $operator = $this->operator->get();
+        $namedParameter = $this->parameterName;
+     
+        if ($this->value->isNull() && $this->operator->nullable())
+            return $this->nullCondition();
+
         return "$column $operator :$namedParameter";
     }
 
-    public function namedParameter(string $column): string
+    public function parameterName(): string
     {
-        $md5_short = substr(md5($column), -10);
-        return 'named_' . strtolower($column) . '_' . $md5_short;
+        $col = strtolower($this->column->raw());
+        $md5_short = substr(md5($this->seed()), -10);
+        return 'named_' . $col . '_' . $md5_short;
     }
 
-    public function nullCondition(string $column, string $operator): void
+    public function seed(): string
     {
-        $this->namedCondition = "$column $operator";
+        return $this->column->raw() . $this->operator->raw() . $this->value->asString();
     }
 
-    public function getNamedCondition(): string
+    public function nullCondition(): string
     {
-        return $this->namedCondition;
+        $column = $this->column->get();
+        $operator = $this->operator->nullString();
+        return "$column $operator";
     }
 
-    public function getNamedParameter(): array|null
+    public function get(): string
     {
-        return $this->namedParamater;
+        return $this->condition;
+    }
+
+    public function parameter(): array|null
+    {
+        return $this->parameter;
+    }
+
+    public static function create(Column $column, Value $value, Operator $operator): Condition
+    {
+        return new Condition($column, $value, $operator);
     }
 }

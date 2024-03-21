@@ -13,7 +13,7 @@ trait Source
 {
 	use DSN;
 
-	protected PDO|null $PDO = null;
+	protected static PDO|null $PDO = null;
 
 	const DEFAULT_PDO_OPTIONS = [
 		PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -22,7 +22,10 @@ trait Source
 
 	protected function connect(array $config, array $options = [])
 	{
-		$this->PDO = new PDO(
+		if (static::$PDO !== null)
+			return;
+		
+		static::$PDO = new PDO(
 			static::DSN($config),
 			$config['username'] ?? null,
 			$config['password'] ?? null,

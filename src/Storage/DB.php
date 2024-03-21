@@ -5,8 +5,17 @@ declare(strict_types=1);
 namespace Projom\Storage;
 
 use Projom\Storage\Database\Engine;
+use Projom\Storage\Database\QueryInterface;
 
-class DB 
+class DB extends Engine 
 {
-	use Engine;
+	public static function query(string $table): QueryInterface
+	{
+		return static::dispatch($table);
+	}
+
+	public static function sql(string $query, ?array $params): mixed
+	{
+		return static::dispatch($query, $params);
+	}
 }
