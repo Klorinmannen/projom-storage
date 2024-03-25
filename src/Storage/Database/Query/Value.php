@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Language\Sql;
+namespace Projom\Storage\Database\Query;
 
-enum ValueType
+enum Values
 {
 	case STRING;
 	case BOOL;
@@ -16,7 +16,7 @@ enum ValueType
 class Value
 {
 	private mixed $value = [];
-	private ValueType $type = ValueType::NONE;
+	private Values $type = Values::NONE;
 
 	public function __construct(mixed $value)
 	{
@@ -24,35 +24,35 @@ class Value
 		$this->type = $this->type($value);
 	}
 
-	public function type(mixed $value): ValueType
+	public function type(mixed $value): Values
 	{
 		return match (true) {
-			is_string($value) => ValueType::STRING,
-			is_bool($value) => ValueType::BOOL,
-			is_numeric($value) => ValueType::NUMERIC,
-			is_null($value) => ValueType::NULL,
-			default => ValueType::NONE
+			is_string($value) => Values::STRING,
+			is_bool($value) => Values::BOOL,
+			is_numeric($value) => Values::NUMERIC,
+			is_null($value) => Values::NULL,
+			default => Values::NONE
 		};
 	}
 
-	public function get(): string|null
+	public function get(): mixed
 	{
 		return $this->value;
 	}
 
-	public function getType(): ValueType
+	public function getType(): Values
 	{
 		return $this->type;
 	}
 
 	public function isNull(): bool
 	{
-		return $this->type === ValueType::NULL;
+		return $this->type === Values::NULL;
 	}
 
 	public function empty(): bool
 	{
-		return $this->type === ValueType::NONE;
+		return $this->type === Values::NONE;
 	}
 
 	public function asString(): string

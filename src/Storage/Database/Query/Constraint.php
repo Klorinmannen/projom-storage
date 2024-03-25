@@ -4,53 +4,25 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Query;
 
-enum Operator
+use Projom\Storage\Database\Query\Operator;
+use Projom\Storage\Database\Query\Operators;
+use Projom\Storage\Database\Query\Field;
+use Projom\Storage\Database\Query\Value;
+
+abstract class Constraint
 {
-	case EQ;
-	case NE;
-	case GT;
-	case LT;
-	case GTE;
-	case LTE;
-	case LIKE;
-	case NOT_LIKE;
-	case IN;
-	case NOT_IN;
-	case IS_NULL;
-	case IS_NOT_NULL;		
-}
+	protected array $fieldsWithValues = [];
+	protected array $constraints = [];
 
-class Constraint
-{
-	private array $fieldsWithValues = [];
-	private array $constraints = [];
-
-	public function __construct(array $fieldsWithValues)
-	{
-		$this->fieldsWithValues = $fieldsWithValues;	
-	}
-
-	public function eq(): Constraint
-	{
-		$this->constraints = $this->build($this->fieldsWithValues, Operator::EQ);
-		return $this;
-	}
-
-	public function ne(): Constraint
-	{
-		$this->constraints = $this->build($this->fieldsWithValues, Operator::NE);
-		return $this;
-	}
-
-	private function build(array $fieldsWithValues, Operator $operator): array
+	protected function build(array $fieldsWithValues, Operators $operator): array
 	{
 		$constraints = [];
 
 		foreach ($fieldsWithValues as $field => $value) {
 			$constraints[] = [
-				$field,
-				$value,
-				$operator
+				Field::create($field),
+				Value::create($value),
+				Operator::create($operator)
 			];
 		}
 
@@ -62,14 +34,15 @@ class Constraint
 		return $this->constraints;
 	}
 
-	public function merge(Constraint $other): Constraint
+	public function raw(): array
 	{
-		$this->constraints = array_merge($this->constraints, $other->get());
-		return $this;
+		return $this->fieldsWithValues;
 	}
 
-	public static function create(array $fieldsWithValues): Constraint
+	public function merge(Constraint ...$other): Constraint
 	{
-		return new Constraint($fieldsWithValues);
+		foreach ($other as $constraint)
+			$this->constraints = [ ...$this->constraints, ...$constraint->get() ];
+		return $this;
 	}
 }

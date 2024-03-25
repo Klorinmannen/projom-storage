@@ -7,8 +7,9 @@ namespace Projom\Storage\Database\PDO\Driver;
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\Language\SQL;
 use Projom\Storage\Database\Query;
-use Projom\Storage\Database\Query\Constraint;
 use Projom\Storage\Database\PDO\Source;
+use Projom\Storage\Database\Query\Collection;
+use Projom\Storage\Database\Query\Field;
 
 class MySQL implements DriverInterface
 {
@@ -19,7 +20,7 @@ class MySQL implements DriverInterface
 		$this->connect($config);
 	}
 
-	public function select(string $table, Constraint ...$constraints): mixed
+	public function select(Collection $collection, Field $field, array $constraints): mixed
 	{
 		$query = '';
 		$params = [];
