@@ -17,6 +17,7 @@ class Query implements QueryInterface
     private DriverInterface|null $driver = null;
     private Collection $collection = '';
 
+    private Field $field = [];
     private array $constraints = [];
 
     public function __construct(DriverInterface $driver, string $collection)
@@ -42,7 +43,14 @@ class Query implements QueryInterface
         return $this->driver->select($this->collection, $field, [ $constraint ]);
     }
 
-    public function eq(array ...$constraints): mixed
+    public function field(string ...$fields): Query
+    {
+        $this->field = Field::create(...$fields);
+
+        return $this;
+    }
+
+    public function eq(array ...$constraints): Query
     {
         $newConstraints = array_map(
             fn (array $constraint) => Equals::create($constraint),
@@ -54,7 +62,7 @@ class Query implements QueryInterface
         return $this;
     }
 
-    public function ne(array ...$constraints): mixed
+    public function ne(array ...$constraints): Query
     {
         $newConstraints = array_map(
             fn (array $constraint) => NotEquals::create($constraint),
@@ -68,6 +76,6 @@ class Query implements QueryInterface
 
     public function get(): mixed
     {
-        return $this->driver->select($this->collection, ...$this->constraints);
+        return $this->driver->select($this->collection, $this->field, $this->constraints);
     }
 }

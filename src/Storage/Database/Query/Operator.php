@@ -20,7 +20,7 @@ enum Operators: string
 	case IS_NOT_NULL = 'IS NOT NULL';
 }
 
-class Operator
+class Operator implements AccessorInterface
 {
     private Operators $raw = '';
     private string $operator = '';

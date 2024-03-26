@@ -9,7 +9,7 @@ use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Value;
 
-abstract class Constraint
+abstract class Constraint implements AccessorInterface
 {
 	protected array $fieldsWithValues = [];
 	protected array $constraints = [];

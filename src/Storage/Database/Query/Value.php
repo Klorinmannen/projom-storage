@@ -13,7 +13,7 @@ enum Values
 	case NONE;
 }
 
-class Value
+class Value implements AccessorInterface
 {
 	private mixed $value = [];
 	private Values $type = Values::NONE;
@@ -36,6 +36,11 @@ class Value
 	}
 
 	public function get(): mixed
+	{
+		return $this->value;
+	}
+
+	public function raw(): mixed
 	{
 		return $this->value;
 	}

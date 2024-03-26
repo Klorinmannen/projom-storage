@@ -6,7 +6,7 @@ namespace Projom\Storage\Database\Query;
 
 use Projom\Storage\Database\Query\Util;
 
-class Field
+class Field implements AccessorInterface
 {
 	private array $raw = '';
 	private array $fields = [];
@@ -34,6 +34,11 @@ class Field
 		return Util::quoteAndJoin($this->fields);
 	}
 
+	public function raw(): array
+	{
+		return $this->raw;
+	}
+
 	public function quoted(): array
 	{
 		return Util::quoteList($this->fields);
@@ -42,11 +47,6 @@ class Field
 	public function joined(string $delimeter = ','): string
 	{
 		return Util::join($this->fields, $delimeter);
-	}
-
-	public function raw(): array
-	{
-		return $this->raw;
 	}
 
 	public static function create(string ...$fields): Field
