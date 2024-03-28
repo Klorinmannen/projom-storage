@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\DriverInterface;
-use Projom\Storage\Database\PDO\Driver\MySQL;
+use Projom\Storage\Database\Driver\MySQL;
 
-enum Driver: string 
+enum Drivers: string 
 {
 	case MySQL = 'mysql';
 }
@@ -15,7 +15,7 @@ enum Driver: string
 class Engine
 {
 	private static array $drivers = [];
-	private static Driver $currentDriver;
+	private static Drivers $currentDriver;
 
 	protected static function dispatch(): object|array
 	{
@@ -32,10 +32,10 @@ class Engine
 
 	private static function driver(): DriverInterface|null
 	{
-		return static::$drivers[static::$currentDriver->value] ?? null;
+		return static::$drivers[static::$currentDriver] ?? null;
 	}
 
-	public static function useDriver(Driver $newDriver): void
+	public static function useDriver(Drivers $newDriver): void
 	{
 		if (!array_key_exists($newDriver->value, static::$drivers))
 			throw new \Exception("Driver {$newDriver->value} is not loaded", 400);
@@ -47,14 +47,14 @@ class Engine
 	{
 		$driver = $config['driver'] ?? '';
 		match ($driver) {
-			Driver::MySQL->value => static::loadMySQLDriver($config),
-			default => throw new \Exception("Driver {$driver} is not supported", 400)
+			Drivers::MySQL->value => static::loadMySQLDriver($config),
+			default => throw new \Exception("Driver $driver is not supported", 400)
 		};
 	}
 
 	private static function loadMySQLDriver(array $config): void
 	{
-		static::$drivers[Driver::MySQL->value] = MySQL::create($config);
-		static::$currentDriver = Driver::MySQL;
+		static::$drivers[Drivers::MySQL] = MySQL::create($config);
+		static::$currentDriver = Drivers::MySQL;
 	}
 }

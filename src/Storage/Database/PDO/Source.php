@@ -13,7 +13,7 @@ trait Source
 {
 	use DSN;
 
-	protected static PDO|null $PDO = null;
+	private PDO|null $pdo = null;
 
 	const DEFAULT_PDO_OPTIONS = [
 		PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -22,23 +22,31 @@ trait Source
 
 	protected function connect(array $config, array $options = [])
 	{
-		if (static::$PDO !== null)
+		if ($this->pdo !== null)
 			return;
 		
-		static::$PDO = new PDO(
+		static::$pdo = new PDO(
 			static::DSN($config),
 			$config['username'] ?? null,
 			$config['password'] ?? null,
-			static::DEFAULT_PDO_OPTIONS + $options
+			$options + static::DEFAULT_PDO_OPTIONS
 		);
+	}
+
+	public function quote(string $value): string
+	{
+		if ($this->pdo === null)
+			throw new Exception('PDO not initialized', 400);
+
+		return $this->pdo->quote($value);
 	}
 
 	public function execute(string $query, ?array $params = null): array
 	{
-		if (static::$PDO === null)
+		if ($this->pdo === null)
 			throw new Exception('PDO not initialized', 400);
 
-		if (!$statement = static::$PDO->prepare($query))
+		if (!$statement = $this->pdo->prepare($query))
 			throw new Exception('Failed to prepare PDO query', 500);
 		
 		if (!$statement->execute($params))

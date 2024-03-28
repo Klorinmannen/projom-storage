@@ -24,6 +24,16 @@ class Value implements AccessorInterface
 		$this->type = $this->type($value);
 	}
 
+	public static function create(mixed $value): Value
+	{
+		return new Value($value);
+	}
+	
+	public function __toString(): string 
+	{ 
+		return $this->asString();
+	}
+
 	public function type(mixed $value): Values
 	{
 		return match (true) {
@@ -62,11 +72,12 @@ class Value implements AccessorInterface
 
 	public function asString(): string
 	{
-		return (string)$this->value;
-	}
-
-	public static function create(mixed $value): Value
-	{
-		return new Value($value);
+		return match ($this->type) {
+			Values::STRING => $this->value,
+			Values::BOOL => $this->value ? 'TRUE' : 'FALSE',
+			Values::NUMERIC => (string) $this->value,
+			Values::NULL => 'NULL',
+			default => ''
+		};
 	}
 }

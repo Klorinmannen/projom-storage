@@ -18,6 +18,22 @@ enum Operators: string
 	case NOT_IN = 'NOT IN';
 	case IS_NULL = 'IS NULL';
 	case IS_NOT_NULL = 'IS NOT NULL';
+    case BETWEEN = 'BETWEEN';
+}
+
+enum MathOperators: string
+{
+    case ADD = '+';
+    case SUB = '-';
+    case MUL = '*';
+    case DIV = '/';
+    case MOD = '%';
+}
+
+enum LogicOperators: string
+{
+    case AND = 'AND';
+    case OR = 'OR';
 }
 
 class Operator implements AccessorInterface
@@ -30,6 +46,16 @@ class Operator implements AccessorInterface
         $this->raw = $operator;
         $this->operator = $operator->value;
     }
+
+    public static function create(Operators $operator): Operator
+    {
+        return new Operator($operator);
+    }
+    
+    public function __toString(): string 
+    { 
+        return $this->get();
+    }
        
     public function get(): string
     {
@@ -39,10 +65,5 @@ class Operator implements AccessorInterface
     public function raw(): Operators
     {
         return $this->raw;
-    }
-
-    public static function create(Operators $operator): Operator
-    {
-        return new Operator($operator);
     }
 }
