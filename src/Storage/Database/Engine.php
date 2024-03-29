@@ -6,16 +6,12 @@ namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\Driver\MySQL;
-
-enum Drivers: string 
-{
-	case MySQL = 'mysql';
-}
+use Projom\Storage\Database\PDO\Source;
 
 class Engine
 {
-	private static array $drivers = [];
-	private static Drivers $currentDriver;
+	protected static array $drivers = [];
+	protected static Drivers|null $currentDriver = null;
 
 	protected static function dispatch(): object|array
 	{
@@ -30,31 +26,36 @@ class Engine
 		};
 	}
 
-	private static function driver(): DriverInterface|null
+	public static function driver(): DriverInterface|null
 	{
-		return static::$drivers[static::$currentDriver] ?? null;
+		return static::$drivers[static::$currentDriver?->value] ?? null;
 	}
 
-	public static function useDriver(Drivers $newDriver): void
+	public static function setDriver(DriverInterface $driver): void
 	{
-		if (!array_key_exists($newDriver->value, static::$drivers))
-			throw new \Exception("Driver {$newDriver->value} is not loaded", 400);
-
-		static::$currentDriver = $newDriver;
+		static::$drivers[$driver->type()->value] = $driver;
+		static::$currentDriver = $driver->type();
 	}
 
-	public static function loadDriver(array $config): void
+	public static function useDriver(Drivers $driver): void
 	{
-		$driver = $config['driver'] ?? '';
-		match ($driver) {
-			Drivers::MySQL->value => static::loadMySQLDriver($config),
-			default => throw new \Exception("Driver $driver is not supported", 400)
-		};
+		if (!array_key_exists($driver->value, static::$drivers))
+			throw new \Exception("Driver not loaded", 400);
+		
+		static::$currentDriver = $driver;
 	}
 
-	private static function loadMySQLDriver(array $config): void
+	public static function loadMySQLDriver(array $config, array $options = []): void
 	{
-		static::$drivers[Drivers::MySQL] = MySQL::create($config);
-		static::$currentDriver = Drivers::MySQL;
+		$source = Source::create($config, $options);
+		$driver = MySQL::create($source);
+		static::setDriver($driver);
+		static::useDriver(Drivers::MySQL);
+	}
+
+	public static function clear(): void
+	{
+		static::$drivers = [];
+		static::$currentDriver = null;
 	}
 }

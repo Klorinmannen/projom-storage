@@ -10,11 +10,16 @@ use Projom\Storage\Database\QueryInterface;
 
 class Database extends Engine 
 {
-	protected static Drivers $currentDriver;
+	protected static Drivers|null $currentDriver = null;
 
 	private function __construct(Drivers $driver)
 	{
 		static::$currentDriver = $driver;
+	}
+
+	public static function create(Drivers $driver = Drivers::MySQL): Database
+	{
+		return new Database($driver);
 	}
 
 	public function query(string $table): QueryInterface
@@ -22,13 +27,8 @@ class Database extends Engine
 		return static::dispatch($table);
 	}
 
-	public function sql(string $query, ?array $params): mixed
+	public function sql(string $query, ?array $params = null): mixed
 	{
 		return static::dispatch($query, $params);
-	}
-
-	public static function create(Drivers $driver = Drivers::MySQL): Database
-	{
-		return new Database($driver);
 	}
 }

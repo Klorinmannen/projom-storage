@@ -6,25 +6,38 @@ namespace Projom\Storage\Database\Driver;
 
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\Query;
-use Projom\Storage\Database\PDO\Source;
-use Projom\Storage\Database\Query\Collection;
-use Projom\Storage\Database\Query\Field;
+use Projom\Storage\Database\Query\Collection as QCollection;
+use Projom\Storage\Database\Query\Field as QField;
 use Projom\Storage\Database\Query\Filter as QFilter;
 use Projom\Storage\Database\Driver\MySQL\Statement;
 use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\Driver\MySQL\Filter;
+use Projom\Storage\Database\Drivers;
+use Projom\Storage\Database\PDO\Source;
+use Projom\Storage\Database\SourceInterface;
 
 class MySQL implements DriverInterface
 {
-	use Source;
+	private SourceInterface $source;
+	private Drivers $driver = Drivers::MySQL;
 
-	public function __construct(array $config)
+	public function __construct(Source $source)
 	{
-		$this->connect($config);
+		$this->source = $source;
 	}
 
-	public function select(Collection $collection, Field $field, QFilter $QFilter): mixed
+	public static function create(SourceInterface $source): MySQL
+	{
+		return new MySQL($source);
+	}
+
+	public function type(): Drivers 
+	{
+		return $this->driver;
+	}
+
+	public function select(QCollection $collection, QField $field, QFilter $QFilter): mixed
 	{
 		$table = Table::create($collection->get());
 		$column = Column::create($field->get());
@@ -33,16 +46,16 @@ class MySQL implements DriverInterface
 		$statement = Statement::create($table, $column, $filter);
 		[ $query, $params ] = $statement->select();
 
-		return $this->execute($query, $params);
+		return $this->source->execute($query, $params);
 	}
 
 	public function Query(string $table): Query
 	{
 		return new Query($this, $table);
 	}
-
-	public static function create(array $config): MySQL
-	{
-		return new MySQL($config);
+	
+	public function execute(string $sql, ?array $params): mixed 
+	{ 
+		return $this->source->execute($sql, $params);
 	}
 }
