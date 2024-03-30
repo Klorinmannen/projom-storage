@@ -34,24 +34,6 @@ class Source implements SourceInterface
 		return new Source($config, $options);
 	}
 
-	public function execute(string $query, ?array $params = null): array
-	{
-		if ($this->pdo === null)
-			$this->connect();
-
-		if (!$statement = $this->pdo->prepare($query))
-			throw new Exception('Failed to prepare PDO query', 500);
-
-		if (!$statement->execute($params))
-			throw new Exception('Failed to execute PDO query', 500);
-
-		$result = $statement->fetchAll();
-		if ($result === false)
-			throw new Exception('Failed to fetch PDO query result', 500);
-
-		return $result;
-	}
-
 	public function connect(): void
 	{
 		if ($this->pdo !== null)
@@ -76,5 +58,23 @@ class Source implements SourceInterface
 	public function get(): object
 	{
 		return $this->pdo;
+	}
+
+	public function execute(string $query, ?array $params = null): array
+	{
+		if ($this->pdo === null)
+			$this->connect();
+
+		if (!$statement = $this->pdo->prepare($query))
+			throw new Exception('Failed to prepare PDO query', 500);
+
+		if (!$statement->execute($params))
+			throw new Exception('Failed to execute PDO query', 500);
+
+		$result = $statement->fetchAll();
+		if ($result === false)
+			throw new Exception('Failed to fetch PDO query result', 500);
+
+		return $result;
 	}
 }
