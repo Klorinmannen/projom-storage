@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\DriverInterface;
+use Projom\Storage\Database\QueryInterface;
 use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Collection;
 use Projom\Storage\Database\Query\Operators;
-use Projom\Storage\Database\QueryInterface;
 
 class Query implements QueryInterface
 {
     private DriverInterface|null $driver = null;
-    private Collection $collection;
-    private Field $field;
-    private Filter $filter;
+    private Collection|null $collection = null;
+    private Field|null $field = null;
+    private Filter|null $filter = null;
 
     public function __construct(DriverInterface $driver, string $collection)
     {
@@ -53,7 +53,10 @@ class Query implements QueryInterface
 
     public function eq(array ...$filters): Query
     {
-        $newFilters = array_map(
+        if ($this->filter === null)
+            $this->filter = Filter::create(array_shift($filters), Operators::EQ);
+
+            $newFilters = array_map(
             fn (array $filter) => Filter::create($filter, Operators::EQ),
             $filters
         );
@@ -65,6 +68,9 @@ class Query implements QueryInterface
 
     public function ne(array ...$filters): Query
     {
+        if ($this->filter === null)
+            $this->filter = Filter::create(array_shift($filters), Operators::NE);
+
         $newFilters = array_map(
             fn (array $filter) => Filter::create($filter, Operators::NE),
             $filters
