@@ -8,7 +8,7 @@ use Projom\Storage\Database\Query\Operators;
 
 class Operator implements AccessorInterface
 {
-    private Operators $raw = '';
+    private Operators|null $raw = null;
     private string $operator = '';
 
     public function __construct(Operators $operator)
