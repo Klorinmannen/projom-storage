@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:     
-  2024-03-29 15:53:06     
+  2024-03-30 08:21:16     
                           
  Summary:                 
   Classes: 16.67% (3/18)  
-  Methods: 16.83% (17/101)
-  Lines:   12.31% (32/260)
+  Methods: 33.66% (34/101)
+  Lines:   30.21% (87/288)
 
 Projom\Storage\DB
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
@@ -18,3 +18,17 @@ Projom\Storage\Database\Engine
   Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 20/ 20)
 Projom\Storage\Database\PDO\Source
   Methods:  33.33% ( 2/ 6)   Lines:  12.00% (  3/ 25)
+Projom\Storage\Database\Query
+  Methods:  42.86% ( 3/ 7)   Lines:  36.67% ( 11/ 30)
+Projom\Storage\Database\Query\Collection
+  Methods:  40.00% ( 2/ 5)   Lines:  50.00% (  3/  6)
+Projom\Storage\Database\Query\Field
+  Methods:  33.33% ( 2/ 6)   Lines:  58.33% (  7/ 12)
+Projom\Storage\Database\Query\Filter
+  Methods:  42.86% ( 3/ 7)   Lines:  76.47% ( 13/ 17)
+Projom\Storage\Database\Query\Operator
+  Methods:  40.00% ( 2/ 5)   Lines:  50.00% (  3/  6)
+Projom\Storage\Database\Query\Util
+  Methods:  33.33% ( 2/ 6)   Lines:  57.14% (  8/ 14)
+Projom\Storage\Database\Query\Value
+  Methods:  30.00% ( 3/10)   Lines:  43.48% ( 10/ 23)
