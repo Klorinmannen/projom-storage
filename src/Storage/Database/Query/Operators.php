@@ -14,4 +14,6 @@ enum Operators: string
 	case LTE = '<=';
 	case IS_NULL = 'IS NULL';
 	case IS_NOT_NULL = 'IS NOT NULL';
+	case IN = 'IN';
+	case NOT_IN = 'NOT IN';
 }

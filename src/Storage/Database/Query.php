@@ -32,6 +32,9 @@ class Query implements QueryInterface
         return $this->driver->select($this->collection, $field, $filter);
     }
 
+    /**
+     * Fetches a record field by its value from the database.
+     */
     public function fetch(string $field, mixed $value, Operators $operator = Operators::EQ): mixed
     {
         $fieldsWithValues = [
@@ -44,6 +47,11 @@ class Query implements QueryInterface
         return $this->driver->select($this->collection, $field, $filter);
     }
 
+    /**
+     * * Example use: $query->field('name', 'age')
+     * * Example use: $query->field('name, age')
+     * * Example use: $query->field([ 'name', 'age', 'username' ])
+     */
     public function field(string ...$fields): Query
     {
         $this->field = Field::create(...$fields);
@@ -51,28 +59,18 @@ class Query implements QueryInterface
         return $this;
     }
 
-    public function eq(array ...$filters): Query
+    /**
+     * * Example use: $query->filterOn(Operators::EQ, ['name' => 'John']);
+     * * Example use: $query->filterOn(Operators::EQ, ['name' => 'John'], ['age' => 25]);
+     * * Example use: $query->filterOn(Operators::IN, [ 'age' => [12, 23, 45] ]);
+     */
+    public function filterOn(Operators $operator, array ...$filters): Query
     {
         if ($this->filter === null)
-            $this->filter = Filter::create(array_shift($filters), Operators::EQ);
-
-            $newFilters = array_map(
-            fn (array $filter) => Filter::create($filter, Operators::EQ),
-            $filters
-        );
-
-        $this->filter->merge(...$newFilters);
-
-        return $this;
-    }
-
-    public function ne(array ...$filters): Query
-    {
-        if ($this->filter === null)
-            $this->filter = Filter::create(array_shift($filters), Operators::NE);
+            $this->filter = Filter::create(array_shift($filters), $operator);
 
         $newFilters = array_map(
-            fn (array $filter) => Filter::create($filter, Operators::NE),
+            fn (array $filter) => Filter::create($filter, $operator),
             $filters
         );
 
@@ -81,6 +79,9 @@ class Query implements QueryInterface
         return $this;
     }
 
+    /**
+     * Executes the query and returns the result.
+     */
     public function get(): mixed
     {
         return $this->driver->select($this->collection, $this->field, $this->filter);

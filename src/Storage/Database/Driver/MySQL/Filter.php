@@ -52,17 +52,17 @@ class Filter implements AccessorInterface
 	}
 
 	public function params(): array
-    {
-        $params = array_column($this->parsed, 'params');
-        return array_merge(...$params) ?: [];
-    }
+	{
+		$params = array_column($this->parsed, 'params');
+		return array_merge(...$params) ?: [];
+	}
 
-    public function filters(): string
-    {        
-        $operator = LogicOperators::AND->value;
-        $filters = array_column($this->parsed, 'filter');
-        return implode(" {$operator} ", $filters);
-    }
+	public function filters(): string
+	{
+		$operator = LogicOperators::AND->value;
+		$filters = array_column($this->parsed, 'filter');
+		return implode(" {$operator} ", $filters);
+	}
 
 	private function parse(Field $field, Operator $operator, Value $value): array
 	{
@@ -74,20 +74,13 @@ class Filter implements AccessorInterface
 			case Operators::IS_NOT_NULL:
 				return $this->nullFilter($column, $operator);
 
+			case Operators::IN:
+			case Operators::NOT_IN:
+				return $this->inFilter($column, $operator, $value);
+
 			default:
 				return $this->defaultFilter($column, $operator, $value);
 		}
-	}
-
-	private function defaultFilter(Column $column, Operator $operator, Value $value): array
-	{	
-		$parameterName = $this->parameterName($column, $operator, $value);
-		$filter = "$column $operator :$parameterName";
-		$params = [
-			$parameterName => $value->get()
-		];
-
-		return ['filter' => $filter,  'params' => $params];
 	}
 
 	private function nullFilter(Column $column, Operator $operator): array
@@ -95,9 +88,37 @@ class Filter implements AccessorInterface
 		return ['filter' => "$column $operator"];
 	}
 
-	private function parameterName(Column $column, Operator $operator, Value $value): string
+	private function inFilter(Column $column, Operator $operator, Value $value): array
 	{
-		$fieldString = strtolower($column->joined('_'));
-		return 'named_' . $fieldString . '_' . $this->filterID;
+		$parameterName = $this->parameterName($column->get(), $this->filterID);
+
+		$parameters = [];
+		$params = [];
+		foreach ($value->get() as $id => $val) {
+			$parameter = $this->parameterName($parameterName, $id);
+			$parameters[] = ":$parameter";
+			$params[$parameter] = $val;
+		}
+
+		$parameterString = implode(',', $parameters);
+		$filter = "$column $operator ($parameterString)";
+		return ['filter' => $filter, 'params' => $params];
+	}
+
+	private function defaultFilter(Column $column, Operator $operator, Value $value): array
+	{
+		$parameterName = $this->parameterName($column->get(), $this->filterID);
+		$filter = "$column $operator :named_{$parameterName}";
+		$params = [
+			$parameterName => $value->get()
+		];
+
+		return ['filter' => $filter,  'params' => $params];
+	}
+
+	private function parameterName(string $column, int $id): string
+	{
+		$colString = strtolower($column);
+		return $colString . '_' . $id;
 	}
 }

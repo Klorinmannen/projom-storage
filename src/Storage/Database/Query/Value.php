@@ -10,6 +10,7 @@ enum Values
 	case BOOL;
 	case NUMERIC;
 	case NULL;
+	case ARRAY;
 	case NONE;
 }
 
@@ -41,6 +42,7 @@ class Value implements AccessorInterface
 			is_bool($value) => Values::BOOL,
 			is_numeric($value) => Values::NUMERIC,
 			is_null($value) => Values::NULL,
+			is_array($value) => Values::ARRAY,
 			default => Values::NONE
 		};
 	}
@@ -77,6 +79,7 @@ class Value implements AccessorInterface
 			Values::BOOL => $this->value ? 'TRUE' : 'FALSE',
 			Values::NUMERIC => (string) $this->value,
 			Values::NULL => 'NULL',
+			Values::ARRAY => implode(',', $this->value),
 			default => ''
 		};
 	}
