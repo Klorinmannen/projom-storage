@@ -74,14 +74,6 @@ class Filter implements AccessorInterface
 			case Operators::IS_NOT_NULL:
 				return $this->nullFilter($column, $operator);
 
-			case Operators::IN:
-			case Operators::NOT_IN:
-				return [];
-
-			case Operators::LIKE:
-			case Operators::NOT_LIKE:
-				return [];
-
 			default:
 				return $this->defaultFilter($column, $operator, $value);
 		}
