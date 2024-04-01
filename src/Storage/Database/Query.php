@@ -24,6 +24,9 @@ class Query implements QueryInterface
         $this->collection = Collection::create($collection);
     }
 
+    /**
+     * * Example use: $query->select(Field::create(...), Filter::create(...), Filter::create(...))
+     */
     public function select(Field $field, Filter ...$filters): mixed
     {
         $filter = array_shift($filters);
@@ -33,7 +36,8 @@ class Query implements QueryInterface
     }
 
     /**
-     * Fetches a record field by its value from the database.
+     * * Example use: $query->fetch('Name', 'John')
+     * * Example use: $query->fetch('Age', [25, 55], Operators::IN)
      */
     public function fetch(string $field, mixed $value, Operators $operator = Operators::EQ): mixed
     {
@@ -60,9 +64,9 @@ class Query implements QueryInterface
     }
 
     /**
-     * * Example use: $query->filterOn(Operators::EQ, ['name' => 'John']);
-     * * Example use: $query->filterOn(Operators::EQ, ['name' => 'John'], ['age' => 25]);
-     * * Example use: $query->filterOn(Operators::IN, [ 'age' => [12, 23, 45] ]);
+     * * Example use: $query->filterOn(Operators::EQ, ['name' => 'John'])
+     * * Example use: $query->filterOn(Operators::EQ, ['name' => 'John'], ['age' => 25])
+     * * Example use: $query->filterOn(Operators::IN, [ 'age' => [12, 23, 45] ])
      */
     public function filterOn(Operators $operator, array ...$filters): Query
     {
