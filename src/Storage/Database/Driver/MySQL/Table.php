@@ -30,7 +30,7 @@ class Table implements AccessorInterface
 
 	public function raw(): string
 	{
-		return $this->table;
+		return $this->raw;
 	}
 
 	public function get(): string
