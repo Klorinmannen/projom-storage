@@ -95,7 +95,7 @@ class Filter implements AccessorInterface
 		$parameters = [];
 		$params = [];
 		foreach ($value->get() as $id => $val) {
-			$parameter = $this->parameterName($parameterName, $id);
+			$parameter = $this->parameterName($parameterName, ++$id);
 			$parameters[] = ":$parameter";
 			$params[$parameter] = $val;
 		}

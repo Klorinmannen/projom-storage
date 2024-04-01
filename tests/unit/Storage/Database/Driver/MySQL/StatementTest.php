@@ -50,6 +50,21 @@ class StatementTest extends TestCase
 					'query' => 'SELECT `Name` FROM `User` WHERE `Name` IS NULL',
 					'params' => []
 				]
+			],
+			'IN filter' => [
+				'User',
+				['*'],
+				[
+					[
+						Field::create('Age'),
+						Operator::create(Operators::IN),
+						Value::create([12, 23, 45])
+					]
+				],
+				[
+					'query' => 'SELECT * FROM `User` WHERE `Age` IN (:age_1_1,:age_1_2,:age_1_3)',
+					'params' => ['age_1_1' => 12, 'age_1_2' => 23, 'age_1_3' => 45]
+				]
 			]
 		];
 	}
