@@ -90,7 +90,7 @@ class Filter implements AccessorInterface
 
 	private function inFilter(Column $column, Operator $operator, Value $value): array
 	{
-		$parameterName = $this->parameterName($column->get(), $this->filterID);
+		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
 
 		$parameters = [];
 		$params = [];
@@ -107,8 +107,8 @@ class Filter implements AccessorInterface
 
 	private function defaultFilter(Column $column, Operator $operator, Value $value): array
 	{
-		$parameterName = $this->parameterName($column->get(), $this->filterID);
-		$filter = "$column $operator :named_{$parameterName}";
+		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
+		$filter = "$column $operator :{$parameterName}";
 		$params = [
 			$parameterName => $value->get()
 		];

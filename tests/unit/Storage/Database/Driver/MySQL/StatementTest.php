@@ -32,8 +32,8 @@ class StatementTest extends TestCase
 					]
 				],
 				[
-					'query' => 'SELECT `Name` FROM `User` WHERE `Name` = :named_name_1',
-					'params' => ['named_name_1' => 'John']
+					'query' => 'SELECT `Name` FROM `User` WHERE `Name` = :name_1',
+					'params' => ['name_1' => 'John']
 				]
 			],
 			'Null filter' => [
