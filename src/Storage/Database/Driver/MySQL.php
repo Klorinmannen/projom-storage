@@ -20,7 +20,7 @@ use Projom\Storage\Database\SourceInterface;
 class MySQL implements DriverInterface
 {
 	private SourceInterface $source;
-	private Drivers $driver = Drivers::MySQL;
+	protected Drivers $driver = Drivers::MySQL;
 
 	public function __construct(Source $source)
 	{
