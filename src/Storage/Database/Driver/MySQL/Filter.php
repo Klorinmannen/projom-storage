@@ -15,6 +15,7 @@ class Filter implements AccessorInterface
 {
 	private array $raw = [];
 	private array $parsed = [];
+	private int $filterID = 0;
 
 	public function __construct(array $filters)
 	{
@@ -45,24 +46,30 @@ class Filter implements AccessorInterface
 		return $this->parsed;
 	}
 
+	public function empty(): bool
+	{
+		return empty($this->parsed);
+	}
+
 	public function params(): array
     {
         $params = array_column($this->parsed, 'params');
-        return array_merge(...$params) ?: null;
+        return array_merge(...$params) ?: [];
     }
 
     public function filters(): string
     {        
-        $operator = LogicOperators::AND;
+        $operator = LogicOperators::AND->value;
         $filters = array_column($this->parsed, 'filter');
         return implode(" {$operator} ", $filters);
     }
 
 	private function parse(Field $field, Operator $operator, Value $value): array
 	{
+		$this->filterID++;
 		$column = Column::create($field->get());
 
-		switch ($operator) {
+		switch ($operator->raw()) {
 			case Operators::IS_NULL:
 			case Operators::IS_NOT_NULL:
 				return $this->nullFilter($column, $operator);
@@ -76,12 +83,12 @@ class Filter implements AccessorInterface
 				return [];
 
 			default:
-				return $this->normFilter($column, $operator, $value);
+				return $this->defaultFilter($column, $operator, $value);
 		}
 	}
 
-	private function normFilter(Column $column, Operator $operator, Value $value): array
-	{
+	private function defaultFilter(Column $column, Operator $operator, Value $value): array
+	{	
 		$parameterName = $this->parameterName($column, $operator, $value);
 		$filter = "$column $operator :$parameterName";
 		$params = [
@@ -99,12 +106,6 @@ class Filter implements AccessorInterface
 	private function parameterName(Column $column, Operator $operator, Value $value): string
 	{
 		$fieldString = strtolower($column->joined('_'));
-		$md5_short = substr(md5($this->seed($column, $operator, $value)), -10);
-		return 'named_' . $fieldString . '_' . $md5_short;
-	}
-
-	private function seed(Column $column, Operator $operator, Value $value): string
-	{
-		return $column . $operator . $value;
+		return 'named_' . $fieldString . '_' . $this->filterID;
 	}
 }

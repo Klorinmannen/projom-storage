@@ -28,14 +28,12 @@ class Statement
 
     public function select(): array
     {
-        $filters = $this->filter->filters();        
-        $params = $this->filter->params();
         
-        $query = match (empty($filters)) {
+        $query = match ($this->filter->empty()) {
             false => "SELECT {$this->column} FROM {$this->table} WHERE {$this->filter}",
             default => "SELECT {$this->column} FROM {$this->table}"
         };
 
-        return [ $query, $params ];
+        return [ $query, $this->filter->params() ];
     }
 }
