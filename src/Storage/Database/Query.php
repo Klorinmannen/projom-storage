@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\DriverInterface;
-use Projom\Storage\Database\QueryInterface;
 use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Collection;
 use Projom\Storage\Database\Query\Operators;
 
-class Query implements QueryInterface
+class Query
 {
     private DriverInterface|null $driver = null;
     private Collection|null $collection = null;
@@ -52,9 +51,9 @@ class Query implements QueryInterface
     }
 
     /**
-     * * Example use: $query->field('name', 'age')
-     * * Example use: $query->field('name, age')
-     * * Example use: $query->field([ 'name', 'age', 'username' ])
+     * * Example use: $query->field('Name', 'Age')
+     * * Example use: $query->field('Name, Age')
+     * * Example use: $query->field([ 'Name', 'Age', 'Username' ])
      */
     public function field(string ...$fields): Query
     {
@@ -64,9 +63,9 @@ class Query implements QueryInterface
     }
 
     /**
-     * * Example use: $query->filterOn(Operators::EQ, ['name' => 'John'])
-     * * Example use: $query->filterOn(Operators::EQ, ['name' => 'John'], ['age' => 25])
-     * * Example use: $query->filterOn(Operators::IN, [ 'age' => [12, 23, 45] ])
+     * * Example use: $query->filterOn(Operators::EQ, ['Name' => 'John'])
+     * * Example use: $query->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
+     * * Example use: $query->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
      */
     public function filterOn(Operators $operator, array ...$filters): Query
     {

@@ -6,7 +6,7 @@ namespace Projom\Storage;
 
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Engine;
-use Projom\Storage\Database\QueryInterface;
+use Projom\Storage\Database\Query;
 
 class Database extends Engine 
 {
@@ -22,7 +22,7 @@ class Database extends Engine
 		return new Database($driver);
 	}
 
-	public function query(string $table): QueryInterface
+	public function query(string $table): Query
 	{
 		return static::dispatch($table);
 	}
