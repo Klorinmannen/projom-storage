@@ -6,7 +6,7 @@ namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\Driver\MySQL;
-use Projom\Storage\Database\PDO\Source;
+use Projom\Storage\Database\Source\Factory;
 
 class Engine
 {
@@ -47,7 +47,7 @@ class Engine
 
 	public static function loadMySQLDriver(array $config, array $options = []): void
 	{
-		$source = Source::create($config, $options);
+		$source = Factory::createPDO($config, $options);
 		$driver = MySQL::create($source);
 		static::setDriver($driver);
 		static::useDriver(Drivers::MySQL);

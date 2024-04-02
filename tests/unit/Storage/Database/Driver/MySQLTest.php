@@ -12,14 +12,14 @@ use Projom\Storage\Database\Query\Collection;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Drivers;
-use Projom\Storage\Database\PDO\Source;
+use Projom\Storage\Database\Source\PDOSource;
 use Projom\Storage\Database\Query;
 
 class MySQLTest extends TestCase
 {
 	public function test_type(): void
 	{
-		$source = $this->createMock(Source::class);
+		$source = $this->createMock(PDOSource::class);
 		$mysql = new MySQL($source);
 
 		$this->assertEquals(Drivers::MySQL, $mysql->type());
@@ -35,7 +35,7 @@ class MySQLTest extends TestCase
 			['Name' => 'Jane', 'Age' => 21]
 		];
 
-		$source = $this->createMock(Source::class);
+		$source = $this->createMock(PDOSource::class);
 		$source->expects($this->once())
 			->method('execute')
 			->with($this->equalTo($query), $this->equalTo($params))
@@ -62,7 +62,7 @@ class MySQLTest extends TestCase
 
 	public function test_query(): void
 	{
-		$source = $this->createMock(Source::class);
+		$source = $this->createMock(PDOSource::class);
 		$mysql = new MySQL($source);
 
 		$query = $mysql->Query('table');
@@ -75,7 +75,7 @@ class MySQLTest extends TestCase
 		$sql = 'INSERT INTO `User` (`Name`) VALUES (?)';
 		$params = ['John'];
 
-		$source = $this->createMock(Source::class);
+		$source = $this->createMock(PDOSource::class);
 		$source->expects($this->once())
 			->method('execute')
 			->with($this->equalTo($sql), $this->equalTo($params))

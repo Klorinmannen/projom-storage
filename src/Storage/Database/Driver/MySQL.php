@@ -14,15 +14,15 @@ use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Drivers;
-use Projom\Storage\Database\PDO\Source;
+use Projom\Storage\Database\Source\PDOSource;
 use Projom\Storage\Database\SourceInterface;
 
 class MySQL implements DriverInterface
 {
-	private SourceInterface $source;
+	private PDOSource $source;
 	protected Drivers $driver = Drivers::MySQL;
 
-	public function __construct(Source $source)
+	public function __construct(PDOSource $source)
 	{
 		$this->source = $source;
 	}

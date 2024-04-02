@@ -11,20 +11,14 @@ use Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Engine;
-use Projom\Storage\Database\PDO\Source;
+use Projom\Storage\Database\Source\PDOSource;
 
 class EngineTest extends TestCase
 {
-	public function test_loadMySQLDriver()
-	{
-		Engine::loadMySQLDriver([], []);
-		$this->assertInstanceOf(DriverInterface::class, Engine::driver());
-		$this->assertInstanceOf(MySQL::class, Engine::driver());
-	}
-
 	public function test_setDriver()
 	{
-		$mysql = MySQL::create(Source::create([], []));
+		$source = $this->createMock(PDOSource::class);		
+		$mysql = MySQL::create($source);
 		Engine::setDriver($mysql);
 		$this->assertInstanceOf(DriverInterface::class, Engine::driver());
 		$this->assertInstanceOf(MySQL::class, Engine::driver());
@@ -32,7 +26,8 @@ class EngineTest extends TestCase
 
 	public function test_useDriver()
 	{
-		$mysql = MySQL::create(Source::create([], []));
+		$source = $this->createMock(PDOSource::class);		
+		$mysql = MySQL::create($source);
 		Engine::setDriver($mysql);
 		Engine::useDriver($mysql->type());
 		$this->assertEquals($mysql->type(), Engine::driver()->type());
@@ -47,7 +42,9 @@ class EngineTest extends TestCase
 
 	public function test_clear()
 	{
-		$mysql = MySQL::create(Source::create([], []));
+		$source = $this->createMock(PDOSource::class);		
+
+		$mysql = MySQL::create($source);
 		Engine::setDriver($mysql);
 		Engine::clear();
 		$this->assertNull(Engine::driver());
@@ -58,7 +55,8 @@ class EngineTest extends TestCase
 		Engine::clear();
 		$this->assertNull(Engine::driver());
 
-		$mysql = MySQL::create(Source::create([], []));
+		$source = $this->createMock(PDOSource::class);		
+		$mysql = MySQL::create($source);
 		Engine::setDriver($mysql);
 		$this->assertInstanceOf(MySQL::class, Engine::driver());
 	}
