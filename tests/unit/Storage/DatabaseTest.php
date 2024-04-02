@@ -11,7 +11,6 @@ use Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query;
-use Projom\Storage\Database\QueryInterface;
 
 class DatabaseTest extends TestCase
 {
@@ -31,7 +30,7 @@ class DatabaseTest extends TestCase
 		$this->assertInstanceOf(Database::class, $database);
 		
 		$query = $database->query('User');
-		$this->assertInstanceOf(QueryInterface::class, $query);
+		$this->assertInstanceOf(Query::class, $query);
 
 		$result = $database->sql('SELECT * FROM User WHERE UserID = :user_id', [ 'user_id' => 10 ]);
 		$this->assertEquals($record, $result);

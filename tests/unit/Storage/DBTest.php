@@ -10,7 +10,6 @@ use Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query;
-use Projom\Storage\Database\QueryInterface;
 use Projom\Storage\DB;
 
 class DBTest extends TestCase
@@ -28,7 +27,7 @@ class DBTest extends TestCase
 		Engine::setDriver($mysql);
 
 		$query = DB::query('User');
-		$this->assertInstanceOf(QueryInterface::class, $query);
+		$this->assertInstanceOf(Query::class, $query);
 
 		$result = DB::sql('SELECT * FROM User');
 		$this->assertEquals($record, $result);
