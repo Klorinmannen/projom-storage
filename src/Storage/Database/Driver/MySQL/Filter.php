@@ -6,7 +6,7 @@ namespace Projom\Storage\Database\Driver\MySQL;
 
 use Projom\Storage\Database\Query\AccessorInterface;
 use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\LogicOperators;
+use Projom\Storage\Database\Query\LogicalOperators;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Value;
@@ -14,16 +14,33 @@ use Projom\Storage\Database\Query\Value;
 class Filter implements AccessorInterface
 {
 	private array $raw = [];
+	private array $filters = [];
+	private array $params = [];
 	private array $parsed = [];
 	private int $filterID = 0;
 
 	public function __construct(array $filters)
 	{
 		$this->raw = $filters;
-		$this->parsed = array_map(
-			fn (array $filter) => $this->parse(...$filter),
-			$filters
-		);
+
+		foreach ($filters as $filter) {
+
+			[$field, $operator, $value, $logicalOperator] = $filter;
+			[$filter, $params] = $this->parse($field, $operator, $value);
+
+			if (empty($this->filters))
+				$this->filters[] = $filter;
+			else
+				$this->filters[] = "{$logicalOperator->value} $filter";
+
+			if ($params)
+				$this->params[] = $params;
+
+			$this->parsed[] = [
+				'filter' => $filter,
+				'params' => $params
+			];
+		}
 	}
 
 	public static function create(array $filters): Filter
@@ -53,23 +70,24 @@ class Filter implements AccessorInterface
 
 	public function params(): array
 	{
-		$params = array_column($this->parsed, 'params');
-		return array_merge(...$params) ?: [];
+		return $this->params;
 	}
 
 	public function filters(): string
 	{
-		$operator = LogicOperators::AND->value;
-		$filters = array_column($this->parsed, 'filter');
-		return implode(" {$operator} ", $filters);
+		return implode(" ", $this->filters);
 	}
 
-	private function parse(Field $field, Operator $operator, Value $value): array
-	{
+	private function parse(
+		Field $field,
+		Operators $operator,
+		Value $value
+	): array {
+
 		$this->filterID++;
 		$column = Column::create($field->get());
 
-		switch ($operator->raw()) {
+		switch ($operator) {
 			case Operators::IS_NULL:
 			case Operators::IS_NOT_NULL:
 				return $this->nullFilter($column, $operator);
@@ -83,12 +101,15 @@ class Filter implements AccessorInterface
 		}
 	}
 
-	private function nullFilter(Column $column, Operator $operator): array
+	private function nullFilter(Column $column, Operators $operator): array
 	{
-		return ['filter' => "$column $operator"];
+		return [
+			"$column {$operator->value}",
+			[]
+		];
 	}
 
-	private function inFilter(Column $column, Operator $operator, Value $value): array
+	private function inFilter(Column $column, Operators $operator, Value $value): array
 	{
 		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
 
@@ -100,20 +121,28 @@ class Filter implements AccessorInterface
 			$params[$parameter] = $val;
 		}
 
-		$parameterString = implode(',', $parameters);
-		$filter = "$column $operator ($parameterString)";
-		return ['filter' => $filter, 'params' => $params];
+		$parameterString = implode(', ', $parameters);
+		$filter = "$column {$operator->value} ( $parameterString )";
+
+		return [
+			$filter,
+			$params
+		];
 	}
 
-	private function defaultFilter(Column $column, Operator $operator, Value $value): array
+	private function defaultFilter(Column $column, Operators $operator, Value $value): array
 	{
 		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
-		$filter = "$column $operator :{$parameterName}";
+
+		$filter = "$column {$operator->value} :{$parameterName}";
 		$params = [
 			$parameterName => $value->get()
 		];
 
-		return ['filter' => $filter,  'params' => $params];
+		return [
+			$filter,
+			$params
+		];
 	}
 
 	private function parameterName(string $column, int $id): string
