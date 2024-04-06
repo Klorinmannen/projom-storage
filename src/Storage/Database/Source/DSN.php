@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\PDO;
+namespace Projom\Storage\Database\Source;
 
 use Exception;
 

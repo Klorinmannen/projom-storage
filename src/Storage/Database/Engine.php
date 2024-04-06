@@ -5,57 +5,57 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\DriverInterface;
-use Projom\Storage\Database\PDO\Driver\MySQL;
-use Projom\Storage\Database\Query;
+use Projom\Storage\Database\Driver\MySQL;
+use Projom\Storage\Database\Source\Factory;
 
-enum Driver: string 
+class Engine
 {
-	case MySQL = 'mysql';
-}
+	protected static array $drivers = [];
+	protected static Drivers|null $currentDriver = null;
 
-trait Engine
-{
-	private static array $drivers = [];
-	private static Driver $currentDriver;
-
-	public static function query(string $table): Query
+	protected static function dispatch(): object|array
 	{
-		return static::dispatch(table: $table);
-	}
-
-	public static function sql(string $query, ?array $params): mixed
-	{
-		return static::dispatch(sql: $query, params: $params);
-	}
-
-	protected static function dispatch(string $table = '', string $sql = '', array|null $params = null): mixed
-	{
-		if (static::driver() === null)
+		$driver = static::driver();
+		if ($driver === null)
 			throw new \Exception("Database driver not set", 400);
 
-		match (true) {
-			$table => new Query(static::driver(), $table),
-			$sql => static::driver()->execute($sql, $params),
-			default => []
+		return match (func_num_args()) {
+			1 => $driver->Query(...func_get_args()),
+			2 => $driver->execute(...func_get_args()),
+			default => throw new \Exception("Invalid number of arguments", 400)
 		};
 	}
 
-	protected static function driver(): DriverInterface|null
+	public static function driver(): DriverInterface|null
 	{
-		return static::$drivers[static::$currentDriver->value] ?? null;
+		return static::$drivers[static::$currentDriver?->value] ?? null;
 	}
 
-	public static function setDriver(Driver $currentDriver): void
+	public static function setDriver(DriverInterface $driver): void
 	{
-		if (!in_array($currentDriver, static::$drivers))
-			throw new \Exception("Driver {$currentDriver->value} is not loaded", 400);
-
-		static::$currentDriver = $currentDriver;
+		static::$drivers[$driver->type()->value] = $driver;
+		static::$currentDriver = $driver->type();
 	}
 
-	public static function loadMySQLDriver(array $config): void
+	public static function useDriver(Drivers $driver): void
 	{
-		static::$drivers[Driver::MySQL->value] = new MySQL($config);
-		static::$currentDriver = Driver::MySQL;
+		if (!array_key_exists($driver->value, static::$drivers))
+			throw new \Exception("Driver not loaded", 400);
+		
+		static::$currentDriver = $driver;
+	}
+
+	public static function loadMySQLDriver(array $config, array $options = []): void
+	{
+		$source = Factory::createPDO($config, $options);
+		$driver = MySQL::create($source);
+		static::setDriver($driver);
+		static::useDriver(Drivers::MySQL);
+	}
+
+	public static function clear(): void
+	{
+		static::$drivers = [];
+		static::$currentDriver = null;
 	}
 }

@@ -4,33 +4,31 @@ declare(strict_types=1);
 
 namespace Projom\Storage;
 
-use Projom\Storage\Database\Driver;
+use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query;
 
-class Database
+class Database extends Engine 
 {
-	use Engine;
+	protected static Drivers|null $currentDriver = null;
 
-	public function __construct(Driver $driver)
+	private function __construct(Drivers $driver)
 	{
-		$this->setDriver($driver);
+		static::$currentDriver = $driver;
 	}
 
-	public static function create(Driver $driver = Driver::MySQL): Database
+	public static function create(Drivers $driver = Drivers::MySQL): Database
 	{
 		return new Database($driver);
 	}
-	
-	// Overrides Engine::query
+
 	public function query(string $table): Query
 	{
-		return $this->dispatch(table: $table);
+		return static::dispatch($table);
 	}
 
-	// Overrides Engine::sql
-	public function sql(string $query, ?array $params): mixed
+	public function sql(string $query, ?array $params = null): mixed
 	{
-		return $this->dispatch(sql: $query, params: $params);
+		return static::dispatch($query, $params);
 	}
 }
