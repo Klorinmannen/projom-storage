@@ -8,6 +8,7 @@ use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Collection;
+use Projom\Storage\Database\Query\LogicalOperators;
 use Projom\Storage\Database\Query\Operators;
 
 class Query
@@ -67,17 +68,13 @@ class Query
      * * Example use: $query->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
      * * Example use: $query->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
      */
-    public function filterOn(Operators $operator, array ...$filters): Query
+    public function filterOn(Operators $operator, array $fieldsWithValues, LogicalOperators $logicalOperators = LogicalOperators::AND): Query
     {
+        $filter = Filter::create($operator, $fieldsWithValues, $logicalOperators);
         if ($this->filter === null)
-            $this->filter = Filter::create($operator, array_shift($filters));
-
-        $newFilters = array_map(
-            fn (array $filter) => Filter::create($operator, $filter),
-            $filters
-        );
-
-        $this->filter->merge(...$newFilters);
+            $this->filter = $filter;
+        else
+            $this->filter->merge($filter);
 
         return $this;
     }
