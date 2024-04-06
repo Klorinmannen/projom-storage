@@ -13,7 +13,6 @@ use Projom\Storage\Database\Driver\MySQL\Statement;
 use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\LogicalOperators;
-use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Value;
 
