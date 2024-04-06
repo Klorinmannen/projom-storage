@@ -12,14 +12,15 @@ use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Value;
 use Projom\Storage\Database\Driver\MySQL\Filter;
+use Projom\Storage\Database\Query\LogicalOperators;
 
 class FilterTest extends TestCase
 {
 	public function test_create(): void
 	{
 		$filters = [
-			[Field::create('name'), Operator::create(Operators::EQ), Value::create('John')],
-			[Field::create('age'), Operator::create(Operators::GT), Value::create(18)],
+			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
 		];
 
 		$filter = Filter::create($filters);
@@ -30,8 +31,8 @@ class FilterTest extends TestCase
 	public function test_to_tring(): void
 	{
 		$filters = [
-			[Field::create('name'), Operator::create(Operators::EQ), Value::create('John')],
-			[Field::create('age'), Operator::create(Operators::GT), Value::create(18)],
+			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
 		];
 
 		$filter = Filter::create($filters);
@@ -43,8 +44,8 @@ class FilterTest extends TestCase
 	public function test_raw(): void
 	{
 		$filters = [
-			[Field::create('name'), Operator::create(Operators::EQ), Value::create('John')],
-			[Field::create('age'), Operator::create(Operators::GT), Value::create(18)],
+			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
 		];
 
 		$filter = Filter::create($filters);
@@ -56,8 +57,8 @@ class FilterTest extends TestCase
 	public function test_get(): void
 	{
 		$filters = [
-			[Field::create('name'), Operator::create(Operators::EQ), Value::create('John')],
-			[Field::create('age'), Operator::create(Operators::GT), Value::create(18)],
+			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
 		];
 
 		$filter = Filter::create($filters);
@@ -79,8 +80,8 @@ class FilterTest extends TestCase
 	public function test_params(): void
 	{
 		$filters = [
-			[Field::create('name'), Operator::create(Operators::EQ), Value::create('John')],
-			[Field::create('age'), Operator::create(Operators::GT), Value::create(18)],
+			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
 		];
 
 		$filter = Filter::create($filters);
@@ -92,8 +93,8 @@ class FilterTest extends TestCase
 	public function test_filters(): void
 	{
 		$filters = [
-			[Field::create('name'), Operator::create(Operators::EQ), Value::create('John')],
-			[Field::create('age'), Operator::create(Operators::GT), Value::create(18)],
+			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND]
 		];
 
 		$filter = Filter::create($filters);

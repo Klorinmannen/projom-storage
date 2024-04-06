@@ -12,6 +12,7 @@ use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Driver\MySQL\Statement;
 use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\Query\Field;
+use Projom\Storage\Database\Query\LogicalOperators;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Value;
@@ -27,8 +28,9 @@ class StatementTest extends TestCase
 				[
 					[
 						Field::create('Name'),
-						Operator::create(Operators::EQ),
-						Value::create('John')
+						Operators::EQ,
+						Value::create('John'),
+						LogicalOperators::AND
 					]
 				],
 				[
@@ -42,8 +44,9 @@ class StatementTest extends TestCase
 				[
 					[
 						Field::create('Name'),
-						Operator::create(Operators::IS_NULL),
-						Value::create(null)
+						Operators::IS_NULL,
+						Value::create(null),
+						LogicalOperators::AND
 					]
 				],
 				[
@@ -57,12 +60,13 @@ class StatementTest extends TestCase
 				[
 					[
 						Field::create('Age'),
-						Operator::create(Operators::IN),
-						Value::create([12, 23, 45])
+						Operators::IN,
+						Value::create([12, 23, 45]),
+						LogicalOperators::AND
 					]
 				],
 				[
-					'query' => 'SELECT * FROM `User` WHERE `Age` IN (:age_1_1,:age_1_2,:age_1_3)',
+					'query' => 'SELECT * FROM `User` WHERE `Age` IN ( :age_1_1, :age_1_2, :age_1_3 )',
 					'params' => ['age_1_1' => 12, 'age_1_2' => 23, 'age_1_3' => 45]
 				]
 			]

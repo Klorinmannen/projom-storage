@@ -17,15 +17,7 @@ class ColumnTest extends TestCase
 
 		$this->assertInstanceOf(Column::class, $column);
 		$this->assertEquals($fields, $column->raw());
-		$this->assertEquals('`field1`,`field2`', $column->get());
+		$this->assertEquals('`field1`, `field2`', $column->get());
 		$this->assertEquals('field1_field2', $column->joined('_'));
-	}
-
-	public function test_to_string(): void
-	{
-		$fields = ['field1', 'field2'];
-		$column = new Column($fields);
-
-		$this->assertEquals('`field1`,`field2`', "$column");
 	}
 }
