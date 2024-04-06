@@ -15,7 +15,7 @@ class Column implements AccessorInterface
 	public function __construct(array $fields)
 	{
 		$this->raw = Util::cleanList($fields);
-		$this->fields = Util::quoteAndJoin($this->raw);
+		$this->fields = Util::quoteAndJoin($this->raw, ', ');
 	}
 
 	public static function create(array $fields): Column 
