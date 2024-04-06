@@ -68,8 +68,11 @@ class Query
      * * Example use: $query->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
      * * Example use: $query->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
      */
-    public function filterOn(Operators $operator, array $fieldsWithValues, LogicalOperators $logicalOperators = LogicalOperators::AND): Query
-    {
+    public function filterOn(
+        Operators $operator,
+        array $fieldsWithValues,
+        LogicalOperators $logicalOperators = LogicalOperators::AND
+    ): Query {
         $filter = Filter::create($operator, $fieldsWithValues, $logicalOperators);
         if ($this->filter === null)
             $this->filter = $filter;
