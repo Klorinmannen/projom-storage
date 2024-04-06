@@ -70,7 +70,7 @@ class Filter implements AccessorInterface
 
 	public function params(): array
 	{
-		return $this->params;
+		return array_merge(...$this->params);
 	}
 
 	public function filters(): string
