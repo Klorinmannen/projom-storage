@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Value;
 use Projom\Storage\Database\Driver\MySQL\Filter;

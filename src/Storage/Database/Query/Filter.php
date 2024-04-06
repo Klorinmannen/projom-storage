@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Query;
 
-use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Value;
