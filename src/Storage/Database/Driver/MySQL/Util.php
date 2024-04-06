@@ -10,7 +10,7 @@ class Util extends QUtil
 {
 	public static function quoteList(array $list): array
     {
-        return array_map([ self::class, 'quote' ], $list);
+        return array_map([ static::class, 'quote' ], $list);
     }
 
     public static function quote(string $subject): string
