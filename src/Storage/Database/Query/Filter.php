@@ -15,31 +15,41 @@ class Filter implements AccessorInterface
 	protected array $fieldsWithValues = [];
 	protected array $filters = [];
 
-	public function __construct(array $fieldsWithValues, Operators $operator)
-	{
+	public function __construct(
+		Operators $operator,
+		array $fieldsWithValues,
+		LogicalOperators $logicalOperator = LogicalOperators::AND
+	) {
 		$this->fieldsWithValues = $fieldsWithValues;
-		$this->filters = $this->build($this->fieldsWithValues, $operator);
+		$this->filters = $this->build($operator, $this->fieldsWithValues, $logicalOperator);
 	}
 
-	public static function create(array $fieldsWithValues, Operators $operator): Filter
+	public static function create(
+		Operators $operator,
+		array $fieldsWithValues,
+		LogicalOperators $logicalOperator = LogicalOperators::AND
+	): Filter {
+		return new Filter($operator, $fieldsWithValues, $logicalOperator);
+	}
+
+	public function __toString(): string
 	{
-		return new Filter($fieldsWithValues, $operator);
-	}
-
-	public function __toString(): string 
-	{ 
 		return Json::encode($this->get());
 	}
 
-	protected function build(array $fieldsWithValues, Operators $operator): array
-	{
+	protected function build(
+		Operators $operator,
+		array $fieldsWithValues,
+		LogicalOperators $logicalOperator = LogicalOperators::AND
+	): array {
 		$Filters = [];
 
 		foreach ($fieldsWithValues as $field => $value) {
 			$Filters[] = [
 				Field::create($field),
-				Operator::create($operator),
-				Value::create($value)
+				$operator,
+				Value::create($value),
+				$logicalOperator
 			];
 		}
 
@@ -59,7 +69,7 @@ class Filter implements AccessorInterface
 	public function merge(Filter ...$others): Filter
 	{
 		foreach ($others as $filter)
-			$this->filters = [ ...$this->filters, ...$filter->get() ];
+			$this->filters = [...$this->filters, ...$filter->get()];
 		return $this;
-	}	
+	}
 }
