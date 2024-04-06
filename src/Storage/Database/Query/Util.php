@@ -46,6 +46,6 @@ class Util
 
     public static function join(array $list, string $delimeter = ','): string
     {
-        return implode("$delimeter", $list);
+        return implode($delimeter, $list);
     }
 }
