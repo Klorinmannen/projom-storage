@@ -45,7 +45,7 @@ class Query
         ];
 
         $field = Field::create($field);
-        $filter = Filter::create($fieldsWithValues, $operator);
+        $filter = Filter::create($operator, $fieldsWithValues);
 
         return $this->driver->select($this->collection, $field, $filter);
     }
@@ -70,10 +70,10 @@ class Query
     public function filterOn(Operators $operator, array ...$filters): Query
     {
         if ($this->filter === null)
-            $this->filter = Filter::create(array_shift($filters), $operator);
+            $this->filter = Filter::create($operator, array_shift($filters));
 
         $newFilters = array_map(
-            fn (array $filter) => Filter::create($filter, $operator),
+            fn (array $filter) => Filter::create($operator, $filter),
             $filters
         );
 
