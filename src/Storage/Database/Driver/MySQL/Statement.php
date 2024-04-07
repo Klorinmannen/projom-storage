@@ -6,6 +6,7 @@ namespace Projom\Storage\Database\Driver\MySQL;
 
 use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Filter;
+use Projom\Storage\Database\Driver\MySQL\Set;
 use Projom\Storage\Database\Driver\MySQL\Table;
 
 class Statement
@@ -19,33 +20,20 @@ class Statement
 
         return [
             $query,
-            $filter->params()
+            $filter->params() ?: null
         ];
     }
 
-    public static function update(Table $table, array $fieldsWithValues, Filter $filter): array
+    public static function update(Table $table, Set $set, Filter $filter): array
     {
-        $id = 0;
-        $params = $filter->params() ?? [];
-        $updateFields = [];
-        foreach ($fieldsWithValues as $field => $value) {
-            $id++;
-            $qoutedField = Util::quote($field);
-            $setField = strtolower("set_{$field}_{$id}");
-            $updateFields[] = "{$qoutedField} = :{$setField}";
-            $params[$setField] = $value;
-        }      
-
-        $updateList = Util::join($updateFields, ', ');
-
         $query = match ($filter->empty()) {
-            false => "UPDATE {$table} SET {$updateList} WHERE {$filter}",
-            default => "UPDATE {$table} SET {$updateList}"
+            false => "UPDATE {$table} SET {$set} WHERE {$filter}",
+            default => "UPDATE {$table} SET {$set}"
         };
 
         return [
             $query,
-            $params
+            $set->params() + $filter->params() ?: null
         ];
     }
 }

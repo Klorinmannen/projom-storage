@@ -30,21 +30,21 @@ class FilterTest extends TestCase
 	public function test_to_tring(): void
 	{
 		$filters = [
-			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
+			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND],
 		];
 
 		$filter = Filter::create($filters);
 
-		$expected = '`name` = :name_1 AND `age` > :age_2';
+		$expected = '`Name` = :filter_name_1 AND `Age` > :filter_age_2';
 		$this->assertEquals($expected, "$filter");
 	}
 
 	public function test_raw(): void
 	{
 		$filters = [
-			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
+			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND],
 		];
 
 		$filter = Filter::create($filters);
@@ -56,15 +56,15 @@ class FilterTest extends TestCase
 	public function test_get(): void
 	{
 		$filters = [
-			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
+			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND],
 		];
 
 		$filter = Filter::create($filters);
 
 		$expected = [
-			['filter' => '`name` = :name_1', 'params' => ['name_1' => 'John']],
-			['filter' => '`age` > :age_2', 'params' => ['age_2' => 18]],
+			['filter' => '`Name` = :filter_name_1', 'params' => ['filter_name_1' => 'John']],
+			['filter' => '`Age` > :filter_age_2', 'params' => ['filter_age_2' => 18]],
 		];
 		$this->assertEquals($expected, $filter->get());
 	}
@@ -79,26 +79,26 @@ class FilterTest extends TestCase
 	public function test_params(): void
 	{
 		$filters = [
-			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
+			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND],
 		];
 
 		$filter = Filter::create($filters);
 
-		$expected = ['name_1' => 'John', 'age_2' => 18];
+		$expected = ['filter_name_1' => 'John', 'filter_age_2' => 18];
 		$this->assertEquals($expected, $filter->params());
 	}
 
 	public function test_filters(): void
 	{
 		$filters = [
-			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND]
+			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
+			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND]
 		];
 
 		$filter = Filter::create($filters);
 
-		$expected = '`name` = :name_1 AND `age` > :age_2';
+		$expected = '`Name` = :filter_name_1 AND `Age` > :filter_age_2';
 		$this->assertEquals($expected, $filter->filters());
 	}
 }

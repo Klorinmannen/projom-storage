@@ -91,10 +91,9 @@ class Query
      */
     public function update(array ...$fieldsWithValues): int
     {
-        
         // This will cause the last field provided to overwrite a previous field if they are the same.
         $fieldsWithValues = array_merge(...$fieldsWithValues);
-                
+
         return $this->driver->update($this->collection, $fieldsWithValues, $this->filter);
     }
 }

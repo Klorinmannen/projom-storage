@@ -66,9 +66,9 @@ class Filter implements AccessorInterface
 		return empty($this->parsed);
 	}
 
-	public function params(): array|null
+	public function params(): array
 	{
-		return array_merge(...$this->params) ?: null;
+		return array_merge(...$this->params);
 	}
 
 	public function filters(): string
@@ -114,7 +114,8 @@ class Filter implements AccessorInterface
 		$parameters = [];
 		$params = [];
 		foreach ($value->get() as $id => $val) {
-			$parameter = $this->parameterName($parameterName, ++$id);
+			$id++;
+			$parameter = "{$parameterName}_{$id}";
 			$parameters[] = ":$parameter";
 			$params[$parameter] = $val;
 		}
@@ -146,6 +147,6 @@ class Filter implements AccessorInterface
 	private function parameterName(string $column, int $id): string
 	{
 		$colString = strtolower($column);
-		return $colString . '_' . $id;
+		return "filter_{$colString}_{$id}";
 	}
 }
