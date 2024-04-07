@@ -66,7 +66,7 @@ class Filter implements AccessorInterface
 		return empty($this->parsed);
 	}
 
-	public function params(): array
+	public function params(): array|null
 	{
 		return array_merge(...$this->params) ?: null;
 	}

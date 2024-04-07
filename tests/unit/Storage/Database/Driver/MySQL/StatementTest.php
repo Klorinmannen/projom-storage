@@ -50,7 +50,7 @@ class StatementTest extends TestCase
 				],
 				[
 					'query' => 'SELECT `Name` FROM `User` WHERE `Name` IS NULL',
-					'params' => []
+					'params' => null
 				]
 			],
 			'IN filter' => [
@@ -79,9 +79,7 @@ class StatementTest extends TestCase
 		$column = new Column($columns);
 		$filter = new Filter($filter);
 
-		$statement = Statement::create($table, $column, $filter);
-
-		[$query, $params] = $statement->select();
+		[$query, $params] = Statement::select($table, $column, $filter);
 
 		$this->assertEquals($expected['query'], $query);
 		$this->assertEquals($expected['params'], $params);
