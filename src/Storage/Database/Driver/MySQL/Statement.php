@@ -10,30 +10,16 @@ use Projom\Storage\Database\Driver\MySQL\Table;
 
 class Statement
 {
-    private Table $table;
-    private Column $column;
-    private Filter $filter;
-
-    public function __construct(Table $table, Column $column, Filter $filter)
+    public static function select(Table $table, Column $column, Filter $filter): array
     {
-        $this->table = $table;
-        $this->column = $column;
-        $this->filter = $filter;
-    }
-
-    public static function create(Table $table, Column $column, Filter $filter): Statement
-    {
-        return new Statement($table, $column, $filter);
-    }
-
-    public function select(): array
-    {
-        
-        $query = match ($this->filter->empty()) {
-            false => "SELECT {$this->column} FROM {$this->table} WHERE {$this->filter}",
-            default => "SELECT {$this->column} FROM {$this->table}"
+        $query = match ($filter->empty()) {
+            false => "SELECT {$column} FROM {$table} WHERE {$filter}",
+            default => "SELECT {$column} FROM {$table}"
         };
 
-        return [ $query, $this->filter->params() ];
+        return [
+            $query,
+            $filter->params()
+        ];
     }
 }

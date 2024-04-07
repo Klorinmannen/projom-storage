@@ -43,8 +43,7 @@ class MySQL implements DriverInterface
 		$column = Column::create($field->get());
 		$filter = Filter::create($QFilter->get());
 
-		$statement = Statement::create($table, $column, $filter);
-		[ $query, $params ] = $statement->select();
+		[ $query, $params ] = Statement::select($table, $column, $filter);
 
 		return $this->source->execute($query, $params);
 	}
