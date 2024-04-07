@@ -48,6 +48,18 @@ class MySQL implements DriverInterface
 		return $this->source->execute($query, $params);
 	}
 
+	public function update(QCollection $collection, array $fieldsWithValues, QFilter $QFilter): int
+	{
+		$table = Table::create($collection->get());
+		$filter = Filter::create($QFilter->get());
+
+		[ $query, $params ] = Statement::update($table, $fieldsWithValues, $filter);
+
+		$this->source->execute($query, $params);
+
+		return $this->source->get()->rowCount();
+	}
+
 	public function Query(string $table): Query
 	{
 		return new Query($this, $table);
