@@ -52,18 +52,6 @@ class Query
     }
 
     /**
-     * * Example use: $query->field('Name', 'Age')
-     * * Example use: $query->field('Name, Age')
-     * * Example use: $query->field([ 'Name', 'Age', 'Username' ])
-     */
-    public function field(string ...$fields): Query
-    {
-        $this->field = Field::create(...$fields);
-
-        return $this;
-    }
-
-    /**
      * * Example use: $query->filterOn(Operators::EQ, ['Name' => 'John'])
      * * Example use: $query->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
      * * Example use: $query->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
@@ -73,6 +61,7 @@ class Query
         array $fieldsWithValues,
         LogicalOperators $logicalOperators = LogicalOperators::AND
     ): Query {
+
         $filter = Filter::create($operator, $fieldsWithValues, $logicalOperators);
         if ($this->filter === null)
             $this->filter = $filter;
@@ -83,10 +72,15 @@ class Query
     }
 
     /**
-     * Executes the query and returns the result.
+     * Executes a select query and returns the result.
+     * 
+     * * Example use: $query->get('Name', 'Age')
+     * * Example use: $query->get('Name, Age')
+     * * Example use: $query->get([ 'Name', 'Age', 'Username' ])
      */
-    public function get(): mixed
+    public function get(string ...$fields): mixed
     {
+        $this->field = Field::create(...$fields);
         return $this->driver->select($this->collection, $this->field, $this->filter);
     }
 }
