@@ -28,7 +28,7 @@ class MySQLTest extends TestCase
 	public function test_select(): void
 	{
 		$query = 'SELECT * FROM `User`';
-		$params = [];
+		$params = null;
 
 		$records = [
 			['Name' => 'John', 'Age' => 18],

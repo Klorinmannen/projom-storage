@@ -82,4 +82,18 @@ class Query
         $field = Field::create(...$fields);
         return $this->driver->select($this->collection, $field, $this->filter);
     }
+
+    /**
+     * Executes the update query and returns the number of affected rows.
+     * 
+     * * Example use: $query->update(['Name' => 'John', 'Age' => 25])
+     * * Example use: $query->update(['Name' => 'John'], ['Age' => 25])
+     */
+    public function update(array ...$fieldsWithValues): int
+    {
+        // This will cause the last field provided to overwrite a previous field if they are the same.
+        $fieldsWithValues = array_merge(...$fieldsWithValues);
+
+        return $this->driver->update($this->collection, $fieldsWithValues, $this->filter);
+    }
 }

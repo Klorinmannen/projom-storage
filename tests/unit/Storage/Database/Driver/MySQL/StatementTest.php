@@ -33,8 +33,8 @@ class StatementTest extends TestCase
 					]
 				],
 				[
-					'query' => 'SELECT `Name` FROM `User` WHERE `Name` = :name_1',
-					'params' => ['name_1' => 'John']
+					'query' => 'SELECT `Name` FROM `User` WHERE `Name` = :filter_name_1',
+					'params' => ['filter_name_1' => 'John']
 				]
 			],
 			'Null filter' => [
@@ -50,7 +50,7 @@ class StatementTest extends TestCase
 				],
 				[
 					'query' => 'SELECT `Name` FROM `User` WHERE `Name` IS NULL',
-					'params' => []
+					'params' => null
 				]
 			],
 			'IN filter' => [
@@ -65,8 +65,8 @@ class StatementTest extends TestCase
 					]
 				],
 				[
-					'query' => 'SELECT * FROM `User` WHERE `Age` IN ( :age_1_1, :age_1_2, :age_1_3 )',
-					'params' => ['age_1_1' => 12, 'age_1_2' => 23, 'age_1_3' => 45]
+					'query' => 'SELECT * FROM `User` WHERE `Age` IN ( :filter_age_1_1, :filter_age_1_2, :filter_age_1_3 )',
+					'params' => ['filter_age_1_1' => 12, 'filter_age_1_2' => 23, 'filter_age_1_3' => 45]
 				]
 			]
 		];
@@ -79,9 +79,7 @@ class StatementTest extends TestCase
 		$column = new Column($columns);
 		$filter = new Filter($filter);
 
-		$statement = Statement::create($table, $column, $filter);
-
-		[$query, $params] = $statement->select();
+		[$query, $params] = Statement::select($table, $column, $filter);
 
 		$this->assertEquals($expected['query'], $query);
 		$this->assertEquals($expected['params'], $params);
