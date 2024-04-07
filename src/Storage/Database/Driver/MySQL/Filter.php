@@ -68,7 +68,7 @@ class Filter implements AccessorInterface
 
 	public function params(): array
 	{
-		return array_merge(...$this->params);
+		return array_merge(...$this->params) ?: null;
 	}
 
 	public function filters(): string
