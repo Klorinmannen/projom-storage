@@ -15,7 +15,6 @@ class Query
 {
     private DriverInterface|null $driver = null;
     private Collection|null $collection = null;
-    private Field|null $field = null;
     private Filter|null $filter = null;
 
     public function __construct(DriverInterface $driver, string $collection)
@@ -80,7 +79,7 @@ class Query
      */
     public function get(string ...$fields): mixed
     {
-        $this->field = Field::create(...$fields);
-        return $this->driver->select($this->collection, $this->field, $this->filter);
+        $field = Field::create(...$fields);
+        return $this->driver->select($this->collection, $field, $this->filter);
     }
 }
