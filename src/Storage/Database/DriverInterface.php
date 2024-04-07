@@ -13,9 +13,9 @@ use Projom\Storage\Database\SourceInterface;
 
 interface DriverInterface
 {
+	public static function create(SourceInterface $source): DriverInterface;
 	public function type(): Drivers;
-	public function execute(string $sql, ?array $params): mixed;
 	public function select(Collection $table, Field $field, Filter $filter): mixed;
 	public function Query(string $collection): Query;
-	public static function create(SourceInterface $source): DriverInterface;
+	public function execute(string $sql, ?array $params): mixed;
 }
