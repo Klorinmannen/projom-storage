@@ -48,4 +48,30 @@ class Statement
             $params
         ];
     }
+
+    public static function update(Table $table, array $fieldsWithValues, Filter $filter): array
+    {
+        $id = 0;
+        $params = $filter->params() ?? [];
+        $updateFields = [];
+        foreach ($fieldsWithValues as $field => $value) {
+            $id++;
+            $qoutedField = Util::quote($field);
+            $setField = strtolower("set_{$field}_{$id}");
+            $updateFields[] = "{$qoutedField} = :{$setField}";
+            $params[$setField] = $value;
+        }      
+
+        $updateList = Util::join($updateFields, ', ');
+
+        $query = match ($filter->empty()) {
+            false => "UPDATE {$table} SET {$updateList} WHERE {$filter}",
+            default => "UPDATE {$table} SET {$updateList}"
+        };
+
+        return [
+            $query,
+            $params
+        ];
+    }
 }
