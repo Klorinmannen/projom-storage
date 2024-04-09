@@ -59,7 +59,7 @@ class MySQL implements DriverInterface
 
 		$this->source->execute($query, $params);
 
-		return $this->source->get()->rowCount();
+		return $this->source->rowsAffected();
 	}
 
 	public function Query(string $table): Query

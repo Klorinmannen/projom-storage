@@ -24,9 +24,9 @@ class Query
     }
 
     /**
-     * * Example use: $query->select(Field::create(...), Filter::create(...), Filter::create(...))
+     * * Example use: $database::query('CollectionName')->exec(Field::create(...), Filter::create(...), Filter::create(...))
      */
-    public function select(Field $field, Filter ...$filters): mixed
+    public function exec(Field $field, Filter ...$filters): mixed
     {
         $filter = array_shift($filters);
         $filter->merge(...$filters);
@@ -35,8 +35,8 @@ class Query
     }
 
     /**
-     * * Example use: $query->fetch('Name', 'John')
-     * * Example use: $query->fetch('Age', [25, 55], Operators::IN)
+     * * Example use: $database::query('CollectionName')->fetch('Name', 'John')
+     * * Example use: $database::query('CollectionName')->fetch('Age', [25, 55], Operators::IN)
      */
     public function fetch(string $field, mixed $value, Operators $operator = Operators::EQ): mixed
     {
@@ -51,9 +51,9 @@ class Query
     }
 
     /**
-     * * Example use: $query->filterOn(Operators::EQ, ['Name' => 'John'])
-     * * Example use: $query->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
-     * * Example use: $query->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
+     * * Example use: $database::query('CollectionName')->filterOn(Operators::EQ, ['Name' => 'John'])
+     * * Example use: $database::query('CollectionName')->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
+     * * Example use: $database::query('CollectionName')->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
      */
     public function filterOn(
         Operators $operator,
@@ -71,29 +71,25 @@ class Query
     }
 
     /**
-     * Executes a select query and returns the result.
+     * Executes a query finding a record and returns the result.
      * 
-     * * Example use: $query->get('Name', 'Age')
-     * * Example use: $query->get('Name, Age')
-     * * Example use: $query->get([ 'Name', 'Age', 'Username' ])
+     * * Example use: $database::query('CollectionName')->get('Name', 'Age')
+     * * Example use: $database::query('CollectionName')->get('Name, Age')
+     * * Example use: $database::query('CollectionName')->get([ 'Name', 'Age', 'Username' ])
      */
     public function get(string ...$fields): mixed
     {
         $field = Field::create(...$fields);
         return $this->driver->select($this->collection, $field, $this->filter);
-    }
+    } 
 
     /**
-     * Executes the update query and returns the number of affected rows.
+     * Executes a query modifing record(s) and returns the number of affected rows.
      * 
-     * * Example use: $query->update(['Name' => 'John', 'Age' => 25])
-     * * Example use: $query->update(['Name' => 'John'], ['Age' => 25])
+     * * Example use: $database::query('CollectionName')->modify(['Name' => 'John', 'Age' => 25])
      */
-    public function update(array ...$fieldsWithValues): int
+    public function modify(array $fieldsWithValues): int
     {
-        // This will cause the last field provided to overwrite a previous field if they are the same.
-        $fieldsWithValues = array_merge(...$fieldsWithValues);
-
         return $this->driver->update($this->collection, $fieldsWithValues, $this->filter);
     }
 }
