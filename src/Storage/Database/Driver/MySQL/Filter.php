@@ -94,8 +94,16 @@ class Filter implements AccessorInterface
 			case Operators::NOT_IN:
 				return $this->inFilter($column, $operator, $value);
 
-			default:
+			case Operators::EQ:
+			case Operators::NE:
+			case Operators::GT:
+			case Operators::GTE:
+			case Operators::LT:
+			case Operators::LTE:
 				return $this->defaultFilter($column, $operator, $value);
+
+			default:
+				throw new \Exception("Operator not supported: {$operator->value}", 400);
 		}
 	}
 
