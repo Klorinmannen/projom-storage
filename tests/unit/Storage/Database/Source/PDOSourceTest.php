@@ -57,20 +57,26 @@ class PDOSourceTest extends TestCase
 		$this->assertEquals($records, $result);
 	}
 
-	public function test_faile_prepare_exception(): void
+	public function test_failed_prepare_exception(): void
 	{
-		$pdo = $this->createMock(PDO::class);
+		$pdostmnt = $this->createMock(PDOStatement::class);
 		$sql = 'SELECT * FROM users';
 
 		// Failed to prepare PDO query
+		$pdostmnt->expects($this->once())
+			->method('execute')
+			->with($this->equalTo(null))
+			->willReturn(false);
+
+		$pdo = $this->createMock(PDO::class);
 		$pdo->expects($this->once())
 			->method('prepare')
 			->with($this->equalTo($sql))
-			->willReturn(false);
+			->willReturn($pdostmnt);
 
 		$source = PDOSource::create($pdo);
 		$this->expectException(Exception::class);
-		$this->expectExceptionCode(500);
+		$this->expectExceptionCode(500);		
 		$source->execute($sql);
 	}
 
