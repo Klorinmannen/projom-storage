@@ -24,17 +24,8 @@ class Query
     }
 
     /**
-     * * Example use: $database->query('CollectionName')->exec(Field::create(...), Filter::create(...), Filter::create(...))
-     */
-    public function exec(Field $field, Filter ...$filters): mixed
-    {
-        $filter = array_shift($filters);
-        $filter->merge(...$filters);
-
-        return $this->driver->select($this->collection, $field, $filter);
-    }
-
-    /**
+     * Simple query mechanism to find a record by a field and its value.
+     * 
      * * Example use: $database->query('CollectionName')->fetch('Name', 'John')
      * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operators::IN)
      */
@@ -51,6 +42,8 @@ class Query
     }
 
     /**
+     * Creating a filter to be used in the query to be executed.
+     * 
      * * Example use: $database->query('CollectionName')->filterOn(Operators::EQ, ['Name' => 'John'])
      * * Example use: $database->query('CollectionName')->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
      * * Example use: $database->query('CollectionName')->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
@@ -84,7 +77,7 @@ class Query
     }
 
     /**
-     * Executes a query modifing record(s) and returns the number of affected rows.
+     * Executes a query modifying record(s) and returns the number of affected rows.
      * 
      * * Example use: $database->query('CollectionName')->modify(['Name' => 'John', 'Age' => 25])
      */
