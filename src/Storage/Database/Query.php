@@ -24,7 +24,7 @@ class Query
     }
 
     /**
-     * * Example use: $database::query('CollectionName')->exec(Field::create(...), Filter::create(...), Filter::create(...))
+     * * Example use: $database->query('CollectionName')->exec(Field::create(...), Filter::create(...), Filter::create(...))
      */
     public function exec(Field $field, Filter ...$filters): mixed
     {
@@ -35,8 +35,8 @@ class Query
     }
 
     /**
-     * * Example use: $database::query('CollectionName')->fetch('Name', 'John')
-     * * Example use: $database::query('CollectionName')->fetch('Age', [25, 55], Operators::IN)
+     * * Example use: $database->query('CollectionName')->fetch('Name', 'John')
+     * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operators::IN)
      */
     public function fetch(string $field, mixed $value, Operators $operator = Operators::EQ): mixed
     {
@@ -51,9 +51,9 @@ class Query
     }
 
     /**
-     * * Example use: $database::query('CollectionName')->filterOn(Operators::EQ, ['Name' => 'John'])
-     * * Example use: $database::query('CollectionName')->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
-     * * Example use: $database::query('CollectionName')->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
+     * * Example use: $database->query('CollectionName')->filterOn(Operators::EQ, ['Name' => 'John'])
+     * * Example use: $database->query('CollectionName')->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
+     * * Example use: $database->query('CollectionName')->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
      */
     public function filterOn(
         Operators $operator,
@@ -73,23 +73,33 @@ class Query
     /**
      * Executes a query finding a record and returns the result.
      * 
-     * * Example use: $database::query('CollectionName')->get('Name', 'Age')
-     * * Example use: $database::query('CollectionName')->get('Name, Age')
-     * * Example use: $database::query('CollectionName')->get([ 'Name', 'Age', 'Username' ])
+     * * Example use: $database->query('CollectionName')->get('Name', 'Age')
+     * * Example use: $database->query('CollectionName')->get('Name, Age')
+     * * Example use: $database->query('CollectionName')->get([ 'Name', 'Age', 'Username' ])
      */
     public function get(string ...$fields): mixed
     {
         $field = Field::create(...$fields);
         return $this->driver->select($this->collection, $field, $this->filter);
-    } 
+    }
 
     /**
      * Executes a query modifing record(s) and returns the number of affected rows.
      * 
-     * * Example use: $database::query('CollectionName')->modify(['Name' => 'John', 'Age' => 25])
+     * * Example use: $database->query('CollectionName')->modify(['Name' => 'John', 'Age' => 25])
      */
     public function modify(array $fieldsWithValues): int
     {
         return $this->driver->update($this->collection, $fieldsWithValues, $this->filter);
+    }
+
+    /**
+     * Executing a query adding a record and returns the latest inserted primary id.
+     * 
+     * * Example use: $database->query('CollectionName')->add(['Name' => 'John', 'Age' => 25])
+     */
+    public function add(array $fieldsWithValues): int
+    {
+        return $this->driver->insert($this->collection, $fieldsWithValues);
     }
 }
