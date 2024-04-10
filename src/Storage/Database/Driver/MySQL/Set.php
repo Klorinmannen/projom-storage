@@ -9,9 +9,10 @@ use Projom\Storage\Database\Query\AccessorInterface;
 class Set implements AccessorInterface
 {
 	private array $fieldsWithValues = [];
+	private array $sets = [];
 	private array $fields = [];
 	private array $params = [];
-	private string $fieldString = '';
+	private string $setString = '';
 	private int $id = 0;
 
 	public function __construct(array $fieldsWithValues)
@@ -27,25 +28,24 @@ class Set implements AccessorInterface
 
 	public function __toString(): string
 	{
-		return $this->fieldString;
+		return $this->asString();
 	}
 
 	private function build(): void
 	{
 		foreach ($this->fieldsWithValues as $field => $value) {
 			$this->id++;
-
+			$valueField = $this->createValueField($field, $this->id);
 			$qoutedField = Util::quote($field);
-			$setField = $this->createSetField($field, $this->id);
-
-			$this->fields[] = "{$qoutedField} = :{$setField}";
-			$this->params[$setField] = $value;
+			$this->sets[] = "{$qoutedField} = :{$valueField}";
+			$this->fields[$valueField] = $qoutedField;
+			$this->params[$valueField] = $value;
 		}
 
-		$this->fieldString = Util::join($this->fields, ', ');
+		$this->setString = Util::join($this->sets, ', ');
 	}
 
-	private function createSetField(string $field, int $id): string
+	private function createValueField(string $field, int $id): string
 	{
 		return strtolower("set_{$field}_{$id}");
 	}
@@ -58,9 +58,35 @@ class Set implements AccessorInterface
 	public function get()
 	{
 		return [
+			'sets' => $this->sets,
 			'fields' => $this->fields,
 			'params' => $this->params
 		];
+	}
+
+	public function sets(): array
+	{
+		return $this->sets;
+	}
+
+	public function asString(): string
+	{
+		return $this->setString;
+	}
+
+	public function fields(): array
+	{
+		return $this->fields;
+	}
+
+	public function fieldString(): string
+	{
+		return implode(', ', $this->fields());
+	}
+
+	public function valueFields(): array
+	{
+		return array_keys($this->fields);
 	}
 
 	public function params(): array
@@ -68,8 +94,16 @@ class Set implements AccessorInterface
 		return $this->params;
 	}
 
-	public function asString(): string
+	public function positionalString(): string
 	{
-		return $this->fieldString;
+		return implode(
+			', ',
+			array_fill(0, count($this->params()), '?')
+		);
+	}
+
+	public function positionalParams(): array
+	{
+		return array_values($this->params());
 	}
 }

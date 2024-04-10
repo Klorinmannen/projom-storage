@@ -36,4 +36,17 @@ class Statement
             $set->params() + $filter->params() ?: null
         ];
     }
+
+    public static function insert(Table $table, Set $set): array
+    {
+        $fieldString = $set->fieldString();
+        $positionalString = $set->positionalString();
+
+        $query = "INSERT INTO {$table} ({$fieldString}) VALUES ({$positionalString})";
+
+        return [
+            $query,
+            $set->positionalParams() ?: null
+        ];
+    }
 }

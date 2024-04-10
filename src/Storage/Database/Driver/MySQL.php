@@ -62,6 +62,18 @@ class MySQL implements DriverInterface
 		return $this->source->rowsAffected();
 	}
 
+	public function insert(QCollection $collection, array $fieldsWithValues): int
+	{
+		$table = Table::create($collection->get());
+		$set = Set::create($fieldsWithValues);
+
+		[$query, $params] = Statement::insert($table, $set);
+
+		$this->source->execute($query, $params);
+
+		return $this->source->lastInsertedID();
+	}
+
 	public function Query(string $table): Query
 	{
 		return new Query($this, $table);

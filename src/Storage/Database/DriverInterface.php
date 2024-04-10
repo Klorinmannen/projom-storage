@@ -17,6 +17,7 @@ interface DriverInterface
 	public function type(): Drivers;
 	public function select(Collection $table, Field $field, Filter $filter): mixed;
 	public function update(Collection $table, array $fieldsWithValues, Filter $filter): int;
+	public function insert(Collection $table, array $fieldsWithValues): int;
 	public function Query(string $collection): Query;
-	public function execute(string $sql, ?array $params): mixed;	
+	public function execute(string $sql, ?array $params): mixed;
 }
