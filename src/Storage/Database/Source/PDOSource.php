@@ -24,11 +24,6 @@ class PDOSource implements SourceInterface
 		return new PDOSource($pdo);
 	}
 
-	public function get(): PDO
-	{
-		return $this->pdo;
-	}
-
 	public function execute(string $query, array|null $params = null): array
 	{
 		if (!$this->statement = $this->pdo->prepare($query))
@@ -38,6 +33,11 @@ class PDOSource implements SourceInterface
 			throw new Exception('Failed to execute PDO query', 500);
 
 		return $this->statement->fetchAll();
+	}
+
+	public function get(): PDO
+	{
+		return $this->pdo;
 	}
 
 	public function rowsAffected(): int
