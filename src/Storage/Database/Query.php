@@ -95,4 +95,14 @@ class Query
     {
         return $this->driver->insert($this->collection, $fieldsWithValues);
     }
+
+    /**
+     * Executes a query removing record(s) and returns the number of affected rows.
+     * 
+     * * Example use: $database->query('CollectionName')->remove()
+     */
+    public function remove(): int
+    {
+        return $this->driver->delete($this->collection, $this->filter);
+    }
 }

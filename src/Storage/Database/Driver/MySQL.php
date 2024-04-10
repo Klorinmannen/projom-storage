@@ -74,6 +74,18 @@ class MySQL implements DriverInterface
 		return $this->source->lastInsertedID();
 	}
 
+	public function delete(QCollection $collection, QFilter $QFilter): int
+	{
+		$table = Table::create($collection->get());
+		$filter = Filter::create($QFilter->get());
+
+		[$query, $params] = Statement::delete($table, $filter);
+
+		$this->source->execute($query, $params);
+
+		return $this->source->rowsAffected();
+	}
+
 	public function Query(string $table): Query
 	{
 		return new Query($this, $table);

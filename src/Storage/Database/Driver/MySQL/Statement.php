@@ -49,4 +49,14 @@ class Statement
             $set->positionalParams() ?: null
         ];
     }
+
+    public static function delete(Table $table, Filter $filter): array
+    {
+        $query = "DELETE FROM {$table} WHERE {$filter}";
+
+        return [
+            $query,
+            $filter->params() ?: null
+        ];
+    }
 }
