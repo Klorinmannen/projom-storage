@@ -38,8 +38,9 @@ class Query
 
         $field = Field::create($field);
         $filter = Filter::create($operator, $fieldsWithValues);
+        $this->filter->merge($filter);
 
-        return $this->driver->select($this->collection, $field, $filter);
+        return $this->driver->select($this->collection, $field, $this->filter);
     }
 
     /**
@@ -56,10 +57,7 @@ class Query
     ): Query {
 
         $filter = Filter::create($operator, $fieldsWithValues, $logicalOperators);
-        if ($this->filter === null)
-            $this->filter = $filter;
-        else
-            $this->filter->merge($filter);
+        $this->filter->merge($filter);
 
         return $this;
     }
@@ -67,6 +65,7 @@ class Query
     /**
      * Executes a query finding a record and returns the result.
      * 
+     * * Example use: $database->query('CollectionName')->get('*')
      * * Example use: $database->query('CollectionName')->get('Name', 'Age')
      * * Example use: $database->query('CollectionName')->get('Name, Age')
      * * Example use: $database->query('CollectionName')->get([ 'Name', 'Age', 'Username' ])
@@ -80,7 +79,8 @@ class Query
     /**
      * Executes a query modifying record(s) and returns the number of affected rows.
      * 
-     * * Example use: $database->query('CollectionName')->modify(['Name' => 'John', 'Age' => 25])
+     * * Example use: $database->query('CollectionName')->modify(['Active' => 1])
+     * * Example use: $database->query('CollectionName')->filterOn( ... )->modify(['Username' => 'Jane', 'Password' => 'password'])
      */
     public function modify(array $fieldsWithValues): int
     {
@@ -90,7 +90,7 @@ class Query
     /**
      * Executing a query adding a record and returns the latest inserted primary id.
      * 
-     * * Example use: $database->query('CollectionName')->add(['Name' => 'John', 'Age' => 25])
+     * * Example use: $database->query('CollectionName')->add(['Username' => 'John', 'Password' => '1234'])
      */
     public function add(array $fieldsWithValues): int
     {
@@ -100,7 +100,7 @@ class Query
     /**
      * Executes a query removing record(s) and returns the number of affected rows.
      * 
-     * * Example use: $database->query('CollectionName')->remove()
+     * * Example use: $database->query('CollectionName')->filterOn( ... )->remove()
      */
     public function remove(): int
     {
