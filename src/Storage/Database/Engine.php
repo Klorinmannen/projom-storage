@@ -45,7 +45,16 @@ class Engine
 		static::$currentDriver = $driver;
 	}
 
-	public static function loadMySQLDriver(array $config, array $options = []): void
+	public static function loadDriver(array $config, array $options = []): void
+	{
+		$driver = $config['driver'] ?? '';
+		match ($driver) {
+			Drivers::MySQL->value => static::loadMySQL($config, $options),
+			default => throw new \Exception("Driver {$driver} is not supported", 400)
+		};
+	}
+
+	public static function loadMySQL(array $config, array $options = []): void
 	{
 		$source = Factory::createPDO($config, $options);
 		$driver = MySQL::create($source);
