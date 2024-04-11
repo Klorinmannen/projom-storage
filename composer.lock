@@ -4,24 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5626fcfba5b450fc0ad8246918b23224",
+    "content-hash": "6491c4afaccbc96c9199bcfc5ef268d1",
     "packages": [
         {
             "name": "klorinmannen/projom-util",
-            "version": "0.1.0",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:Klorinmannen/projom-util.git",
-                "reference": "c4c5d7fd57d8bf09357f1e7cacbf7834b1a1d678"
+                "reference": "e6012911e905c89af569beb025825bb00c420db6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Klorinmannen/projom-util/zipball/c4c5d7fd57d8bf09357f1e7cacbf7834b1a1d678",
-                "reference": "c4c5d7fd57d8bf09357f1e7cacbf7834b1a1d678",
+                "url": "https://api.github.com/repos/Klorinmannen/projom-util/zipball/e6012911e905c89af569beb025825bb00c420db6",
+                "reference": "e6012911e905c89af569beb025825bb00c420db6",
                 "shasum": ""
             },
             "require-dev": {
-                "phpunit/phpunit": "*"
+                "phpunit/phpunit": "^11.0.0"
             },
             "type": "library",
             "autoload": {
@@ -36,10 +36,10 @@
             ],
             "description": "Projom util module",
             "support": {
-                "source": "https://github.com/Klorinmannen/projom-util/tree/0.1.0",
+                "source": "https://github.com/Klorinmannen/projom-util/tree/1.0.0",
                 "issues": "https://github.com/Klorinmannen/projom-util/issues"
             },
-            "time": "2024-02-07T12:10:19+00:00"
+            "time": "2024-04-11T19:42:25+00:00"
         }
     ],
     "packages-dev": [
@@ -603,16 +603,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.0.9",
+            "version": "11.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "591bbfe416400385527d5086b346b92c06de404b"
+                "reference": "816cb6070af901c0548aa5f18f2132fd8a6e4ade"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/591bbfe416400385527d5086b346b92c06de404b",
-                "reference": "591bbfe416400385527d5086b346b92c06de404b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/816cb6070af901c0548aa5f18f2132fd8a6e4ade",
+                "reference": "816cb6070af901c0548aa5f18f2132fd8a6e4ade",
                 "shasum": ""
             },
             "require": {
@@ -651,7 +651,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "11.0-dev"
+                    "dev-main": "11.1-dev"
                 }
             },
             "autoload": {
@@ -683,7 +683,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.0.9"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.1.1"
             },
             "funding": [
                 {
@@ -699,7 +699,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-28T10:09:42+00:00"
+            "time": "2024-04-06T06:20:21+00:00"
         },
         {
             "name": "sebastian/cli-parser",
