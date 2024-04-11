@@ -54,7 +54,7 @@ class Engine
 		};
 	}
 
-	public static function loadMySQL(array $config, array $options = []): void
+	private static function loadMySQL(array $config, array $options = []): void
 	{
 		$source = Factory::createPDO($config, $options);
 		$driver = MySQL::create($source);
