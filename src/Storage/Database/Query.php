@@ -21,6 +21,7 @@ class Query
     {
         $this->driver = $driver;
         $this->collection = Collection::create($collection);
+        $this->filter = Filter::create(Operators::EQ, []);
     }
 
     /**

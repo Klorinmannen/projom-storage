@@ -41,10 +41,10 @@ class Filter implements AccessorInterface
 		array $fieldsWithValues,
 		LogicalOperators $logicalOperator = LogicalOperators::AND
 	): array {
-		$Filters = [];
+		$filters = [];
 
 		foreach ($fieldsWithValues as $field => $value) {
-			$Filters[] = [
+			$filters[] = [
 				Field::create($field),
 				$operator,
 				Value::create($value),
@@ -52,7 +52,7 @@ class Filter implements AccessorInterface
 			];
 		}
 
-		return $Filters;
+		return $filters;
 	}
 
 	public function get(): array
