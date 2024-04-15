@@ -88,7 +88,7 @@ class Query
     }
 
     /**
-     * Executing a query adding a record and returns the latest inserted primary id.
+     * Executes a query adding a record and returns the latest inserted primary id.
      * 
      * * Example use: $database->query('CollectionName')->add(['Username' => 'John', 'Password' => '1234'])
      */
