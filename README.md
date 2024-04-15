@@ -7,7 +7,7 @@
 * Lightweight, *no dependencies*
 * Support for MySQL/MariaDB/SQLite/JSON
 
-### Completeted features
+### Completed features
 * MySQL with PDO
 * CRUD operations
 * Basic filter stacking with AND/OR
