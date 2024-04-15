@@ -20,8 +20,17 @@ class Filter implements AccessorInterface
 	public function __construct(array $filters)
 	{
 		$this->raw = $filters;
+		$this->build();
+	}
 
-		foreach ($filters as $filter) {
+	public static function create(array $filters): Filter
+	{
+		return new Filter($filters);
+	}
+
+	private function build()
+	{
+		foreach ($this->raw as $filter) {
 
 			[$field, $operator, $value, $logicalOperator] = $filter;
 			[$filter, $params] = $this->parse($field, $operator, $value);
@@ -39,11 +48,6 @@ class Filter implements AccessorInterface
 				'params' => $params
 			];
 		}
-	}
-
-	public static function create(array $filters): Filter
-	{
-		return new Filter($filters);
 	}
 
 	public function __toString(): string
