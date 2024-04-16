@@ -7,7 +7,7 @@
 [phpunit-action]: https://github.com/Klorinmannen/projom-storage/actions
 [phpunit-ci-badge]: https://github.com/Klorinmannen/projom-storage/workflows/PHPUnit/badge.svg
 
-### The goals of this project are
+### Project goals
 * Accessing databases with a simple interface
 * Should be easy to understand and use
 * Lightweight
