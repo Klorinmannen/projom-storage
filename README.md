@@ -5,9 +5,9 @@
 * Accessing databases with a simple interface
 * Should be easy to understand, *no black magic*
 * Lightweight, *no dependencies*
-* Support for MySQL/MariaDB/SQLite/JSON
+* Support for MySQL, MariaDB, SQLite and JSON
 
-### Completed features
+### Features so far
 * MySQL with PDO
 * CRUD operations
 * Basic filter stacking with AND/OR
