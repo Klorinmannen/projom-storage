@@ -6,9 +6,10 @@
             "Projom\\": "src/"
         }
     },
+    "license": "MIT",
     "authors": [
         {
-            "name": "Jonatan Fransson"
+            "name": "Jonatan Rao-Fransson"
         }
     ],
     "require": {
