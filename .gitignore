@@ -18,6 +18,3 @@
 # Ignore crap files.
 **/*.*~
 **/*#*
-
-# Ignore test file
-src/test.php
