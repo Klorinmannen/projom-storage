@@ -17,7 +17,7 @@
 ####  [Use composer](https://getcomposer.org/doc/00-intro.md)
 
 ````
-composer require Klorinmannen/projom-storage
+composer require klorinmannen/projom-storage
 ````
 #### [Clone the repository](https://git-scm.com/docs/git-clone)
 ````
