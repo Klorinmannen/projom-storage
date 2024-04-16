@@ -29,6 +29,10 @@ class Query
      * 
      * * Example use: $database->query('CollectionName')->fetch('Name', 'John')
      * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operators::IN)
+     * 
+     * @param string $field
+     * @param mixed $value
+     * @param Operators $operator
      */
     public function fetch(string $field, mixed $value, Operators $operator = Operators::EQ): array
     {
@@ -49,6 +53,11 @@ class Query
      * * Example use: $database->query('CollectionName')->filterOn(Operators::EQ, ['Name' => 'John'])
      * * Example use: $database->query('CollectionName')->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
      * * Example use: $database->query('CollectionName')->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
+     * 
+     * @param Operators $operator
+     * @param array $fieldsWithValues
+     * @param LogicalOperators $logicalOperators
+     * @return Query
      */
     public function filterOn(
         Operators $operator,
@@ -69,11 +78,24 @@ class Query
      * * Example use: $database->query('CollectionName')->get('Name', 'Age')
      * * Example use: $database->query('CollectionName')->get('Name, Age')
      * * Example use: $database->query('CollectionName')->get([ 'Name', 'Age', 'Username' ])
+     *
+     * @param string[] $fields
+     * @return array
      */
     public function get(string ...$fields): array
     {
         $field = Field::create(...$fields);
         return $this->driver->select($this->collection, $field, $this->filter);
+    }
+    /**
+     * Alias for get method.
+     * 
+     * @param string[] $fields 
+     * @return array
+     */
+    public function select(string ...$fields): array
+    {
+        return $this->get(...$fields);
     }
 
     /**
@@ -81,16 +103,32 @@ class Query
      * 
      * * Example use: $database->query('CollectionName')->modify(['Active' => 1])
      * * Example use: $database->query('CollectionName')->filterOn( ... )->modify(['Username' => 'Jane', 'Password' => 'password'])
+     * 
+     * @param array $fieldsWithValues
+     * @return int
      */
     public function modify(array $fieldsWithValues): int
     {
         return $this->driver->update($this->collection, $fieldsWithValues, $this->filter);
+    }
+    /**
+     * Alias for modify method.
+     * 
+     * @param array $fieldsWithValues 
+     * @return int 
+     */
+    public function update(array $fieldsWithValues): int
+    {
+        return $this->modify($fieldsWithValues);
     }
 
     /**
      * Executes a query adding a record and returns the latest inserted primary id.
      * 
      * * Example use: $database->query('CollectionName')->add(['Username' => 'John', 'Password' => '1234'])
+     * 
+     * @param array $fieldsWithValues
+     * @return int
      */
     public function add(array $fieldsWithValues): int
     {
@@ -98,12 +136,35 @@ class Query
     }
 
     /**
+     * Alias for add method.
+     * 
+     * @param array $fieldsWithValues 
+     * @return int 
+     */
+    public function insert(array $fieldsWithValues): int
+    {
+        return $this->add($fieldsWithValues);
+    }
+
+    /**
      * Executes a query removing record(s) and returns the number of affected rows.
      * 
      * * Example use: $database->query('CollectionName')->filterOn( ... )->remove()
+     * 
+     * @return int
      */
     public function remove(): int
     {
         return $this->driver->delete($this->collection, $this->filter);
+    }
+
+    /**
+     * Alias for remove method.
+     * 
+     * @return int 
+     */
+    public function delete(): int
+    {
+        return $this->remove();
     }
 }
