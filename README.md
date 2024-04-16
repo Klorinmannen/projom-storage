@@ -41,19 +41,19 @@ Engine::loadDriver([
 
 // Jane creates an account
 $userID = DB::query('User')->add(['Username' => 'Jane.doe@example.com',
-                    			  'Firstname' => 'Jane', 
-								  'Lastname' => 'Doe']);
+                                  'Firstname' => 'Jane', 
+                                  'Lastname' => 'Doe']);
 
 // Find Janes account
 $records = DB::query('User')
-			 ->filterOn(Opertators::EQ, [ 'UserID' => $userID ])
-			 ->get(['UserID', 'Username']);
+             ->filterOn(Opertators::EQ, [ 'UserID' => $userID ])
+             ->get(['UserID', 'Username']);
 var_dump($records);
 
 // John hacks Janes account
 $affectedRows = DB::query('User')
-				  ->filterOn(Operators::EQ, ['UserID' => '$userID'])
-				  ->modify(['Firstname' => 'John', 'Password' => 'password']);
+                  ->filterOn(Operators::EQ, ['UserID' => '$userID'])
+                  ->modify(['Firstname' => 'John', 'Password' => 'password']);
 
 // Remove Janes account because John hacked it
 $affectedRows = DB::query('User')->filterOn(Operators::EQ, [ 'UserID' => $userID ])->remove();
