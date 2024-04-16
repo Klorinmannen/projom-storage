@@ -38,7 +38,7 @@ class MySQL implements DriverInterface
 		return $this->driver;
 	}
 
-	public function select(QCollection $collection, QField $field, QFilter $QFilter): mixed
+	public function select(QCollection $collection, QField $field, QFilter $QFilter): array
 	{
 		$table = Table::create($collection->get());
 		$column = Column::create($field->get());

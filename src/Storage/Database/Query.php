@@ -25,12 +25,12 @@ class Query
     }
 
     /**
-     * Simple query mechanism to find a record by a field and its value.
+     * Simple query mechanism to find record(s) by a field and its value.
      * 
      * * Example use: $database->query('CollectionName')->fetch('Name', 'John')
      * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operators::IN)
      */
-    public function fetch(string $field, mixed $value, Operators $operator = Operators::EQ): mixed
+    public function fetch(string $field, mixed $value, Operators $operator = Operators::EQ): array
     {
         $fieldsWithValues = [
             $field => $value
@@ -70,7 +70,7 @@ class Query
      * * Example use: $database->query('CollectionName')->get('Name, Age')
      * * Example use: $database->query('CollectionName')->get([ 'Name', 'Age', 'Username' ])
      */
-    public function get(string ...$fields): mixed
+    public function get(string ...$fields): array
     {
         $field = Field::create(...$fields);
         return $this->driver->select($this->collection, $field, $this->filter);
