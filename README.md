@@ -47,7 +47,7 @@ $userID = DB::query('User')->add(['Username' => 'Jane.doe@example.com',
 
 // Find Janes account
 $records = DB::query('User')
-             ->filterOn(Opertators::EQ, [ 'UserID' => $userID ])
+             ->filterOn(Operators::EQ, [ 'UserID' => $userID ])
              ->get(['UserID', 'Username']);
 var_dump($records);
 
