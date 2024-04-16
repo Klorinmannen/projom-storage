@@ -7,7 +7,6 @@ namespace Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Value;
-use Projom\Util\Json;
 
 class Filter implements AccessorInterface
 {
@@ -33,7 +32,7 @@ class Filter implements AccessorInterface
 
 	public function __toString(): string
 	{
-		return Json::encode($this->get());
+		return '';
 	}
 
 	protected function build(
