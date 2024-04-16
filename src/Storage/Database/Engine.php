@@ -47,9 +47,9 @@ class Engine
 
 	public static function loadDriver(array $config, array $options = []): void
 	{
-		$driver = $config['driver'] ?? '';
+		$driver = Drivers::tryFrom($config['driver']);
 		match ($driver) {
-			Drivers::MySQL->value => static::loadMySQL($config, $options),
+			Drivers::MySQL => static::loadMySQL($config, $options),
 			default => throw new \Exception("Driver {$driver} is not supported", 400)
 		};
 	}
