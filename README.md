@@ -1,16 +1,17 @@
 # Projom storage module
-[![PHPUnit](https://github.com/Klorinmannen/projom-storage/workflows/PHPUnit/badge.svg)](https://github.com/Klorinmannen/projom-storage/actions)
+[![PHP version support][php-version-badge]][php]
+[![PHPUnit][phpunit-ci-badge]][phpunit-action]
+
+[php-version-badge]: https://img.shields.io/badge/php-%5E8.0-7A86B8
+[php]: https://www.php.net/supported-versions.php
+[phpunit-action]: https://github.com/Klorinmannen/projom-storage/actions
+[phpunit-ci-badge]: https://github.com/Klorinmannen/projom-storage/workflows/PHPUnit/badge.svg
 
 ### The goals of this project are
 * Accessing databases with a simple interface
 * Should be easy to understand, *no black magic*
 * Lightweight, *no dependencies*
 * Support for MySQL, MariaDB, SQLite and JSON
-
-### Features so far
-* MySQL with PDO
-* CRUD operations
-* Basic filter stacking with AND/OR
 
 ## How to install?
 ####  [Use composer](https://getcomposer.org/doc/00-intro.md)
