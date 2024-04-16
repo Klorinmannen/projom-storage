@@ -9,9 +9,9 @@
 
 ### The goals of this project are
 * Accessing databases with a simple interface
-* Should be easy to understand, *no black magic*
-* Lightweight, *no dependencies*
-* Support for MySQL, MariaDB, SQLite and JSON
+* Should be easy to understand and use
+* Lightweight
+* Support for MySQL/MariaDB, SQLite and JSON
 
 ## How to install?
 ####  [Use composer](https://getcomposer.org/doc/00-intro.md)
