@@ -7,5 +7,4 @@ namespace Projom\Storage\Database;
 enum Drivers: string 
 {
 	case MySQL = 'mysql';
-	case MariaDB = 'mariadb';
 }
