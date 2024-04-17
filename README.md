@@ -44,7 +44,6 @@ $userID = DB::query('User')->add(['Username' => 'Jane.doe@example.com',
 $records = DB::query('User')
              ->filterOn(Operators::EQ, [ 'UserID' => $userID ])
              ->get(['UserID', 'Username']);
-var_dump($records);
 
 // John hacks Janes account
 $affectedRows = DB::query('User')
