@@ -19,6 +19,9 @@
 composer require klorinmannen/projom-storage
 ````
 
+#### Docs
+Visit the repository [wiki](https://github.com/Klorinmannen/projom-storage/wiki) page.
+
 ## How to use
 ### Static example
 ````
