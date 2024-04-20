@@ -14,7 +14,7 @@ class Field implements AccessorInterface
 	public function __construct(array $fields)
 	{
 		$this->raw = Util::cleanList($fields);
-		$this->build($this->raw);
+		$this->fields = $this->build($this->raw);
 	}
 
 	public static function create(string ...$fields): Field
@@ -27,7 +27,7 @@ class Field implements AccessorInterface
 		return Util::join($this->fields);
 	}
 
-	private function build(array $fields): void
+	private function build(array $fields): array
 	{
 		if (!$fields)
 			return [];
@@ -36,7 +36,7 @@ class Field implements AccessorInterface
 			return $fields;
 
 		$fieldString = array_shift($fields);
-		$this->fields = Util::stringToList($fieldString);
+		return Util::stringToList($fieldString);
 	}
 
 	public function get(): array
