@@ -10,6 +10,7 @@ use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Collection;
 use Projom\Storage\Database\Query\LogicalOperators;
 use Projom\Storage\Database\Query\Operators;
+use Projom\Storage\Database\Query\Sort;
 use Projom\Storage\Database\Query\Value;
 
 class Query
@@ -143,5 +144,15 @@ class Query
     public function delete(): int
     {
         return $this->remove();
+    }
+
+    /**
+     * Sorts the result of the query.
+     * 
+     * * Example use: $database->query('CollectionName')->get(['UserID', 'Username'])->sort('Username', Sort::ASC)
+     */
+    public function sort(string $field, Sort $sort): Query
+    {
+        return $this;
     }
 }
