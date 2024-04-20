@@ -18,23 +18,23 @@ class Column implements AccessorInterface
 		$this->fields = Util::quoteAndJoin($this->raw, ', ');
 	}
 
-	public static function create(array $fields): Column 
-	{ 
+	public static function create(array $fields): Column
+	{
 		return new Column($fields);
 	}
 
-	public function __toString(): string 
+	public function __toString(): string
 	{
 		return $this->get();
 	}
 
-	public function raw(): array 
+	public function raw(): array
 	{
 		return $this->raw;
 	}
 
 	public function get(): string
-	{ 
+	{
 		return $this->fields;
 	}
 
