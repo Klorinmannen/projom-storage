@@ -8,15 +8,18 @@ use Projom\Storage\Database\Query\Util as QUtil;
 
 class Util extends QUtil
 {
-	public static function quoteList(array $list): array
+    public static function quoteList(array $list): array
     {
-        return array_map([ static::class, 'quote' ], $list);
+        return array_map([static::class, 'quote'], $list);
     }
 
     public static function quote(string $subject): string
     {
-        if ($subject == '*')
+        $subject = static::cleanString($subject);
+
+        if ($subject === '*')
             return $subject;
+
         return "`$subject`";
     }
 
