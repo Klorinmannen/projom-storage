@@ -14,20 +14,20 @@ class Filter implements AccessorInterface
 	protected array $filters = [];
 
 	public function __construct(
-		Operators $operator,
 		array $fieldsWithValues,
-		LogicalOperators $logicalOperator = LogicalOperators::AND
+		Operators $operator,
+		LogicalOperators $logicalOperator
 	) {
 		$this->fieldsWithValues = $fieldsWithValues;
 		$this->filters = $this->build($operator, $this->fieldsWithValues, $logicalOperator);
 	}
 
 	public static function create(
-		Operators $operator,
 		array $fieldsWithValues,
+		Operators $operator = Operators::EQ,
 		LogicalOperators $logicalOperator = LogicalOperators::AND
 	): Filter {
-		return new Filter($operator, $fieldsWithValues, $logicalOperator);
+		return new Filter($fieldsWithValues, $operator, $logicalOperator);
 	}
 
 	public function __toString(): string
