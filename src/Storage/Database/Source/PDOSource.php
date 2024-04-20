@@ -30,7 +30,7 @@ class PDOSource implements SourceInterface
 			throw new Exception('Failed to prepare PDO query', 500);
 
 		if (!$this->statement->execute($params))
-			throw new Exception('Failed to execute PDO query', 500);
+			throw new Exception('Failed to execute PDO statement', 500);
 
 		return $this->statement->fetchAll();
 	}
