@@ -11,18 +11,16 @@ class Util
         return str_pad($subject, strlen($subject) + 2, ' ', STR_PAD_BOTH);
     }
 
-    public static function stringToList(array|string $subject, string $delimeter = ','): array 
+    public static function stringToList(array|string $subject, string $delimeter = ','): array
     {
-        $list = $subject;
+        if (is_array($subject))
+            return $subject;
 
-        if (!is_array($subject)) {
-            
-            $subject = static::cleanString($subject);
-            $list = [ $subject ];
+        $subject = static::cleanString($subject);
 
-            if (strpos($subject, ',') !== false)
-                $list = explode($delimeter, $subject);
-        }
+        $list = [ $subject ];
+        if (strpos($subject, ',') !== false)
+            $list = explode($delimeter, $subject);
 
         return $list;
     }
@@ -31,10 +29,10 @@ class Util
     {
         return str_replace(' ', '', trim($subject));
     }
-	
+
     public static function cleanList(array $list): array
     {
-        return array_map([ self::class, 'cleanString' ], $list);
+        return array_map([self::class, 'cleanString'], $list);
     }
 
     public static function clean(array|string $subject): array|string
