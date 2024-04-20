@@ -4,15 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Query;
 
-enum Values
-{
-	case STRING;
-	case BOOL;
-	case NUMERIC;
-	case NULL;
-	case ARRAY;
-	case NONE;
-}
+use Projom\Storage\Database\Query\Values;
 
 class Value implements AccessorInterface
 {
@@ -29,9 +21,9 @@ class Value implements AccessorInterface
 	{
 		return new Value($value);
 	}
-	
-	public function __toString(): string 
-	{ 
+
+	public function __toString(): string
+	{
 		return $this->asString();
 	}
 
