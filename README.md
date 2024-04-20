@@ -13,13 +13,13 @@
 * Lightweight
 * Support for MySQL/MariaDB, SQLite and JSON
 
-####  [Composer](https://getcomposer.org/doc/00-intro.md)
+###  [Composer](https://getcomposer.org/doc/00-intro.md)
 
 ````
 composer require klorinmannen/projom-storage
 ````
 
-#### Docs
+### Docs
 Visit the repository [wiki](https://github.com/Klorinmannen/projom-storage/wiki) page.
 
 ## How to use
