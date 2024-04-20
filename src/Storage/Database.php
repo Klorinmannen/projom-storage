@@ -8,11 +8,11 @@ use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query;
 
-class Database extends Engine 
+class Database extends Engine
 {
 	protected static Drivers|null $currentDriver = null;
 
-	private function __construct(Drivers $driver)
+	public function __construct(Drivers $driver)
 	{
 		static::$currentDriver = $driver;
 	}
@@ -27,7 +27,7 @@ class Database extends Engine
 		return static::dispatch($table);
 	}
 
-	public function sql(string $query, ?array $params = null): mixed
+	public function sql(string $query, array|null $params = null): mixed
 	{
 		return static::dispatch($query, $params);
 	}
