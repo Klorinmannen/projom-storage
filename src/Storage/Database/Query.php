@@ -10,6 +10,7 @@ use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Collection;
 use Projom\Storage\Database\Query\LogicalOperators;
 use Projom\Storage\Database\Query\Operators;
+use Projom\Storage\Database\Query\Value;
 
 class Query
 {
@@ -21,7 +22,12 @@ class Query
     {
         $this->driver = $driver;
         $this->collection = Collection::create($collection);
-        $this->filter = Filter::create(Operators::EQ, []);
+        $this->filter = Filter::create([], Operators::EQ);
+    }
+
+    public static function create(DriverInterface $driver, string $collection): Query
+    {
+        return new Query($driver, $collection);
     }
 
     /**
@@ -37,7 +43,7 @@ class Query
         ];
 
         $field = Field::create($field);
-        $filter = Filter::create($operator, $fieldsWithValues);
+        $filter = Filter::create($fieldsWithValues, $operator);
         $this->filter->merge($filter);
 
         return $this->driver->select($this->collection, $field, $this->filter);
@@ -46,24 +52,24 @@ class Query
     /**
      * Creating a filter to be used in the query to be executed.
      * 
-     * * Example use: $database->query('CollectionName')->filterOn(Operators::EQ, ['Name' => 'John'])
-     * * Example use: $database->query('CollectionName')->filterOn(Operators::NE, ['Name' => 'John'], ['Age' => 25])
-     * * Example use: $database->query('CollectionName')->filterOn(Operators::IN, [ 'Age' => [12, 23, 45] ])
+     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'])
+     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'], ['Age' => 25], Operators::NE)
+     * * Example use: $database->query('CollectionName')->filterOn([ 'Age' => [12, 23, 45] ], Operators::IN)
      */
     public function filterOn(
-        Operators $operator,
         array $fieldsWithValues,
+        Operators $operator = Operators::EQ,
         LogicalOperators $logicalOperators = LogicalOperators::AND
     ): Query {
 
-        $filter = Filter::create($operator, $fieldsWithValues, $logicalOperators);
+        $filter = Filter::create($fieldsWithValues, $operator, $logicalOperators);
         $this->filter->merge($filter);
 
         return $this;
     }
 
     /**
-     * Executes a query finding a record and returns the result.
+     * Executes a query finding record(s) and returns the result.
      * 
      * * Example use: $database->query('CollectionName')->get('*')
      * * Example use: $database->query('CollectionName')->get('Name', 'Age')
@@ -91,7 +97,8 @@ class Query
      */
     public function modify(array $fieldsWithValues): int
     {
-        return $this->driver->update($this->collection, $fieldsWithValues, $this->filter);
+        $value = Value::create($fieldsWithValues);
+        return $this->driver->update($this->collection, $value, $this->filter);
     }
     /**
      * Alias for modify method.
@@ -108,7 +115,8 @@ class Query
      */
     public function add(array $fieldsWithValues): int
     {
-        return $this->driver->insert($this->collection, $fieldsWithValues);
+        $value = Value::create($fieldsWithValues);
+        return $this->driver->insert($this->collection, $value);
     }
 
     /**

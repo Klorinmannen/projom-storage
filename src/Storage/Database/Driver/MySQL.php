@@ -15,6 +15,7 @@ use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\Collection as QCollection;
 use Projom\Storage\Database\Query\Field as QField;
 use Projom\Storage\Database\Query\Filter as QFilter;
+use Projom\Storage\Database\Query\Value as QValue;
 use Projom\Storage\Database\SourceInterface;
 use Projom\Storage\Database\Source\PDOSource;
 
@@ -49,10 +50,10 @@ class MySQL implements DriverInterface
 		return $this->source->execute($query, $params);
 	}
 
-	public function update(QCollection $collection, array $fieldsWithValues, QFilter $QFilter): int
+	public function update(QCollection $collection, QValue $value, QFilter $QFilter): int
 	{
 		$table = Table::create($collection->get());
-		$set = Set::create($fieldsWithValues);
+		$set = Set::create($value->get());
 		$filter = Filter::create($QFilter->get());
 
 		[$query, $params] = Statement::update($table, $set, $filter);
@@ -62,10 +63,10 @@ class MySQL implements DriverInterface
 		return $this->source->rowsAffected();
 	}
 
-	public function insert(QCollection $collection, array $fieldsWithValues): int
+	public function insert(QCollection $collection, QValue $value): int
 	{
 		$table = Table::create($collection->get());
-		$set = Set::create($fieldsWithValues);
+		$set = Set::create($value->get());
 
 		[$query, $params] = Statement::insert($table, $set);
 
@@ -88,10 +89,10 @@ class MySQL implements DriverInterface
 
 	public function Query(string $table): Query
 	{
-		return new Query($this, $table);
+		return Query::create($this, $table);
 	}
 
-	public function execute(string $sql, ?array $params): mixed
+	public function execute(string $sql, ?array $params): array
 	{
 		return $this->source->execute($sql, $params);
 	}
