@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Projom\Storage\Database\Query;
 
 use Projom\Storage\Database\Query\Util;
-use Projom\Util\Json;
 
 class Field implements AccessorInterface
 {
@@ -15,7 +14,7 @@ class Field implements AccessorInterface
 	public function __construct(array $fields)
 	{
 		$this->raw = Util::cleanList($fields);
-		$this->fields = $this->build($this->raw);
+		$this->build($this->raw);
 	}
 
 	public static function create(string ...$fields): Field
@@ -23,12 +22,12 @@ class Field implements AccessorInterface
 		return new Field($fields);
 	}
 
-	public function __toString(): string 
-	{ 
-		return Json::encode($this->get());
+	public function __toString(): string
+	{
+		return Util::join($this->fields);
 	}
 
-	private function build(array $fields): array
+	private function build(array $fields): void
 	{
 		if (!$fields)
 			return [];
@@ -37,7 +36,7 @@ class Field implements AccessorInterface
 			return $fields;
 
 		$fieldString = array_shift($fields);
-		return Util::stringToList($fieldString);
+		$this->fields = Util::stringToList($fieldString);
 	}
 
 	public function get(): array
