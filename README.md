@@ -20,6 +20,7 @@ composer require klorinmannen/projom-storage
 ````
 
 ### Docs
+Visit the project [docs](https://projom.se/docs/projom-storage/) page.<br>
 Visit the repository [wiki](https://github.com/Klorinmannen/projom-storage/wiki) page.
 
 ## How to use
