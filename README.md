@@ -14,14 +14,12 @@
 * Support for MySQL/MariaDB, SQLite and JSON
 
 ###  [Composer](https://getcomposer.org/doc/00-intro.md)
-
 ````
 composer require klorinmannen/projom-storage
 ````
 
 ### Docs
-Visit the project [docs](https://projom.se/docs/projom-storage/) page.<br>
-Visit the repository [wiki](https://github.com/Klorinmannen/projom-storage/wiki) page.
+Visit the project [documentation](https://projom.se/docs/projom-storage/) pages or the repository [wiki](https://github.com/Klorinmannen/projom-storage/wiki) pages.
 
 ## How to use
 ### Static example
