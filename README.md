@@ -2,7 +2,7 @@
 [![PHP version support][php-version-badge]][php]
 [![PHPUnit][phpunit-ci-badge]][phpunit-action]
 
-[php-version-badge]: https://img.shields.io/badge/php-%5E8.0-7A86B8
+[php-version-badge]: https://img.shields.io/badge/php-%5E8.1-7A86B8
 [php]: https://www.php.net/supported-versions.php
 [phpunit-action]: https://github.com/Klorinmannen/projom-storage/actions
 [phpunit-ci-badge]: https://github.com/Klorinmannen/projom-storage/workflows/PHPUnit/badge.svg
