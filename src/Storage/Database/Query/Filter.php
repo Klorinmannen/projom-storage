@@ -20,7 +20,7 @@ class Filter
 		LogicalOperators $logicalOperator
 	) {
 		$this->fieldsWithValues = $fieldsWithValues;
-		$this->filters = $this->build($operator, $this->fieldsWithValues, $logicalOperator);
+		$this->filters = $this->build($this->fieldsWithValues, $operator, $logicalOperator);
 	}
 
 	public static function create(
@@ -32,8 +32,8 @@ class Filter
 	}
 
 	protected function build(
-		Operators $operator,
 		array $fieldsWithValues,
+		Operators $operator,
 		LogicalOperators $logicalOperator = LogicalOperators::AND
 	): array {
 		$filters = [];
