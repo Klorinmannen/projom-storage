@@ -6,15 +6,13 @@ namespace Projom\Storage\Database\Query;
 
 use Projom\Storage\Database\Query\Util;
 
-class Field implements AccessorInterface
+class Field
 {
-	private array $raw = [];
 	private array $fields = [];
 
 	public function __construct(array $fields)
 	{
-		$this->raw = Util::cleanList($fields);
-		$this->fields = $this->build($this->raw);
+		$this->fields = $this->build($fields);
 	}
 
 	public static function create(string ...$fields): Field
@@ -22,13 +20,10 @@ class Field implements AccessorInterface
 		return new Field($fields);
 	}
 
-	public function __toString(): string
-	{
-		return Util::join($this->fields);
-	}
-
 	private function build(array $fields): array
 	{
+		$fields = Util::cleanList($fields);
+
 		if (!$fields)
 			return [];
 
@@ -42,10 +37,5 @@ class Field implements AccessorInterface
 	public function get(): array
 	{
 		return $this->fields;
-	}
-
-	public function raw(): array
-	{
-		return $this->raw;
 	}
 }

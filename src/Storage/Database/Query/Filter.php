@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Query;
 
-use Projom\Storage\Database\Query\Operators;
+use Projom\Storage\Database\LogicalOperators;
+use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Value;
 
-class Filter implements AccessorInterface
+class Filter
 {
 	protected array $fieldsWithValues = [];
 	protected array $filters = [];
@@ -28,11 +29,6 @@ class Filter implements AccessorInterface
 		LogicalOperators $logicalOperator = LogicalOperators::AND
 	): Filter {
 		return new Filter($fieldsWithValues, $operator, $logicalOperator);
-	}
-
-	public function __toString(): string
-	{
-		return '';
 	}
 
 	protected function build(
@@ -57,11 +53,6 @@ class Filter implements AccessorInterface
 	public function get(): array
 	{
 		return $this->filters;
-	}
-
-	public function raw(): array
-	{
-		return $this->fieldsWithValues;
 	}
 
 	public function merge(Filter ...$others): Filter

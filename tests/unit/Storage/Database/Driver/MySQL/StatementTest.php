@@ -7,13 +7,13 @@ namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use Projom\Storage\Database\LogicalOperators;
+use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Driver\MySQL\Statement;
 use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\LogicalOperators;
-use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Value;
 
 class StatementTest extends TestCase

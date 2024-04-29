@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\DriverInterface;
+use Projom\Storage\Database\LogicalOperators;
+use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Collection;
-use Projom\Storage\Database\Query\LogicalOperators;
-use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Value;
 
 class Query

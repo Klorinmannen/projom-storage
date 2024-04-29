@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\Query\AccessorInterface;
+use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\AccessorInterface;
 use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\Operators;
 use Projom\Storage\Database\Query\Value;
 
 class Filter implements AccessorInterface

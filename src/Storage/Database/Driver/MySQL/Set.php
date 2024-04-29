@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\Query\AccessorInterface;
+use Projom\Storage\Database\AccessorInterface;
 
 class Set implements AccessorInterface
 {
