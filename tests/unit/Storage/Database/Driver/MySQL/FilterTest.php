@@ -9,62 +9,40 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\Value;
 use Projom\Storage\Database\Driver\MySQL\Filter;
 
 class FilterTest extends TestCase
 {
 	public function test_create(): void
 	{
-		$filters = [
-			[Field::create('name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('age'), Operators::GT, Value::create(18), LogicalOperators::AND],
-		];
-
-		$filter = Filter::create($filters);
+		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
+		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		$filter->merge($filter2);
 
 		$this->assertInstanceOf(Filter::class, $filter);
 	}
 
 	public function test_to_tring(): void
 	{
-		$filters = [
-			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND],
-		];
-
-		$filter = Filter::create($filters);
+		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
+		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		$filter->merge($filter2);
+		$filter->parse();
 
 		$expected = '`Name` = :filter_name_1 AND `Age` > :filter_age_2';
 		$this->assertEquals($expected, "$filter");
 	}
 
-	public function test_raw(): void
-	{
-		$filters = [
-			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND],
-		];
-
-		$filter = Filter::create($filters);
-
-		$expected = $filters;
-		$this->assertEquals($expected, $filter->raw());
-	}
-
 	public function test_get(): void
 	{
-		$filters = [
-			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND],
-		];
-
-		$filter = Filter::create($filters);
+		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
+		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		$filter->merge($filter2);
+		$filter->parse();
 
 		$expected = [
-			['filter' => '`Name` = :filter_name_1', 'params' => ['filter_name_1' => 'John']],
-			['filter' => '`Age` > :filter_age_2', 'params' => ['filter_age_2' => 18]],
+			['`Name` = :filter_name_1', 'AND `Age` > :filter_age_2'],
+			[['filter_name_1' => 'John'], ['filter_age_2' => 18]],
 		];
 		$this->assertEquals($expected, $filter->get());
 	}
@@ -72,18 +50,17 @@ class FilterTest extends TestCase
 	public function test_empty(): void
 	{
 		$filter = Filter::create([]);
+		$filter->parse();
 
 		$this->assertTrue($filter->empty());
 	}
 
 	public function test_params(): void
 	{
-		$filters = [
-			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND],
-		];
-
-		$filter = Filter::create($filters);
+		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
+		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		$filter->merge($filter2);
+		$filter->parse();
 
 		$expected = ['filter_name_1' => 'John', 'filter_age_2' => 18];
 		$this->assertEquals($expected, $filter->params());
@@ -91,12 +68,10 @@ class FilterTest extends TestCase
 
 	public function test_filters(): void
 	{
-		$filters = [
-			[Field::create('Name'), Operators::EQ, Value::create('John'), LogicalOperators::AND],
-			[Field::create('Age'), Operators::GT, Value::create(18), LogicalOperators::AND]
-		];
-
-		$filter = Filter::create($filters);
+		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
+		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		$filter->merge($filter2);
+		$filter->parse();
 
 		$expected = '`Name` = :filter_name_1 AND `Age` > :filter_age_2';
 		$this->assertEquals($expected, $filter->filters());

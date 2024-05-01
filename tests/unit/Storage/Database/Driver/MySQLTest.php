@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\Query\Collection;
 use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\Filter;
+use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Source\PDOSource;
 use Projom\Storage\Database\Query;

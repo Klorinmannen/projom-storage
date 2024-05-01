@@ -6,59 +6,52 @@ namespace Projom\Storage\Database\Query;
 
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\Value;
 
-class Filter
+/**
+ * Base class for all filters.
+ */
+abstract class Filter
 {
-	protected array $fieldsWithValues = [];
-	protected array $filters = [];
+	protected array $rawFilters = [];
 
-	public function __construct(
+	/**
+	 * Prepares the set filter to be parsed.
+	*/
+	protected function prepare(
 		array $fieldsWithValues,
 		Operators $operator,
 		LogicalOperators $logicalOperator
-	) {
-		$this->fieldsWithValues = $fieldsWithValues;
-		$this->filters = $this->build($this->fieldsWithValues, $operator, $logicalOperator);
-	}
-
-	public static function create(
-		array $fieldsWithValues,
-		Operators $operator = Operators::EQ,
-		LogicalOperators $logicalOperator = LogicalOperators::AND
-	): Filter {
-		return new Filter($fieldsWithValues, $operator, $logicalOperator);
-	}
-
-	protected function build(
-		array $fieldsWithValues,
-		Operators $operator,
-		LogicalOperators $logicalOperator = LogicalOperators::AND
-	): array {
-		$filters = [];
-
+	): void {
 		foreach ($fieldsWithValues as $field => $value) {
-			$filters[] = [
-				Field::create($field),
+			$this->rawFilters[] = [
+				$field,
 				$operator,
-				Value::create($value),
+				$value,
 				$logicalOperator
 			];
 		}
-
-		return $filters;
 	}
 
-	public function get(): array
-	{
-		return $this->filters;
-	}
+	abstract public static function create(
+		array $fieldsWithValues,
+		Operators $operator,
+		LogicalOperators $logicalOperator
+	): Filter;
 
+	abstract public function parse(): void;
+
+	/**
+	 * Merges the current class $rawFilter with other filters.
+	 */
 	public function merge(Filter ...$others): Filter
 	{
-		foreach ($others as $filter)
-			$this->filters = [...$this->filters, ...$filter->get()];
+		foreach ($others as $otherFilter)
+			$this->rawFilters = [...$this->rawFilters, ...$otherFilter->rawFilters()];
 		return $this;
+	}
+
+	public function rawFilters(): array
+	{
+		return $this->rawFilters;
 	}
 }

@@ -1,23 +1,23 @@
 
 
 Code Coverage Report:
-  2024-04-29 17:10:20
+  2024-05-01 08:18:35
 
  Summary:
-  Classes: 31.58% (6/19)
-  Methods: 55.93% (66/118)
-  Lines:   58.72% (192/327)
+  Classes: 36.84% (7/19)
+  Methods: 50.86% (59/116)
+  Lines:   52.65% (169/321)
 
 Projom\Storage\DB
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
 Projom\Storage\Database
   Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
 Projom\Storage\Database\Driver\MySQL
-  Methods:  66.67% ( 6/ 9)   Lines:  38.46% ( 10/ 26)
+  Methods:  60.00% ( 6/10)   Lines:  35.48% ( 11/ 31)
 Projom\Storage\Database\Driver\MySQL\Column
   Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  7/  7)
 Projom\Storage\Database\Driver\MySQL\Filter
-  Methods:  92.86% (13/14)   Lines:  93.94% ( 62/ 66)
+  Methods:  92.31% (12/13)   Lines:  93.65% ( 59/ 63)
 Projom\Storage\Database\Driver\MySQL\Statement
   Methods:  25.00% ( 1/ 4)   Lines:  28.57% (  8/ 28)
 Projom\Storage\Database\Driver\MySQL\Table
@@ -27,17 +27,13 @@ Projom\Storage\Database\Driver\MySQL\Util
 Projom\Storage\Database\Engine
   Methods:  71.43% ( 5/ 7)   Lines:  64.00% ( 16/ 25)
 Projom\Storage\Database\Query
-  Methods:  16.67% ( 2/12)   Lines:  16.00% (  4/ 25)
+  Methods:  16.67% ( 2/12)   Lines:  13.64% (  3/ 22)
 Projom\Storage\Database\Query\Collection
   Methods:  66.67% ( 2/ 3)   Lines:  66.67% (  2/  3)
-Projom\Storage\Database\Query\Field
-  Methods:  75.00% ( 3/ 4)   Lines:  80.00% (  8/ 10)
 Projom\Storage\Database\Query\Filter
-  Methods:  40.00% ( 2/ 5)   Lines:  37.50% (  6/ 16)
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 11/ 11)
 Projom\Storage\Database\Query\Util
-  Methods:  50.00% ( 3/ 6)   Lines:  57.14% (  8/ 14)
-Projom\Storage\Database\Query\Value
-  Methods:  57.14% ( 4/ 7)   Lines:  80.00% ( 12/ 15)
+  Methods:  50.00% ( 3/ 6)   Lines:  21.43% (  3/ 14)
 Projom\Storage\Database\Source\DSN
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 24/ 24)
 Projom\Storage\Database\Source\PDOSource

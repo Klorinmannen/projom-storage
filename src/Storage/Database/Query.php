@@ -7,7 +7,6 @@ namespace Projom\Storage\Database;
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Collection;
 use Projom\Storage\Database\Query\Value;
@@ -16,13 +15,12 @@ class Query
 {
     private DriverInterface|null $driver = null;
     private Collection|null $collection = null;
-    private Filter|null $filter = null;
 
     public function __construct(DriverInterface $driver, string $collection)
     {
         $this->driver = $driver;
         $this->collection = Collection::create($collection);
-        $this->filter = Filter::create([], Operators::EQ);
+
     }
 
     public static function create(DriverInterface $driver, string $collection): Query
@@ -43,10 +41,9 @@ class Query
         ];
 
         $field = Field::create($field);
-        $filter = Filter::create($fieldsWithValues, $operator);
-        $this->filter->merge($filter);
+        $this->driver->setFilter($fieldsWithValues, $operator, LogicalOperators::AND);
 
-        return $this->driver->select($this->collection, $field, $this->filter);
+        return $this->driver->select($this->collection, $field);
     }
 
     /**
@@ -62,8 +59,7 @@ class Query
         LogicalOperators $logicalOperators = LogicalOperators::AND
     ): Query {
 
-        $filter = Filter::create($fieldsWithValues, $operator, $logicalOperators);
-        $this->filter->merge($filter);
+        $this->driver->setFilter($fieldsWithValues, $operator, $logicalOperators);
 
         return $this;
     }
@@ -79,7 +75,7 @@ class Query
     public function get(string ...$fields): array
     {
         $field = Field::create(...$fields);
-        return $this->driver->select($this->collection, $field, $this->filter);
+        return $this->driver->select($this->collection, $field);
     }
     /**
      * Alias for get method.
@@ -98,7 +94,7 @@ class Query
     public function modify(array $fieldsWithValues): int
     {
         $value = Value::create($fieldsWithValues);
-        return $this->driver->update($this->collection, $value, $this->filter);
+        return $this->driver->update($this->collection, $value);
     }
     /**
      * Alias for modify method.
@@ -134,7 +130,7 @@ class Query
      */
     public function remove(): int
     {
-        return $this->driver->delete($this->collection, $this->filter);
+        return $this->driver->delete($this->collection);
     }
 
     /**
