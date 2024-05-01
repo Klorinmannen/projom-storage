@@ -91,8 +91,8 @@ class Query
      */
     public function modify(array $fieldsWithValues): int
     {
-        $value = Value::create($fieldsWithValues);
-        return $this->driver->update($this->collection, $value);
+        $this->driver->setSet($fieldsWithValues);
+        return $this->driver->update($this->collection);
     }
     /**
      * Alias for modify method.
@@ -109,8 +109,8 @@ class Query
      */
     public function add(array $fieldsWithValues): int
     {
-        $value = Value::create($fieldsWithValues);
-        return $this->driver->insert($this->collection, $value);
+        $this->driver->setSet($fieldsWithValues);
+        return $this->driver->insert($this->collection);
     }
 
     /**

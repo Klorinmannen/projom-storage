@@ -15,8 +15,6 @@ use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\Collection as QCollection;
-use Projom\Storage\Database\Query\Field as QField;
-use Projom\Storage\Database\Query\Value as QValue;
 use Projom\Storage\Database\SourceInterface;
 use Projom\Storage\Database\Source\PDOSource;
 
@@ -26,6 +24,7 @@ class MySQL implements DriverInterface
 	protected Drivers $driver = Drivers::MySQL;
 	private Filter $filter;
 	private Column $column;
+	private Set $set;
 
 	public function __construct(PDOSource $source)
 	{
@@ -60,6 +59,11 @@ class MySQL implements DriverInterface
 			$this->filter->merge($filter);
 	}
 
+	public function setSet(array $fieldsWithValues): void
+	{
+		$this->set = Set::create($fieldsWithValues);
+	}
+
 	public function select(QCollection $collection): array
 	{
 		$table = Table::create($collection->get());
@@ -71,25 +75,25 @@ class MySQL implements DriverInterface
 		return $this->source->execute($query, $params);
 	}
 
-	public function update(QCollection $collection, QValue $value): int
+	public function update(QCollection $collection): int
 	{
 		$table = Table::create($collection->get());
-		$set = Set::create($value->get());
+		$this->set->parse();
 		$this->filter->parse();
 
-		[$query, $params] = Statement::update($table, $set, $this->filter);
+		[$query, $params] = Statement::update($table, $this->set, $this->filter);
 
 		$this->source->execute($query, $params);
 
 		return $this->source->rowsAffected();
 	}
 
-	public function insert(QCollection $collection, QValue $value): int
+	public function insert(QCollection $collection): int
 	{
 		$table = Table::create($collection->get());
-		$set = Set::create($value->get());
+		$this->set->parse();
 
-		[$query, $params] = Statement::insert($table, $set);
+		[$query, $params] = Statement::insert($table, $this->set);
 
 		$this->source->execute($query, $params);
 

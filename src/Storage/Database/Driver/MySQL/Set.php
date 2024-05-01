@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Projom\Storage\Database\Driver\MySQL;
 
 use Projom\Storage\Database\AccessorInterface;
+use Projom\Storage\Database\Query\Set as QuerySet;
 
-class Set implements AccessorInterface
+class Set extends QuerySet implements AccessorInterface
 {
-	private array $fieldsWithValues = [];
+	private mixed $fieldsWithValues = [];
 	private array $sets = [];
 	private array $fields = [];
 	private array $params = [];
@@ -17,11 +18,10 @@ class Set implements AccessorInterface
 
 	public function __construct(array $fieldsWithValues)
 	{
-		$this->fieldsWithValues = $fieldsWithValues;
-		$this->build();
+		$this->$fieldsWithValues = $fieldsWithValues;
 	}
 
-	public static function create(array $fieldsWithValues): Set
+	public static function create(mixed $fieldsWithValues): Set
 	{
 		return new Set($fieldsWithValues);
 	}
@@ -31,7 +31,7 @@ class Set implements AccessorInterface
 		return $this->asString();
 	}
 
-	private function build(): void
+	public function parse(): void
 	{
 		foreach ($this->fieldsWithValues as $field => $value) {
 			$this->id++;

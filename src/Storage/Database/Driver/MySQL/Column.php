@@ -6,9 +6,9 @@ namespace Projom\Storage\Database\Driver\MySQL;
 
 use Projom\Storage\Database\AccessorInterface;
 use Projom\Storage\Database\Driver\MySQL\Util;
-use Projom\Storage\Database\Query\Field;
+use Projom\Storage\Database\Query\Field as QueryField;
 
-class Column extends Field implements AccessorInterface
+class Column extends QueryField implements AccessorInterface
 {
 	private string $fieldString = '';
 
