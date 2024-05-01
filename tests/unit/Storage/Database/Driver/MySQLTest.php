@@ -42,11 +42,8 @@ class MySQLTest extends TestCase
 
 		$mysql->setTable('User');
 		$mysql->setField(['*']);
-
-		$collection = $this->createMock(Collection::class);
-		$collection->method('get')->willReturn('User');
 		
-		$result = $mysql->select($collection);
+		$result = $mysql->select();
 
 		$this->assertEquals($records, $result);
 	}
