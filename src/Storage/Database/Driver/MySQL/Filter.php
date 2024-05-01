@@ -7,20 +7,17 @@ namespace Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\AccessorInterface;
 use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\LogicalOperators;
-use Projom\Storage\Database\Query\Filter as QueryFilter;
 
-class Filter extends QueryFilter implements AccessorInterface
+class Filter implements AccessorInterface
 {
+	private array $rawFilters = [];
 	private array $filters = [];
 	private array $params = [];
 	private int $filterID = 0;
 
-	public function __construct(
-		array $fieldsWithValues,
-		Operators $operator,
-		LogicalOperators $logicalOperator
-	) {
-		$this->prepare($fieldsWithValues, $operator, $logicalOperator);
+	public function __construct(array $rawFilters)
+	{
+		$this->rawFilters = $rawFilters;
 	}
 
 	public static function create(
@@ -28,7 +25,18 @@ class Filter extends QueryFilter implements AccessorInterface
 		Operators $operator = Operators::EQ,
 		LogicalOperators $logicalOperator = LogicalOperators::AND
 	): Filter {
-		return new Filter($fieldsWithValues, $operator, $logicalOperator);
+
+		$rawFilters = [];
+		foreach ($fieldsWithValues as $field => $value) {
+			$rawFilters[] = [
+				$field,
+				$operator,
+				$value,
+				$logicalOperator
+			];
+		}
+
+		return new Filter($rawFilters);
 	}
 
 	public function __toString(): string
@@ -43,9 +51,9 @@ class Filter extends QueryFilter implements AccessorInterface
 
 	public function get(): array
 	{
-		return [ 
-			$this->filters, 
-			$this->params 
+		return [
+			$this->filters,
+			$this->params
 		];
 	}
 
@@ -57,6 +65,18 @@ class Filter extends QueryFilter implements AccessorInterface
 	public function params(): array
 	{
 		return array_merge(...$this->params);
+	}
+
+	public function merge(Filter ...$others): Filter
+	{
+		foreach ($others as $otherFilter)
+			$this->rawFilters = [...$this->rawFilters, ...$otherFilter->rawFilters()];
+		return $this;
+	}
+
+	public function rawFilters(): array
+	{
+		return $this->rawFilters;
 	}
 
 	public function parse(): void
@@ -83,8 +103,7 @@ class Filter extends QueryFilter implements AccessorInterface
 	): array {
 
 		$this->filterID++;
-		$column = Column::create([ $field ]);
-		$column->parse();
+		$column = Column::create([$field]);
 
 		switch ($operator) {
 			case Operators::IS_NULL:

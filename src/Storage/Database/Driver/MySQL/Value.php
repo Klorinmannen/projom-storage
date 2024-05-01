@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Query;
+namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\Query\Values;
+use Projom\Storage\Database\Values;
 
 class Value
 {

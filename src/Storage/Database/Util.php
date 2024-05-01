@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Query;
+namespace Projom\Storage\Database;
 
 class Util
 {

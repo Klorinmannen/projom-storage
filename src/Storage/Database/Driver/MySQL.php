@@ -71,7 +71,6 @@ class MySQL implements DriverInterface
 
 	public function select(): array
 	{
-		$this->column->parse();
 		$this->filter->parse();
 
 		[$query, $params] = Statement::select($this->table, $this->column, $this->filter);
@@ -81,7 +80,6 @@ class MySQL implements DriverInterface
 
 	public function update(): int
 	{
-		$this->set->parse();
 		$this->filter->parse();
 
 		[$query, $params] = Statement::update($this->table, $this->set, $this->filter);
@@ -93,8 +91,6 @@ class MySQL implements DriverInterface
 
 	public function insert(): int
 	{
-		$this->set->parse();
-
 		[$query, $params] = Statement::insert($this->table, $this->set);
 
 		$this->source->execute($query, $params);
