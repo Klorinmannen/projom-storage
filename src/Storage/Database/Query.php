@@ -7,7 +7,6 @@ namespace Projom\Storage\Database;
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Collection;
 use Projom\Storage\Database\Query\Value;
 
@@ -20,7 +19,6 @@ class Query
     {
         $this->driver = $driver;
         $this->collection = Collection::create($collection);
-
     }
 
     public static function create(DriverInterface $driver, string $collection): Query
@@ -40,10 +38,11 @@ class Query
             $field => $value
         ];
 
-        $field = Field::create($field);
+        $field = [$field];
+        $this->driver->setField($field);
         $this->driver->setFilter($fieldsWithValues, $operator, LogicalOperators::AND);
 
-        return $this->driver->select($this->collection, $field);
+        return $this->driver->select($this->collection);
     }
 
     /**
@@ -58,9 +57,7 @@ class Query
         Operators $operator = Operators::EQ,
         LogicalOperators $logicalOperators = LogicalOperators::AND
     ): Query {
-
         $this->driver->setFilter($fieldsWithValues, $operator, $logicalOperators);
-
         return $this;
     }
 
@@ -74,9 +71,10 @@ class Query
      */
     public function get(string ...$fields): array
     {
-        $field = Field::create(...$fields);
-        return $this->driver->select($this->collection, $field);
+        $this->driver->setField($fields);
+        return $this->driver->select($this->collection);
     }
+
     /**
      * Alias for get method.
      */

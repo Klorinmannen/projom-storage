@@ -65,7 +65,10 @@ class StatementTest extends TestCase
 	public function test_select(string $table, array $columns, array $filter, array $expected): void
 	{
 		$table = new Table($table);
+		
 		$column = new Column($columns);
+		$column->parse();
+
 		$filter = new Filter(...$filter);
 		$filter->parse();
 

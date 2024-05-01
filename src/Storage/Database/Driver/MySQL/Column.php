@@ -6,16 +6,15 @@ namespace Projom\Storage\Database\Driver\MySQL;
 
 use Projom\Storage\Database\AccessorInterface;
 use Projom\Storage\Database\Driver\MySQL\Util;
+use Projom\Storage\Database\Query\Field;
 
-class Column implements AccessorInterface
+class Column extends Field implements AccessorInterface
 {
-	private array $raw = [];
-	private string $fields = '';
+	private string $fieldString = '';
 
 	public function __construct(array $fields)
 	{
-		$this->raw = Util::cleanList($fields);
-		$this->fields = Util::quoteAndJoin($this->raw, ', ');
+		$this->fields = $this->prepare($fields);
 	}
 
 	public static function create(array $fields): Column
@@ -23,23 +22,23 @@ class Column implements AccessorInterface
 		return new Column($fields);
 	}
 
+	public function parse(): void 
+	{
+		$this->fieldString = Util::quoteAndJoin($this->fields, ', ');
+	}
+
 	public function __toString(): string
 	{
 		return $this->get();
 	}
 
-	public function raw(): array
-	{
-		return $this->raw;
-	}
-
 	public function get(): string
 	{
-		return $this->fields;
+		return $this->fieldString;
 	}
 
 	public function joined(string $delimiter = ','): string
 	{
-		return Util::join($this->raw, $delimiter);
+		return Util::join($this->fields, $delimiter);
 	}
 }

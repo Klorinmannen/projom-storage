@@ -7,9 +7,7 @@ namespace Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\AccessorInterface;
 use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\LogicalOperators;
-use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Filter as QueryFilter;
-use Projom\Storage\Database\Query\Value;
 
 class Filter extends QueryFilter implements AccessorInterface
 {
@@ -86,6 +84,7 @@ class Filter extends QueryFilter implements AccessorInterface
 
 		$this->filterID++;
 		$column = Column::create([ $field ]);
+		$column->parse();
 
 		switch ($operator) {
 			case Operators::IS_NULL:

@@ -25,6 +25,7 @@ class MySQL implements DriverInterface
 	private PDOSource $source;
 	protected Drivers $driver = Drivers::MySQL;
 	private Filter $filter;
+	private Column $column;
 
 	public function __construct(PDOSource $source)
 	{
@@ -42,26 +43,30 @@ class MySQL implements DriverInterface
 		return $this->driver;
 	}
 
-	public function setFilter(
-        array $fieldsWithValues,
-        Operators $operator,
-        LogicalOperators $logicalOperators
-    ): void
+	public function setField(array $fields): void
 	{
+		$this->column = Column::create($fields);
+	}
+
+	public function setFilter(
+		array $fieldsWithValues,
+		Operators $operator,
+		LogicalOperators $logicalOperators
+	): void {
 		$filter = Filter::create($fieldsWithValues, $operator, $logicalOperators);
-		if ($this->filter === null)		
+		if ($this->filter === null)
 			$this->filter = $filter;
 		else
 			$this->filter->merge($filter);
 	}
 
-	public function select(QCollection $collection, QField $field): array
+	public function select(QCollection $collection): array
 	{
 		$table = Table::create($collection->get());
-		$column = Column::create($field->get());
+		$this->column->parse();
 		$this->filter->parse();
 
-		[$query, $params] = Statement::select($table, $column, $this->filter);
+		[$query, $params] = Statement::select($table, $this->column, $this->filter);
 
 		return $this->source->execute($query, $params);
 	}

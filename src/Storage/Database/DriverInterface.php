@@ -6,7 +6,6 @@ namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Query;
-use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Query\Collection;
 use Projom\Storage\Database\Query\Value;
 use Projom\Storage\Database\SourceInterface;
@@ -15,8 +14,9 @@ interface DriverInterface
 {
 	public static function create(SourceInterface $source): DriverInterface;
 	public function type(): Drivers;
+	public function setField(array $fields): void;
 	public function setFilter(array $fieldsWithValues, Operators $operator, LogicalOperators $logicalOperators): void;
-	public function select(Collection $table, Field $field): array;
+	public function select(Collection $table): array;
 	public function update(Collection $table, Value $value): int;
 	public function insert(Collection $table, Value $value): int;
 	public function delete(Collection $table): int;

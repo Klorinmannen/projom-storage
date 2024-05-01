@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\MySQL;
+use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Query\Collection;
-use Projom\Storage\Database\Query\Field;
 use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Source\PDOSource;
@@ -43,19 +43,12 @@ class MySQLTest extends TestCase
 
 		$mysql = new MySQL($source);
 
+		$mysql->setField(['*']);
+
 		$collection = $this->createMock(Collection::class);
-		$collection->method('get')
-			->willReturn('User');
-
-		$field = $this->createMock(Field::class);
-		$field->method('get')
-			->willReturn(['*']);
-
-		$filter = $this->createMock(Filter::class);
-		$filter->method('get')
-			->willReturn([]);
-
-		$result = $mysql->select($collection, $field, $filter);
+		$collection->method('get')->willReturn('User');
+		
+		$result = $mysql->select($collection);
 
 		$this->assertEquals($records, $result);
 	}

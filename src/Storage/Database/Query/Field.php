@@ -6,21 +6,11 @@ namespace Projom\Storage\Database\Query;
 
 use Projom\Storage\Database\Query\Util;
 
-class Field
+abstract class Field
 {
-	private array $fields = [];
+	protected array $fields = [];
 
-	public function __construct(array $fields)
-	{
-		$this->fields = $this->build($fields);
-	}
-
-	public static function create(string ...$fields): Field
-	{
-		return new Field($fields);
-	}
-
-	private function build(array $fields): array
+	protected function prepare(array $fields): array
 	{
 		$fields = Util::cleanList($fields);
 
@@ -34,8 +24,6 @@ class Field
 		return Util::stringToList($fieldString);
 	}
 
-	public function get(): array
-	{
-		return $this->fields;
-	}
+	abstract public static function create(array $fields): Field;
+	abstract public function parse(): void;
 }
