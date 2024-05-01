@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Projom\tests\unit\Storage\Database\Driver;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\MySQL;
-use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Query\Collection;
-use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Source\PDOSource;
 use Projom\Storage\Database\Query;
@@ -43,6 +40,7 @@ class MySQLTest extends TestCase
 
 		$mysql = new MySQL($source);
 
+		$mysql->setTable('User');
 		$mysql->setField(['*']);
 
 		$collection = $this->createMock(Collection::class);

@@ -14,7 +14,6 @@ use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\Query;
-use Projom\Storage\Database\Query\Collection as QCollection;
 use Projom\Storage\Database\SourceInterface;
 use Projom\Storage\Database\Source\PDOSource;
 
@@ -22,8 +21,9 @@ class MySQL implements DriverInterface
 {
 	private PDOSource $source;
 	protected Drivers $driver = Drivers::MySQL;
-	private Filter $filter;
+	private Table $table;
 	private Column $column;
+	private Filter $filter;
 	private Set $set;
 
 	public function __construct(PDOSource $source)
@@ -40,6 +40,11 @@ class MySQL implements DriverInterface
 	public function type(): Drivers
 	{
 		return $this->driver;
+	}
+
+	public function setTable(string $table): void
+	{
+		$this->table = Table::create($table);
 	}
 
 	public function setField(array $fields): void
@@ -64,48 +69,44 @@ class MySQL implements DriverInterface
 		$this->set = Set::create($fieldsWithValues);
 	}
 
-	public function select(QCollection $collection): array
+	public function select(): array
 	{
-		$table = Table::create($collection->get());
 		$this->column->parse();
 		$this->filter->parse();
 
-		[$query, $params] = Statement::select($table, $this->column, $this->filter);
+		[$query, $params] = Statement::select($this->table, $this->column, $this->filter);
 
 		return $this->source->execute($query, $params);
 	}
 
-	public function update(QCollection $collection): int
+	public function update(): int
 	{
-		$table = Table::create($collection->get());
 		$this->set->parse();
 		$this->filter->parse();
 
-		[$query, $params] = Statement::update($table, $this->set, $this->filter);
+		[$query, $params] = Statement::update($this->table, $this->set, $this->filter);
 
 		$this->source->execute($query, $params);
 
 		return $this->source->rowsAffected();
 	}
 
-	public function insert(QCollection $collection): int
+	public function insert(): int
 	{
-		$table = Table::create($collection->get());
 		$this->set->parse();
 
-		[$query, $params] = Statement::insert($table, $this->set);
+		[$query, $params] = Statement::insert($this->table, $this->set);
 
 		$this->source->execute($query, $params);
 
 		return $this->source->lastInsertedID();
 	}
 
-	public function delete(QCollection $collection): int
+	public function delete(): int
 	{
-		$table = Table::create($collection->get());
 		$this->filter->parse();
 
-		[$query, $params] = Statement::delete($table, $this->filter);
+		[$query, $params] = Statement::delete($this->table, $this->filter);
 
 		$this->source->execute($query, $params);
 
@@ -114,7 +115,8 @@ class MySQL implements DriverInterface
 
 	public function Query(string $table): Query
 	{
-		return Query::create($this, $table);
+		$this->setTable($table);
+		return Query::create($this);
 	}
 
 	public function execute(string $sql, ?array $params): array

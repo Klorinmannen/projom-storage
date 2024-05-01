@@ -23,12 +23,6 @@ class TableTest extends TestCase
 		$this->assertEquals('`User`', "$table");
 	}
 
-	public function test_raw(): void
-	{
-		$table = Table::create('User');
-		$this->assertEquals('User', $table->raw());
-	}
-
 	public function test_get(): void
 	{
 		$table = Table::create('User');

@@ -7,23 +7,19 @@ namespace Projom\Storage\Database;
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Query\Collection;
-use Projom\Storage\Database\Query\Value;
 
 class Query
 {
     private DriverInterface|null $driver = null;
-    private Collection|null $collection = null;
 
-    public function __construct(DriverInterface $driver, string $collection)
+    public function __construct(DriverInterface $driver)
     {
         $this->driver = $driver;
-        $this->collection = Collection::create($collection);
     }
 
-    public static function create(DriverInterface $driver, string $collection): Query
+    public static function create(DriverInterface $driver): Query
     {
-        return new Query($driver, $collection);
+        return new Query($driver);
     }
 
     /**
@@ -42,7 +38,7 @@ class Query
         $this->driver->setField($field);
         $this->driver->setFilter($fieldsWithValues, $operator, LogicalOperators::AND);
 
-        return $this->driver->select($this->collection);
+        return $this->driver->select();
     }
 
     /**
@@ -72,7 +68,7 @@ class Query
     public function get(string ...$fields): array
     {
         $this->driver->setField($fields);
-        return $this->driver->select($this->collection);
+        return $this->driver->select();
     }
 
     /**
@@ -92,7 +88,7 @@ class Query
     public function modify(array $fieldsWithValues): int
     {
         $this->driver->setSet($fieldsWithValues);
-        return $this->driver->update($this->collection);
+        return $this->driver->update();
     }
     /**
      * Alias for modify method.
@@ -110,7 +106,7 @@ class Query
     public function add(array $fieldsWithValues): int
     {
         $this->driver->setSet($fieldsWithValues);
-        return $this->driver->insert($this->collection);
+        return $this->driver->insert();
     }
 
     /**
@@ -128,7 +124,7 @@ class Query
      */
     public function remove(): int
     {
-        return $this->driver->delete($this->collection);
+        return $this->driver->delete();
     }
 
     /**
