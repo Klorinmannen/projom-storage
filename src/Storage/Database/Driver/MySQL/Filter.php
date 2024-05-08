@@ -6,7 +6,6 @@ namespace Projom\Storage\Database\Driver\MySQL;
 
 use Projom\Storage\Database\AccessorInterface;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\LogicalOperators;
 
 class Filter implements AccessorInterface
 {
@@ -56,7 +55,7 @@ class Filter implements AccessorInterface
 	public function merge(Filter ...$others): Filter
 	{
 		foreach ($others as $otherFilter)
-			$this->queryFilters = [...$this->queryFilters, ...$otherFilter->queryFilters()];
+			$this->queryFilters = [$this->queryFilters, $otherFilter->queryFilters()];
 		return $this;
 	}
 
@@ -75,7 +74,7 @@ class Filter implements AccessorInterface
 			if (empty($this->filters))
 				$this->filters[] = $filter;
 			else
-				$this->filters[] = "{$logicalOperator} $filter";
+				$this->filters[] = "{$logicalOperator->value} $filter";
 
 			if ($params)
 				$this->params[] = $params;
@@ -109,14 +108,14 @@ class Filter implements AccessorInterface
 				return $this->defaultFilter($column, $operator, $value);
 
 			default:
-				throw new \Exception("Operator not supported: {$operator}", 400);
+				throw new \Exception("Operator not supported: {$operator->value}", 400);
 		}
 	}
 
 	private function nullFilter(Column $column, Operators $operator): array
 	{
 		return [
-			"$column {$operator}",
+			"$column {$operator->value}",
 			[]
 		];
 	}
@@ -135,7 +134,7 @@ class Filter implements AccessorInterface
 		}
 
 		$parameterString = implode(', ', $parameters);
-		$filter = "$column {$operator} ( $parameterString )";
+		$filter = "$column {$operator->value} ( $parameterString )";
 
 		return [
 			$filter,
@@ -147,7 +146,7 @@ class Filter implements AccessorInterface
 	{
 		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
 
-		$filter = "$column {$operator} :{$parameterName}";
+		$filter = "$column {$operator->value} :{$parameterName}";
 		$params = [
 			$parameterName => $value
 		];

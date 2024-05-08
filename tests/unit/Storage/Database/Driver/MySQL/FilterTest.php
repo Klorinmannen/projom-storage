@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\LogicalOperators;
@@ -12,19 +13,31 @@ use Projom\Storage\Database\Driver\MySQL\Filter;
 
 class FilterTest extends TestCase
 {
-	public function test_create(): void
+	public static function filter(): array
 	{
-		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
-		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		return [
+			[ 
+				['Name', Operators::EQ, 'John', LogicalOperators::AND],
+				['Age', Operators::GT, 18, LogicalOperators::AND]
+			]
+		];
+	}	
+
+	#[DataProvider('filter')]
+	public function test_create(array $filter, array $filter2): void
+	{
+		$filter = Filter::create($filter);
+		$filter2 = Filter::create($filter2);
 		$filter->merge($filter2);
 
 		$this->assertInstanceOf(Filter::class, $filter);
 	}
 
-	public function test_to_tring(): void
+	#[DataProvider('filter')]
+	public function test_to_tring(array $filter, array $filter2): void
 	{
-		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
-		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		$filter = Filter::create($filter);
+		$filter2 = Filter::create($filter2);
 		$filter->merge($filter2);
 		$filter->parse();
 
@@ -32,10 +45,11 @@ class FilterTest extends TestCase
 		$this->assertEquals($expected, "$filter");
 	}
 
-	public function test_get(): void
+	#[DataProvider('filter')]
+	public function test_get(array $filter, array $filter2): void
 	{
-		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
-		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		$filter = Filter::create($filter);
+		$filter2 = Filter::create($filter2);
 		$filter->merge($filter2);
 		$filter->parse();
 
@@ -54,10 +68,11 @@ class FilterTest extends TestCase
 		$this->assertTrue($filter->empty());
 	}
 
-	public function test_params(): void
+	#[DataProvider('filter')]
+	public function test_params(array $filter, array $filter2): void
 	{
-		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
-		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		$filter = Filter::create($filter);
+		$filter2 = Filter::create($filter2);
 		$filter->merge($filter2);
 		$filter->parse();
 
@@ -65,10 +80,11 @@ class FilterTest extends TestCase
 		$this->assertEquals($expected, $filter->params());
 	}
 
-	public function test_filters(): void
+	#[DataProvider('filter')]
+	public function test_filters(array $filter, array $filter2): void
 	{
-		$filter = Filter::create(['Name' => 'John'], Operators::EQ, LogicalOperators::AND);
-		$filter2 = Filter::create(['Age' => 18], Operators::GT, LogicalOperators::AND);
+		$filter = Filter::create($filter);
+		$filter2 = Filter::create($filter2);
 		$filter->merge($filter2);
 		$filter->parse();
 

@@ -13,6 +13,7 @@ use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Driver\MySQL\Set;
 use Projom\Storage\Database\Driver\MySQL\Statement;
 use Projom\Storage\Database\Driver\MySQL\Table;
+use Projom\Storage\Database\LogicalOperators;
 
 class StatementTest extends TestCase
 {
@@ -23,8 +24,12 @@ class StatementTest extends TestCase
 				'User',
 				['Name'],
 				[
-					['Name' => 'John'],
-					Operators::EQ
+					[
+						'Name',
+						Operators::EQ,
+						'John',
+						LogicalOperators::AND
+					]
 				],
 				[
 					'query' => 'SELECT `Name` FROM `User` WHERE `Name` = :filter_name_1',
@@ -35,8 +40,12 @@ class StatementTest extends TestCase
 				'User',
 				['Name'],
 				[
-					['Name' => null],
-					Operators::IS_NULL
+					[
+						'Name',
+						Operators::IS_NULL,
+						null,
+						LogicalOperators::AND
+					]
 				],
 				[
 					'query' => 'SELECT `Name` FROM `User` WHERE `Name` IS NULL',
@@ -47,8 +56,12 @@ class StatementTest extends TestCase
 				'User',
 				['*'],
 				[
-					['Age' => [12, 23, 45]],
-					Operators::IN
+					[
+						'Age',
+						Operators::IN,
+						[12, 23, 45],
+						LogicalOperators::AND
+					]
 				],
 				[
 					'query' => 'SELECT * FROM `User` WHERE `Age` IN ( :filter_age_1_1, :filter_age_1_2, :filter_age_1_3 )',
@@ -63,7 +76,7 @@ class StatementTest extends TestCase
 	{
 		$table = Table::create($table);
 		$column = Column::create($columns);
-		$filter = Filter::create(...$filter);
+		$filter = Filter::create($filter);
 		$filter->parse();
 
 		[$query, $params] = Statement::select($table, $column, $filter);
@@ -105,12 +118,16 @@ class StatementTest extends TestCase
 				'User',
 				['Name' => 'John', 'Age' => 18],
 				[
-					['Name' => 'John'],
-					Operators::EQ
+					[
+						'Name',
+						Operators::EQ,
+						'John',
+						LogicalOperators::AND
+					]
 				],
 				[
 					'query' => 'UPDATE `User` SET `Name` = :set_name_1, `Age` = :set_age_2 WHERE `Name` = :filter_name_1',
-					'params' => [ 'set_name_1' => 'John', 'set_age_2' => 18, 'filter_name_1' => 'John']
+					'params' => ['set_name_1' => 'John', 'set_age_2' => 18, 'filter_name_1' => 'John']
 				]
 			]
 		];
@@ -121,7 +138,7 @@ class StatementTest extends TestCase
 	{
 		$table = Table::create($table);
 		$set = Set::create($values);
-		$filter = Filter::create(...$filter);
+		$filter = Filter::create($filter);
 		$filter->parse();
 
 		[$query, $params] = Statement::update($table, $set, $filter);
@@ -136,8 +153,12 @@ class StatementTest extends TestCase
 			'Delete single row' => [
 				'User',
 				[
-					['Name' => 'John'],
-					Operators::EQ
+					[
+						'Name',
+						Operators::EQ,
+						'John',
+						LogicalOperators::AND
+					]
 				],
 				[
 					'query' => 'DELETE FROM `User` WHERE `Name` = :filter_name_1',
@@ -151,7 +172,7 @@ class StatementTest extends TestCase
 	public function test_delete(string $table, array $filter, array $expected): void
 	{
 		$table = Table::create($table);
-		$filter = Filter::create(...$filter);
+		$filter = Filter::create($filter);
 		$filter->parse();
 
 		[$query, $params] = Statement::delete($table, $filter);
