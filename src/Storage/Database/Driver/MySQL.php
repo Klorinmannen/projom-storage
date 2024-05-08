@@ -47,17 +47,14 @@ class MySQL implements DriverInterface
 		$this->table = Table::create($table);
 	}
 
-	public function setField(array $fields): void
+	public function setFields(array $fields): void
 	{
 		$this->column = Column::create($fields);
 	}
 
-	public function setFilter(
-		array $fieldsWithValues,
-		Operators $operator,
-		LogicalOperators $logicalOperators
-	): void {
-		$filter = Filter::create($fieldsWithValues, $operator, $logicalOperators);
+	public function setFilter(array $queryFilters): void
+	{
+		$filter = Filter::create($queryFilters);
 		if ($this->filter === null)
 			$this->filter = $filter;
 		else

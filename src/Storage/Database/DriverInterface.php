@@ -12,8 +12,8 @@ interface DriverInterface
 {
 	public static function create(SourceInterface $source): DriverInterface;
 	public function type(): Drivers;
-	public function setField(array $fields): void;
-	public function setFilter(array $fieldsWithValues, Operators $operator, LogicalOperators $logicalOperators): void;
+	public function setFields(array $fields): void;
+	public function setFilter(array $queryFilters): void;
 	public function setSet(array $fieldsWithValues): void;
 	public function select(): array;
 	public function update(): int;

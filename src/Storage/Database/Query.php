@@ -35,7 +35,7 @@ class Query
         ];
 
         $field = [$field];
-        $this->driver->setField($field);
+        $this->driver->setFields($field);
         $this->driver->setFilter($fieldsWithValues, $operator, LogicalOperators::AND);
 
         return $this->driver->select();
@@ -51,9 +51,20 @@ class Query
     public function filterOn(
         array $fieldsWithValues,
         Operators $operator = Operators::EQ,
-        LogicalOperators $logicalOperators = LogicalOperators::AND
+        LogicalOperators $logicalOperator = LogicalOperators::AND
     ): Query {
-        $this->driver->setFilter($fieldsWithValues, $operator, $logicalOperators);
+
+        $queryFilters = [];
+        foreach ($fieldsWithValues as $field => $value) {
+            $queryFilters[] = [
+                $field,
+                $operator,
+                $value,
+                $logicalOperator
+            ];
+        }
+
+        $this->driver->setFilter($queryFilters);
         return $this;
     }
 
@@ -67,7 +78,7 @@ class Query
      */
     public function get(string ...$fields): array
     {
-        $this->driver->setField($fields);
+        $this->driver->setFields($fields);
         return $this->driver->select();
     }
 

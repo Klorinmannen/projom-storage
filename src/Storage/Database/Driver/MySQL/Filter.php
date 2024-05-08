@@ -10,33 +10,19 @@ use Projom\Storage\Database\LogicalOperators;
 
 class Filter implements AccessorInterface
 {
-	private array $rawFilters = [];
+	private array $queryFilters = [];
 	private array $filters = [];
 	private array $params = [];
 	private int $filterID = 0;
 
-	public function __construct(array $rawFilters)
+	public function __construct(array $queryFilters)
 	{
-		$this->rawFilters = $rawFilters;
+		$this->queryFilters = $queryFilters;
 	}
 
-	public static function create(
-		array $fieldsWithValues,
-		Operators $operator = Operators::EQ,
-		LogicalOperators $logicalOperator = LogicalOperators::AND
-	): Filter {
-
-		$rawFilters = [];
-		foreach ($fieldsWithValues as $field => $value) {
-			$rawFilters[] = [
-				$field,
-				$operator,
-				$value,
-				$logicalOperator
-			];
-		}
-
-		return new Filter($rawFilters);
+	public static function create(array $queryFilters): Filter
+	{
+		return new Filter($queryFilters);
 	}
 
 	public function __toString(): string
@@ -70,26 +56,26 @@ class Filter implements AccessorInterface
 	public function merge(Filter ...$others): Filter
 	{
 		foreach ($others as $otherFilter)
-			$this->rawFilters = [...$this->rawFilters, ...$otherFilter->rawFilters()];
+			$this->queryFilters = [...$this->queryFilters, ...$otherFilter->queryFilters()];
 		return $this;
 	}
 
-	public function rawFilters(): array
+	public function queryFilters(): array
 	{
-		return $this->rawFilters;
+		return $this->queryFilters;
 	}
 
 	public function parse(): void
 	{
-		foreach ($this->rawFilters as $rawFilter) {
+		foreach ($this->queryFilters as $queryFilter) {
 
-			[$field, $operator, $value, $logicalOperator] = $rawFilter;
+			[$field, $operator, $value, $logicalOperator] = $queryFilter;
 			[$filter, $params] = $this->build($field, $operator, $value);
 
 			if (empty($this->filters))
 				$this->filters[] = $filter;
 			else
-				$this->filters[] = "{$logicalOperator->value} $filter";
+				$this->filters[] = "{$logicalOperator} $filter";
 
 			if ($params)
 				$this->params[] = $params;
@@ -123,14 +109,14 @@ class Filter implements AccessorInterface
 				return $this->defaultFilter($column, $operator, $value);
 
 			default:
-				throw new \Exception("Operator not supported: {$operator->value}", 400);
+				throw new \Exception("Operator not supported: {$operator}", 400);
 		}
 	}
 
 	private function nullFilter(Column $column, Operators $operator): array
 	{
 		return [
-			"$column {$operator->value}",
+			"$column {$operator}",
 			[]
 		];
 	}
@@ -149,7 +135,7 @@ class Filter implements AccessorInterface
 		}
 
 		$parameterString = implode(', ', $parameters);
-		$filter = "$column {$operator->value} ( $parameterString )";
+		$filter = "$column {$operator} ( $parameterString )";
 
 		return [
 			$filter,
@@ -161,7 +147,7 @@ class Filter implements AccessorInterface
 	{
 		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
 
-		$filter = "$column {$operator->value} :{$parameterName}";
+		$filter = "$column {$operator} :{$parameterName}";
 		$params = [
 			$parameterName => $value
 		];
