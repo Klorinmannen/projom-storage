@@ -11,8 +11,6 @@ use Projom\Storage\Database\Driver\MySQL\Set;
 use Projom\Storage\Database\Driver\MySQL\Statement;
 use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\Drivers;
-use Projom\Storage\Database\LogicalOperators;
-use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\Query;
 use Projom\Storage\Database\SourceInterface;
 use Projom\Storage\Database\Source\PDOSource;
