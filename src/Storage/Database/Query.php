@@ -5,30 +5,22 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\DriverInterface;
-use Projom\Storage\Database\Query\Filter;
-use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\Collection;
-use Projom\Storage\Database\Query\LogicalOperators;
-use Projom\Storage\Database\Query\Operators;
-use Projom\Storage\Database\Query\Sort;
-use Projom\Storage\Database\Query\Value;
+use Projom\Storage\Database\LogicalOperators;
+use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\Sort;
 
 class Query
 {
     private DriverInterface|null $driver = null;
-    private Collection|null $collection = null;
-    private Filter|null $filter = null;
 
-    public function __construct(DriverInterface $driver, string $collection)
+    public function __construct(DriverInterface $driver)
     {
         $this->driver = $driver;
-        $this->collection = Collection::create($collection);
-        $this->filter = Filter::create([], Operators::EQ);
     }
 
-    public static function create(DriverInterface $driver, string $collection): Query
+    public static function create(DriverInterface $driver): Query
     {
-        return new Query($driver, $collection);
+        return new Query($driver);
     }
 
     /**
@@ -43,11 +35,11 @@ class Query
             $field => $value
         ];
 
-        $field = Field::create($field);
-        $filter = Filter::create($fieldsWithValues, $operator);
-        $this->filter->merge($filter);
+        $field = [$field];
+        $this->driver->setFields($field);
+        $this->driver->setFilter($fieldsWithValues, $operator, LogicalOperators::AND);
 
-        return $this->driver->select($this->collection, $field, $this->filter);
+        return $this->driver->select();
     }
 
     /**
@@ -60,12 +52,20 @@ class Query
     public function filterOn(
         array $fieldsWithValues,
         Operators $operator = Operators::EQ,
-        LogicalOperators $logicalOperators = LogicalOperators::AND
+        LogicalOperators $logicalOperator = LogicalOperators::AND
     ): Query {
 
-        $filter = Filter::create($fieldsWithValues, $operator, $logicalOperators);
-        $this->filter->merge($filter);
+        $queryFilters = [];
+        foreach ($fieldsWithValues as $field => $value) {
+            $queryFilters[] = [
+                $field,
+                $operator,
+                $value,
+                $logicalOperator
+            ];
+        }
 
+        $this->driver->setFilter($queryFilters);
         return $this;
     }
 
@@ -79,9 +79,10 @@ class Query
      */
     public function get(string ...$fields): array
     {
-        $field = Field::create(...$fields);
-        return $this->driver->select($this->collection, $field, $this->filter);
+        $this->driver->setFields($fields);
+        return $this->driver->select();
     }
+
     /**
      * Alias for get method.
      */
@@ -98,8 +99,8 @@ class Query
      */
     public function modify(array $fieldsWithValues): int
     {
-        $value = Value::create($fieldsWithValues);
-        return $this->driver->update($this->collection, $value, $this->filter);
+        $this->driver->setSet($fieldsWithValues);
+        return $this->driver->update();
     }
     /**
      * Alias for modify method.
@@ -116,8 +117,8 @@ class Query
      */
     public function add(array $fieldsWithValues): int
     {
-        $value = Value::create($fieldsWithValues);
-        return $this->driver->insert($this->collection, $value);
+        $this->driver->setSet($fieldsWithValues);
+        return $this->driver->insert();
     }
 
     /**
@@ -135,7 +136,7 @@ class Query
      */
     public function remove(): int
     {
-        return $this->driver->delete($this->collection, $this->filter);
+        return $this->driver->delete();
     }
 
     /**

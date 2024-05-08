@@ -1,6 +1,6 @@
 <?php
 
-namespace Projom\Storage\Database\Query;
+namespace Projom\Storage\Database;
 
 enum LogicalOperators: string
 {

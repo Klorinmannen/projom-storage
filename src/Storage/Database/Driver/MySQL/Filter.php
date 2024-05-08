@@ -4,36 +4,72 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\Query\AccessorInterface;
-use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\Operators;
-use Projom\Storage\Database\Query\Value;
+use Projom\Storage\Database\AccessorInterface;
+use Projom\Storage\Database\Operators;
 
 class Filter implements AccessorInterface
 {
-	private array $raw = [];
+	private array $queryFilters = [];
 	private array $filters = [];
 	private array $params = [];
-	private array $parsed = [];
 	private int $filterID = 0;
 
-	public function __construct(array $filters)
+	public function __construct(array $queryFilters)
 	{
-		$this->raw = $filters;
-		$this->build();
+		$this->queryFilters = $queryFilters;
 	}
 
-	public static function create(array $filters): Filter
+	public static function create(array $queryFilters): Filter
 	{
-		return new Filter($filters);
+		return new Filter($queryFilters);
 	}
 
-	private function build()
+	public function __toString(): string
 	{
-		foreach ($this->raw as $filter) {
+		return $this->filters();
+	}
 
-			[$field, $operator, $value, $logicalOperator] = $filter;
-			[$filter, $params] = $this->parse($field, $operator, $value);
+	public function filters(): string
+	{
+		return implode(" ", $this->filters);
+	}
+
+	public function get(): array
+	{
+		return [
+			$this->filters,
+			$this->params
+		];
+	}
+
+	public function empty(): bool
+	{
+		return empty($this->filters);
+	}
+
+	public function params(): array
+	{
+		return array_merge(...$this->params);
+	}
+
+	public function merge(Filter ...$others): Filter
+	{
+		foreach ($others as $otherFilter)
+			$this->queryFilters = [$this->queryFilters, $otherFilter->queryFilters()];
+		return $this;
+	}
+
+	public function queryFilters(): array
+	{
+		return $this->queryFilters;
+	}
+
+	public function parse(): void
+	{
+		foreach ($this->queryFilters as $queryFilter) {
+
+			[$field, $operator, $value, $logicalOperator] = $queryFilter;
+			[$filter, $params] = $this->build($field, $operator, $value);
 
 			if (empty($this->filters))
 				$this->filters[] = $filter;
@@ -42,52 +78,17 @@ class Filter implements AccessorInterface
 
 			if ($params)
 				$this->params[] = $params;
-
-			$this->parsed[] = [
-				'filter' => $filter,
-				'params' => $params
-			];
 		}
 	}
 
-	public function __toString(): string
-	{
-		return $this->filters();
-	}
-
-	public function raw(): array
-	{
-		return $this->raw;
-	}
-
-	public function get(): array
-	{
-		return $this->parsed;
-	}
-
-	public function empty(): bool
-	{
-		return empty($this->parsed);
-	}
-
-	public function params(): array
-	{
-		return array_merge(...$this->params);
-	}
-
-	public function filters(): string
-	{
-		return implode(" ", $this->filters);
-	}
-
-	private function parse(
-		Field $field,
+	private function build(
+		string $field,
 		Operators $operator,
-		Value $value
+		mixed $value
 	): array {
 
 		$this->filterID++;
-		$column = Column::create($field->get());
+		$column = Column::create([$field]);
 
 		switch ($operator) {
 			case Operators::IS_NULL:
@@ -119,17 +120,17 @@ class Filter implements AccessorInterface
 		];
 	}
 
-	private function inFilter(Column $column, Operators $operator, Value $value): array
+	private function inFilter(Column $column, Operators $operator, array $values): array
 	{
 		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
 
 		$parameters = [];
 		$params = [];
-		foreach ($value->get() as $id => $val) {
+		foreach ($values as $id => $value) {
 			$id++;
 			$parameter = "{$parameterName}_{$id}";
 			$parameters[] = ":$parameter";
-			$params[$parameter] = $val;
+			$params[$parameter] = $value;
 		}
 
 		$parameterString = implode(', ', $parameters);
@@ -141,13 +142,13 @@ class Filter implements AccessorInterface
 		];
 	}
 
-	private function defaultFilter(Column $column, Operators $operator, Value $value): array
+	private function defaultFilter(Column $column, Operators $operator, mixed $value): array
 	{
 		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
 
 		$filter = "$column {$operator->value} :{$parameterName}";
 		$params = [
-			$parameterName => $value->get()
+			$parameterName => $value
 		];
 
 		return [

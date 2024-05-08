@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\Query\Util as QUtil;
+use Projom\Storage\Database\Util as DBUtil;
 
-class Util extends QUtil
+class Util extends DBUtil
 {
     public static function quoteList(array $list): array
     {

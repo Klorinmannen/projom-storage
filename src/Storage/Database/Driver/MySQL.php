@@ -12,10 +12,6 @@ use Projom\Storage\Database\Driver\MySQL\Statement;
 use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Query;
-use Projom\Storage\Database\Query\Collection as QCollection;
-use Projom\Storage\Database\Query\Field as QField;
-use Projom\Storage\Database\Query\Filter as QFilter;
-use Projom\Storage\Database\Query\Value as QValue;
 use Projom\Storage\Database\SourceInterface;
 use Projom\Storage\Database\Source\PDOSource;
 
@@ -23,10 +19,15 @@ class MySQL implements DriverInterface
 {
 	private PDOSource $source;
 	protected Drivers $driver = Drivers::MySQL;
+	private Table $table;
+	private Column $column;
+	private Filter $filter;
+	private Set $set;
 
 	public function __construct(PDOSource $source)
 	{
 		$this->source = $source;
+		$this->filter = Filter::create([]);
 	}
 
 	public static function create(SourceInterface $source): MySQL
@@ -39,48 +40,64 @@ class MySQL implements DriverInterface
 		return $this->driver;
 	}
 
-	public function select(QCollection $collection, QField $field, QFilter $QFilter): array
+	public function setTable(string $table): void
 	{
-		$table = Table::create($collection->get());
-		$column = Column::create($field->get());
-		$filter = Filter::create($QFilter->get());
+		$this->table = Table::create($table);
+	}
 
-		[$query, $params] = Statement::select($table, $column, $filter);
+	public function setFields(array $fields): void
+	{
+		$this->column = Column::create($fields);
+	}
+
+	public function setFilter(array $queryFilters): void
+	{
+		$filter = Filter::create($queryFilters);
+		if ($this->filter === null)
+			$this->filter = $filter;
+		else
+			$this->filter->merge($filter);
+	}
+
+	public function setSet(array $fieldsWithValues): void
+	{
+		$this->set = Set::create($fieldsWithValues);
+	}
+
+	public function select(): array
+	{
+		$this->filter->parse();
+
+		[$query, $params] = Statement::select($this->table, $this->column, $this->filter);
 
 		return $this->source->execute($query, $params);
 	}
 
-	public function update(QCollection $collection, QValue $value, QFilter $QFilter): int
+	public function update(): int
 	{
-		$table = Table::create($collection->get());
-		$set = Set::create($value->get());
-		$filter = Filter::create($QFilter->get());
+		$this->filter->parse();
 
-		[$query, $params] = Statement::update($table, $set, $filter);
+		[$query, $params] = Statement::update($this->table, $this->set, $this->filter);
 
 		$this->source->execute($query, $params);
 
 		return $this->source->rowsAffected();
 	}
 
-	public function insert(QCollection $collection, QValue $value): int
+	public function insert(): int
 	{
-		$table = Table::create($collection->get());
-		$set = Set::create($value->get());
-
-		[$query, $params] = Statement::insert($table, $set);
+		[$query, $params] = Statement::insert($this->table, $this->set);
 
 		$this->source->execute($query, $params);
 
 		return $this->source->lastInsertedID();
 	}
 
-	public function delete(QCollection $collection, QFilter $QFilter): int
+	public function delete(): int
 	{
-		$table = Table::create($collection->get());
-		$filter = Filter::create($QFilter->get());
+		$this->filter->parse();
 
-		[$query, $params] = Statement::delete($table, $filter);
+		[$query, $params] = Statement::delete($this->table, $this->filter);
 
 		$this->source->execute($query, $params);
 
@@ -89,7 +106,8 @@ class MySQL implements DriverInterface
 
 	public function Query(string $table): Query
 	{
-		return Query::create($this, $table);
+		$this->setTable($table);
+		return Query::create($this);
 	}
 
 	public function execute(string $sql, ?array $params): array

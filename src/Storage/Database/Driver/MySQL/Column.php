@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\Query\AccessorInterface;
+use Projom\Storage\Database\AccessorInterface;
 use Projom\Storage\Database\Driver\MySQL\Util;
 
 class Column implements AccessorInterface
 {
-	private array $raw = [];
-	private string $fields = '';
+	private array $fields = [];
+	private string $fieldString = '';
 
 	public function __construct(array $fields)
 	{
-		$this->raw = Util::cleanList($fields);
-		$this->fields = Util::quoteAndJoin($this->raw, ', ');
+		$this->fields = $this->parse($fields);
+		$this->fieldString = Util::quoteAndJoin($this->fields, ', ');
 	}
 
 	public static function create(array $fields): Column
@@ -23,23 +23,32 @@ class Column implements AccessorInterface
 		return new Column($fields);
 	}
 
+	private function parse(array $fields): array
+	{
+		$fields = Util::cleanList($fields);
+
+		if (!$fields)
+			return [];
+
+		if (count($fields) > 1)
+			return $fields;
+
+		$fieldString = array_shift($fields);
+		return Util::stringToList($fieldString);
+	}
+
 	public function __toString(): string
 	{
 		return $this->get();
 	}
 
-	public function raw(): array
-	{
-		return $this->raw;
-	}
-
 	public function get(): string
 	{
-		return $this->fields;
+		return $this->fieldString;
 	}
 
 	public function joined(string $delimiter = ','): string
 	{
-		return Util::join($this->raw, $delimiter);
+		return Util::join($this->fields, $delimiter);
 	}
 }

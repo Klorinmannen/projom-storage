@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\tests\unit\Storage\Database\Driver;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\MySQL;
-use Projom\Storage\Database\Query\Collection;
-use Projom\Storage\Database\Query\Field;
-use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Source\PDOSource;
 use Projom\Storage\Database\Query;
@@ -43,19 +39,10 @@ class MySQLTest extends TestCase
 
 		$mysql = new MySQL($source);
 
-		$collection = $this->createMock(Collection::class);
-		$collection->method('get')
-			->willReturn('User');
-
-		$field = $this->createMock(Field::class);
-		$field->method('get')
-			->willReturn(['*']);
-
-		$filter = $this->createMock(Filter::class);
-		$filter->method('get')
-			->willReturn([]);
-
-		$result = $mysql->select($collection, $field, $filter);
+		$mysql->setTable('User');
+		$mysql->setFields(['*']);
+		
+		$result = $mysql->select();
 
 		$this->assertEquals($records, $result);
 	}

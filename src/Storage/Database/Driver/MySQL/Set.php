@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\Query\AccessorInterface;
+use Projom\Storage\Database\AccessorInterface;
 
 class Set implements AccessorInterface
 {
@@ -18,7 +18,7 @@ class Set implements AccessorInterface
 	public function __construct(array $fieldsWithValues)
 	{
 		$this->fieldsWithValues = $fieldsWithValues;
-		$this->build();
+		$this->parse();
 	}
 
 	public static function create(array $fieldsWithValues): Set
@@ -31,7 +31,7 @@ class Set implements AccessorInterface
 		return $this->asString();
 	}
 
-	private function build(): void
+	public function parse(): void
 	{
 		foreach ($this->fieldsWithValues as $field => $value) {
 			$this->id++;
@@ -48,11 +48,6 @@ class Set implements AccessorInterface
 	private function createValueField(string $field, int $id): string
 	{
 		return strtolower("set_{$field}_{$id}");
-	}
-
-	public function raw()
-	{
-		return $this->fieldsWithValues;
 	}
 
 	public function get()
@@ -81,7 +76,7 @@ class Set implements AccessorInterface
 
 	public function fieldString(): string
 	{
-		return implode(', ', $this->fields());
+		return Util::join($this->fields(), ', ');
 	}
 
 	public function valueFields(): array

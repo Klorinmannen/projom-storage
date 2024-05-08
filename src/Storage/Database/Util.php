@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Query;
+namespace Projom\Storage\Database;
 
 class Util
 {
@@ -18,7 +18,7 @@ class Util
 
         $subject = static::cleanString($subject);
 
-        $list = [ $subject ];
+        $list = [$subject];
         if (strpos($subject, ',') !== false)
             $list = explode($delimeter, $subject);
 

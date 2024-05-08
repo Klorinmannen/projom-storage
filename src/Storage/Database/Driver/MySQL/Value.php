@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Query;
+namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\Query\Values;
+use Projom\Storage\Database\Values;
 
-class Value implements AccessorInterface
+class Value
 {
 	private mixed $value = [];
 	private Values $type = Values::NONE;
@@ -20,11 +20,6 @@ class Value implements AccessorInterface
 	public static function create(mixed $value): Value
 	{
 		return new Value($value);
-	}
-
-	public function __toString(): string
-	{
-		return $this->asString();
 	}
 
 	public function type(mixed $value): Values
@@ -44,11 +39,6 @@ class Value implements AccessorInterface
 		return $this->value;
 	}
 
-	public function raw(): mixed
-	{
-		return $this->value;
-	}
-
 	public function getType(): Values
 	{
 		return $this->type;
@@ -62,17 +52,5 @@ class Value implements AccessorInterface
 	public function empty(): bool
 	{
 		return $this->type === Values::NONE;
-	}
-
-	public function asString(): string
-	{
-		return match ($this->type) {
-			Values::STRING => $this->value,
-			Values::BOOL => $this->value ? 'TRUE' : 'FALSE',
-			Values::NUMERIC => (string) $this->value,
-			Values::NULL => 'NULL',
-			Values::ARRAY => implode(',', $this->value),
-			default => ''
-		};
 	}
 }
