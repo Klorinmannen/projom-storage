@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Filter;
+use Projom\Storage\Database\Driver\MySQL\Limit;
 use Projom\Storage\Database\Driver\MySQL\Set;
 use Projom\Storage\Database\Driver\MySQL\Sort;
 use Projom\Storage\Database\Driver\MySQL\Statement;
@@ -34,8 +35,9 @@ class StatementTest extends TestCase
 					]
 				],
 				[],
+				5,
 				[
-					'query' => 'SELECT `Name` FROM `User` WHERE `Name` = :filter_name_1',
+					'query' => 'SELECT `Name` FROM `User` WHERE `Name` = :filter_name_1 LIMIT 5',
 					'params' => ['filter_name_1' => 'John']
 				]
 			],
@@ -51,8 +53,9 @@ class StatementTest extends TestCase
 					]
 				],
 				[],
+				10,
 				[
-					'query' => 'SELECT `Name` FROM `User` WHERE `Name` IS NULL',
+					'query' => 'SELECT `Name` FROM `User` WHERE `Name` IS NULL LIMIT 10',
 					'params' => null
 				]
 			],
@@ -68,6 +71,7 @@ class StatementTest extends TestCase
 					]
 				],
 				['Name' => Sorts::DESC],
+				'',
 				[
 					'query' => 'SELECT * FROM `User` WHERE `Age` IN ( :filter_age_1_1, :filter_age_1_2, :filter_age_1_3 ) ORDER BY `Name` DESC',
 					'params' => ['filter_age_1_1' => 12, 'filter_age_1_2' => 23, 'filter_age_1_3' => 45]
@@ -77,15 +81,16 @@ class StatementTest extends TestCase
 	}
 
 	#[DataProvider('select_test_provider')]
-	public function test_select(string $table, array $columns, array $filter, array $sort, array $expected): void
+	public function test_select(string $table, array $columns, array $filter, array $sort, int|string $limit, array $expected): void
 	{
 		$table = Table::create($table);
 		$column = Column::create($columns);
 		$filter = Filter::create($filter);
 		$sort = Sort::create($sort);
+		$limit = Limit::create($limit);
 		$filter->parse();
 
-		[$query, $params] = Statement::select($table, $column, $filter, $sort);
+		[$query, $params] = Statement::select($table, $column, $filter, $sort, $limit);
 
 		$this->assertEquals($expected['query'], $query);
 		$this->assertEquals($expected['params'], $params);

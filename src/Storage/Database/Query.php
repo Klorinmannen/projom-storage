@@ -104,6 +104,17 @@ class Query
     }
 
     /**
+     * Limits the result of the query.
+     * 
+     * * Example use: $database->query('CollectionName')->limit(10)->get('*')
+     */
+    public function limit(int|string $limit): Query
+    {
+        $this->driver->setLimit($limit);
+        return $this;
+    }
+
+    /**
      * Executes a query modifying record(s) and returns the number of affected rows.
      * 
      * * Example use: $database->query('CollectionName')->modify(['Active' => 1])

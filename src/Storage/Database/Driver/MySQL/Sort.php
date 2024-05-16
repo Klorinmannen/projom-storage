@@ -11,7 +11,7 @@ class Sort implements AccessorInterface
 {
 	private array $sortFields = [];
 	private array $parsed = [];
-	private string $sort = '';
+	private string $sortBy = '';
 
 	public function __construct(array $sortFields)
 	{
@@ -37,7 +37,8 @@ class Sort implements AccessorInterface
 			$this->parsed[] = "$quotedField $sortUC";
 		}
 
-		$this->sort = Util::join($this->parsed, ', ');
+		$joined = Util::join($this->parsed, ', ');
+		$this->sortBy = "ORDER BY $joined";
 	}
 
 	public function get(): array
@@ -62,6 +63,6 @@ class Sort implements AccessorInterface
 
 	public function string(): string
 	{
-		return $this->sort;
+		return $this->sortBy;
 	}
 }

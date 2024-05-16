@@ -6,13 +6,14 @@ namespace Projom\Storage\Database\Driver\MySQL;
 
 use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Filter;
+use Projom\Storage\Database\Driver\MySQL\Limit;
 use Projom\Storage\Database\Driver\MySQL\Set;
 use Projom\Storage\Database\Driver\MySQL\Sort;
 use Projom\Storage\Database\Driver\MySQL\Table;
 
 class Statement
 {
-    public static function select(Table $table, Column $column, Filter $filter, Sort $sort): array
+    public static function select(Table $table, Column $column, Filter $filter, Sort $sort, Limit $limit): array
     {
         $query = "SELECT {$column} FROM {$table}";
 
@@ -20,7 +21,10 @@ class Statement
             $query .= " WHERE {$filter}";
 
         if (!$sort->empty())
-            $query .= " ORDER BY {$sort}";
+            $query .= " $sort";
+
+        if (!$limit->empty())
+            $query .= " $limit";
 
         return [
             $query,

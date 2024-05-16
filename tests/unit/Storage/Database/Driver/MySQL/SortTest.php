@@ -21,8 +21,8 @@ class SortTest extends TestCase
 		];
 
 		$this->assertEquals($expected, $sort->parsed());
-		$this->assertEquals('`Name` ASC, `Age` DESC', $sort->string());
-		$this->assertEquals('`Name` ASC, `Age` DESC', "$sort");
+		$this->assertEquals('ORDER BY `Name` ASC, `Age` DESC', $sort->string());
+		$this->assertEquals('ORDER BY `Name` ASC, `Age` DESC', "$sort");
 		$this->assertFalse($sort->empty());
 	}
 
@@ -44,8 +44,8 @@ class SortTest extends TestCase
 		];
 
 		$this->assertEquals($expected, $sort_1->parsed());
-		$this->assertEquals('`Name` ASC, `Age` DESC, `UserID` DESC, `Email` DESC', $sort_1->string());
-		$this->assertEquals('`Name` ASC, `Age` DESC, `UserID` DESC, `Email` DESC', "$sort_1");
+		$this->assertEquals('ORDER BY `Name` ASC, `Age` DESC, `UserID` DESC, `Email` DESC', $sort_1->string());
+		$this->assertEquals('ORDER BY `Name` ASC, `Age` DESC, `UserID` DESC, `Email` DESC', "$sort_1");
 		$this->assertFalse($sort_1->empty());
 	}
 }
