@@ -7,6 +7,7 @@ namespace Projom\Storage\Database\Driver;
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Filter;
+use Projom\Storage\Database\Driver\MySQL\Limit;
 use Projom\Storage\Database\Driver\MySQL\Set;
 use Projom\Storage\Database\Driver\MySQL\Sort;
 use Projom\Storage\Database\Driver\MySQL\Statement;
@@ -25,12 +26,14 @@ class MySQL implements DriverInterface
 	private Filter $filter;
 	private Set $set;
 	private Sort $sort;
+	private Limit $limit;
 
 	public function __construct(PDOSource $source)
 	{
 		$this->source = $source;
 		$this->filter = Filter::create([]);
 		$this->sort = Sort::create([]);
+		$this->limit = Limit::create('');
 	}
 
 	public static function create(SourceInterface $source): MySQL
@@ -70,11 +73,16 @@ class MySQL implements DriverInterface
 		$this->sort->merge($sort);
 	}
 
+	public function setLimit(int|string $limit): void
+	{
+		$this->limit = Limit::create($limit);
+	}
+
 	public function select(): array
 	{
 		$this->filter->parse();
 
-		[$query, $params] = Statement::select($this->table, $this->column, $this->filter, $this->sort);
+		[$query, $params] = Statement::select($this->table, $this->column, $this->filter, $this->sort, $this->limit);
 
 		return $this->source->execute($query, $params);
 	}

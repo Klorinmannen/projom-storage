@@ -15,7 +15,8 @@ interface DriverInterface
 	public function setFields(array $fields): void;
 	public function setFilter(array $queryFilters): void;
 	public function setSet(array $fieldsWithValues): void;
-	public function setSort(array $fieldsWithValues): void;
+	public function setSort(array $sortFields): void;
+	public function setLimit(int|string $limit): void;
 	public function select(): array;
 	public function update(): int;
 	public function insert(): int;
