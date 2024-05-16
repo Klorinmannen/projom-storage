@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\Query\AccessorInterface;
+use Projom\Storage\Database\AccessorInterface;
 use Projom\Storage\Database\Driver\MySQL\Util;
 
 class Sort implements AccessorInterface
 {
-	private array $raw = [];
+	private array $sortFields = [];
 	private array $parsed = [];
 	private string $sort = '';
 
 	public function __construct(array $sortFields)
 	{
-		$this->raw = $sortFields;
-		$this->build();
+		$this->sortFields = $sortFields;
+		$this->parse($sortFields);
 	}
 
 	public static function create(array $sortFields): Sort
@@ -24,30 +24,44 @@ class Sort implements AccessorInterface
 		return new Sort($sortFields);
 	}
 
-	public function __toString(): string 
-	{ 
-		return $this->get();
+	public function __toString(): string
+	{
+		return $this->string();
 	}
 
-	private function build() 
-	{ 
-		foreach ($this->raw as $sort) {
-
-			[$field, $sorting] = $sort;
-			$sorting = strtoupper($sorting);
-			$this->parsed[] = "$field $sorting";
+	private function parse(array $sortFields)
+	{
+		foreach ($sortFields as $field => $sort) {
+			$sortUC = strtoupper($sort->value);
+			$quotedField = Util::quote($field);
+			$this->parsed[] = "$quotedField $sortUC";
 		}
 
-		$this->sort = Util::join($this->parsed);
+		$this->sort = Util::join($this->parsed, ', ');
 	}
 
-	public function raw(): array 
-	{ 
-		return $this->raw; 
+	public function get(): array
+	{
+		return $this->sortFields;
 	}
 
-	public function get(): string
-	{ 
+	public function parsed(): array
+	{
+		return $this->parsed;
+	}
+
+	public function merge(Sort $sort): void
+	{
+		$this->parse($sort->get());
+	}
+
+	public function empty(): bool
+	{
+		return $this->parsed ? false : true;
+	}
+
+	public function string(): string
+	{
 		return $this->sort;
 	}
 }
