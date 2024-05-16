@@ -15,7 +15,7 @@ class LimitTest extends TestCase
 		$limit = Limit::create($limits);
 
 		$this->assertEquals($limits, $limit->get());
-		$this->assertEquals("LIMIT $limits", "$limit");
+		$this->assertEquals($limits, "$limit");
 		$this->assertFalse($limit->empty());
 
 		$limits = '';

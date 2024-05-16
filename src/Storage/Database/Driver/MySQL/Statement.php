@@ -21,10 +21,10 @@ class Statement
             $query .= " WHERE {$filter}";
 
         if (!$sort->empty())
-            $query .= " $sort";
+            $query .= " ORDER BY $sort";
 
         if (!$limit->empty())
-            $query .= " $limit";
+            $query .= " LIMIT $limit";
 
         return [
             $query,

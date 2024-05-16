@@ -14,7 +14,7 @@ class ColumnTest extends TestCase
 		$fields = ['field1', 'field2'];
 		$column = Column::create($fields);
 		
-		$this->assertEquals('`field1`, `field2`', $column->get());
+		$this->assertEquals('`field1`, `field2`', "$column");
 		$this->assertEquals('field1_field2', $column->joined('_'));
 	}
 }

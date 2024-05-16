@@ -37,8 +37,7 @@ class Sort implements AccessorInterface
 			$this->parsed[] = "$quotedField $sortUC";
 		}
 
-		$joined = Util::join($this->parsed, ', ');
-		$this->sortBy = "ORDER BY $joined";
+		$this->sortBy = Util::join($this->parsed, ', ');
 	}
 
 	public function get(): array

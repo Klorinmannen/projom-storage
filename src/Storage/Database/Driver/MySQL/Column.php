@@ -14,8 +14,8 @@ class Column implements AccessorInterface
 
 	public function __construct(array $fields)
 	{
-		$this->fields = $this->parse($fields);
-		$this->fieldString = Util::quoteAndJoin($this->fields, ', ');
+		$this->fields = $fields;
+		$this->parse($fields);
 	}
 
 	public static function create(array $fields): Column
@@ -23,32 +23,27 @@ class Column implements AccessorInterface
 		return new Column($fields);
 	}
 
-	private function parse(array $fields): array
-	{
-		$fields = Util::cleanList($fields);
-
-		if (!$fields)
-			return [];
-
-		if (count($fields) > 1)
-			return $fields;
-
-		$fieldString = array_shift($fields);
-		return Util::stringToList($fieldString);
-	}
-
 	public function __toString(): string
-	{
-		return $this->get();
-	}
-
-	public function get(): string
 	{
 		return $this->fieldString;
 	}
 
-	public function joined(string $delimiter = ','): string
+	private function parse(array $fields): void
 	{
-		return Util::join($this->fields, $delimiter);
+		$fields = Util::cleanList($fields);
+		if (!$fields)
+			return;
+
+		$this->fieldString = Util::quoteAndJoin($this->fields, ', ');
+	}
+
+	public function get(): array
+	{
+		return $this->fields;
+	}
+
+	public function joined(string $delimeter): string
+	{
+		return Util::join($this->fields, $delimeter);
 	}
 }

@@ -29,7 +29,7 @@ class Limit implements AccessorInterface
 
 	public function parse(int|string $limit): void
 	{		
-		$this->limitString = "LIMIT $limit";
+		$this->limitString = "$limit";
 	}
 
 	public function get()
