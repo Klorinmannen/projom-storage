@@ -7,16 +7,20 @@ namespace Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Driver\MySQL\Set;
+use Projom\Storage\Database\Driver\MySQL\Sort;
 use Projom\Storage\Database\Driver\MySQL\Table;
 
 class Statement
 {
-    public static function select(Table $table, Column $column, Filter $filter): array
+    public static function select(Table $table, Column $column, Filter $filter, Sort $sort): array
     {
-        $query = match ($filter->empty()) {
-            false => "SELECT {$column} FROM {$table} WHERE {$filter}",
-            default => "SELECT {$column} FROM {$table}"
-        };
+        $query = "SELECT {$column} FROM {$table}";
+
+        if (!$filter->empty()) 
+            $query .= " WHERE {$filter}";
+
+        if (!$sort->empty())
+            $query .= " ORDER BY {$sort}";
 
         return [
             $query,

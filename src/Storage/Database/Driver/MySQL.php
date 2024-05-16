@@ -8,6 +8,7 @@ use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Driver\MySQL\Set;
+use Projom\Storage\Database\Driver\MySQL\Sort;
 use Projom\Storage\Database\Driver\MySQL\Statement;
 use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\Drivers;
@@ -23,11 +24,13 @@ class MySQL implements DriverInterface
 	private Column $column;
 	private Filter $filter;
 	private Set $set;
+	private Sort $sort;
 
 	public function __construct(PDOSource $source)
 	{
 		$this->source = $source;
 		$this->filter = Filter::create([]);
+		$this->sort = Sort::create([]);
 	}
 
 	public static function create(SourceInterface $source): MySQL
@@ -53,10 +56,7 @@ class MySQL implements DriverInterface
 	public function setFilter(array $queryFilters): void
 	{
 		$filter = Filter::create($queryFilters);
-		if ($this->filter === null)
-			$this->filter = $filter;
-		else
-			$this->filter->merge($filter);
+		$this->filter->merge($filter);
 	}
 
 	public function setSet(array $fieldsWithValues): void
@@ -64,11 +64,17 @@ class MySQL implements DriverInterface
 		$this->set = Set::create($fieldsWithValues);
 	}
 
+	public function setSort(array $sortFields): void
+	{
+		$sort = Sort::create($sortFields);
+		$this->sort->merge($sort);
+	}
+
 	public function select(): array
 	{
 		$this->filter->parse();
 
-		[$query, $params] = Statement::select($this->table, $this->column, $this->filter);
+		[$query, $params] = Statement::select($this->table, $this->column, $this->filter, $this->sort);
 
 		return $this->source->execute($query, $params);
 	}

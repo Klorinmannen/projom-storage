@@ -7,6 +7,7 @@ namespace Projom\Storage\Database;
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\Sorts;
 
 class Query
 {
@@ -74,6 +75,7 @@ class Query
      * * Example use: $database->query('CollectionName')->get('*')
      * * Example use: $database->query('CollectionName')->get('Name', 'Age')
      * * Example use: $database->query('CollectionName')->get('Name, Age')
+     * * Example use: $database->query('CollectionName')->get('Name as Username')
      * * Example use: $database->query('CollectionName')->get([ 'Name', 'Age', 'Username' ])
      */
     public function get(string ...$fields): array
@@ -88,6 +90,17 @@ class Query
     public function select(string ...$fields): array
     {
         return $this->get(...$fields);
+    }
+
+    /**
+     * Sorts the result of the query.
+     * 
+     * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])->get('*')
+    */
+    public function sortOn(array $sortFields): Query
+    {
+        $this->driver->setSort($sortFields);
+        return $this;
     }
 
     /**
