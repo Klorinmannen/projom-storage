@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Projom\Storage\Database\Driver;
 
 use Projom\Storage\Database\DriverInterface;
-use Projom\Storage\Database\Driver\MySQL\Column;
-use Projom\Storage\Database\Driver\MySQL\Filter;
-use Projom\Storage\Database\Driver\MySQL\Limit;
-use Projom\Storage\Database\Driver\MySQL\Set;
-use Projom\Storage\Database\Driver\MySQL\Sort;
-use Projom\Storage\Database\Driver\MySQL\Statement;
-use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\Drivers;
+use Projom\Storage\Database\Driver\MySQL\Delete;
+use Projom\Storage\Database\Driver\MySQL\Insert;
+use Projom\Storage\Database\Driver\MySQL\Select;
+use Projom\Storage\Database\Driver\MySQL\Update;
 use Projom\Storage\Database\Query;
+use Projom\Storage\Database\Query\Delete as QueryDelete;
+use Projom\Storage\Database\Query\Insert as QueryInsert;
+use Projom\Storage\Database\Query\Select as QuerySelect;
+use Projom\Storage\Database\Query\Update as QueryUpdate;
 use Projom\Storage\Database\SourceInterface;
 use Projom\Storage\Database\Source\PDOSource;
 
@@ -21,19 +22,10 @@ class MySQL implements DriverInterface
 {
 	private PDOSource $source;
 	protected Drivers $driver = Drivers::MySQL;
-	private Table $table;
-	private Column $column;
-	private Filter $filter;
-	private Set $set;
-	private Sort $sort;
-	private Limit $limit;
 
 	public function __construct(PDOSource $source)
 	{
 		$this->source = $source;
-		$this->filter = Filter::create([]);
-		$this->sort = Sort::create([]);
-		$this->limit = Limit::create('');
 	}
 
 	public static function create(SourceInterface $source): MySQL
@@ -46,85 +38,46 @@ class MySQL implements DriverInterface
 		return $this->driver;
 	}
 
-	public function setTable(string $table): void
+	public function select(QuerySelect $select): array
 	{
-		$this->table = Table::create($table);
+		$select = Select::create($select);
+
+		return $this->source->run($select);
 	}
 
-	public function setFields(array $fields): void
+	public function update(QueryUpdate $update): int
 	{
-		$this->column = Column::create($fields);
-	}
+		$update = Update::create($update);
 
-	public function setFilter(array $queryFilters): void
-	{
-		$filter = Filter::create($queryFilters);
-		$this->filter->merge($filter);
-	}
-
-	public function setSet(array $fieldsWithValues): void
-	{
-		$this->set = Set::create($fieldsWithValues);
-	}
-
-	public function setSort(array $sortFields): void
-	{
-		$sort = Sort::create($sortFields);
-		$this->sort->merge($sort);
-	}
-
-	public function setLimit(int|string $limit): void
-	{
-		$this->limit = Limit::create($limit);
-	}
-
-	public function select(): array
-	{
-		$this->filter->parse();
-
-		[$query, $params] = Statement::select($this->table, $this->column, $this->filter, $this->sort, $this->limit);
-
-		return $this->source->execute($query, $params);
-	}
-
-	public function update(): int
-	{
-		$this->filter->parse();
-
-		[$query, $params] = Statement::update($this->table, $this->set, $this->filter);
-
-		$this->source->execute($query, $params);
+		$this->source->run($update);
 
 		return $this->source->rowsAffected();
 	}
 
-	public function insert(): int
+	public function insert(QueryInsert $insert): int
 	{
-		[$query, $params] = Statement::insert($this->table, $this->set);
+		$inserted = Insert::create($insert);
 
-		$this->source->execute($query, $params);
+		$this->source->run($inserted);
 
 		return $this->source->lastInsertedID();
 	}
 
-	public function delete(): int
+	public function delete(QueryDelete $delete): int
 	{
-		$this->filter->parse();
+		$delete = Delete::create($delete);
 
-		[$query, $params] = Statement::delete($this->table, $this->filter);
-
-		$this->source->execute($query, $params);
+		$this->source->run($delete);
 
 		return $this->source->rowsAffected();
 	}
 
-	public function Query(string $table): Query
+	public function Query(string ...$tables): Query
 	{
-		$this->setTable($table);
-		return Query::create($this);
+		return Query::create($this, $tables);
 	}
 
-	public function execute(string $sql, ?array $params): array
+	public function execute(string $sql, array|null $params): array
 	{
 		return $this->source->execute($sql, $params);
 	}

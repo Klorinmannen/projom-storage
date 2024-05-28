@@ -6,21 +6,20 @@ namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\Drivers;
 use Projom\Storage\Database\Query;
+use Projom\Storage\Database\Query\Delete;
+use Projom\Storage\Database\Query\Insert;
+use Projom\Storage\Database\Query\Select;
+use Projom\Storage\Database\Query\Update;
 use Projom\Storage\Database\SourceInterface;
 
 interface DriverInterface
 {
 	public static function create(SourceInterface $source): DriverInterface;
 	public function type(): Drivers;
-	public function setFields(array $fields): void;
-	public function setFilter(array $queryFilters): void;
-	public function setSet(array $fieldsWithValues): void;
-	public function setSort(array $sortFields): void;
-	public function setLimit(int|string $limit): void;
-	public function select(): array;
-	public function update(): int;
-	public function insert(): int;
-	public function delete(): int;
-	public function Query(string $collection): Query;
+	public function select(Select $select): array;
+	public function update(Update $update): int;
+	public function insert(Insert $insert): int;
+	public function delete(Delete $delete): int;
+	public function Query(string ...$collections): Query;
 	public function execute(string $sql, ?array $params): array;
 }

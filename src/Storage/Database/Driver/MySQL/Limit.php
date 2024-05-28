@@ -22,19 +22,14 @@ class Limit implements AccessorInterface
 		return new Limit($limit);
 	}
 
-	public function __toString(): string 
-	{ 
+	public function __toString(): string
+	{
 		return $this->limitString;
 	}
 
 	public function parse(int|string $limit): void
-	{		
+	{
 		$this->limitString = "$limit";
-	}
-
-	public function get()
-	{ 
-		return $this->limit;
 	}
 
 	public function empty(): bool

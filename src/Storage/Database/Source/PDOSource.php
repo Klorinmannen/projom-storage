@@ -7,6 +7,7 @@ namespace Projom\Storage\Database\Source;
 use PDO;
 use Exception;
 use PDOStatement;
+use Projom\Storage\Database\Driver\QueryInterface;
 use Projom\Storage\Database\SourceInterface;
 
 class PDOSource implements SourceInterface
@@ -24,9 +25,16 @@ class PDOSource implements SourceInterface
 		return new PDOSource($pdo);
 	}
 
-	public function execute(string $query, array|null $params = null): array
+	public function run(QueryInterface $queryAble): array
 	{
-		if (!$this->statement = $this->pdo->prepare($query))
+		[$query, $params] = $queryAble->query();
+
+		return $this->execute($query, $params);
+	}
+
+	public function execute(string $sql, ?array $params): mixed
+	{
+		if (!$this->statement = $this->pdo->prepare($sql))
 			throw new Exception('Failed to prepare PDO query', 500);
 
 		if (!$this->statement->execute($params))

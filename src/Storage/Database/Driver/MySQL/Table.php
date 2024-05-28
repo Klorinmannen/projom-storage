@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\AccessorInterface;
+use Projom\Storage\Database\Driver\AccessorInterface;
 use Projom\Storage\Database\Driver\MySQL\Util;
 
 class Table implements AccessorInterface
 {
 	private string $table = '';
 
-	public function __construct(string $table)
+	public function __construct(array $table)
 	{
-		$table = Util::cleanString($table);
-		$this->table = Util::quote($table);
+		$table = Util::cleanList($table);
+		$this->table = Util::quoteAndJoin($table, ', ');
 	}
 
-	public static function create(string $table): Table
+	public static function create(array $table): Table
 	{
 		return new Table($table);
 	}
 
 	public function __toString(): string
 	{
-		return $this->get();
+		return $this->table;
 	}
 
-	public function get(): string
+	public function empty(): bool
 	{
-		return $this->table;
+		return empty($this->table);
 	}
 }

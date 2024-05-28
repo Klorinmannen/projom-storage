@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\AccessorInterface;
+use Projom\Storage\Database\Driver\AccessorInterface;
 
 class Set implements AccessorInterface
 {
@@ -12,7 +12,6 @@ class Set implements AccessorInterface
 	private array $sets = [];
 	private array $fields = [];
 	private array $params = [];
-	private string $setString = '';
 	private int $id = 0;
 
 	public function __construct(array $fieldsWithValues)
@@ -28,7 +27,12 @@ class Set implements AccessorInterface
 
 	public function __toString(): string
 	{
-		return $this->asString();
+		return Util::join($this->sets, ', ');
+	}
+
+	public function empty(): bool
+	{
+		return empty($this->fieldsWithValues);
 	}
 
 	public function parse(): void
@@ -41,8 +45,6 @@ class Set implements AccessorInterface
 			$this->fields[$valueField] = $qoutedField;
 			$this->params[$valueField] = $value;
 		}
-
-		$this->setString = Util::join($this->sets, ', ');
 	}
 
 	private function createValueField(string $field, int $id): string
@@ -50,23 +52,9 @@ class Set implements AccessorInterface
 		return strtolower("set_{$field}_{$id}");
 	}
 
-	public function get()
-	{
-		return [
-			'sets' => $this->sets,
-			'fields' => $this->fields,
-			'params' => $this->params
-		];
-	}
-
 	public function sets(): array
 	{
 		return $this->sets;
-	}
-
-	public function asString(): string
-	{
-		return $this->setString;
 	}
 
 	public function fields(): array
@@ -74,31 +62,24 @@ class Set implements AccessorInterface
 		return $this->fields;
 	}
 
-	public function fieldString(): string
-	{
-		return Util::join($this->fields(), ', ');
-	}
-
-	public function valueFields(): array
-	{
-		return array_keys($this->fields);
-	}
-
 	public function params(): array
 	{
 		return $this->params;
 	}
 
-	public function positionalString(): string
+	public function positionalFields(): string
 	{
-		return implode(
-			', ',
-			array_fill(0, count($this->params()), '?')
-		);
+		return Util::join($this->fields, ', ');
 	}
 
-	public function positionalParams(): array
+	public function positionalParams(): string
 	{
-		return array_values($this->params());
+		$positionalParams = array_fill(0, count($this->params), '?');
+		return Util::join($positionalParams, ', ');
+	}
+
+	public function positionalParamValues(): array
+	{
+		return array_values($this->params);
 	}
 }

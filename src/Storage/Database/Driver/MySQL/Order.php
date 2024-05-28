@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\AccessorInterface;
+use Projom\Storage\Database\Driver\AccessorInterface;
 use Projom\Storage\Database\Driver\MySQL\Util;
 
-class Sort implements AccessorInterface
+class Order implements AccessorInterface
 {
 	private array $sortFields = [];
 	private array $parsed = [];
@@ -19,9 +19,9 @@ class Sort implements AccessorInterface
 		$this->parse($sortFields);
 	}
 
-	public static function create(array $sortFields): Sort
+	public static function create(array $sortFields): Order
 	{
-		return new Sort($sortFields);
+		return new Order($sortFields);
 	}
 
 	public function __toString(): string
@@ -31,9 +31,12 @@ class Sort implements AccessorInterface
 
 	private function parse(array $sortFields)
 	{
-		foreach ($sortFields as $field => $sort) {
+		foreach ($sortFields as $sortField) {
+
+			[$sort, $field] = $sortField;
 			$sortUC = strtoupper($sort->value);
 			$quotedField = Util::quote($field);
+
 			$this->parsed[] = "$quotedField $sortUC";
 		}
 
@@ -50,7 +53,7 @@ class Sort implements AccessorInterface
 		return $this->parsed;
 	}
 
-	public function merge(Sort $sort): void
+	public function merge(Order $sort): void
 	{
 		$this->parse($sort->get());
 	}

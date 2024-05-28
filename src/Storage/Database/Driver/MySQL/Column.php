@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\AccessorInterface;
+use Projom\Storage\Database\Driver\AccessorInterface;
 use Projom\Storage\Database\Driver\MySQL\Util;
 
 class Column implements AccessorInterface
@@ -28,6 +28,11 @@ class Column implements AccessorInterface
 		return $this->fieldString;
 	}
 
+	public function empty(): bool
+	{
+		return empty($this->fields);
+	}
+
 	private function parse(array $fields): void
 	{
 		$fields = Util::cleanList($fields);
@@ -35,11 +40,6 @@ class Column implements AccessorInterface
 			return;
 
 		$this->fieldString = Util::quoteAndJoin($this->fields, ', ');
-	}
-
-	public function get(): array
-	{
-		return $this->fields;
 	}
 
 	public function joined(string $delimeter): string

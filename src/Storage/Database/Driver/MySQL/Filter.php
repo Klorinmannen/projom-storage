@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver\MySQL;
 
-use Projom\Storage\Database\AccessorInterface;
+use Projom\Storage\Database\Driver\AccessorInterface;
 use Projom\Storage\Database\Operators;
 
 class Filter implements AccessorInterface
@@ -26,20 +26,7 @@ class Filter implements AccessorInterface
 
 	public function __toString(): string
 	{
-		return $this->filters();
-	}
-
-	public function filters(): string
-	{
-		return implode(" ", $this->filters);
-	}
-
-	public function get(): array
-	{
-		return [
-			$this->filters,
-			$this->params
-		];
+		return Util::join($this->filters, " ");
 	}
 
 	public function empty(): bool

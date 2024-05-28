@@ -7,20 +7,29 @@ namespace Projom\Storage\Database;
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Sorts;
+use Projom\Storage\Database\Query\Delete;
+use Projom\Storage\Database\Query\Insert;
+use Projom\Storage\Database\Query\Select;
+use Projom\Storage\Database\Query\Update;
 
 class Query
 {
     private DriverInterface|null $driver = null;
 
-    public function __construct(DriverInterface $driver)
+    private array $collections = [];
+    private array $filters = [];
+    private array $sorts = [];
+    private int|string $limit = '';
+
+    public function __construct(DriverInterface $driver, array $collections)
     {
+        $this->collections = $collections;
         $this->driver = $driver;
     }
 
-    public static function create(DriverInterface $driver): Query
+    public static function create(DriverInterface $driver, array $collections): Query
     {
-        return new Query($driver);
+        return new Query($driver, $collections);
     }
 
     /**
@@ -31,15 +40,8 @@ class Query
      */
     public function fetch(string $field, mixed $value, Operators $operator = Operators::EQ): array
     {
-        $fieldsWithValues = [
-            $field => $value
-        ];
-
-        $field = [$field];
-        $this->driver->setFields($field);
-        $this->driver->setFilter($fieldsWithValues, $operator, LogicalOperators::AND);
-
-        return $this->driver->select();
+        $this->filterOn([$field => $value], $operator);
+        return $this->get($field);
     }
 
     /**
@@ -55,9 +57,8 @@ class Query
         LogicalOperators $logicalOperator = LogicalOperators::AND
     ): Query {
 
-        $queryFilters = [];
         foreach ($fieldsWithValues as $field => $value) {
-            $queryFilters[] = [
+            $this->filters[] = [
                 $field,
                 $operator,
                 $value,
@@ -65,41 +66,40 @@ class Query
             ];
         }
 
-        $this->driver->setFilter($queryFilters);
         return $this;
     }
 
     /**
      * Executes a query finding record(s) and returns the result.
      * 
-     * * Example use: $database->query('CollectionName')->get('*')
-     * * Example use: $database->query('CollectionName')->get('Name', 'Age')
-     * * Example use: $database->query('CollectionName')->get('Name, Age')
-     * * Example use: $database->query('CollectionName')->get('Name as Username')
-     * * Example use: $database->query('CollectionName')->get([ 'Name', 'Age', 'Username' ])
-     */
-    public function get(string ...$fields): array
-    {
-        $this->driver->setFields($fields);
-        return $this->driver->select();
-    }
-
-    /**
-     * Alias for get method.
+     * * Example use: $database->query('CollectionName')->select('*')
+     * * Example use: $database->query('CollectionName')->select('Name', 'Age')
+     * * Example use: $database->query('CollectionName')->select('Name, Age')
+     * * Example use: $database->query('CollectionName')->select('Name as Username')
+     * * Example use: $database->query('CollectionName')->select([ 'Name', 'Age', 'Username' ])
      */
     public function select(string ...$fields): array
     {
-        return $this->get(...$fields);
+        $select = new Select($this->collections, $fields, $this->filters, $this->sorts, $this->limit);
+        return $this->driver->select($select);
+    }
+
+    /**
+     * Alias for select method.
+     */
+    public function get(string ...$fields): array
+    {
+        return $this->select(...$fields);
     }
 
     /**
      * Sorts the result of the query.
      * 
      * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])->get('*')
-    */
+     */
     public function sortOn(array $sortFields): Query
     {
-        $this->driver->setSort($sortFields);
+        $this->sorts[] = $sortFields;
         return $this;
     }
 
@@ -110,63 +110,64 @@ class Query
      */
     public function limit(int|string $limit): Query
     {
-        $this->driver->setLimit($limit);
+        $this->limit = $limit;
         return $this;
     }
 
     /**
-     * Executes a query modifying record(s) and returns the number of affected rows.
+     * Executes a query updating record(s) and returns the number of affected rows.
      * 
-     * * Example use: $database->query('CollectionName')->modify(['Active' => 1])
-     * * Example use: $database->query('CollectionName')->filterOn( ... )->modify(['Username' => 'Jane', 'Password' => 'password'])
-     */
-    public function modify(array $fieldsWithValues): int
-    {
-        $this->driver->setSet($fieldsWithValues);
-        return $this->driver->update();
-    }
-    /**
-     * Alias for modify method.
+     * * Example use: $database->query('CollectionName')->update(['Active' => 1])
+     * * Example use: $database->query('CollectionName')->filterOn( ... )->update(['Username' => 'Jane', 'Password' => 'password'])
      */
     public function update(array $fieldsWithValues): int
     {
-        return $this->modify($fieldsWithValues);
+        $update = new Update($this->collections, $fieldsWithValues, $this->filters);
+        return $this->driver->update($update);
     }
-
     /**
-     * Executes a query adding a record and returns the latest inserted primary id.
-     * 
-     * * Example use: $database->query('CollectionName')->add(['Username' => 'John', 'Password' => '1234'])
+     * Alias for update method.
      */
-    public function add(array $fieldsWithValues): int
+    public function modify(array $fieldsWithValues): int
     {
-        $this->driver->setSet($fieldsWithValues);
-        return $this->driver->insert();
+        return $this->update($fieldsWithValues);
     }
 
     /**
-     * Alias for add method.
+     * Executes a query inserting a record and returns the latest inserted primary id.
+     * 
+     * * Example use: $database->query('CollectionName')->insert(['Username' => 'John', 'Password' => '1234'])
      */
     public function insert(array $fieldsWithValues): int
     {
-        return $this->add($fieldsWithValues);
+        $insert = new Insert($this->collections, $fieldsWithValues);
+        return $this->driver->insert($insert);
     }
 
     /**
-     * Executes a query removing record(s) and returns the number of affected rows.
-     * 
-     * * Example use: $database->query('CollectionName')->filterOn( ... )->remove()
+     * Alias for insert method.
      */
-    public function remove(): int
+    public function add(array $fieldsWithValues): int
     {
-        return $this->driver->delete();
+        return $this->insert($fieldsWithValues);
     }
 
     /**
-     * Alias for remove method.
+     * Executes a query to delete record(s) and returns the number of affected rows.
+     * 
+     * * Example use: $database->query('CollectionName')->filterOn( ... )->delete()
      */
     public function delete(): int
     {
-        return $this->remove();
+        $delete = new Delete($this->collections, $this->filters);
+        return $this->driver->delete($delete);
+    }
+
+    /**
+     * Alias for delete method.
+     */
+    public function remove(): int
+    {
+        return $this->delete();
     }
 }

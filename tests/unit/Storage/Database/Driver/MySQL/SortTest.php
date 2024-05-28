@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
 
 use PHPUnit\Framework\TestCase;
-use Projom\Storage\Database\Driver\MySQL\Sort;
+use Projom\Storage\Database\Driver\MySQL\Order;
 use Projom\Storage\Database\Sorts;
 
 class SortTest extends TestCase
@@ -13,7 +13,7 @@ class SortTest extends TestCase
 	public function test_create()
 	{
 		$sortFields = ['Name' => Sorts::ASC, 'Age' => Sorts::DESC];
-		$sort = Sort::create($sortFields);
+		$sort = Order::create($sortFields);
 
 		$expected = [
 			'`Name` ASC',
@@ -29,10 +29,10 @@ class SortTest extends TestCase
 	public function test_merge()
 	{
 		$sortFields = ['Name' => Sorts::ASC, 'Age' => Sorts::DESC];
-		$sort_1 = Sort::create($sortFields);
+		$sort_1 = Order::create($sortFields);
 
 		$sortFields = [ 'UserID' => Sorts::DESC, 'Email' => Sorts::DESC];
-		$sort_2 = Sort::create($sortFields);
+		$sort_2 = Order::create($sortFields);
 
 		$sort_1->merge($sort_2);
 

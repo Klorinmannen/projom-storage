@@ -12,7 +12,7 @@ use Projom\Storage\Database\Driver\MySQL\Column;
 use Projom\Storage\Database\Driver\MySQL\Filter;
 use Projom\Storage\Database\Driver\MySQL\Limit;
 use Projom\Storage\Database\Driver\MySQL\Set;
-use Projom\Storage\Database\Driver\MySQL\Sort;
+use Projom\Storage\Database\Driver\MySQL\Order;
 use Projom\Storage\Database\Driver\MySQL\Statement;
 use Projom\Storage\Database\Driver\MySQL\Table;
 use Projom\Storage\Database\LogicalOperators;
@@ -86,7 +86,7 @@ class StatementTest extends TestCase
 		$table = Table::create($table);
 		$column = Column::create($columns);
 		$filter = Filter::create($filter);
-		$sort = Sort::create($sort);
+		$sort = Order::create($sort);
 		$limit = Limit::create($limit);
 		$filter->parse();
 
