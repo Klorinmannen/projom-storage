@@ -15,7 +15,6 @@ use Projom\Storage\Database\Query\Update;
 class Query
 {
     private DriverInterface|null $driver = null;
-
     private array $collections = [];
     private array $filters = [];
     private array $sorts = [];

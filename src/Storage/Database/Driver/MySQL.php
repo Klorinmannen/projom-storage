@@ -42,7 +42,9 @@ class MySQL implements DriverInterface
 	{
 		$select = Select::create($select);
 
-		return $this->source->run($select);
+		$this->source->run($select);
+
+		return $this->source->fetchResult();
 	}
 
 	public function update(QueryUpdate $update): int
@@ -60,7 +62,7 @@ class MySQL implements DriverInterface
 
 		$this->source->run($inserted);
 
-		return $this->source->lastInsertedID();
+		return $this->source->insertedID();
 	}
 
 	public function delete(QueryDelete $delete): int
@@ -79,6 +81,7 @@ class MySQL implements DriverInterface
 
 	public function execute(string $sql, array|null $params): array
 	{
-		return $this->source->execute($sql, $params);
+		$this->source->execute($sql, $params);
+		return $this->source->fetchResult();
 	}
 }

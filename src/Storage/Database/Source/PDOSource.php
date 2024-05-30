@@ -13,7 +13,7 @@ use Projom\Storage\Database\SourceInterface;
 class PDOSource implements SourceInterface
 {
 	private PDO|null $pdo = null;
-	private PDOStatement|null $statement = null;
+	private PDOStatement|false|null $statement = null;
 
 	public function __construct(PDO $pdo)
 	{
@@ -25,22 +25,19 @@ class PDOSource implements SourceInterface
 		return new PDOSource($pdo);
 	}
 
-	public function run(QueryInterface $queryAble): array
+	public function run(QueryInterface $query): void
 	{
-		[$query, $params] = $queryAble->query();
-
-		return $this->execute($query, $params);
+		[$query, $params] = $query->query();
+		$this->execute($query, $params);
 	}
 
-	public function execute(string $sql, ?array $params): mixed
+	public function execute(string $sql, array|null $params = null): void
 	{
 		if (!$this->statement = $this->pdo->prepare($sql))
 			throw new Exception('Failed to prepare PDO query', 500);
 
 		if (!$this->statement->execute($params))
-			throw new Exception('Failed to execute PDO statement', 500);
-
-		return $this->statement->fetchAll();
+			throw new Exception('Failed to execute PDO statement', 500);		
 	}
 
 	public function get(): PDO
@@ -48,12 +45,17 @@ class PDOSource implements SourceInterface
 		return $this->pdo;
 	}
 
+	public function fetchResult(): array
+	{
+		return $this->statement->fetchAll();
+	}
+
 	public function rowsAffected(): int
 	{
 		return $this->statement->rowCount();
 	}
 
-	public function lastInsertedID(): int
+	public function insertedID(): int
 	{
 		return (int) $this->pdo->lastInsertId();
 	}

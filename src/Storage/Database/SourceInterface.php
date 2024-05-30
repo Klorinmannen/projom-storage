@@ -8,7 +8,8 @@ use Projom\Storage\Database\Driver\QueryInterface;
 
 interface SourceInterface
 {
-	public function run(QueryInterface $queryAble): mixed;
-	public function execute(string $sql, array|null $params): mixed;
+	public function run(QueryInterface $queryAble): void;
+	public function execute(string $sql, array|null $params): void;
+	public function fetchResult(): array;
 	public function get(): object;	
 }
