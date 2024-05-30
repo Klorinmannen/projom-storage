@@ -17,6 +17,7 @@ class Filter implements AccessorInterface
 	public function __construct(array $queryFilters)
 	{
 		$this->queryFilters = $queryFilters;
+		$this->parse($queryFilters);
 	}
 
 	public static function create(array $queryFilters): Filter
@@ -41,8 +42,11 @@ class Filter implements AccessorInterface
 
 	public function merge(Filter ...$others): Filter
 	{
-		foreach ($others as $otherFilter)
-			$this->queryFilters = [$this->queryFilters, $otherFilter->queryFilters()];
+		foreach ($others as $other) {
+			$this->queryFilters = array_merge($this->queryFilters, $other->queryFilters());
+			$this->parse($other->queryFilters());
+		}
+		
 		return $this;
 	}
 
@@ -51,9 +55,9 @@ class Filter implements AccessorInterface
 		return $this->queryFilters;
 	}
 
-	public function parse(): void
+	private function parse(array $queryFilters): void
 	{
-		foreach ($this->queryFilters as $queryFilter) {
+		foreach ($queryFilters as $queryFilter) {
 
 			[$field, $operator, $value, $logicalOperator] = $queryFilter;
 			[$filter, $params] = $this->build($field, $operator, $value);

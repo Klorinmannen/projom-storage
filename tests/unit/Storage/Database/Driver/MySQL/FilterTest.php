@@ -17,78 +17,45 @@ class FilterTest extends TestCase
 	{
 		return [
 			[ 
-				['Name', Operators::EQ, 'John', LogicalOperators::AND],
-				['Age', Operators::GT, 18, LogicalOperators::AND]
+				[ ['Name', Operators::EQ, 'John', LogicalOperators::AND] ],
+				[ ['Age', Operators::GT, 18, LogicalOperators::AND] ]
 			]
 		];
 	}	
 
 	#[DataProvider('filter')]
-	public function test_create(array $filter, array $filter2): void
+	public function test_create(array $filter1, array $filter2): void
 	{
-		$filter = Filter::create($filter);
-		$filter2 = Filter::create($filter2);
-		$filter->merge($filter2);
+		$filter = Filter::create($filter1);
+		$this->assertFalse($filter->empty());
+		$this->assertEquals(['filter_name_1' => 'John'], $filter->params());
+		$this->assertEquals($filter1, $filter->queryFilters());
 
-		$this->assertInstanceOf(Filter::class, $filter);
-	}
+		$filterOther = Filter::create($filter2);
+		$this->assertFalse($filterOther->empty());
+		$this->assertEquals(['filter_age_1' => 18], $filterOther->params());
+		$this->assertEquals($filter2, $filterOther->queryFilters());
 
-	#[DataProvider('filter')]
-	public function test_to_tring(array $filter, array $filter2): void
-	{
-		$filter = Filter::create($filter);
-		$filter2 = Filter::create($filter2);
-		$filter->merge($filter2);
-		$filter->parse();
-
+		$filter->merge($filterOther);
 		$expected = '`Name` = :filter_name_1 AND `Age` > :filter_age_2';
 		$this->assertEquals($expected, "$filter");
 	}
 
 	#[DataProvider('filter')]
-	public function test_get(array $filter, array $filter2): void
+	public function test_merge(array $filter1, array $filter2): void
 	{
-		$filter = Filter::create($filter);
-		$filter2 = Filter::create($filter2);
-		$filter->merge($filter2);
-		$filter->parse();
+		$filter = Filter::create($filter1);
+		$filterOther = Filter::create($filter2);
+		$filter->merge($filterOther);
 
-		$expected = [
-			['`Name` = :filter_name_1', 'AND `Age` > :filter_age_2'],
-			[['filter_name_1' => 'John'], ['filter_age_2' => 18]],
-		];
-		$this->assertEquals($expected, $filter->get());
+		$this->assertFalse($filter->empty());
+		$this->assertEquals(['filter_name_1' => 'John', 'filter_age_2' => 18], $filter->params());
+		$this->assertEquals([...$filter1, ...$filter2], $filter->queryFilters());
 	}
 
 	public function test_empty(): void
 	{
 		$filter = Filter::create([]);
-		$filter->parse();
-
 		$this->assertTrue($filter->empty());
-	}
-
-	#[DataProvider('filter')]
-	public function test_params(array $filter, array $filter2): void
-	{
-		$filter = Filter::create($filter);
-		$filter2 = Filter::create($filter2);
-		$filter->merge($filter2);
-		$filter->parse();
-
-		$expected = ['filter_name_1' => 'John', 'filter_age_2' => 18];
-		$this->assertEquals($expected, $filter->params());
-	}
-
-	#[DataProvider('filter')]
-	public function test_filters(array $filter, array $filter2): void
-	{
-		$filter = Filter::create($filter);
-		$filter2 = Filter::create($filter2);
-		$filter->merge($filter2);
-		$filter->parse();
-
-		$expected = '`Name` = :filter_name_1 AND `Age` > :filter_age_2';
-		$this->assertEquals($expected, $filter->filters());
 	}
 }

@@ -29,14 +29,13 @@ class SetTest extends TestCase
 			'set_age_2' => 25
 		];
 
-		$this->assertEquals([ 'sets' => $sets, 'fields' => $fields, 'params' => $params ], $set->get());
 		$this->assertEquals($sets, $set->sets());
-		$this->assertEquals('`Name` = :set_name_1, `Age` = :set_age_2', $set->asString());
+		$this->assertEquals(implode(', ', $sets), "$set");
 		$this->assertEquals($fields, $set->fields());
-		$this->assertEquals('`Name`, `Age`' ,$set->fieldString());
-		$this->assertEquals(['set_name_1', 'set_age_2'], $set->valueFields());
 		$this->assertEquals($params, $set->params());
-		$this->assertEquals('?, ?', $set->positionalString());
-		$this->assertEquals(['John', 25], $set->positionalParams());
+		$this->assertFalse($set->empty());
+		$this->assertEquals(implode(', ', $fields), $set->positionalFields());
+		$this->assertEquals('?, ?', $set->positionalParams());
+		$this->assertEquals(['John', 25], $set->positionalParamValues());
 	}
 }

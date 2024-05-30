@@ -6,12 +6,12 @@ namespace Projom\Storage\Database\Driver\MySQL;
 
 use Projom\Storage\Database\Driver\AccessorInterface;
 use Projom\Storage\Database\Driver\MySQL\Util;
+use Projom\Storage\Database\Sorts;
 
 class Order implements AccessorInterface
 {
 	private array $sortFields = [];
 	private array $parsed = [];
-	private string $sortBy = '';
 
 	public function __construct(array $sortFields)
 	{
@@ -26,21 +26,22 @@ class Order implements AccessorInterface
 
 	public function __toString(): string
 	{
-		return $this->string();
+		return Util::join($this->parsed, ', ');
 	}
 
-	private function parse(array $sortFields)
+	private function parse(array $sortFields): void
 	{
 		foreach ($sortFields as $sortField) {
-
-			[$sort, $field] = $sortField;
-			$sortUC = strtoupper($sort->value);
-			$quotedField = Util::quote($field);
-
-			$this->parsed[] = "$quotedField $sortUC";
+			[$field, $sort] = $sortField;
+			$this->parsed[] = $this->createSortField($field, $sort);
 		}
+	}
 
-		$this->sortBy = Util::join($this->parsed, ', ');
+	private function createSortField(string $field, Sorts $sort): string
+	{
+		$sortUC = strtoupper($sort->value);
+		$quotedField = Util::quote($field);
+		return "{$quotedField} {$sortUC}";
 	}
 
 	public function get(): array
@@ -48,23 +49,18 @@ class Order implements AccessorInterface
 		return $this->sortFields;
 	}
 
-	public function parsed(): array
+	public function merge(Order ...$others): Order
 	{
-		return $this->parsed;
-	}
+		foreach ($others as $other) {
+			$this->sortFields = array_merge($this->sortFields, $other->get());
+			$this->parse($other->get());
+		}
 
-	public function merge(Order $sort): void
-	{
-		$this->parse($sort->get());
+		return $this;
 	}
 
 	public function empty(): bool
 	{
-		return $this->parsed ? false : true;
-	}
-
-	public function string(): string
-	{
-		return $this->sortBy;
+		return empty($this->sortFields);
 	}
 }

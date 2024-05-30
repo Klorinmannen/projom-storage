@@ -40,11 +40,16 @@ class Set implements AccessorInterface
 		foreach ($this->fieldsWithValues as $field => $value) {
 			$this->id++;
 			$valueField = $this->createValueField($field, $this->id);
-			$qoutedField = Util::quote($field);
-			$this->sets[] = "{$qoutedField} = :{$valueField}";
-			$this->fields[$valueField] = $qoutedField;
+			$quotedField = Util::quote($field);
+			$this->sets[] = $this->createtSet($quotedField, $valueField);
+			$this->fields[$valueField] = $quotedField;
 			$this->params[$valueField] = $value;
 		}
+	}
+
+	private function createtSet(string $quotedField, string $valueField): string
+	{
+		return "{$quotedField} = :{$valueField}";
 	}
 
 	private function createValueField(string $field, int $id): string

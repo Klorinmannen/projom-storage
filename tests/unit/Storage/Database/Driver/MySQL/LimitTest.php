@@ -9,17 +9,30 @@ use Projom\Storage\Database\Driver\MySQL\Limit;
 
 class LimitTest extends TestCase
 {
-	public function test_create()
+	public function test_create_int()
 	{
 		$limits = 10;
 		$limit = Limit::create($limits);
 
-		$this->assertEquals($limits, $limit->get());
 		$this->assertEquals($limits, "$limit");
 		$this->assertFalse($limit->empty());
+	}
 
-		$limits = '';
+	public function test_create_string()
+	{
+		$limits = '10';
 		$limit = Limit::create($limits);
+
+		$this->assertEquals($limits, "$limit");
+		$this->assertFalse($limit->empty());
+	}
+
+	public function test_create_empty()
+	{
+		$limit = Limit::create(0);
+		$this->assertTrue($limit->empty());
+
+		$limit = Limit::create('');
 		$this->assertTrue($limit->empty());
 	}
 }

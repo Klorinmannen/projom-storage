@@ -8,13 +8,11 @@ use Projom\Storage\Database\Driver\AccessorInterface;
 
 class Limit implements AccessorInterface
 {
-	private int|string $limit = '';
-	private string $limitString = '';
+	private int|string|null $limit = null;
 
 	public function __construct(int|string $limit)
 	{
 		$this->limit = $limit;
-		$this->parse($limit);
 	}
 
 	public static function create(int|string $limit): Limit
@@ -24,16 +22,11 @@ class Limit implements AccessorInterface
 
 	public function __toString(): string
 	{
-		return $this->limitString;
-	}
-
-	public function parse(int|string $limit): void
-	{
-		$this->limitString = "$limit";
+		return (string) $this->limit;
 	}
 
 	public function empty(): bool
 	{
-		return $this->limit ? false : true;
+		return empty($this->limit);
 	}
 }

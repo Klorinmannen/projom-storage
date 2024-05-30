@@ -11,22 +11,45 @@ use Projom\Storage\Database\Driver\MySQL\Table;
 
 class TableTest extends TestCase
 {
-	public function test_create(): void
+	public static function create_test_provider(): array
 	{
-		$table = Table::create('User');
-		$this->assertInstanceOf(Table::class, $table);
+		return [
+			[
+				['User'], 
+				'`User`'
+			],
+			[
+				[ 'User', 'UserAccess'], 
+				'`User`, `UserAccess`'
+			],
+		];
 	}
 
-	public function test_to_string(): void
+	#[DataProvider('create_test_provider')]
+	public function test_create(array $tables, string $expected): void
 	{
-		$table = Table::create('User');
-		$this->assertEquals('`User`', "$table");
+		$table = Table::create($tables);
+		$this->assertEquals($expected, "$table");
 	}
 
-	public function test_get(): void
+	public static function empty_test_provider(): array
 	{
-		$table = Table::create('User');
-		$this->assertEquals('`User`', $table->get());
+		return [
+			[
+				['User'], 
+				false
+			],
+			[
+				[], 
+				true
+			]
+		];
 	}
 
+	#[DataProvider('empty_test_provider')]
+	public function test_empty(array $tables, bool $expected): void
+	{
+		$table = Table::create($tables);
+		$this->assertEquals($expected, $table->empty());
+	}
 }

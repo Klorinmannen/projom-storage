@@ -99,7 +99,8 @@ class Query
      */
     public function sortOn(array $sortFields): Query
     {
-        $this->sorts[] = $sortFields;
+        foreach ($sortFields as $field => $sort)
+            $this->sorts[] = [$field, $sort];
         return $this;
     }
 
