@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
+namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Driver\MySQL\Filter;
+use Projom\Storage\Database\Driver\SQL\Filter;
 
 class FilterTest extends TestCase
 {

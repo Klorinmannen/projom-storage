@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
+namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 
 use PHPUnit\Framework\TestCase;
-use Projom\Storage\Database\Driver\MySQL\Limit;
+use Projom\Storage\Database\Driver\SQL\Limit;
 
 class LimitTest extends TestCase
 {

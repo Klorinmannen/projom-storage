@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
+namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\MySQL\Select;
+use Projom\Storage\Database\Driver\SQL\Select;
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Query\Select as QuerySelect;
+use Projom\Storage\Database\Query\QueryObject;
 use Projom\Storage\Database\Sorts;
 
 class SelectTest extends TestCase
@@ -19,48 +19,45 @@ class SelectTest extends TestCase
 	{
 		return [
 			[
-				[
-					['User'],
-					['UserID', 'Name'],
-					[['UserID', Operators::EQ, 10, LogicalOperators::AND]],
-					[['UserID', Sorts::ASC], ['Name', Sorts::DESC]],
-					10,
-				],
+				new QueryObject(
+					collections: ['User'],
+					fields: ['UserID', 'Name'],
+					filters: [['UserID', Operators::EQ, 10, LogicalOperators::AND]],
+					sorts: [['UserID', Sorts::ASC], ['Name', Sorts::DESC]],
+					limit: 10
+				),
 				[
 					'SELECT `UserID`, `Name` FROM `User` WHERE `UserID` = :filter_userid_1 ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
 					['filter_userid_1' => 10]
 				]
 			],
 			[
-				[
-					['User'],
-					['*'],
-					[],
-					[['UserID', Sorts::ASC], ['Name', Sorts::DESC]]
-				],
+				new QueryObject(
+					collections: ['User'],
+					fields: ['*'],
+					sorts: [['UserID', Sorts::ASC], ['Name', Sorts::DESC]]
+				),
 				[
 					'SELECT * FROM `User` ORDER BY `UserID` ASC, `Name` DESC',
 					null
 				]
 			],
 			[
-				[
-					['User'],
-					['*'],
-					[],
-					[],
-					10
-				],
+				new QueryObject(
+					collections: ['User'],
+					fields: ['*'],
+					limit: 10
+				),
 				[
 					'SELECT * FROM `User` LIMIT 10',
 					null
 				]
 			],			
 			[
-				[
-					['User'],
-					['*']
-				],
+				new QueryObject(
+					collections: ['User'],
+					fields: ['*']
+				),
 				[
 					'SELECT * FROM `User`',
 					null
@@ -70,10 +67,9 @@ class SelectTest extends TestCase
 	}
 
 	#[DataProvider('create_test_provider')]
-	public function test_create(array $parameters, array $expected): void
+	public function test_create(QueryObject $queryObject, array $expected): void
 	{
-		$querySelect = new QuerySelect(...$parameters);
-		$select = Select::create($querySelect);
+		$select = Select::create($queryObject);
 		$this->assertEquals($expected, $select->query());
 	}
 }

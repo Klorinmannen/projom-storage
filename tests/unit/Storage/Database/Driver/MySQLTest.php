@@ -13,10 +13,7 @@ use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
 use Projom\Storage\Database\Source\PDOSource;
 use Projom\Storage\Database\Query;
-use Projom\Storage\Database\Query\Delete;
-use Projom\Storage\Database\Query\Insert;
-use Projom\Storage\Database\Query\Select;
-use Projom\Storage\Database\Query\Update;
+use Projom\Storage\Database\Query\QueryObject;
 
 class MySQLTest extends TestCase
 {
@@ -37,9 +34,9 @@ class MySQLTest extends TestCase
 		$source->expects($this->once())->method('fetchResult')->willReturn($expected);
 
 		$mysql = MySQL::create($source);
-		$querySelect = new Select(['User'], ['*']);
+		$queryObject = new QueryObject(collections: ['User'], fields: ['*']);
 
-		$result = $mysql->select($querySelect);
+		$result = $mysql->select($queryObject);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -52,9 +49,9 @@ class MySQLTest extends TestCase
 		$source->expects($this->once())->method('rowsAffected')->willReturn($expected);
 
 		$mysql = MySQL::create($source);
-		$queryUpdate = new Update(['User'], ['Name' => 'John']);
+		$queryObject = new QueryObject(collections: ['User'], fieldsWithValues: ['Name' => 'John']);
 
-		$result = $mysql->update($queryUpdate);
+		$result = $mysql->update($queryObject);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -67,9 +64,9 @@ class MySQLTest extends TestCase
 		$source->expects($this->once())->method('insertedID')->willReturn($expected);
 
 		$mysql = MySQL::create($source);
-		$queryInsert = new Insert(['User'], ['Name' => 'John', 'Age' => 25]);
+		$queryObject = new QueryObject(collections: ['User'], fieldsWithValues: ['Name' => 'John', 'Age' => 25]);
 
-		$result = $mysql->insert($queryInsert);
+		$result = $mysql->insert($queryObject);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -82,9 +79,9 @@ class MySQLTest extends TestCase
 		$source->expects($this->once())->method('rowsAffected')->willReturn($expected);
 
 		$mysql = MySQL::create($source);
-		$queryDelete = new Delete(['User'], [['UserID', Operators::EQ, '10', LogicalOperators::AND]]);
+		$queryObject = new QueryObject(collections: ['User'], filters: [['UserID', Operators::EQ, '10', LogicalOperators::AND]]);
 
-		$result = $mysql->delete($queryDelete);
+		$result = $mysql->delete($queryObject);
 		$this->assertEquals($expected, $result);
 	}
 

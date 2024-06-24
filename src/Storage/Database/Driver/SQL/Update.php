@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver\MySQL;
+namespace Projom\Storage\Database\Driver\SQL;
 
-use Projom\Storage\Database\Driver\MySQL\Filter;
-use Projom\Storage\Database\Driver\MySQL\Set;
-use Projom\Storage\Database\Driver\MySQL\Table;
+use Projom\Storage\Database\Driver\SQL\Filter;
+use Projom\Storage\Database\Driver\SQL\Set;
+use Projom\Storage\Database\Driver\SQL\Table;
 use Projom\Storage\Database\Driver\QueryInterface;
-use Projom\Storage\Database\Query\Update as QueryUpdate;
+use Projom\Storage\Database\Query\QueryObject;
 
 class Update implements QueryInterface
 {
@@ -16,14 +16,14 @@ class Update implements QueryInterface
 	private Set $set;
 	private Filter $filter;
 
-	public function __construct(QueryUpdate $queryUpdate)
+	public function __construct(QueryObject $queryUpdate)
 	{
 		$this->table = Table::create($queryUpdate->collections);
 		$this->set = Set::create($queryUpdate->fieldsWithValues);
 		$this->filter = Filter::create($queryUpdate->filters);
 	}
 
-	public static function create(QueryUpdate $queryUpdate): Update
+	public static function create(QueryObject $queryUpdate): Update
 	{
 		return new Update($queryUpdate);
 	}

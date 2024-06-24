@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver\MySQL;
+namespace Projom\Storage\Database\Driver\SQL;
 
 use Projom\Storage\Database\Driver\AccessorInterface;
-use Projom\Storage\Database\Driver\MySQL\Util;
+use Projom\Storage\Database\Driver\SQL\Util;
 
 class Table implements AccessorInterface
 {

@@ -6,15 +6,12 @@ namespace Projom\Storage\Database\Driver;
 
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\Drivers;
-use Projom\Storage\Database\Driver\MySQL\Delete;
-use Projom\Storage\Database\Driver\MySQL\Insert;
-use Projom\Storage\Database\Driver\MySQL\Select;
-use Projom\Storage\Database\Driver\MySQL\Update;
+use Projom\Storage\Database\Driver\SQL\Delete;
+use Projom\Storage\Database\Driver\SQL\Insert;
+use Projom\Storage\Database\Driver\SQL\Select;
+use Projom\Storage\Database\Driver\SQL\Update;
 use Projom\Storage\Database\Query;
-use Projom\Storage\Database\Query\Delete as QueryDelete;
-use Projom\Storage\Database\Query\Insert as QueryInsert;
-use Projom\Storage\Database\Query\Select as QuerySelect;
-use Projom\Storage\Database\Query\Update as QueryUpdate;
+use Projom\Storage\Database\Query\QueryObject;
 use Projom\Storage\Database\SourceInterface;
 use Projom\Storage\Database\Source\PDOSource;
 
@@ -38,36 +35,36 @@ class MySQL implements DriverInterface
 		return $this->driver;
 	}
 
-	public function select(QuerySelect $select): array
+	public function select(QueryObject $queryObject): array
 	{
-		$select = Select::create($select);
+		$select = Select::create($queryObject);
 
 		$this->source->run($select);
 
 		return $this->source->fetchResult();
 	}
 
-	public function update(QueryUpdate $update): int
+	public function update(QueryObject $queryObject): int
 	{
-		$update = Update::create($update);
+		$update = Update::create($queryObject);
 
 		$this->source->run($update);
 
 		return $this->source->rowsAffected();
 	}
 
-	public function insert(QueryInsert $insert): int
+	public function insert(QueryObject $queryObject): int
 	{
-		$inserted = Insert::create($insert);
+		$inserted = Insert::create($queryObject);
 
 		$this->source->run($inserted);
 
 		return $this->source->insertedID();
 	}
 
-	public function delete(QueryDelete $delete): int
+	public function delete(QueryObject $queryObject): int
 	{
-		$delete = Delete::create($delete);
+		$delete = Delete::create($queryObject);
 
 		$this->source->run($delete);
 

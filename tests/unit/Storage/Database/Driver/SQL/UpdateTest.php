@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
+namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\MySQL\Update;
+use Projom\Storage\Database\Driver\SQL\Update;
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Query\Update as QueryUpdate;
+use Projom\Storage\Database\Query\QueryObject;
 
 class UpdateTest extends TestCase
 {
@@ -18,22 +18,21 @@ class UpdateTest extends TestCase
 	{
 		return [
 			[
-				[
-					['User'],
-					['Name' => 'John'],
-					[['UserID', Operators::EQ, 10, LogicalOperators::AND]]
-				],
+				new QueryObject(
+					collections: ['User'],
+					fieldsWithValues: ['Name' => 'John'],
+					filters: [['UserID', Operators::EQ, 10, LogicalOperators::AND]]
+				),
 				[
 					'UPDATE `User` SET `Name` = :set_name_1 WHERE `UserID` = :filter_userid_1',
 					['set_name_1' => 'John', 'filter_userid_1' => 10]
 				]
 			],
 			[
-				[
-					['User'],
-					['Name' => 'John'],
-					[]
-				],
+				new QueryObject(
+					collections: ['User'],
+					fieldsWithValues: ['Name' => 'John']
+				),
 				[
 					'UPDATE `User` SET `Name` = :set_name_1',
 					['set_name_1' => 'John']
@@ -43,10 +42,9 @@ class UpdateTest extends TestCase
 	}
 
 	#[DataProvider('create_test_provider')]
-	public function test_create(array $parameters, array $expected): void
+	public function test_create(QueryObject $queryObject, array $expected): void
 	{
-		$queryUpdate = new QueryUpdate(...$parameters);
-		$update = Update::create($queryUpdate);
+		$update = Update::create($queryObject);
 		$this->assertEquals($expected, $update->query());
 	}
 }

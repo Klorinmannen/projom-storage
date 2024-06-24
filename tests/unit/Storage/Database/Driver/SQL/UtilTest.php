@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
+namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\MySQL\Util;
+use Projom\Storage\Database\Driver\SQL\Util;
 
 class UtilTest extends TestCase
 {

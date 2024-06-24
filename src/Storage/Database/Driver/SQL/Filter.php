@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver\MySQL;
+namespace Projom\Storage\Database\Driver\SQL;
 
 use Projom\Storage\Database\Driver\AccessorInterface;
 use Projom\Storage\Database\Operators;
@@ -46,7 +46,7 @@ class Filter implements AccessorInterface
 			$this->queryFilters = array_merge($this->queryFilters, $other->queryFilters());
 			$this->parse($other->queryFilters());
 		}
-		
+
 		return $this;
 	}
 

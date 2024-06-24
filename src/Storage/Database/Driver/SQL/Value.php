@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver\MySQL;
+namespace Projom\Storage\Database\Driver\SQL;
 
 use Projom\Storage\Database\Values;
 

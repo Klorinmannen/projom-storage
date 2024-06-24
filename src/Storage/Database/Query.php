@@ -7,10 +7,7 @@ namespace Projom\Storage\Database;
 use Projom\Storage\Database\DriverInterface;
 use Projom\Storage\Database\LogicalOperators;
 use Projom\Storage\Database\Operators;
-use Projom\Storage\Database\Query\Delete;
-use Projom\Storage\Database\Query\Insert;
-use Projom\Storage\Database\Query\Select;
-use Projom\Storage\Database\Query\Update;
+use Projom\Storage\Database\Query\QueryObject;
 
 class Query
 {
@@ -79,8 +76,14 @@ class Query
      */
     public function select(string ...$fields): array
     {
-        $select = new Select($this->collections, $fields, $this->filters, $this->sorts, $this->limit);
-        return $this->driver->select($select);
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fields: $fields,
+            filters: $this->filters,
+            sorts: $this->sorts,
+            limit: $this->limit
+        );
+        return $this->driver->select($queryObject);
     }
 
     /**
@@ -122,8 +125,12 @@ class Query
      */
     public function update(array $fieldsWithValues): int
     {
-        $update = new Update($this->collections, $fieldsWithValues, $this->filters);
-        return $this->driver->update($update);
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fieldsWithValues: $fieldsWithValues,
+            filters: $this->filters
+        );
+        return $this->driver->update($queryObject);
     }
     /**
      * Alias for update method.
@@ -140,8 +147,11 @@ class Query
      */
     public function insert(array $fieldsWithValues): int
     {
-        $insert = new Insert($this->collections, $fieldsWithValues);
-        return $this->driver->insert($insert);
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fieldsWithValues: $fieldsWithValues
+        );
+        return $this->driver->insert($queryObject);
     }
 
     /**
@@ -159,8 +169,11 @@ class Query
      */
     public function delete(): int
     {
-        $delete = new Delete($this->collections, $this->filters);
-        return $this->driver->delete($delete);
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            filters: $this->filters
+        );
+        return $this->driver->delete($queryObject);
     }
 
     /**

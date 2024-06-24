@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
+namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\MySQL\Insert;
-use Projom\Storage\Database\Query\Insert as QueryInsert;
+use Projom\Storage\Database\Driver\SQL\Insert;
+use Projom\Storage\Database\Query\QueryObject;
 
 class InsertTest extends TestCase
 {
@@ -16,10 +16,10 @@ class InsertTest extends TestCase
 	{
 		return [
 			[
-				[
-					['User'],
-					['Name' => 'John', 'Age' => 25]
-				],
+				new QueryObject(
+					collections: ['User'],
+					fieldsWithValues: ['Name' => 'John', 'Age' => 25]
+				),
 				[
 					'INSERT INTO `User` (`Name`, `Age`) VALUES (?, ?)',
 					['John', 25]
@@ -29,10 +29,9 @@ class InsertTest extends TestCase
 	}
 
 	#[DataProvider('create_test_provider')]
-	public function test_create(array $parameters, array $expected): void
+	public function test_create(QueryObject $queryObject, array $expected): void
 	{
-		$queryInsert = new QueryInsert(...$parameters);
-		$insert = Insert::create($queryInsert);
+		$insert = Insert::create($queryObject);
 		$this->assertEquals($expected, $insert->query());
 	}
 }

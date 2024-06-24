@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Driver\MySQL;
+namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\MySQL\Table;
+use Projom\Storage\Database\Driver\SQL\Table;
 
 class TableTest extends TestCase
 {

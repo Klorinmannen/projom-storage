@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver\MySQL;
+namespace Projom\Storage\Database\Driver\SQL;
 
-use Projom\Storage\Database\Driver\MySQL\Set;
-use Projom\Storage\Database\Driver\MySQL\Table;
+use Projom\Storage\Database\Driver\SQL\Set;
+use Projom\Storage\Database\Driver\SQL\Table;
 use Projom\Storage\Database\Driver\QueryInterface;
-use Projom\Storage\Database\Query\Insert as QueryInsert;
+use Projom\Storage\Database\Query\QueryObject;
 
 class Insert implements QueryInterface
 {
 	private Table $table;
 	private Set $set;
 
-	public function __construct(QueryInsert $queryInsert)
+	public function __construct(QueryObject $queryInsert)
 	{
 		$this->table = Table::create($queryInsert->collections);
 		$this->set = Set::create($queryInsert->fieldsWithValues);
 	}
 
-	public static function create(QueryInsert $queryInsert): Insert
+	public static function create(QueryObject $queryInsert): Insert
 	{
 		return new Insert($queryInsert);
 	}

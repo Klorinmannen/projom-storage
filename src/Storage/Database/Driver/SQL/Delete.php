@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver\MySQL;
+namespace Projom\Storage\Database\Driver\SQL;
 
-use Projom\Storage\Database\Driver\MySQL\Filter;
-use Projom\Storage\Database\Driver\MySQL\Table;
+use Projom\Storage\Database\Driver\SQL\Filter;
+use Projom\Storage\Database\Driver\SQL\Table;
 use Projom\Storage\Database\Driver\QueryInterface;
-use Projom\Storage\Database\Query\Delete as QueryDelete;
+use Projom\Storage\Database\Query\QueryObject;
 
 class Delete implements QueryInterface
 {
 	private Table $table;
 	private Filter $filter;
 
-	public function __construct(QueryDelete $queryDelete)
+	public function __construct(QueryObject $queryDelete)
 	{
 		$this->table = Table::create($queryDelete->collections);
 		$this->filter = Filter::create($queryDelete->filters);
 	}
 
-	public static function create(QueryDelete $queryDelete): Delete
+	public static function create(QueryObject $queryDelete): Delete
 	{
 		return new Delete($queryDelete);
 	}

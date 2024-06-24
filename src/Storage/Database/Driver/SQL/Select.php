@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver\MySQL;
+namespace Projom\Storage\Database\Driver\SQL;
 
-use Projom\Storage\Database\Driver\MySQL\Column;
-use Projom\Storage\Database\Driver\MySQL\Filter;
-use Projom\Storage\Database\Driver\MySQL\Limit;
-use Projom\Storage\Database\Driver\MySQL\Order;
-use Projom\Storage\Database\Driver\MySQL\Table;
+use Projom\Storage\Database\Driver\SQL\Column;
+use Projom\Storage\Database\Driver\SQL\Filter;
+use Projom\Storage\Database\Driver\SQL\Limit;
+use Projom\Storage\Database\Driver\SQL\Order;
+use Projom\Storage\Database\Driver\SQL\Table;
 use Projom\Storage\Database\Driver\QueryInterface;
-use Projom\Storage\Database\Query\Select as QuerySelect;
+use Projom\Storage\Database\Query\QueryObject;
 
 class Select implements QueryInterface
 {
@@ -20,16 +20,16 @@ class Select implements QueryInterface
 	private Order $order;
 	private Limit $limit;
 
-	public function __construct(QuerySelect $querySelect)
+	public function __construct(QueryObject $querySelect)
 	{
 		$this->table = Table::create($querySelect->collections);
 		$this->column = Column::create($querySelect->fields);
 		$this->filter = Filter::create($querySelect->filters);
-		$this->order = Order::create($querySelect->order);
+		$this->order = Order::create($querySelect->sorts);
 		$this->limit = Limit::create($querySelect->limit);
 	}
 
-	public static function create(QuerySelect $querySelect): Select
+	public static function create(QueryObject $querySelect): Select
 	{
 		return new Select($querySelect);
 	}
