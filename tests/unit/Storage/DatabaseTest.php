@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database;
 use Projom\Storage\Database\Driver\MySQL;
-use Projom\Storage\Database\Drivers;
+use Projom\Storage\Database\Driver\Driver;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query;
 
@@ -19,14 +19,14 @@ class DatabaseTest extends TestCase
 		$record = [ 1 => 'record' ];
 
 		$mysql = $this->createMock(MySQL::class);
-		$mysql->method('type')->willReturn(Drivers::MySQL);
+		$mysql->method('type')->willReturn(Driver::MySQL);
 		$mysql->method('select')->willReturn($record);
 		$mysql->method('Query')->willReturn($this->createMock(Query::class));
 		$mysql->method('execute')->willReturn($record);
 
 		Engine::setDriver($mysql);
 		
-		$database = Database::create(Drivers::MySQL);
+		$database = Database::create(Driver::MySQL);
 		$this->assertInstanceOf(Database::class, $database);
 		
 		$query = $database->query('User');

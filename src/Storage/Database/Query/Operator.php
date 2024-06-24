@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database;
+namespace Projom\Storage\Database\Query;
 
-enum Operators: string
+enum Operator: string
 {
 	case EQ = '=';
 	case NE = '<>';

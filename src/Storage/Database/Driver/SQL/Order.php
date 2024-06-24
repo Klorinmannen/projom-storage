@@ -6,7 +6,7 @@ namespace Projom\Storage\Database\Driver\SQL;
 
 use Projom\Storage\Database\Driver\AccessorInterface;
 use Projom\Storage\Database\Driver\SQL\Util;
-use Projom\Storage\Database\Sorts;
+use Projom\Storage\Database\Query\Sort;
 
 class Order implements AccessorInterface
 {
@@ -37,7 +37,7 @@ class Order implements AccessorInterface
 		}
 	}
 
-	private function createSortField(string $field, Sorts $sort): string
+	private function createSortField(string $field, Sort $sort): string
 	{
 		$sortUC = strtoupper($sort->value);
 		$quotedField = Util::quote($field);

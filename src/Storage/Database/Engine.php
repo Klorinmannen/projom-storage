@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database;
 
-use Projom\Storage\Database\DriverInterface;
+use Projom\Storage\Database\Driver\Driver;
+use Projom\Storage\Database\Driver\DriverInterface;
 use Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\Source\Factory;
 
 class Engine
 {
 	protected static array $drivers = [];
-	protected static Drivers|null $currentDriver = null;
+	protected static Driver|null $currentDriver = null;
 
 	protected static function dispatch(): object|array
 	{
@@ -37,7 +38,7 @@ class Engine
 		static::$currentDriver = $driver->type();
 	}
 
-	public static function useDriver(Drivers $driver): void
+	public static function useDriver(Driver $driver): void
 	{
 		if (!array_key_exists($driver->value, static::$drivers))
 			throw new \Exception("Driver not loaded", 400);
@@ -48,9 +49,9 @@ class Engine
 	public static function loadDriver(array $config, array $options = []): void
 	{
 		$confDriver = $config['driver'] ?? '';
-		$driver = Drivers::tryFrom($confDriver);
+		$driver = Driver::tryFrom($confDriver);
 		match ($driver) {
-			Drivers::MySQL => static::loadMySQL($config, $options),
+			Driver::MySQL => static::loadMySQL($config, $options),
 			default => throw new \Exception("Driver {$confDriver} is not supported", 400)
 		};
 	}
@@ -60,7 +61,7 @@ class Engine
 		$source = Factory::createPDO($config, $options);
 		$driver = MySQL::create($source);
 		static::setDriver($driver);
-		static::useDriver(Drivers::MySQL);
+		static::useDriver(Driver::MySQL);
 	}
 
 	public static function clear(): void

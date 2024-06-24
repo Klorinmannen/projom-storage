@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\SQL\Order;
-use Projom\Storage\Database\Sorts;
+use Projom\Storage\Database\Query\Sort;
 
 class OrderTest extends TestCase
 {
@@ -17,21 +17,21 @@ class OrderTest extends TestCase
 		return [
 			[
 				[
-					['Name', Sorts::ASC]
+					['Name', Sort::ASC]
 				],
 				'`Name` ASC'
 			],
 			[
 				[
-					['Name', Sorts::ASC,], 
-					['Age', Sorts::DESC]
+					['Name', Sort::ASC,], 
+					['Age', Sort::DESC]
 				],
 				'`Name` ASC, `Age` DESC'
 			],
 			[
 				[
-					['UserID', Sorts::DESC], 
-					['Email', Sorts::DESC]
+					['UserID', Sort::DESC], 
+					['Email', Sort::DESC]
 				],
 				'`UserID` DESC, `Email` DESC',
 			]
@@ -51,12 +51,12 @@ class OrderTest extends TestCase
 		return [
 			[
 				[
-					['Name', Sorts::ASC], 
-					['Age', Sorts::DESC]
+					['Name', Sort::ASC], 
+					['Age', Sort::DESC]
 				],
 				[ 
-					['UserID', Sorts::DESC], 
-					['Email', Sorts::DESC]
+					['UserID', Sort::DESC], 
+					['Email', Sort::DESC]
 				],
 				'`Name` ASC, `Age` DESC, `UserID` DESC, `Email` DESC'
 			]

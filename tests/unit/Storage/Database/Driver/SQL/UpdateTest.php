@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\SQL\Update;
-use Projom\Storage\Database\LogicalOperators;
-use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\Query\LogicalOperator;
+use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
 
 class UpdateTest extends TestCase
@@ -21,7 +21,7 @@ class UpdateTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					fieldsWithValues: ['Name' => 'John'],
-					filters: [['UserID', Operators::EQ, 10, LogicalOperators::AND]]
+					filters: [['UserID', Operator::EQ, 10, LogicalOperator::AND]]
 				),
 				[
 					'UPDATE `User` SET `Name` = :set_name_1 WHERE `UserID` = :filter_userid_1',

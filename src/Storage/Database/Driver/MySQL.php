@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Driver;
 
-use Projom\Storage\Database\DriverInterface;
-use Projom\Storage\Database\Drivers;
+use Projom\Storage\Database\Driver\DriverInterface;
+use Projom\Storage\Database\Driver\Driver;
 use Projom\Storage\Database\Driver\SQL\Delete;
 use Projom\Storage\Database\Driver\SQL\Insert;
 use Projom\Storage\Database\Driver\SQL\Select;
@@ -18,7 +18,7 @@ use Projom\Storage\Database\Source\PDOSource;
 class MySQL implements DriverInterface
 {
 	private PDOSource $source;
-	protected Drivers $driver = Drivers::MySQL;
+	protected Driver $driver = Driver::MySQL;
 
 	public function __construct(PDOSource $source)
 	{
@@ -30,7 +30,7 @@ class MySQL implements DriverInterface
 		return new MySQL($source);
 	}
 
-	public function type(): Drivers
+	public function type(): Driver
 	{
 		return $this->driver;
 	}

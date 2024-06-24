@@ -7,7 +7,7 @@ namespace Projom\Tests\Unit\Storage;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\MySQL;
-use Projom\Storage\Database\Drivers;
+use Projom\Storage\Database\Driver\Driver;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query;
 use Projom\Storage\DB;
@@ -19,7 +19,7 @@ class DBTest extends TestCase
 		$record = [ 1 => 'record' ];
 
 		$mysql = $this->createMock(MySQL::class);
-		$mysql->method('type')->willReturn(Drivers::MySQL);
+		$mysql->method('type')->willReturn(Driver::MySQL);
 		$mysql->method('select')->willReturn($record);
 		$mysql->method('Query')->willReturn($this->createMock(Query::class));
 		$mysql->method('execute')->willReturn($record);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Database\Driver\SQL;
 
 use Projom\Storage\Database\Driver\AccessorInterface;
-use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\Query\Operator;
 
 class Filter implements AccessorInterface
 {
@@ -74,7 +74,7 @@ class Filter implements AccessorInterface
 
 	private function build(
 		string $field,
-		Operators $operator,
+		Operator $operator,
 		mixed $value
 	): array {
 
@@ -82,20 +82,20 @@ class Filter implements AccessorInterface
 		$column = Column::create([$field]);
 
 		switch ($operator) {
-			case Operators::IS_NULL:
-			case Operators::IS_NOT_NULL:
+			case Operator::IS_NULL:
+			case Operator::IS_NOT_NULL:
 				return $this->nullFilter($column, $operator);
 
-			case Operators::IN:
-			case Operators::NOT_IN:
+			case Operator::IN:
+			case Operator::NOT_IN:
 				return $this->inFilter($column, $operator, $value);
 
-			case Operators::EQ:
-			case Operators::NE:
-			case Operators::GT:
-			case Operators::GTE:
-			case Operators::LT:
-			case Operators::LTE:
+			case Operator::EQ:
+			case Operator::NE:
+			case Operator::GT:
+			case Operator::GTE:
+			case Operator::LT:
+			case Operator::LTE:
 				return $this->defaultFilter($column, $operator, $value);
 
 			default:
@@ -103,7 +103,7 @@ class Filter implements AccessorInterface
 		}
 	}
 
-	private function nullFilter(Column $column, Operators $operator): array
+	private function nullFilter(Column $column, Operator $operator): array
 	{
 		return [
 			"$column {$operator->value}",
@@ -111,7 +111,7 @@ class Filter implements AccessorInterface
 		];
 	}
 
-	private function inFilter(Column $column, Operators $operator, array $values): array
+	private function inFilter(Column $column, Operator $operator, array $values): array
 	{
 		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
 
@@ -133,7 +133,7 @@ class Filter implements AccessorInterface
 		];
 	}
 
-	private function defaultFilter(Column $column, Operators $operator, mixed $value): array
+	private function defaultFilter(Column $column, Operator $operator, mixed $value): array
 	{
 		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
 

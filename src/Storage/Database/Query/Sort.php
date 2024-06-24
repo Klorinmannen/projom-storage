@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database;
+namespace Projom\Storage\Database\Query;
 
-enum Sorts: string
+enum Sort: string
 {
 	case ASC = 'ASC';
 	case DESC = 'DESC';

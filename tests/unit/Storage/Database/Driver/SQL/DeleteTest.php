@@ -8,9 +8,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\SQL\Delete;
-use Projom\Storage\Database\LogicalOperators;
+use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\QueryObject;
-use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\Query\Operator;
 
 class DeleteTest extends TestCase
 {
@@ -20,7 +20,7 @@ class DeleteTest extends TestCase
 			[
 				new QueryObject(
 					collections: ['User'],
-					filters: [['UserID', Operators::EQ, 10, LogicalOperators::AND]]
+					filters: [['UserID', Operator::EQ, 10, LogicalOperator::AND]]
 				),
 				[
 					'DELETE FROM `User` WHERE `UserID` = :filter_userid_1',

@@ -8,9 +8,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\MySQL;
-use Projom\Storage\Database\Drivers;
-use Projom\Storage\Database\LogicalOperators;
-use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\Driver\Driver;
+use Projom\Storage\Database\Query\LogicalOperator;
+use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Source\PDOSource;
 use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\QueryObject;
@@ -22,7 +22,7 @@ class MySQLTest extends TestCase
 		$source = $this->createMock(PDOSource::class);
 		$mysql = new MySQL($source);
 
-		$this->assertEquals(Drivers::MySQL, $mysql->type());
+		$this->assertEquals(Driver::MySQL, $mysql->type());
 	}
 
 	public function test_select(): void
@@ -79,7 +79,7 @@ class MySQLTest extends TestCase
 		$source->expects($this->once())->method('rowsAffected')->willReturn($expected);
 
 		$mysql = MySQL::create($source);
-		$queryObject = new QueryObject(collections: ['User'], filters: [['UserID', Operators::EQ, '10', LogicalOperators::AND]]);
+		$queryObject = new QueryObject(collections: ['User'], filters: [['UserID', Operator::EQ, '10', LogicalOperator::AND]]);
 
 		$result = $mysql->delete($queryObject);
 		$this->assertEquals($expected, $result);

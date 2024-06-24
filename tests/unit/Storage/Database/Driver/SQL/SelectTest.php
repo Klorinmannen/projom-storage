@@ -8,10 +8,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\SQL\Select;
-use Projom\Storage\Database\LogicalOperators;
-use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\Query\LogicalOperator;
+use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
-use Projom\Storage\Database\Sorts;
+use Projom\Storage\Database\Query\Sort;
 
 class SelectTest extends TestCase
 {
@@ -22,8 +22,8 @@ class SelectTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					fields: ['UserID', 'Name'],
-					filters: [['UserID', Operators::EQ, 10, LogicalOperators::AND]],
-					sorts: [['UserID', Sorts::ASC], ['Name', Sorts::DESC]],
+					filters: [['UserID', Operator::EQ, 10, LogicalOperator::AND]],
+					sorts: [['UserID', Sort::ASC], ['Name', Sort::DESC]],
 					limit: 10
 				),
 				[
@@ -35,7 +35,7 @@ class SelectTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					fields: ['*'],
-					sorts: [['UserID', Sorts::ASC], ['Name', Sorts::DESC]]
+					sorts: [['UserID', Sort::ASC], ['Name', Sort::DESC]]
 				),
 				[
 					'SELECT * FROM `User` ORDER BY `UserID` ASC, `Name` DESC',

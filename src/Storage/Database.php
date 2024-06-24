@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Projom\Storage;
 
-use Projom\Storage\Database\Drivers;
+use Projom\Storage\Database\Driver\Driver;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query;
 
 class Database extends Engine
 {
-	protected static Drivers|null $currentDriver = null;
+	protected static Driver|null $currentDriver = null;
 
-	public function __construct(Drivers $driver)
+	public function __construct(Driver $driver)
 	{
 		static::$currentDriver = $driver;
 	}
 
-	public static function create(Drivers $driver = Drivers::MySQL): Database
+	public static function create(Driver $driver = Driver::MySQL): Database
 	{
 		return new Database($driver);
 	}

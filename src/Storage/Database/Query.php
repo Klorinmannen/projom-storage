@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database;
 
-use Projom\Storage\Database\DriverInterface;
-use Projom\Storage\Database\LogicalOperators;
-use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\Driver\DriverInterface;
+use Projom\Storage\Database\Query\LogicalOperator;
+use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
 
 class Query
@@ -34,7 +34,7 @@ class Query
      * * Example use: $database->query('CollectionName')->fetch('Name', 'John')
      * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operators::IN)
      */
-    public function fetch(string $field, mixed $value, Operators $operator = Operators::EQ): array
+    public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): array
     {
         $this->filterOn([$field => $value], $operator);
         return $this->get($field);
@@ -49,8 +49,8 @@ class Query
      */
     public function filterOn(
         array $fieldsWithValues,
-        Operators $operator = Operators::EQ,
-        LogicalOperators $logicalOperator = LogicalOperators::AND
+        Operator $operator = Operator::EQ,
+        LogicalOperator $logicalOperator = LogicalOperator::AND
     ): Query {
 
         foreach ($fieldsWithValues as $field => $value) {

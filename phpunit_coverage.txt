@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2024-06-24 11:27:42
+  2024-06-24 18:34:19
 
  Summary:
-  Classes: 72.73% (16/22)
-  Methods: 78.74% (100/127)
-  Lines:   70.52% (244/346)
+  Classes: 71.43% (15/21)
+  Methods: 77.50% (93/120)
+  Lines:   69.18% (229/331)
 
 Projom\Storage\DB
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
@@ -36,8 +36,6 @@ Projom\Storage\Database\Driver\SQL\Update
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 11/ 11)
 Projom\Storage\Database\Driver\SQL\Util
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  6/  6)
-Projom\Storage\Database\Driver\SQL\Value
-  Methods: 100.00% ( 7/ 7)   Lines: 100.00% ( 15/ 15)
 Projom\Storage\Database\Engine
   Methods:  71.43% ( 5/ 7)   Lines:  61.54% ( 16/ 26)
 Projom\Storage\Database\Query

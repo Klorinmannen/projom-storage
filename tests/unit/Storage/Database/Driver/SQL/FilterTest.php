@@ -7,8 +7,8 @@ namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\LogicalOperators;
-use Projom\Storage\Database\Operators;
+use Projom\Storage\Database\Query\LogicalOperator;
+use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Driver\SQL\Filter;
 
 class FilterTest extends TestCase
@@ -17,8 +17,8 @@ class FilterTest extends TestCase
 	{
 		return [
 			[ 
-				[ ['Name', Operators::EQ, 'John', LogicalOperators::AND] ],
-				[ ['Age', Operators::GT, 18, LogicalOperators::AND] ]
+				[ ['Name', Operator::EQ, 'John', LogicalOperator::AND] ],
+				[ ['Age', Operator::GT, 18, LogicalOperator::AND] ]
 			]
 		];
 	}	
