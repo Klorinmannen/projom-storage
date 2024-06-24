@@ -5,70 +5,70 @@ declare(strict_types=1);
 namespace Projom\Storage\Database\Driver;
 
 use Projom\Storage\Database\Driver\DriverInterface;
-use Projom\Storage\Database\Driver\Driver;
 use Projom\Storage\Database\Driver\SQL\Delete;
 use Projom\Storage\Database\Driver\SQL\Insert;
 use Projom\Storage\Database\Driver\SQL\Select;
 use Projom\Storage\Database\Driver\SQL\Update;
 use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\QueryObject;
-use Projom\Storage\Database\SourceInterface;
-use Projom\Storage\Database\Source\PDOSource;
 
 class MySQL implements DriverInterface
 {
-	private PDOSource $source;
-	protected Driver $driver = Driver::MySQL;
+	private \PDO $pdo;
+	private \PDOStatement|null $statement = null;
 
-	public function __construct(PDOSource $source)
+	public function __construct(\PDO $pdo)
 	{
-		$this->source = $source;
+		$this->pdo = $pdo;
 	}
 
-	public static function create(SourceInterface $source): MySQL
+	public static function create(\PDO $pdo): MySQL
 	{
-		return new MySQL($source);
-	}
-
-	public function type(): Driver
-	{
-		return $this->driver;
+		return new MySQL($pdo);
 	}
 
 	public function select(QueryObject $queryObject): array
 	{
 		$select = Select::create($queryObject);
 
-		$this->source->run($select);
+		[$query, $params] = $select->query();
 
-		return $this->source->fetchResult();
+		$this->execute($query, $params);
+
+		return $this->statement->fetchAll();
 	}
 
 	public function update(QueryObject $queryObject): int
 	{
 		$update = Update::create($queryObject);
 
-		$this->source->run($update);
+		[$query, $params] = $update->query();
 
-		return $this->source->rowsAffected();
+		$this->execute($query, $params);
+
+		return $this->statement->rowCount();
 	}
 
 	public function insert(QueryObject $queryObject): int
 	{
 		$inserted = Insert::create($queryObject);
 
-		$this->source->run($inserted);
+		[$query, $params] = $inserted->query();
 
-		return $this->source->insertedID();
+		$this->execute($query, $params);
+
+		return (int) $this->pdo->lastInsertId();
 	}
 
 	public function delete(QueryObject $queryObject): int
 	{
 		$delete = Delete::create($queryObject);
 
-		$this->source->run($delete);
+		[$query, $params] = $delete->query();
 
-		return $this->source->rowsAffected();
+		$this->execute($query, $params);
+
+		return (int) $this->statement->rowCount();
 	}
 
 	public function Query(string ...$tables): Query
@@ -76,9 +76,12 @@ class MySQL implements DriverInterface
 		return Query::create($this, $tables);
 	}
 
-	public function execute(string $sql, array|null $params): array
+	public function execute(string $sql, array|null $params): void
 	{
-		$this->source->execute($sql, $params);
-		return $this->source->fetchResult();
+		if (!$this->statement = $this->pdo->prepare($sql))
+			throw new \Exception("Failed to prepare statement", 500);
+
+		if (!$this->statement->execute($params))
+			throw new \Exception("Failed to execute statement", 500);
 	}
 }

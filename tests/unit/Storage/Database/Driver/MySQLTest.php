@@ -7,29 +7,20 @@ namespace Projom\tests\unit\Storage\Database\Driver;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use PDO;
 use Projom\Storage\Database\Driver\MySQL;
-use Projom\Storage\Database\Driver\Driver;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
-use Projom\Storage\Database\Source\PDOSource;
 use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\QueryObject;
 
 class MySQLTest extends TestCase
 {
-	public function test_type(): void
-	{
-		$source = $this->createMock(PDOSource::class);
-		$mysql = new MySQL($source);
-
-		$this->assertEquals(Driver::MySQL, $mysql->type());
-	}
-
 	public function test_select(): void
 	{
 		$expected = [['UserID' => '10', 'Name' => 'John']];
 
-		$source = $this->createMock(PDOSource::class);
+		$source = $this->createMock(PDO::class);
 		$source->expects($this->once())->method('run');
 		$source->expects($this->once())->method('fetchResult')->willReturn($expected);
 
@@ -44,7 +35,7 @@ class MySQLTest extends TestCase
 	{
 		$expected = 6;
 
-		$source = $this->createMock(PDOSource::class);
+		$source = $this->createMock(PDO::class);
 		$source->expects($this->once())->method('run');
 		$source->expects($this->once())->method('rowsAffected')->willReturn($expected);
 
@@ -59,9 +50,9 @@ class MySQLTest extends TestCase
 	{
 		$expected = 10;
 
-		$source = $this->createMock(PDOSource::class);
-		$source->expects($this->once())->method('run');
-		$source->expects($this->once())->method('insertedID')->willReturn($expected);
+		$source = $this->createMock(PDO::class);
+		$source->expects($this->once())->method('execute');
+		$source->expects($this->once())->method('lastInsertedId')->willReturn($expected);
 
 		$mysql = MySQL::create($source);
 		$queryObject = new QueryObject(collections: ['User'], fieldsWithValues: ['Name' => 'John', 'Age' => 25]);
@@ -74,9 +65,9 @@ class MySQLTest extends TestCase
 	{
 		$expected = 1;
 
-		$source = $this->createMock(PDOSource::class);
-		$source->expects($this->once())->method('run');
-		$source->expects($this->once())->method('rowsAffected')->willReturn($expected);
+		$source = $this->createMock(PDO::class);
+		$source->expects($this->once())->method('execute');
+		$source->expects($this->once())->method('rowCount')->willReturn($expected);
 
 		$mysql = MySQL::create($source);
 		$queryObject = new QueryObject(collections: ['User'], filters: [['UserID', Operator::EQ, '10', LogicalOperator::AND]]);
@@ -96,7 +87,7 @@ class MySQLTest extends TestCase
 	#[DataProvider('query_test_provider')]
 	public function test_query(array $tables): void
 	{
-		$source = $this->createMock(PDOSource::class);
+		$source = $this->createMock(PDO::class);
 		$mysql = new MySQL($source);
 		$query = $mysql->Query(...$tables);
 		$this->assertInstanceOf(Query::class, $query);
@@ -113,7 +104,7 @@ class MySQLTest extends TestCase
 	#[DataProvider('execute_test_provider')]
 	public function test_execute(string $sql, array|null $params, array $expected): void
 	{
-		$source = $this->createMock(PDOSource::class);
+		$source = $this->createMock(PDO::class);
 		$source->expects($this->once())->method('fetchResult')->willReturn($expected);
 		$mysql = new MySQL($source);
 		$result = $mysql->execute($sql, $params);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver;
+namespace Projom\Storage\Database\Engine;
 
 enum Driver: string 
 {

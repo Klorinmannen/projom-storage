@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\Driver\DriverInterface;
-use Projom\Storage\Database\Driver\Driver;
+use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Source\PDOSource;
 

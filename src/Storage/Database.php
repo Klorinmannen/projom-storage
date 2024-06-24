@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage;
 
-use Projom\Storage\Database\Driver\Driver;
+use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query;
 
