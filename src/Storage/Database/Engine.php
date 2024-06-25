@@ -14,17 +14,23 @@ class Engine
 	protected static array $drivers = [];
 	protected static string|null $currentDriver = null;
 
-	protected static function dispatch(): object|array
-	{
+	protected static function dispatch(
+		array|null $collections = null,
+		string|null $query = null,
+		array|null $params = null
+	): object|array {
+
 		$driver = static::driver();
 		if ($driver === null)
-			throw new \Exception("Database driver not set", 400);
+			throw new \Exception("Engine driver not set", 400);
 
-		return match (func_num_args()) {
-			1 => $driver->Query(...func_get_args()),
-			2 => $driver->execute(...func_get_args()),
-			default => throw new \Exception("Invalid number of arguments", 400)
-		};
+		if ($collections !== null)
+			return new Query($driver, $collections);
+		
+		if ($query !== null)
+			return $driver->execute($query, $params);
+		
+		throw new \Exception("Invalid dispatch", 400);
 	}
 
 	public static function driver(): DriverInterface|null
