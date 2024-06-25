@@ -12,7 +12,7 @@ use Projom\Storage\Database\Engine\DriverFactory;
 class Engine
 {
 	protected static array $drivers = [];
-	protected static Driver|null $currentDriver = null;
+	protected static string|null $currentDriver = null;
 
 	protected static function dispatch(): object|array
 	{
@@ -29,18 +29,18 @@ class Engine
 
 	public static function driver(): DriverInterface|null
 	{
-		return static::$drivers[static::$currentDriver?->value] ?? null;
+		return static::$drivers[static::$currentDriver] ?? null;
 	}
 
-	public static function useDriver(Driver $driver): void
+	public static function useDriver(string $driver): void
 	{
-		if (!array_key_exists($driver->value, static::$drivers))
+		if (!array_key_exists($driver, static::$drivers))
 			throw new \Exception("Driver not loaded", 400);
 
 		static::$currentDriver = $driver;
 	}
 
-	public static function setDriver(array $config): void
+	public static function loadDriver(array $config): void
 	{
 		$config = new Config($config);
 		$driverType = Driver::tryFrom($config->driver);
@@ -49,8 +49,13 @@ class Engine
 			default => throw new \Exception("Driver: {$driverType} is not supported", 400)
 		};
 
-		static::$drivers[$driverType->value] = $driver;
-		static::$currentDriver = $driverType;
+		static::setDriver($driver);
+	}
+
+	public static function setDriver(DriverInterface $driver): void
+	{
+		static::$drivers[$driver::class] = $driver;
+		static::$currentDriver = $driver::class;
 	}
 
 	public static function clear(): void
