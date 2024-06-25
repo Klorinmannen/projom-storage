@@ -9,7 +9,6 @@ use Projom\Storage\Database\Driver\SQL\Delete;
 use Projom\Storage\Database\Driver\SQL\Insert;
 use Projom\Storage\Database\Driver\SQL\Select;
 use Projom\Storage\Database\Driver\SQL\Update;
-use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\QueryObject;
 
 class MySQL implements DriverInterface
@@ -69,11 +68,6 @@ class MySQL implements DriverInterface
 		$this->execute($query, $params);
 
 		return (int) $this->statement->rowCount();
-	}
-
-	public function Query(string ...$tables): Query
-	{
-		return Query::create($this, $tables);
 	}
 
 	public function execute(string $sql, array|null $params): void

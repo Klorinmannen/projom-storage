@@ -13,6 +13,5 @@ interface DriverInterface
 	public function update(QueryObject $queryObject): int;
 	public function insert(QueryObject $queryObject): int;
 	public function delete(QueryObject $queryObject): int;
-	public function Query(string ...$collections): Query;
 	public function execute(string $sql, ?array $params): void;
 }
