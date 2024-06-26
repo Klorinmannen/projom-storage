@@ -11,7 +11,7 @@ use Projom\Storage\Database\Driver\SQL\Select;
 use Projom\Storage\Database\Driver\SQL\Update;
 use Projom\Storage\Database\Query\QueryObject;
 
-class MySQL implements DriverInterface
+class MySQLDriver implements DriverInterface
 {
 	private \PDO $pdo;
 	private \PDOStatement|null $statement = null;
@@ -21,9 +21,9 @@ class MySQL implements DriverInterface
 		$this->pdo = $pdo;
 	}
 
-	public static function create(\PDO $pdo): MySQL
+	public static function create(\PDO $pdo): MySQLDriver
 	{
-		return new MySQL($pdo);
+		return new MySQLDriver($pdo);
 	}
 
 	public function select(QueryObject $queryObject): array
