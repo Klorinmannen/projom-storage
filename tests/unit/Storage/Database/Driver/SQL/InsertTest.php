@@ -7,7 +7,7 @@ namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\SQL\Insert;
+use Projom\Storage\Database\Driver\SQL\InsertQuery;
 use Projom\Storage\Database\Query\QueryObject;
 
 class InsertTest extends TestCase
@@ -31,7 +31,7 @@ class InsertTest extends TestCase
 	#[DataProvider('create_test_provider')]
 	public function test_create(QueryObject $queryObject, array $expected): void
 	{
-		$insert = Insert::create($queryObject);
+		$insert = InsertQuery::create($queryObject);
 		$this->assertEquals($expected, $insert->query());
 	}
 }

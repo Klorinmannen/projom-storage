@@ -9,7 +9,7 @@ use Projom\Storage\Database\Driver\SQL\Table;
 use Projom\Storage\Database\Driver\QueryInterface;
 use Projom\Storage\Database\Query\QueryObject;
 
-class Delete implements QueryInterface
+class DeleteQuery implements QueryInterface
 {
 	private Table $table;
 	private Filter $filter;
@@ -20,9 +20,9 @@ class Delete implements QueryInterface
 		$this->filter = Filter::create($queryDelete->filters);
 	}
 
-	public static function create(QueryObject $queryDelete): Delete
+	public static function create(QueryObject $queryDelete): DeleteQuery
 	{
-		return new Delete($queryDelete);
+		return new DeleteQuery($queryDelete);
 	}
 
 	public function query(): array

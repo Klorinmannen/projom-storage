@@ -10,7 +10,7 @@ use Projom\Storage\Database\Driver\SQL\Table;
 use Projom\Storage\Database\Driver\QueryInterface;
 use Projom\Storage\Database\Query\QueryObject;
 
-class Update implements QueryInterface
+class UpdateQuery implements QueryInterface
 {
 	private Table $table;
 	private Set $set;
@@ -23,9 +23,9 @@ class Update implements QueryInterface
 		$this->filter = Filter::create($queryUpdate->filters);
 	}
 
-	public static function create(QueryObject $queryUpdate): Update
+	public static function create(QueryObject $queryUpdate): UpdateQuery
 	{
-		return new Update($queryUpdate);
+		return new UpdateQuery($queryUpdate);
 	}
 
 	public function query(): array

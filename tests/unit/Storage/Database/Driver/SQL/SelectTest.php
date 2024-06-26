@@ -7,7 +7,7 @@ namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\SQL\Select;
+use Projom\Storage\Database\Driver\SQL\SelectQuery;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
@@ -69,7 +69,7 @@ class SelectTest extends TestCase
 	#[DataProvider('create_test_provider')]
 	public function test_create(QueryObject $queryObject, array $expected): void
 	{
-		$select = Select::create($queryObject);
+		$select = SelectQuery::create($queryObject);
 		$this->assertEquals($expected, $select->query());
 	}
 }

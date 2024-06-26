@@ -7,7 +7,7 @@ namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\SQL\Delete;
+use Projom\Storage\Database\Driver\SQL\DeleteQuery;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\QueryObject;
 use Projom\Storage\Database\Query\Operator;
@@ -42,7 +42,7 @@ class DeleteTest extends TestCase
 	#[DataProvider('create_test_provider')]
 	public function test_create(QueryObject $queryObject, array $expected): void
 	{
-		$delete = Delete::create($queryObject);
+		$delete = DeleteQuery::create($queryObject);
 		$this->assertEquals($expected, $delete->query());
 	}
 }

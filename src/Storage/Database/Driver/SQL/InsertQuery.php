@@ -9,7 +9,7 @@ use Projom\Storage\Database\Driver\SQL\Table;
 use Projom\Storage\Database\Driver\QueryInterface;
 use Projom\Storage\Database\Query\QueryObject;
 
-class Insert implements QueryInterface
+class InsertQuery implements QueryInterface
 {
 	private Table $table;
 	private Set $set;
@@ -20,9 +20,9 @@ class Insert implements QueryInterface
 		$this->set = Set::create($queryInsert->fieldsWithValues);
 	}
 
-	public static function create(QueryObject $queryInsert): Insert
+	public static function create(QueryObject $queryInsert): InsertQuery
 	{
-		return new Insert($queryInsert);
+		return new InsertQuery($queryInsert);
 	}
 
 	public function query(): array

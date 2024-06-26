@@ -12,7 +12,7 @@ use Projom\Storage\Database\Driver\SQL\Table;
 use Projom\Storage\Database\Driver\QueryInterface;
 use Projom\Storage\Database\Query\QueryObject;
 
-class Select implements QueryInterface
+class SelectQuery implements QueryInterface
 {
 	private Table $table;
 	private Column $column;
@@ -29,9 +29,9 @@ class Select implements QueryInterface
 		$this->limit = Limit::create($querySelect->limit);
 	}
 
-	public static function create(QueryObject $querySelect): Select
+	public static function create(QueryObject $querySelect): SelectQuery
 	{
-		return new Select($querySelect);
+		return new SelectQuery($querySelect);
 	}
 
 	public function query(): array

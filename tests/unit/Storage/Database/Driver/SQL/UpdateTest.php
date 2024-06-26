@@ -7,7 +7,7 @@ namespace Projom\tests\unit\Storage\Database\Driver\SQL;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\SQL\Update;
+use Projom\Storage\Database\Driver\SQL\UpdateQuery;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
@@ -44,7 +44,7 @@ class UpdateTest extends TestCase
 	#[DataProvider('create_test_provider')]
 	public function test_create(QueryObject $queryObject, array $expected): void
 	{
-		$update = Update::create($queryObject);
+		$update = UpdateQuery::create($queryObject);
 		$this->assertEquals($expected, $update->query());
 	}
 }
