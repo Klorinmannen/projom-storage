@@ -1,0 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Projom\Storage;
+
+use Projom\Storage\Database\Engine;
+
+class Bootstrap
+{
+	public static function start(): void
+	{
+		Engine::start();
+	}
+}
