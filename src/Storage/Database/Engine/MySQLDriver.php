@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver;
+namespace Projom\Storage\Database\Engine;
 
-use Projom\Storage\Database\Driver\DriverInterface;
+use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Driver\SQL\DeleteQuery;
 use Projom\Storage\Database\Driver\SQL\InsertQuery;
 use Projom\Storage\Database\Driver\SQL\SelectQuery;

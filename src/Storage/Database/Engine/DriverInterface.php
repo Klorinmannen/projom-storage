@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver;
+namespace Projom\Storage\Database\Engine;
 
-use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\QueryObject;
 
 interface DriverInterface
