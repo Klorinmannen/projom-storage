@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Engine;
+namespace Projom\Storage\Database\Engine\Source;
 
 use Projom\Storage\Database\Engine\Config;
 

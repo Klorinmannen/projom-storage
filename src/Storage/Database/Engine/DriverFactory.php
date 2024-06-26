@@ -4,15 +4,39 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Engine;
 
-use Projom\Storage\Database\Driver\MySQL;
 use Projom\Storage\Database\Engine\Config;
-use Projom\Storage\Database\Engine\Source\PDOFactory;
+use Projom\Storage\Database\Engine\Driver;
+use Projom\Storage\Database\Engine\DriverInterface;
+use Projom\Storage\Database\Engine\MySQLDriver;
+use Projom\Storage\Database\Engine\Source\SourceFactory;
 
 class DriverFactory
 {
-	public static function MySQL(Config $config): object
+	private SourceFactory $sourceFactory;
+
+	public function __construct(SourceFactory $sourceFactory)
 	{
-		$pdo = PDOFactory::MySQL($config);
-		return MySQL::create($pdo);
+		$this->sourceFactory = $sourceFactory;
+	}
+
+	public static function create(SourceFactory $sourceFactory): DriverFactory
+	{
+		return new DriverFactory($sourceFactory);
+	}
+
+	public function createDriver(Config $config): DriverInterface
+	{
+		$driver = match ($config->driver) {
+			Driver::MySQL => $this->MySQL($config),
+			default => throw new \Exception("Driver: {$config->driver->value} is not supported", 400)
+		};
+
+		return $driver;
+	}
+
+	public function MySQL(Config $config): MySQLDriver
+	{
+		$pdo = $this->sourceFactory->createPDO($config);
+		return MySQLDriver::create($pdo);
 	}
 }

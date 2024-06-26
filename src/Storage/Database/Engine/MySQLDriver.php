@@ -72,10 +72,18 @@ class MySQLDriver implements DriverInterface
 
 	public function execute(string $sql, array|null $params): void
 	{
-		if (!$this->statement = $this->pdo->prepare($sql))
+		if (!$statement = $this->pdo->prepare($sql))
 			throw new \Exception("Failed to prepare statement", 500);
 
+		$this->statement = $statement;
 		if (!$this->statement->execute($params))
 			throw new \Exception("Failed to execute statement", 500);
+	}
+
+	public function query(string $sql, array|null $params): array
+	{
+		$this->execute($sql, $params);
+
+		return $this->statement->fetchAll();
 	}
 }

@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database;
 
-use Projom\Storage\Database\Driver\DriverInterface;
+use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine\DriverFactory;
+use Projom\Storage\Database\Engine\Source\SourceFactory;
 
 class Engine
 {
 	protected static array $drivers = [];
-	protected static string|null $currentDriver = null;
+	protected static Driver|null $currentDriver = null;
+	protected static DriverFactory|null $driverFactory = null;
 
-	protected static function dispatch(
+	public static function dispatch(
 		array|null $collections = null,
 		string|null $query = null,
 		array|null $params = null
@@ -26,21 +28,21 @@ class Engine
 
 		if ($collections !== null)
 			return new Query($driver, $collections);
-		
+
 		if ($query !== null)
-			return $driver->execute($query, $params);
-		
+			return $driver->query($query, $params);
+
 		throw new \Exception("Invalid dispatch", 400);
 	}
 
 	public static function driver(): DriverInterface|null
 	{
-		return static::$drivers[static::$currentDriver] ?? null;
+		return static::$drivers[static::$currentDriver?->value] ?? null;
 	}
 
-	public static function useDriver(string $driver): void
+	public static function useDriver(Driver $driver): void
 	{
-		if (!array_key_exists($driver, static::$drivers))
+		if (!array_key_exists($driver->value, static::$drivers))
 			throw new \Exception("Driver not loaded", 400);
 
 		static::$currentDriver = $driver;
@@ -48,25 +50,36 @@ class Engine
 
 	public static function loadDriver(array $config): void
 	{
-		$config = new Config($config);
-		$driverType = Driver::tryFrom($config->driver);
-		$driver = match ($driverType) {
-			Driver::MySQL => DriverFactory::MySQL($config),
-			default => throw new \Exception("Driver: {$driverType} is not supported", 400)
-		};
+		if (static::$driverFactory === null)
+			throw new \Exception("Driver factory not set", 400);
 
-		static::setDriver($driver);
+		$config = new Config($config);
+		$engineDriver = static::$driverFactory->createDriver($config);
+		static::setDriver($engineDriver, $config->driver);
 	}
 
-	public static function setDriver(DriverInterface $driver): void
+	public static function setDriver(DriverInterface $engineDriver, Driver $driver): void
 	{
-		static::$drivers[$driver::class] = $driver;
-		static::$currentDriver = $driver::class;
+		static::$drivers[$driver->value] = $engineDriver;
+		static::$currentDriver = $driver;
+	}
+
+	public static function setDriverFactory(DriverFactory $driverFactory): void
+	{
+		static::$driverFactory = $driverFactory;
+	}
+
+	public static function start(): void
+	{
+		$sourceFactory = SourceFactory::create();
+		$driverFactory = DriverFactory::create($sourceFactory);
+		static::setDriverFactory($driverFactory);
 	}
 
 	public static function clear(): void
 	{
 		static::$drivers = [];
 		static::$currentDriver = null;
+		static::$driverFactory = null;
 	}
 }
