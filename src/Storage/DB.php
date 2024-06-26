@@ -11,7 +11,7 @@ class DB extends Engine
 {
 	public static function query(string $table): Query
 	{
-		return static::dispatch(collections: [ $table ]);
+		return static::dispatch(collections: [$table]);
 	}
 
 	public static function sql(string $query, array|null $params = null): mixed
