@@ -115,7 +115,7 @@ class EngineTest extends TestCase
 	public function start(): void
 	{
 		$this->expectException(\Exception::class);
-		$this->expectExceptionMessage('Missing DNS server host');
+		$this->expectExceptionMessage('DNS missing server host');
 
 		Engine::start();
 		Engine::loadDriver(['driver' => 'mysql']);
