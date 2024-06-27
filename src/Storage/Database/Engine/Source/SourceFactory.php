@@ -20,15 +20,32 @@ class SourceFactory
 	{
 		$dsn = match ($config->driver) {
 			Driver::MySQL => DSN::MySQL($config),
-			default => throw new \Exception("Driver: {$config->driver->value} is not supported", 400)
+			default => throw new \Exception('Driver is not supported', 400)
 		};
 
 		$parsedAttributes = PDO::parseAttributes($config->options);
 
+		$pdo = $this->PDO(
+			$dsn,
+			$config->username,
+			$config->password,
+			$parsedAttributes
+		);
+
+		return $pdo;
+	}
+
+	public function PDO(
+		string $dsn,
+		string $username = null,
+		string $password = null,
+		array $parsedAttributes = []
+	): \PDO {
+		
 		$pdo = new \PDO(
 			$dsn,
-			$config->username ?? null,
-			$config->password ?? null,
+			$username,
+			$password,
 			$parsedAttributes + PDO::DEFAULT_PDO_ATTRIBUTES
 		);
 
