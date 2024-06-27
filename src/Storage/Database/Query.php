@@ -37,32 +37,7 @@ class Query
     public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): array
     {
         $this->filterOn([$field => $value], $operator);
-        return $this->get($field);
-    }
-
-    /**
-     * Creating a filter to be used in the query to be executed.
-     * 
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'])
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'], ['Age' => 25], Operators::NE)
-     * * Example use: $database->query('CollectionName')->filterOn([ 'Age' => [12, 23, 45] ], Operators::IN)
-     */
-    public function filterOn(
-        array $fieldsWithValues,
-        Operator $operator = Operator::EQ,
-        LogicalOperator $logicalOperator = LogicalOperator::AND
-    ): Query {
-
-        foreach ($fieldsWithValues as $field => $value) {
-            $this->filters[] = [
-                $field,
-                $operator,
-                $value,
-                $logicalOperator
-            ];
-        }
-
-        return $this;
+        return $this->select('*');
     }
 
     /**
@@ -92,29 +67,6 @@ class Query
     public function get(string ...$fields): array
     {
         return $this->select(...$fields);
-    }
-
-    /**
-     * Sorts the result of the query.
-     * 
-     * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])->get('*')
-     */
-    public function sortOn(array $sortFields): Query
-    {
-        foreach ($sortFields as $field => $sort)
-            $this->sorts[] = [$field, $sort];
-        return $this;
-    }
-
-    /**
-     * Limits the result of the query.
-     * 
-     * * Example use: $database->query('CollectionName')->limit(10)->get('*')
-     */
-    public function limit(int|string $limit): Query
-    {
-        $this->limit = $limit;
-        return $this;
     }
 
     /**
@@ -182,5 +134,53 @@ class Query
     public function remove(): int
     {
         return $this->delete();
+    }
+
+    /**
+     * Creating a filter to be used in the query to be executed.
+     * 
+     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'])
+     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'], ['Age' => 25], Operators::NE)
+     * * Example use: $database->query('CollectionName')->filterOn([ 'Age' => [12, 23, 45] ], Operators::IN)
+     */
+    public function filterOn(
+        array $fieldsWithValues,
+        Operator $operator = Operator::EQ,
+        LogicalOperator $logicalOperator = LogicalOperator::AND
+    ): Query {
+
+        foreach ($fieldsWithValues as $field => $value) {
+            $this->filters[] = [
+                $field,
+                $operator,
+                $value,
+                $logicalOperator
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sorts the result of the query.
+     * 
+     * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])->get('*')
+     */
+    public function sortOn(array $sortFields): Query
+    {
+        foreach ($sortFields as $field => $sort)
+            $this->sorts[] = [$field, $sort];
+        return $this;
+    }
+
+    /**
+     * Limits the result of the query.
+     * 
+     * * Example use: $database->query('CollectionName')->limit(10)->get('*')
+     */
+    public function limit(int|string $limit): Query
+    {
+        $this->limit = $limit;
+        return $this;
     }
 }
