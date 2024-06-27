@@ -16,7 +16,7 @@ class SourceFactory
 		return new SourceFactory();
 	}
 
-	public static function createPDO(Config $config): \PDO
+	public function createPDO(Config $config): \PDO
 	{
 		$dsn = match ($config->driver) {
 			Driver::MySQL => DSN::MySQL($config),
