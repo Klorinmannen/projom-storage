@@ -28,7 +28,7 @@ class DriverFactory
 	{
 		$driver = match ($config->driver) {
 			Driver::MySQL => $this->MySQL($config),
-			default => throw new \Exception("Driver: {$config->driver->value} is not supported", 400)
+			default => throw new \Exception('Driver is not supported', 400)
 		};
 
 		return $driver;
