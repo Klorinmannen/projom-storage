@@ -41,7 +41,7 @@ class SourceFactory
 		string $password = null,
 		array $parsedAttributes = []
 	): \PDO {
-		
+
 		$pdo = new \PDO(
 			$dsn,
 			$username,
