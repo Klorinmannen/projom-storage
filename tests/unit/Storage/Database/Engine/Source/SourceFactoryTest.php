@@ -10,23 +10,44 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\Source\SourceFactory;
 
+class SourceFactoryStub extends SourceFactory
+{
+	private \PDO $pdo;
+
+	public function __construct(\PDO $pdo)
+	{
+		$this->pdo = $pdo;
+	}
+
+	public function PDO(
+		string $dsn,
+		string $username = null,
+		string $password = null,
+		array $parsedAttributes = []
+	): \PDO {
+		return $this->pdo;
+	}
+}
+
 class SourceFactoryTest extends TestCase
 {
 	#[Test]
 	public function createPDO(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
-
-		$sourceFactory = $this->createStub(SourceFactory::class);
-		$sourceFactory->method('PDO')->willReturn($pdo);
-
+		$sourceFactory = new SourceFactoryStub($pdo);
+	
 		$config = new Config([
 			'driver' => 'mysql',
 			'host' => 'localhost',
 			'port' => '3306',
 			'database' => 'test',
 			'charset' => 'utf8mb4',
-			'collation' => 'utf8mb4_unicode_ci'
+			'collation' => 'utf8mb4_unicode_ci',
+			'options' => [
+				'ATTR_ERRMODE' => 'ERRMODE_EXCEPTION',
+				'ATTR_DEFAULT_FETCH_MODE' => 'FETCH_ASSOC'
+			]
 		]);
 
 		$pdo = $sourceFactory->createPDO($config);
