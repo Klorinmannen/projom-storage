@@ -45,16 +45,19 @@ class QueryTest extends TestCase
 		$expected = 1;
 
 		$pdoStatement = $this->createMock(\PDOStatement::class);
-		$pdoStatement->expects($this->once())->method('execute')->willReturn(true);
-		$pdoStatement->expects($this->once())->method('rowCount')->willReturn($expected);
+		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
+		$pdoStatement->expects($this->atLeastOnce())->method('rowCount')->willReturn($expected);
 
 		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
+		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 
 		$driver = MySQLDriver::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$result = $query->update(['Name' => 'Jane', 'Age' => 21]);
+		$this->assertEquals($expected, $result);
+
+		$result = $query->modify(['Name' => 'Jane', 'Age' => 21]);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -64,16 +67,19 @@ class QueryTest extends TestCase
 		$expected = '1';
 
 		$pdoStatement = $this->createMock(\PDOStatement::class);
-		$pdoStatement->expects($this->once())->method('execute')->willReturn(true);
+		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
 
 		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
-		$pdo->expects($this->once())->method('lastInsertId')->willReturn($expected);
+		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
+		$pdo->expects($this->atLeastOnce())->method('lastInsertId')->willReturn($expected);
 
 		$driver = MySQLDriver::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$result = $query->insert(['Name' => 'Jane', 'Age' => 21]);
+		$this->assertEquals((int) $expected, $result);
+
+		$result = $query->add(['Name' => 'Jane', 'Age' => 21]);
 		$this->assertEquals((int) $expected, $result);
 	}
 
@@ -83,16 +89,19 @@ class QueryTest extends TestCase
 		$expected = 2;
 
 		$pdoStatement = $this->createMock(\PDOStatement::class);
-		$pdoStatement->expects($this->once())->method('execute')->willReturn(true);
-		$pdoStatement->expects($this->once())->method('rowCount')->willReturn($expected);
+		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
+		$pdoStatement->expects($this->atLeastOnce())->method('rowCount')->willReturn($expected);
 
 		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
+		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 
 		$driver = MySQLDriver::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$result = $query->delete();
+		$this->assertEquals($expected, $result);
+
+		$result = $query->remove();
 		$this->assertEquals($expected, $result);
 	}
 
