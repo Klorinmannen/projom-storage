@@ -19,7 +19,7 @@ class Util
         $subject = static::cleanString($subject);
 
         $list = [$subject];
-        if (strpos($subject, ',') !== false)
+        if (strpos($subject, $delimeter) !== false)
             $list = explode($delimeter, $subject);
 
         return $list;

@@ -2,62 +2,133 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\Database;
+namespace Projom\tests\unit\Storage\Database;
 
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Driver\MySQL;
-use Projom\Storage\Database\DriverInterface;
-use Projom\Storage\Database\Drivers;
+use Projom\Storage\Database\Engine\MySQLDriver;
+use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine;
-use Projom\Storage\Database\Source\PDOSource;
+use Projom\Storage\Database\Engine\DriverFactory;
 
 class EngineTest extends TestCase
 {
-	public function test_setDriver()
+	public function setup(): void
 	{
-		$source = $this->createMock(PDOSource::class);		
-		$mysql = MySQL::create($source);
-		Engine::setDriver($mysql);
-		$this->assertInstanceOf(DriverInterface::class, Engine::driver());
-		$this->assertInstanceOf(MySQL::class, Engine::driver());
+		Engine::clear();
 	}
 
-	public function test_useDriver()
-	{
-		$source = $this->createMock(PDOSource::class);		
-		$mysql = MySQL::create($source);
-		Engine::setDriver($mysql);
-		Engine::useDriver($mysql->type());
-		$this->assertEquals($mysql->type(), Engine::driver()->type());
-	}
-
-	public function test_useDriver_exception()
+	#[Test]
+	public function dispatch_no_driver_exception(): void
 	{
 		$this->expectException(\Exception::class);
-		Engine::clear();
-		Engine::useDriver(Drivers::MySQL);
+		$this->expectExceptionMessage("Engine driver not set");
+		$this->expectExceptionCode(400);
+		Engine::dispatch();
 	}
 
-	public function test_clear()
+	#[Test]
+	public function dispatch_invalid_dispatch_exception(): void
 	{
-		$source = $this->createMock(PDOSource::class);		
+		$pdo = $this->createMock(\PDO::class);
+		$mysql = MySQLDriver::create($pdo);
+		Engine::setDriver($mysql, Driver::MySQL);
 
-		$mysql = MySQL::create($source);
-		Engine::setDriver($mysql);
-		Engine::clear();
-		$this->assertNull(Engine::driver());
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage("Invalid dispatch");
+		$this->expectExceptionCode(400);
+		Engine::dispatch();
 	}
 
-	public function test_driver()
+	#[Test]
+	public function driver(): void
 	{
-		Engine::clear();
 		$this->assertNull(Engine::driver());
 
-		$source = $this->createMock(PDOSource::class);		
-		$mysql = MySQL::create($source);
-		Engine::setDriver($mysql);
-		$this->assertInstanceOf(MySQL::class, Engine::driver());
+		$pdo = $this->createMock(\PDO::class);
+		$mysql = MySQLDriver::create($pdo);
+		Engine::setDriver($mysql, Driver::MySQL);
+
+		$this->assertInstanceOf(MySQLDriver::class, Engine::driver());
+	}
+
+	#[Test]
+	public function useDriver(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+		$mysql = MySQLDriver::create($pdo);
+		Engine::setDriver($mysql, Driver::MySQL);
+		Engine::useDriver(Driver::MySQL);
+		$this->assertInstanceOf(MySQLDriver::class, Engine::driver());
+	}
+
+	#[Test]
+	public function useDriver_exception(): void
+	{
+		Engine::clear();
+
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage("Driver not loaded");
+		$this->expectExceptionCode(400);
+		Engine::useDriver(Driver::MySQL);
+	}
+
+	#[Test]
+	public function loadDriver(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+		$mysql = MySQLDriver::create($pdo);
+
+		$driverFactory = $this->createMock(DriverFactory::class);
+		$driverFactory->expects($this->once())
+			->method('createDriver')
+			->willReturn($mysql);
+
+		Engine::setDriverFactory($driverFactory);
+		Engine::loadDriver(['driver' => 'mysql']);
+
+		$this->assertInstanceOf(MySQLDriver::class, Engine::driver());
+	}
+
+	#[Test]
+	public function loadDriver_driver_factory_not_set_exception(): void
+	{
+		Engine::clear();
+
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage("Driver factory not set");
+		$this->expectExceptionCode(400);
+		Engine::loadDriver(['driver' => 'mysql']);
+	}
+
+	#[Test]
+	public function setDriver(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+		$mysql = MySQLDriver::create($pdo);
+		Engine::setDriver($mysql, Driver::MySQL);
+		$this->assertInstanceOf(MySQLDriver::class, Engine::driver());
+	}
+
+	#[Test]
+	public function start(): void
+	{
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage('DNS missing server host');
+
+		Engine::start();
+		Engine::loadDriver(['driver' => 'mysql']);
+	}
+
+	#[Test]
+	public function clear(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+		$mysql = MySQLDriver::create($pdo);
+		Engine::setDriver($mysql, Driver::MySQL);
+
+		Engine::clear();
+		$this->assertNull(Engine::driver());
 	}
 }
