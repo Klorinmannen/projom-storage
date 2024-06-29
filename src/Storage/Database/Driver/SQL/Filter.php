@@ -99,7 +99,7 @@ class Filter implements AccessorInterface
 				return $this->defaultFilter($column, $operator, $value);
 
 			default:
-				throw new \Exception("Operator not supported: {$operator->value}", 400);
+				throw new \Exception("Operator not implemented: {$operator->value}", 400);
 		}
 	}
 
