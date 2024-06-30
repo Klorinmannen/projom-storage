@@ -11,7 +11,7 @@
 * Accessing databases with a simple interface
 * Should be easy to understand and use
 * Lightweight
-* Support for MariaDB (MySQL), SQLite and JSON
+* Support for MySQL/MariaDB, SQLite and JSON
 
 ###  [Composer](https://getcomposer.org/doc/00-intro.md)
 ````

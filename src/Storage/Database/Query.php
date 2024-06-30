@@ -16,6 +16,7 @@ class Query
     private array $filters = [];
     private array $sorts = [];
     private int|string $limit = '';
+    private array $groups = [];
 
     public function __construct(DriverInterface $driver, array $collections)
     {
@@ -56,7 +57,8 @@ class Query
             fields: $fields,
             filters: $this->filters,
             sorts: $this->sorts,
-            limit: $this->limit
+            limit: $this->limit,
+            groups: $this->groups
         );
         return $this->driver->select($queryObject);
     }
@@ -158,6 +160,17 @@ class Query
             ];
         }
 
+        return $this;
+    }
+
+    /**
+     * Grouping the result of the query.
+     * 
+     * * Example use: $database->query('CollectionName')->groupOn('Name')->get('*')
+     */
+    public function groupOn(string ...$fields): Query
+    {
+        $this->groups[] = $fields;
         return $this;
     }
 
