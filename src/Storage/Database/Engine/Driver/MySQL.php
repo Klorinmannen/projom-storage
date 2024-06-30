@@ -10,8 +10,6 @@ use Projom\Storage\Database\Query\QueryObject;
 
 class MySQL implements DriverInterface
 {
-	use SQL;
-
 	private \PDO $pdo;
 	private \PDOStatement|null $statement = null;
 

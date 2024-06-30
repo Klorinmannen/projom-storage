@@ -10,7 +10,7 @@ use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Select;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Update;
 use Projom\Storage\Database\Query\QueryObject;
 
-trait SQL
+class SQL
 {
 	public static function select(QueryObject $queryObject): Select
 	{
