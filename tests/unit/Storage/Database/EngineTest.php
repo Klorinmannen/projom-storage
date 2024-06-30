@@ -7,7 +7,7 @@ namespace Projom\tests\unit\Storage\Database;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine\MySQLDriver;
+use Projom\Storage\Database\Engine\Driver\MySQL;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Engine\DriverFactory;
@@ -32,7 +32,7 @@ class EngineTest extends TestCase
 	public function dispatch_invalid_dispatch_exception(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQLDriver::create($pdo);
+		$mysql = MySQL::create($pdo);
 		Engine::setDriver($mysql, Driver::MySQL);
 
 		$this->expectException(\Exception::class);
@@ -47,20 +47,20 @@ class EngineTest extends TestCase
 		$this->assertNull(Engine::driver());
 
 		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQLDriver::create($pdo);
+		$mysql = MySQL::create($pdo);
 		Engine::setDriver($mysql, Driver::MySQL);
 
-		$this->assertInstanceOf(MySQLDriver::class, Engine::driver());
+		$this->assertInstanceOf(MySQL::class, Engine::driver());
 	}
 
 	#[Test]
 	public function useDriver(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQLDriver::create($pdo);
+		$mysql = MySQL::create($pdo);
 		Engine::setDriver($mysql, Driver::MySQL);
 		Engine::useDriver(Driver::MySQL);
-		$this->assertInstanceOf(MySQLDriver::class, Engine::driver());
+		$this->assertInstanceOf(MySQL::class, Engine::driver());
 	}
 
 	#[Test]
@@ -78,7 +78,7 @@ class EngineTest extends TestCase
 	public function loadDriver(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQLDriver::create($pdo);
+		$mysql = MySQL::create($pdo);
 
 		$driverFactory = $this->createMock(DriverFactory::class);
 		$driverFactory->expects($this->once())
@@ -88,7 +88,7 @@ class EngineTest extends TestCase
 		Engine::setDriverFactory($driverFactory);
 		Engine::loadDriver(['driver' => 'mysql']);
 
-		$this->assertInstanceOf(MySQLDriver::class, Engine::driver());
+		$this->assertInstanceOf(MySQL::class, Engine::driver());
 	}
 
 	#[Test]
@@ -106,9 +106,9 @@ class EngineTest extends TestCase
 	public function setDriver(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQLDriver::create($pdo);
+		$mysql = MySQL::create($pdo);
 		Engine::setDriver($mysql, Driver::MySQL);
-		$this->assertInstanceOf(MySQLDriver::class, Engine::driver());
+		$this->assertInstanceOf(MySQL::class, Engine::driver());
 	}
 
 	#[Test]
@@ -125,7 +125,7 @@ class EngineTest extends TestCase
 	public function clear(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQLDriver::create($pdo);
+		$mysql = MySQL::create($pdo);
 		Engine::setDriver($mysql, Driver::MySQL);
 
 		Engine::clear();

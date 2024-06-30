@@ -7,8 +7,8 @@ namespace Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine\DriverInterface;
-use Projom\Storage\Database\Engine\MySQLDriver;
-use Projom\Storage\Database\Engine\Source\SourceFactory;
+use Projom\Storage\Database\Engine\Driver\MySQL;
+use Projom\Storage\Database\Engine\SourceFactory;
 
 class DriverFactory
 {
@@ -34,9 +34,9 @@ class DriverFactory
 		return $driver;
 	}
 
-	public function MySQL(Config $config): MySQLDriver
+	public function MySQL(Config $config): MySQL
 	{
 		$pdo = $this->sourceFactory->createPDO($config);
-		return MySQLDriver::create($pdo);
+		return MySQL::create($pdo);
 	}
 }

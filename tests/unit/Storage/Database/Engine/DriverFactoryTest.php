@@ -10,8 +10,8 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\DriverFactory;
 use Projom\Storage\Database\Engine\DriverInterface;
-use Projom\Storage\Database\Engine\MySQLDriver;
-use Projom\Storage\Database\Engine\Source\SourceFactory;
+use Projom\Storage\Database\Engine\Driver\MySQL;
+use Projom\Storage\Database\Engine\SourceFactory;
 
 class DriverFactoryTest extends TestCase
 {
@@ -35,7 +35,7 @@ class DriverFactoryTest extends TestCase
 
 		$driver = $driverFactory->createDriver($config);
 		$this->assertInstanceOf(DriverInterface::class, $driver);
-		$this->assertInstanceOf(MySQLDriver::class, $driver);
+		$this->assertInstanceOf(MySQL::class, $driver);
 	}
 
 	#[Test]
