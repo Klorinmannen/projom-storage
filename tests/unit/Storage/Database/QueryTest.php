@@ -7,7 +7,7 @@ namespace Projom\tests\unit\Storage\Database;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine\MySQLDriver;
+use Projom\Storage\Database\Engine\Driver\MySQL;
 use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
@@ -26,7 +26,7 @@ class QueryTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$result = $query->fetch('Name', 'John', Operator::EQ);
@@ -51,7 +51,7 @@ class QueryTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$result = $query->update(['Name' => 'Jane', 'Age' => 21]);
@@ -73,7 +73,7 @@ class QueryTest extends TestCase
 		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 		$pdo->expects($this->atLeastOnce())->method('lastInsertId')->willReturn($expected);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$result = $query->insert(['Name' => 'Jane', 'Age' => 21]);
@@ -95,7 +95,7 @@ class QueryTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$result = $query->delete();
@@ -110,7 +110,7 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$query = $query->filterOn(
@@ -129,7 +129,7 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$query = $query->sortOn(['Name' => 'ASC'])->sortOn(['Age' => 'DESC']);
@@ -141,7 +141,7 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
 		$query = $query->limit(10);

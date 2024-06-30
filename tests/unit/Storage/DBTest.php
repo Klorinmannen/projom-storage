@@ -7,7 +7,7 @@ namespace Projom\tests\unit\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine\MySQLDriver;
+use Projom\Storage\Database\Engine\Driver\MySQL;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Query;
@@ -23,7 +23,7 @@ class DBTest extends TestCase
 	#[Test]
 	public function query()
 	{
-		$mysql = $this->createMock(MySQLDriver::class);
+		$mysql = $this->createMock(MySQL::class);
 		Engine::setDriver($mysql, Driver::MySQL);
 
 		$query = DB::query('User');
@@ -42,7 +42,7 @@ class DBTest extends TestCase
 	{
 		$expected = [0 => [ 'id' => 1, 'name' => 'John' ]];
 
-		$mysql = $this->createMock(MySQLDriver::class);
+		$mysql = $this->createMock(MySQL::class);
 		$mysql->expects($this->once())->method('query')->willReturn($expected);
 		Engine::setDriver($mysql, Driver::MySQL);
 

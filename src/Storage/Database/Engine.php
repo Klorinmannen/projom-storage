@@ -8,7 +8,7 @@ use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine\DriverFactory;
-use Projom\Storage\Database\Engine\Source\SourceFactory;
+use Projom\Storage\Database\Engine\SourceFactory;
 
 class Engine
 {
