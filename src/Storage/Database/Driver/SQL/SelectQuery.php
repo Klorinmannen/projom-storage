@@ -9,6 +9,7 @@ use Projom\Storage\Database\Driver\SQL\Filter;
 use Projom\Storage\Database\Driver\SQL\Limit;
 use Projom\Storage\Database\Driver\SQL\Order;
 use Projom\Storage\Database\Driver\SQL\Table;
+use Projom\Storage\Database\Driver\SQL\Util;
 use Projom\Storage\Database\Driver\QueryInterface;
 use Projom\Storage\Database\Query\QueryObject;
 
@@ -19,6 +20,7 @@ class SelectQuery implements QueryInterface
 	private Filter $filter;
 	private Order $order;
 	private Limit $limit;
+	private Group $group;
 
 	public function __construct(QueryObject $querySelect)
 	{
@@ -27,6 +29,7 @@ class SelectQuery implements QueryInterface
 		$this->filter = Filter::create($querySelect->filters);
 		$this->order = Order::create($querySelect->sorts);
 		$this->limit = Limit::create($querySelect->limit);
+		$this->group = Group::create($querySelect->groups);
 	}
 
 	public static function create(QueryObject $querySelect): SelectQuery
@@ -36,20 +39,26 @@ class SelectQuery implements QueryInterface
 
 	public function query(): array
 	{
-		$query = "SELECT {$this->column} FROM {$this->table}";
+		$queryParts[] = "SELECT {$this->column} FROM {$this->table}";
 
 		if (!$this->filter->empty())
-			$query .= " WHERE {$this->filter}";
+			$queryParts[] = "WHERE {$this->filter}";
+
+		if (!$this->group->empty())
+			$queryParts[] = "GROUP BY {$this->group}";
 
 		if (!$this->order->empty())
-			$query .= " ORDER BY {$this->order}";
+			$queryParts[] = "ORDER BY {$this->order}";
 
 		if (!$this->limit->empty())
-			$query .= " LIMIT {$this->limit}";
+			$queryParts[] = "LIMIT {$this->limit}";
+
+		$query = Util::join($queryParts, ' ');
+		$params = $this->filter->params() ?: null;
 
 		return [
 			$query,
-			$this->filter->params() ?: null
+			$params
 		];
 	}
 }

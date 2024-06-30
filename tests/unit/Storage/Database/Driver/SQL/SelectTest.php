@@ -24,10 +24,11 @@ class SelectTest extends TestCase
 					fields: ['UserID', 'Name'],
 					filters: [['UserID', Operator::EQ, 10, LogicalOperator::AND]],
 					sorts: [['UserID', Sort::ASC], ['Name', Sort::DESC]],
-					limit: 10
+					limit: 10,
+					groups: ['Name']
 				),
 				[
-					'SELECT `UserID`, `Name` FROM `User` WHERE `UserID` = :filter_userid_1 ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
+					'SELECT `UserID`, `Name` FROM `User` WHERE `UserID` = :filter_userid_1 GROUP BY `Name` ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
 					['filter_userid_1' => 10]
 				]
 			],

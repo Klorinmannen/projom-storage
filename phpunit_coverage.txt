@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2024-06-29 12:33:04
+  2024-06-30 12:29:05
 
  Summary:
-  Classes: 86.96% (20/23)
-  Methods: 97.35% (110/113)
-  Lines:   97.41% (338/347)
+  Classes: 83.33% (20/24)
+  Methods: 96.64% (115/119)
+  Lines:   97.00% (356/367)
 
 Projom\Storage\DB
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
@@ -16,6 +16,8 @@ Projom\Storage\Database\Driver\SQL\DeleteQuery
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 10/ 10)
 Projom\Storage\Database\Driver\SQL\Filter
   Methods:  92.31% (12/13)   Lines:  98.44% ( 63/ 64)
+Projom\Storage\Database\Driver\SQL\Group
+  Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 12/ 12)
 Projom\Storage\Database\Driver\SQL\InsertQuery
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 10/ 10)
 Projom\Storage\Database\Driver\SQL\Limit
@@ -23,7 +25,7 @@ Projom\Storage\Database\Driver\SQL\Limit
 Projom\Storage\Database\Driver\SQL\Order
   Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 16/ 16)
 Projom\Storage\Database\Driver\SQL\SelectQuery
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 17/ 17)
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 22/ 22)
 Projom\Storage\Database\Driver\SQL\Set
   Methods: 100.00% (13/13)   Lines: 100.00% ( 21/ 21)
 Projom\Storage\Database\Driver\SQL\Table
@@ -47,7 +49,7 @@ Projom\Storage\Database\Engine\Source\PDO
 Projom\Storage\Database\Engine\Source\SourceFactory
   Methods:  66.67% ( 2/ 3)   Lines:  65.00% ( 13/ 20)
 Projom\Storage\Database\Query
-  Methods: 100.00% (14/14)   Lines: 100.00% ( 46/ 46)
+  Methods:  93.33% (14/15)   Lines:  95.92% ( 47/ 49)
 Projom\Storage\Database\Query\QueryObject
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
 Projom\Storage\Database\Util
