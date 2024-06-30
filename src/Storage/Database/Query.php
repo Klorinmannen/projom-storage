@@ -167,6 +167,8 @@ class Query
      * Grouping the result of the query.
      * 
      * * Example use: $database->query('CollectionName')->groupOn('Name')->get('*')
+     * * Example use: $database->query('CollectionName')->groupOn('Name', 'Age')->get('*')
+     * * Example use: $database->query('CollectionName')->groupOn('Name, Age')->get('*');
      */
     public function groupOn(string ...$fields): Query
     {
