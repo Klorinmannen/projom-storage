@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\Engine\DriverInterface;
+use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
@@ -15,8 +16,9 @@ class Query
     private array $collections = [];
     private array $filters = [];
     private array $sorts = [];
-    private int|string $limit = '';
+    private array $joins = [];
     private array $groups = [];
+    private int|string $limit = '';
 
     public function __construct(DriverInterface $driver, array $collections)
     {
@@ -33,7 +35,7 @@ class Query
      * Simple query mechanism to find record(s) by a field and its value.
      * 
      * * Example use: $database->query('CollectionName')->fetch('Name', 'John')
-     * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operators::IN)
+     * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operator::IN)
      */
     public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): array
     {
@@ -57,8 +59,9 @@ class Query
             fields: $fields,
             filters: $this->filters,
             sorts: $this->sorts,
+            groups: $this->groups,
             limit: $this->limit,
-            groups: $this->groups
+            joins: $this->joins
         );
         return $this->driver->select($queryObject);
     }
@@ -82,7 +85,8 @@ class Query
         $queryObject = new QueryObject(
             collections: $this->collections,
             fieldsWithValues: $fieldsWithValues,
-            filters: $this->filters
+            filters: $this->filters,
+            joins: $this->joins
         );
         return $this->driver->update($queryObject);
     }
@@ -125,7 +129,8 @@ class Query
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
-            filters: $this->filters
+            filters: $this->filters,
+            joins: $this->joins
         );
         return $this->driver->delete($queryObject);
     }
@@ -139,11 +144,34 @@ class Query
     }
 
     /**
+     * Join between two or more collections.
+     * 
+     * * Example use: $database->query('CollectionName')->joinOn('collectionField', Join::INNER, 'OtherCollection', 'otherCollectionName')
+     */
+    public function joinOn(
+        string $collectionField,
+        Join $join,
+        string $otherCollection,
+        string $otherCollectionField
+    ): Query {
+
+        $this->joins[] = [
+            array_shift($this->collections),
+            $collectionField,
+            $join,
+            $otherCollection,
+            $otherCollectionField
+        ];
+
+        return $this;
+    }
+
+    /**
      * Creating a filter to be used in the query to be executed.
      * 
      * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'])
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'], ['Age' => 25], Operators::NE)
-     * * Example use: $database->query('CollectionName')->filterOn([ 'Age' => [12, 23, 45] ], Operators::IN)
+     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'], ['Age' => 25], Operator::NE)
+     * * Example use: $database->query('CollectionName')->filterOn([ 'Age' => [12, 23, 45] ], Operator::IN)
      */
     public function filterOn(
         array $fieldsWithValues,
@@ -168,7 +196,7 @@ class Query
      * 
      * * Example use: $database->query('CollectionName')->groupOn('Name')->get('*')
      * * Example use: $database->query('CollectionName')->groupOn('Name', 'Age')->get('*')
-     * * Example use: $database->query('CollectionName')->groupOn('Name, Age')->get('*');
+     * * Example use: $database->query('CollectionName')->groupOn('Name, Age')->get('*')
      */
     public function groupOn(string ...$fields): Query
     {

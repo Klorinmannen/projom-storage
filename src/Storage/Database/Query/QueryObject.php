@@ -12,11 +12,12 @@ class QueryObject
 	public function __construct(
 		public array $collections,
 		public array $fields = [],
-		public array $filters = [],
 		public array $fieldsWithValues = [],
+		public array $joins = [],
+		public array $filters = [],
 		public array $sorts = [],
-		public int|string $limit = '',
-		public array $groups = []
+		public array $groups = [],
+		public int|string $limit = ''
 	) {
 	}
 }

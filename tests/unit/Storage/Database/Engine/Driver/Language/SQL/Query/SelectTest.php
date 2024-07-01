@@ -12,6 +12,7 @@ use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
 use Projom\Storage\Database\Query\Sort;
+use Projom\Storage\Database\Query\Join;
 
 class SelectTest extends TestCase
 {
@@ -22,13 +23,15 @@ class SelectTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					fields: ['UserID', 'Name'],
+					joins: [['Log', 'UserID', Join::INNER, 'Log', 'UserID']],
 					filters: [['UserID', Operator::EQ, 10, LogicalOperator::AND]],
 					sorts: [['UserID', Sort::ASC], ['Name', Sort::DESC]],
 					limit: 10,
 					groups: ['Name']
 				),
 				[
-					'SELECT `UserID`, `Name` FROM `User` WHERE `UserID` = :filter_userid_1 GROUP BY `Name` ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
+					'SELECT `UserID`, `Name` FROM `User` INNER JOIN `Log` ON `Log`.`UserID` = `Log`.`UserID`' .
+					' WHERE `UserID` = :filter_userid_1 GROUP BY `Name` ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
 					['filter_userid_1' => 10]
 				]
 			],

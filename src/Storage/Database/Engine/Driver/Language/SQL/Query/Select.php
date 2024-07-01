@@ -10,6 +10,7 @@ use Projom\Storage\Database\Engine\Driver\Language\SQL\Group;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Limit;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Order;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Table;
+use Projom\Storage\Database\Engine\Driver\Language\SQL\Join;
 use Projom\Storage\Database\Engine\Driver\Language\QueryInterface;
 use Projom\Storage\Database\Engine\Driver\Language\Util;
 use Projom\Storage\Database\Query\QueryObject;
@@ -18,19 +19,21 @@ class Select implements QueryInterface
 {
 	private Table $table;
 	private Column $column;
+	private Join $join;
 	private Filter $filter;
+	private Group $group;
 	private Order $order;
 	private Limit $limit;
-	private Group $group;
 
 	public function __construct(QueryObject $querySelect)
 	{
 		$this->table = Table::create($querySelect->collections);
 		$this->column = Column::create($querySelect->fields);
+		$this->join = Join::create($querySelect->joins);
 		$this->filter = Filter::create($querySelect->filters);
+		$this->group = Group::create($querySelect->groups);
 		$this->order = Order::create($querySelect->sorts);
 		$this->limit = Limit::create($querySelect->limit);
-		$this->group = Group::create($querySelect->groups);
 	}
 
 	public static function create(QueryObject $querySelect): Select
@@ -41,6 +44,9 @@ class Select implements QueryInterface
 	public function query(): array
 	{
 		$queryParts[] = "SELECT {$this->column} FROM {$this->table}";
+
+		if (!$this->join->empty())
+			$queryParts[] = "{$this->join}";
 
 		if (!$this->filter->empty())
 			$queryParts[] = "WHERE {$this->filter}";

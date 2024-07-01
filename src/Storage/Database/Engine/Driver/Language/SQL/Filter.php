@@ -59,9 +59,8 @@ class Filter implements AccessorInterface
 
 	private function parse(array $queryFilters): void
 	{
-		foreach ($queryFilters as $queryFilter) {
+		foreach ($queryFilters as [$field, $operator, $value, $logicalOperator]) {
 
-			[$field, $operator, $value, $logicalOperator] = $queryFilter;
 			[$filter, $params] = $this->build($field, $operator, $value);
 
 			if (empty($this->filters))
