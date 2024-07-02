@@ -9,8 +9,8 @@ use Projom\Storage\Database\Engine\Driver\Language\Util;
 
 class Column implements AccessorInterface
 {
-	private array $fields = [];
-	private string $fieldString = '';
+	private readonly array $fields;
+	private readonly string $fieldString;
 
 	public function __construct(array $fields)
 	{
@@ -36,14 +36,16 @@ class Column implements AccessorInterface
 	private function parse(array $fields): void
 	{
 		$fields = Util::cleanList($fields);
-		if (!$fields)
-			return;
 
-		$this->fieldString = Util::quoteAndJoin($this->fields, ', ');
+		$parts = [];
+		foreach ($fields as $field)
+			$parts[] = Util::splitAndQuoteThenJoin($field, '.');
+
+		$this->fieldString = Util::join($parts, ', ');
 	}
 
-	public function joined(string $delimeter): string
+	public function fields(): array
 	{
-		return Util::join($this->fields, $delimeter);
+		return $this->fields;
 	}
 }

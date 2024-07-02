@@ -7,16 +7,19 @@ namespace Projom\Storage\Database\Engine\Driver\Language\SQL\Query;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Filter;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Table;
 use Projom\Storage\Database\Engine\Driver\Language\QueryInterface;
+use Projom\Storage\Database\Engine\Driver\Language\SQL\Join;
 use Projom\Storage\Database\Query\QueryObject;
 
 class Delete implements QueryInterface
 {
-	private Table $table;
-	private Filter $filter;
+	private readonly Table $table;
+	private readonly Join $join;
+	private readonly Filter $filter;
 
 	public function __construct(QueryObject $queryDelete)
 	{
 		$this->table = Table::create($queryDelete->collections);
+		$this->join = Join::create($queryDelete->joins);
 		$this->filter = Filter::create($queryDelete->filters);
 	}
 
@@ -28,6 +31,9 @@ class Delete implements QueryInterface
 	public function query(): array
 	{
 		$query = "DELETE FROM {$this->table}";
+
+		if (!$this->join->empty())
+			$query .= " {$this->join}";
 
 		if (!$this->filter->empty())
 			$query .= " WHERE {$this->filter}";

@@ -48,12 +48,26 @@ class FilterTest extends TestCase
 			[
 				[['UserID', Operator::IN, [1, 2, 3], LogicalOperator::AND]],
 				['filter_userid_1_1' => 1, 'filter_userid_1_2' => 2, 'filter_userid_1_3' => 3]
+			],
+			[
+				[['UserRole.Name', Operator::EQ, 'leader', LogicalOperator::AND]],
+				['filter_userrole_name_1' => 'leader']
 			]
 		];
 	}
+	
+	#[Test]
+	#[DataProvider('createProvider')]
+	public function create(array $filters, array $expected): void
+	{
+		$filter = Filter::create($filters);
+		$this->assertFalse($filter->empty());
+		$this->assertEquals($expected, $filter->params());
+		$this->assertEquals($filters, $filter->queryFilters());
+	}
 
 	#[Test]
-	public function create_operator_not_found(): void
+	public function operator_not_found(): void
 	{
 		// This test will throw an exception if a case is not handled.
 
@@ -70,16 +84,6 @@ class FilterTest extends TestCase
 		}
 
 		Filter::create([['Name', $case, $value, LogicalOperator::AND]]);
-	}
-
-	#[Test]
-	#[DataProvider('createProvider')]
-	public function create(array $filters, array $expected): void
-	{
-		$filter = Filter::create($filters);
-		$this->assertFalse($filter->empty());
-		$this->assertEquals($expected, $filter->params());
-		$this->assertEquals($filters, $filter->queryFilters());
 	}
 
 	public static function mergeProvider(): array
@@ -111,7 +115,8 @@ class FilterTest extends TestCase
 		$this->assertEquals([...$filter1, ...$filter2], $filter->queryFilters());
 	}
 
-	public function test_empty(): void
+	#[Test]
+	public function empty(): void
 	{
 		$filter = Filter::create([]);
 		$this->assertTrue($filter->empty());

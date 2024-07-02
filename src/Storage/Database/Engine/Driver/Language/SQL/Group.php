@@ -9,13 +9,11 @@ use Projom\Storage\Database\Engine\Driver\Language\Util;
 
 class Group implements AccessorInterface
 {
-	private array $fields = [];
-	private string $group = '';
+	private readonly string $groups;
 
 	public function __construct(array $fields)
 	{
-		$this->fields = $fields;
-		$this->group = $this->parse();
+		$this->parse($fields);
 	}
 
 	public static function create(array $fields): Group
@@ -23,27 +21,25 @@ class Group implements AccessorInterface
 		return new Group($fields);
 	}
 
-	private function parse(): string
+	private function parse(array $fields): void
 	{
-		if (empty($this->fields))
-			return '';
+		$parts = [];
+		foreach ($fields as $field) {			
+			$commaSplitFields = Util::split($field, ',');
+			foreach ($commaSplitFields as $commaSplitField)
+				$parts[] = Util::splitAndQuoteThenJoin($commaSplitField, '.');
+		}
 
-		$fields = [];
-		foreach ($this->fields as $field)
-			$fields[] = Util::stringToList($field);
-
-		$flatten = array_merge(...$fields);
-
-		return Util::quoteAndJoin($flatten, ', ');
+		$this->groups = Util::join($parts, ', ');
 	}
 
 	public function empty()
 	{
-		return empty($this->fields);
+		return empty($this->groups);
 	}
 
 	public function __toString(): string
 	{
-		return $this->group;
+		return $this->groups;
 	}
 }

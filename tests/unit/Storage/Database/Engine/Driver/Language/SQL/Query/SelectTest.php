@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\tests\unit\Storage\Database\Driver\Language\SQL\Query;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Select;
@@ -24,15 +25,22 @@ class SelectTest extends TestCase
 					collections: ['User'],
 					fields: ['UserID', 'Name'],
 					joins: [[Join::INNER, 'Log.UserID', 'User.UserID']],
-					filters: [['UserID', Operator::EQ, 10, LogicalOperator::AND]],
+					filters: [
+						['UserID', Operator::EQ, 10, LogicalOperator::AND],
+						['Log.RequestType', Operator::EQ, 'GET', LogicalOperator::AND]
+					],
 					sorts: [['UserID', Sort::ASC], ['Name', Sort::DESC]],
 					limit: 10,
 					groups: ['Name']
 				),
 				[
 					'SELECT `UserID`, `Name` FROM `User` INNER JOIN `Log` ON `User`.`UserID` = `Log`.`UserID`' .
-					' WHERE `UserID` = :filter_userid_1 GROUP BY `Name` ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
-					['filter_userid_1' => 10]
+					' WHERE `UserID` = :filter_userid_1 AND `Log`.`RequestType` = :filter_log_requesttype_2' . 
+					' GROUP BY `Name` ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
+					[
+						'filter_userid_1' => 10,
+						'filter_log_requesttype_2' => 'GET'
+					]
 				]
 			],
 			[
@@ -70,8 +78,9 @@ class SelectTest extends TestCase
 		];
 	}
 
+	#[Test]
 	#[DataProvider('create_test_provider')]
-	public function test_create(QueryObject $queryObject, array $expected): void
+	public function create(QueryObject $queryObject, array $expected): void
 	{
 		$select = Select::create($queryObject);
 		$this->assertEquals($expected, $select->query());

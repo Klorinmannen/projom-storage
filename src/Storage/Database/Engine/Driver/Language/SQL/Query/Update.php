@@ -8,18 +8,21 @@ use Projom\Storage\Database\Engine\Driver\Language\SQL\Filter;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Set;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Table;
 use Projom\Storage\Database\Engine\Driver\Language\QueryInterface;
+use Projom\Storage\Database\Engine\Driver\Language\SQL\Join;
 use Projom\Storage\Database\Query\QueryObject;
 
 class Update implements QueryInterface
 {
-	private Table $table;
-	private Set $set;
-	private Filter $filter;
+	private readonly Table $table;
+	private readonly Set $set;
+	private readonly Join $join;
+	private readonly Filter $filter;
 
 	public function __construct(QueryObject $queryUpdate)
 	{
 		$this->table = Table::create($queryUpdate->collections);
 		$this->set = Set::create($queryUpdate->fieldsWithValues);
+		$this->join = Join::create($queryUpdate->joins);
 		$this->filter = Filter::create($queryUpdate->filters);
 	}
 
@@ -31,6 +34,9 @@ class Update implements QueryInterface
 	public function query(): array
 	{
 		$query = "UPDATE {$this->table} SET {$this->set}";
+
+		if (!$this->join->empty())
+			$query .= " {$this->join}";
 
 		if (!$this->filter->empty())
 			$query .= " WHERE {$this->filter}";

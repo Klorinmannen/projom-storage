@@ -17,13 +17,13 @@ use Projom\Storage\Database\Query\QueryObject;
 
 class Select implements QueryInterface
 {
-	private Table $table;
-	private Column $column;
-	private Join $join;
-	private Filter $filter;
-	private Group $group;
-	private Order $order;
-	private Limit $limit;
+	private readonly Table $table;
+	private readonly Column $column;
+	private readonly Join $join;
+	private readonly Filter $filter;
+	private readonly Group $group;
+	private readonly Order $order;
+	private readonly Limit $limit;
 
 	public function __construct(QueryObject $querySelect)
 	{

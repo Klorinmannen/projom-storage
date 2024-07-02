@@ -4,38 +4,74 @@ declare(strict_types=1);
 
 namespace Projom\tests\unit\Storage\Database\Driver\Language\SQL;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Set;
 
 class SetTest extends TestCase
 {
-	public function test_create(): void
+	public static function createProvider(): array
 	{
-		$fields = [ 'Name' => 'John', 'Age' => 25 ];
-		$set = Set::create($fields);
+		return [
+			[
+				[],
+				'',
+				'',
+				'',
+				[],
+				[]
+			],
+			[
+				['Name' => 'John', 'Age' => 25],
+				'`Name` = :set_name_1, `Age` = :set_age_2',
+				'`Name`, `Age`',
+				'?, ?',
+				[
+					'set_name_1' => 'John',
+					'set_age_2' => '25'
+				],
+				['John', 25]
+			],
+			[
+				['User.Name' => 'John', 'User.Age' => 25],
+				'`User`.`Name` = :set_user_name_1, `User`.`Age` = :set_user_age_2',
+				'`User`.`Name`, `User`.`Age`',
+				'?, ?',
+				[
+					'set_user_name_1' => 'John',
+					'set_user_age_2' => '25'
+				],
+				['John', 25]
+			]
+		];
+	}
+
+	#[Test]
+	#[DataProvider('createProvider')]
+	public function create(
+		array $fields,
+		string $expectedSets,
+		string $expectedPositionalFields,
+		string $expectedPositionalParams,
+		array $expectedParams,
+		array $expectedPositionalParamValues
+	): void {
 		
-		$sets = [
-			'`Name` = :set_name_1',
-			'`Age` = :set_age_2'		
-		];
+		$set = Set::create($fields);
 
-		$fields = [
-			'set_name_1' => '`Name`',
-			'set_age_2' => '`Age`'
-		];
+		$this->assertEquals($expectedSets, "$set");
+		$this->assertEquals($expectedPositionalFields, $set->positionalFields());
+		$this->assertEquals($expectedPositionalParams, $set->positionalParams());
+		$this->assertEquals($expectedParams, $set->params());
+		$this->assertEquals($expectedPositionalParamValues, $set->positionalParamValues());
+	}
 
-		$params = [
-			'set_name_1' => 'John',
-			'set_age_2' => 25
-		];
-
-		$this->assertEquals($sets, $set->sets());
-		$this->assertEquals(implode(', ', $sets), "$set");
-		$this->assertEquals($fields, $set->fields());
-		$this->assertEquals($params, $set->params());
-		$this->assertFalse($set->empty());
-		$this->assertEquals(implode(', ', $fields), $set->positionalFields());
-		$this->assertEquals('?, ?', $set->positionalParams());
-		$this->assertEquals(['John', 25], $set->positionalParamValues());
+	#[Test]
+	public function empty(): void
+	{
+		$set = Set::create([]);
+		$this->assertTrue($set->empty());
 	}
 }

@@ -9,16 +9,14 @@ use Projom\Storage\Database\Engine\Driver\Language\Util;
 
 class Set implements AccessorInterface
 {
-	private array $fieldsWithValues = [];
-	private array $sets = [];
-	private array $fields = [];
-	private array $params = [];
+	private readonly array $sets;
+	private readonly array $fields;
+	private readonly array $params;
 	private int $id = 0;
 
 	public function __construct(array $fieldsWithValues)
 	{
-		$this->fieldsWithValues = $fieldsWithValues;
-		$this->parse();
+		$this->parse($fieldsWithValues);
 	}
 
 	public static function create(array $fieldsWithValues): Set
@@ -33,39 +31,39 @@ class Set implements AccessorInterface
 
 	public function empty(): bool
 	{
-		return empty($this->fieldsWithValues);
+		return empty($this->sets);
 	}
 
-	public function parse(): void
+	public function parse(array $fieldsWithValues): void
 	{
-		foreach ($this->fieldsWithValues as $field => $value) {
+		$sets = [];
+		$fields = [];
+		$params = [];
+		
+		foreach ($fieldsWithValues as $field => $value) {
 			$this->id++;
 			$valueField = $this->createValueField($field, $this->id);
-			$quotedField = Util::quote($field);
-			$this->sets[] = $this->createtSet($quotedField, $valueField);
-			$this->fields[$valueField] = $quotedField;
-			$this->params[$valueField] = $value;
+			$quotedField = Util::splitAndQuoteThenJoin($field, '.');
+			$sets[] = $this->createSet($quotedField, $valueField);
+			$fields[$valueField] = $quotedField;
+			$params[$valueField] = $value;
 		}
+
+		$this->sets = $sets;
+		$this->fields = $fields;
+		$this->params = $params;
 	}
 
-	private function createtSet(string $quotedField, string $valueField): string
+	private function createSet(string $quotedField, string $valueField): string
 	{
 		return "{$quotedField} = :{$valueField}";
 	}
 
 	private function createValueField(string $field, int $id): string
 	{
-		return strtolower("set_{$field}_{$id}");
-	}
-
-	public function sets(): array
-	{
-		return $this->sets;
-	}
-
-	public function fields(): array
-	{
-		return $this->fields;
+		$field = str_replace(['.', ','], '_', $field);
+		$field = strtolower($field);
+		return "set_{$field}_{$id}";
 	}
 
 	public function params(): array

@@ -73,12 +73,8 @@ class Filter implements AccessorInterface
 		}
 	}
 
-	private function build(
-		string $field,
-		Operator $operator,
-		mixed $value
-	): array {
-
+	private function build(string $field, Operator $operator, mixed $value): array
+	{
 		$this->filterID++;
 		$column = Column::create([$field]);
 
@@ -114,7 +110,7 @@ class Filter implements AccessorInterface
 
 	private function inFilter(Column $column, Operator $operator, array $values): array
 	{
-		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
+		$parameterName = $this->parameterName($column->fields(), $this->filterID);
 
 		$parameters = [];
 		$params = [];
@@ -125,7 +121,7 @@ class Filter implements AccessorInterface
 			$params[$parameter] = $value;
 		}
 
-		$parameterString = implode(', ', $parameters);
+		$parameterString = Util::join($parameters, ', ');
 		$filter = "$column {$operator->value} ( $parameterString )";
 
 		return [
@@ -136,7 +132,7 @@ class Filter implements AccessorInterface
 
 	private function defaultFilter(Column $column, Operator $operator, mixed $value): array
 	{
-		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
+		$parameterName = $this->parameterName($column->fields(), $this->filterID);
 
 		$filter = "$column {$operator->value} :{$parameterName}";
 		$params = [
@@ -149,9 +145,11 @@ class Filter implements AccessorInterface
 		];
 	}
 
-	private function parameterName(string $column, int $id): string
+	private function parameterName(array $columns, int $id): string
 	{
-		$colString = strtolower($column);
+		$colString = Util::join($columns, '_');
+		$colString = str_replace(['.', ','], '_', $colString);
+		$colString = strtolower($colString);
 		return "filter_{$colString}_{$id}";
 	}
 }

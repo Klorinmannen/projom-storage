@@ -10,13 +10,11 @@ use Projom\Storage\Database\Query\Join as QueryJoin;
 
 class Join implements AccessorInterface
 {
-	private array $joins = [];
-	private string $joined = '';
+	private readonly string $joined;
 
 	public function __construct(array $joins)
 	{
-		$this->joins = $joins;
-		$this->parse();
+		$this->parse($joins);
 	}
 
 	public static function create(array $joins): Join
@@ -24,13 +22,13 @@ class Join implements AccessorInterface
 		return new Join($joins);
 	}
 
-	private function parse(): void
+	private function parse(array $joins): void
 	{
 		$joinStrings = [];
-		foreach ($this->joins as [$join, $onCollectionWithField, $collectionWithField])
+		foreach ($joins as [$join, $onCollectionWithField, $collectionWithField])
 			$joinStrings[] = $this->buildJoinString($join, $onCollectionWithField, $collectionWithField);
 
-		$this->joined = implode(' ', $joinStrings);
+		$this->joined = Util::join($joinStrings, ' ');
 	}
 
 	private function buildJoinString(
@@ -82,7 +80,7 @@ class Join implements AccessorInterface
 
 	public function empty()
 	{
-		return empty($this->joins);
+		return empty($this->joined);
 	}
 
 	public function __toString(): string

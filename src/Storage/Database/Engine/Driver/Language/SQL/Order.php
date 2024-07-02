@@ -10,12 +10,10 @@ use Projom\Storage\Database\Query\Sort;
 
 class Order implements AccessorInterface
 {
-	private array $sortFields = [];
-	private array $parsed = [];
+	private readonly array $orders;
 
 	public function __construct(array $sortFields)
 	{
-		$this->sortFields = $sortFields;
 		$this->parse($sortFields);
 	}
 
@@ -26,41 +24,29 @@ class Order implements AccessorInterface
 
 	public function __toString(): string
 	{
-		return Util::join($this->parsed, ', ');
+		return Util::join($this->orders, ', ');
 	}
 
 	private function parse(array $sortFields): void
 	{
+		$orders = [];
 		foreach ($sortFields as $sortField) {
 			[$field, $sort] = $sortField;
-			$this->parsed[] = $this->createSortField($field, $sort);
+			$orders[] = $this->buildSortField($field, $sort);
 		}
+
+		$this->orders = $orders;
 	}
 
-	private function createSortField(string $field, Sort $sort): string
+	private function buildSortField(string $field, Sort $sort): string
 	{
 		$sortUC = strtoupper($sort->value);
-		$quotedField = Util::quote($field);
+		$quotedField = Util::splitAndQuoteThenJoin($field, '.');
 		return "{$quotedField} {$sortUC}";
-	}
-
-	public function get(): array
-	{
-		return $this->sortFields;
-	}
-
-	public function merge(Order ...$others): Order
-	{
-		foreach ($others as $other) {
-			$this->sortFields = array_merge($this->sortFields, $other->get());
-			$this->parse($other->get());
-		}
-
-		return $this;
 	}
 
 	public function empty(): bool
 	{
-		return empty($this->sortFields);
+		return empty($this->orders);
 	}
 }

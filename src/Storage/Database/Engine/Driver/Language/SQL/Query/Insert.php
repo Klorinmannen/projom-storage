@@ -11,8 +11,8 @@ use Projom\Storage\Database\Query\QueryObject;
 
 class Insert implements QueryInterface
 {
-	private Table $table;
-	private Set $set;
+	private readonly Table $table;
+	private readonly Set $set;
 
 	public function __construct(QueryObject $queryInsert)
 	{
