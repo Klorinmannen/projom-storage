@@ -19,50 +19,53 @@ class FilterTest extends TestCase
 		return [
 			[
 				[['Name', Operator::EQ, 'John', LogicalOperator::AND]],
-				['filter_name_1' => 'John']
+				['filter_name_1' => 'John'],
+				'`Name` = :filter_name_1'
 			],
 			[
-				[['Age', Operator::GT, 18, LogicalOperator::AND]],
-				['filter_age_1' => 18]
-			],
-			[
-				[['Created', Operator::GTE, '2024-01-01 00:00:00', LogicalOperator::AND]],
-				['filter_created_1' => '2024-01-01 00:00:00']
-			],
-			[
-				[['Updated', Operator::LT, '2024-01-01 00:00:00', LogicalOperator::AND]],
-				['filter_updated_1' => '2024-01-01 00:00:00']
-			],
-			[
-				[['Deleted', Operator::LTE, '2024-01-01 00:00:00', LogicalOperator::AND]],
-				['filter_deleted_1' => '2024-01-01 00:00:00']
+				[
+					['Updated', Operator::LT, '2024-01-01 00:00:00', LogicalOperator::AND],
+					['Deleted', Operator::LTE, '2024-01-01 00:00:00', LogicalOperator::AND],
+					['Created', Operator::GTE, '2024-01-01 00:00:00', LogicalOperator::OR]
+				],
+				[
+					'filter_updated_1' => '2024-01-01 00:00:00',
+					'filter_deleted_2' => '2024-01-01 00:00:00',
+					'filter_created_3' => '2024-01-01 00:00:00'
+				],
+				'`Updated` < :filter_updated_1 AND `Deleted` <= :filter_deleted_2 OR `Created` >= :filter_created_3'
 			],
 			[
 				[['DeletedAt', Operator::IS_NULL, null, LogicalOperator::AND]],
-				[]
+				[],
+				'`DeletedAt` IS NULL'
 			],
 			[
 				[['UserID', Operator::IS_NOT_NULL, null, LogicalOperator::AND]],
-				[]
+				[],
+				'`UserID` IS NOT NULL'
 			],
 			[
 				[['UserID', Operator::IN, [1, 2, 3], LogicalOperator::AND]],
-				['filter_userid_1_1' => 1, 'filter_userid_1_2' => 2, 'filter_userid_1_3' => 3]
+				['filter_userid_1_1' => 1, 'filter_userid_1_2' => 2, 'filter_userid_1_3' => 3],
+				'`UserID` IN ( :filter_userid_1_1, :filter_userid_1_2, :filter_userid_1_3 )'
 			],
 			[
 				[['UserRole.Name', Operator::EQ, 'leader', LogicalOperator::AND]],
-				['filter_userrole_name_1' => 'leader']
+				['filter_userrole_name_1' => 'leader'],
+				'`UserRole`.`Name` = :filter_userrole_name_1'
 			]
 		];
 	}
-	
+
 	#[Test]
 	#[DataProvider('createProvider')]
-	public function create(array $filters, array $expected): void
+	public function create(array $filters, array $expectedParams, string $expectedFilter): void
 	{
 		$filter = Filter::create($filters);
 		$this->assertFalse($filter->empty());
-		$this->assertEquals($expected, $filter->params());
+		$this->assertEquals($expectedParams, $filter->params());
+		$this->assertEquals($expectedFilter, "$filter");
 		$this->assertEquals($filters, $filter->queryFilters());
 	}
 
