@@ -23,14 +23,14 @@ class SelectTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					fields: ['UserID', 'Name'],
-					joins: [['Log', 'UserID', Join::INNER, 'Log', 'UserID']],
+					joins: [[Join::INNER, 'Log.UserID', 'User.UserID']],
 					filters: [['UserID', Operator::EQ, 10, LogicalOperator::AND]],
 					sorts: [['UserID', Sort::ASC], ['Name', Sort::DESC]],
 					limit: 10,
 					groups: ['Name']
 				),
 				[
-					'SELECT `UserID`, `Name` FROM `User` INNER JOIN `Log` ON `Log`.`UserID` = `Log`.`UserID`' .
+					'SELECT `UserID`, `Name` FROM `User` INNER JOIN `Log` ON `User`.`UserID` = `Log`.`UserID`' .
 					' WHERE `UserID` = :filter_userid_1 GROUP BY `Name` ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
 					['filter_userid_1' => 10]
 				]
@@ -56,7 +56,7 @@ class SelectTest extends TestCase
 					'SELECT * FROM `User` LIMIT 10',
 					null
 				]
-			],			
+			],
 			[
 				new QueryObject(
 					collections: ['User'],

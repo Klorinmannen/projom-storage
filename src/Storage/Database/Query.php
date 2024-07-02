@@ -144,23 +144,21 @@ class Query
     }
 
     /**
-     * Join between two or more collections.
+     * Join collections to the query.
      * 
-     * * Example use: $database->query('CollectionName')->joinOn('collectionField', Join::INNER, 'OtherCollection', 'otherCollectionName')
+     * * Example use: $database->query('CollectionName')->join(Join::INNER, 'onCollection.Field', 'currentCollection.Field')
+     * * Example use: $database->query('CollectionName')->join(Join::LEFT, 'onCollection.Field = currentCollection.Field')
      */
     public function joinOn(
-        string $collectionField,
         Join $join,
-        string $otherCollection,
-        string $otherCollectionField
+        string $onCollectionWithField,
+        string|null $currentCollectionWithField = null
     ): Query {
-
+        
         $this->joins[] = [
-            array_shift($this->collections),
-            $collectionField,
             $join,
-            $otherCollection,
-            $otherCollectionField
+            $onCollectionWithField,
+            $currentCollectionWithField
         ];
 
         return $this;

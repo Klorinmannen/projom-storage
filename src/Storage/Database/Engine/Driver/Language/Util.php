@@ -27,4 +27,9 @@ class Util extends DBUtil
     {
         return static::join(static::quoteList($list), $delimeter);
     }
+
+    public static function splitThenQuoteAndJoin(string $subject, string $delimeter = ','): string
+    {
+        return static::quoteAndJoin(static::split($subject, $delimeter), $delimeter);
+    }
 }

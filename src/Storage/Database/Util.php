@@ -46,4 +46,9 @@ class Util
     {
         return implode($delimeter, $list);
     }
+
+    public static function split(string $subject, string $delimeter = ','): array
+    {
+        return explode($delimeter, $subject);
+    }
 }

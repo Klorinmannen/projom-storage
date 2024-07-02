@@ -4,25 +4,46 @@ declare(strict_types=1);
 
 namespace Projom\tests\unit\Storage\Database\Driver\Language\SQL;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Driver\Language\Util;
 
 class UtilTest extends TestCase
 {
-	public function test_quote(): void
+	#[Test]
+	public function quoteList(): void
 	{
-		$this->assertEquals('`User`', Util::quote('User'));
-		$this->assertEquals('*', Util::quote('*'));
+		$result = Util::quoteList(['User', 'Role']);
+		$expected = ['`User`', '`Role`'];
+		$this->assertEquals($expected, $result);
 	}
 
-	public function test_quote_and_join(): void
+	#[Test]
+	public function quote(): void
 	{
-		$this->assertEquals('`User`,`Role`', Util::quoteAndJoin(['User', 'Role']));
+		$result = Util::quote('User');
+		$expected = '`User`';
+		$this->assertEquals($expected, $result);
+		
+		$result = Util::quote('*');
+		$expected = '*';
+		$this->assertEquals($expected, $result);
 	}
 
-	public function test_quote_list(): void
+	#[Test]
+	public function quoteAndJoin(): void
 	{
-		$this->assertEquals(['`User`', '`Role`'], Util::quoteList(['User', 'Role']));
+		$result = Util::quoteAndJoin(['User', 'Role']);
+		$expected = '`User`,`Role`';
+		$this->assertEquals($expected, $result);
+	}
+
+	#[Test]
+	public function splitThenQuoteAndJoin(): void
+	{
+		$result = Util::splitThenQuoteAndJoin(' User.RoleID ', '.');
+		$expected = '`User`.`RoleID`';
+		$this->assertEquals($expected, $result);
 	}
 }

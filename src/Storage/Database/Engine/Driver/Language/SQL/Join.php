@@ -27,35 +27,57 @@ class Join implements AccessorInterface
 	private function parse(): void
 	{
 		$joinStrings = [];
-		foreach ($this->joins as [$collection, $collectionField, $joinType, $otherCollection, $otherCollectionField])
-			$joinStrings[] = $this->buildJoinString(
-				$collection,
-				$collectionField,
-				$joinType,
-				$otherCollection,
-				$otherCollectionField
-			);
+		foreach ($this->joins as [$join, $onCollectionWithField, $collectionWithField])
+			$joinStrings[] = $this->buildJoinString($join, $onCollectionWithField, $collectionWithField);
 
 		$this->joined = implode(' ', $joinStrings);
 	}
 
 	private function buildJoinString(
-		string $collection,
-		string $collectionField,
 		QueryJoin $join,
-		string $otherCollection,
-		string $otherCollectionField
+		string $onCollectionWithField,
+		string|null $collectionWithField
 	): string {
 
-		$collectionWithField = Util::quoteAndJoin([$collection, $collectionField], '.');
+		if ($collectionWithField === null)
+			return $this->buildCustomJoinString($join, $onCollectionWithField);
 
-		$otherCollection = Util::quote($otherCollection);
-		$otherCollectionField = Util::quote($otherCollectionField);
-		$otherCollectionWithField = Util::join([$otherCollection, $otherCollectionField], '.');
+		$collectionWithField = Util::splitThenQuoteAndJoin($collectionWithField, '.');
+		$onCollectionWithField = Util::splitThenQuoteAndJoin($onCollectionWithField, '.');
 
-		$joinString = "{$join->value} {$otherCollection} ON {$collectionWithField} = {$otherCollectionWithField}";
+		[$onCollection, $onCollectionField] = Util::split($onCollectionWithField, '.');
+
+		$joinString = $this->joinString($join->value, $onCollection, $collectionWithField, $onCollectionWithField);
 
 		return $joinString;
+	}
+
+	/**
+	 * * Format: $join->buildCustomString(QueryJoin::INNER, 'UserRole.UserID = User.UserID')
+	 */
+	private function buildCustomJoinString(QueryJoin $join,	string $customString): string
+	{
+		$stringParts = Util::split($customString, '=');
+
+		$firstParts = Util::split(array_shift($stringParts), '.');
+		$onCollection = Util::quote($firstParts[0]);
+		$onCollectionWithValue = Util::quoteAndJoin($firstParts, '.');
+
+		$collectionWithValue = Util::splitThenQuoteAndJoin(array_shift($stringParts), '.');
+
+		$joinString = $this->joinString($join->value, $onCollection, $collectionWithValue, $onCollectionWithValue);
+
+		return $joinString;
+	}
+
+	private function joinString(
+		string $join,
+		string $onCollection,
+		string $collectionWithValue,
+		string $onCollectionWithValue,
+	): string {
+
+		return "{$join} {$onCollection} ON {$collectionWithValue} = {$onCollectionWithValue}";
 	}
 
 	public function empty()
