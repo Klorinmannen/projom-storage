@@ -44,7 +44,7 @@ class Query
     }
 
     /**
-     * Executes a query finding record(s) and returns the result.
+     * Execute a query finding record(s) and returns the result.
      * 
      * * Example use: $database->query('CollectionName')->select('*')
      * * Example use: $database->query('CollectionName')->select('Name', 'Age')
@@ -75,7 +75,7 @@ class Query
     }
 
     /**
-     * Executes a query updating record(s) and returns the number of affected rows.
+     * Execute a query updating record(s) and returns the number of affected rows.
      * 
      * * Example use: $database->query('CollectionName')->update(['Active' => 1])
      * * Example use: $database->query('CollectionName')->filterOn( ... )->update(['Username' => 'Jane', 'Password' => 'password'])
@@ -99,7 +99,7 @@ class Query
     }
 
     /**
-     * Executes a query inserting a record and returns the latest inserted primary id.
+     * Execute a query inserting a record and returns the latest inserted primary id.
      * 
      * * Example use: $database->query('CollectionName')->insert(['Username' => 'John', 'Password' => '1234'])
      */
@@ -121,7 +121,7 @@ class Query
     }
 
     /**
-     * Executes a query to delete record(s) and returns the number of affected rows.
+     * Execute a query to delete record(s) and returns the number of affected rows.
      * 
      * * Example use: $database->query('CollectionName')->filterOn( ... )->delete()
      */
@@ -146,8 +146,8 @@ class Query
     /**
      * Join collections to the query.
      * 
-     * * Example use: $database->query('CollectionName')->join(Join::INNER, 'onCollection.Field', 'currentCollection.Field')
-     * * Example use: $database->query('CollectionName')->join(Join::LEFT, 'onCollection.Field = currentCollection.Field')
+     * * Example use: $database->query('CollectionName')->join(Join::INNER, 'Collection1.Field', 'Collection2.Field')
+     * * Example use: $database->query('CollectionName')->join(Join::LEFT, 'Collection1.Field = Collection2.Field')
      */
     public function joinOn(
         Join $join,
@@ -165,7 +165,7 @@ class Query
     }
 
     /**
-     * Creating a filter to be used in the query to be executed.
+     * Create a filter to be used in the query to be executed.
      * 
      * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'])
      * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'], ['Age' => 25], Operator::NE)
@@ -190,7 +190,7 @@ class Query
     }
 
     /**
-     * Grouping the result of the query.
+     * Group the query result.
      * 
      * * Example use: $database->query('CollectionName')->groupOn('Name')->get('*')
      * * Example use: $database->query('CollectionName')->groupOn('Name', 'Age')->get('*')
@@ -203,7 +203,7 @@ class Query
     }
 
     /**
-     * Sorts the result of the query.
+     * Sort the query result.
      * 
      * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])->get('*')
      */
@@ -215,7 +215,7 @@ class Query
     }
 
     /**
-     * Limits the result of the query.
+     * Limit the query result.
      * 
      * * Example use: $database->query('CollectionName')->limit(10)->get('*')
      */
