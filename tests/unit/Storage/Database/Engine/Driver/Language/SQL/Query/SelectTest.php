@@ -35,7 +35,7 @@ class SelectTest extends TestCase
 				),
 				[
 					'SELECT `UserID`, `Name` FROM `User` INNER JOIN `Log` ON `User`.`UserID` = `Log`.`UserID`' .
-					' WHERE `UserID` = :filter_userid_1 AND `Log`.`RequestType` = :filter_log_requesttype_2' . 
+					' WHERE ( `UserID` = :filter_userid_1 AND `Log`.`RequestType` = :filter_log_requesttype_2 )' . 
 					' GROUP BY `Name` ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
 					[
 						'filter_userid_1' => 10,

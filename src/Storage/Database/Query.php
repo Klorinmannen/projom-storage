@@ -20,13 +20,13 @@ class Query
     private array $groups = [];
     private int|string $limit = '';
 
-    public function __construct(DriverInterface $driver, array $collections)
+    public function __construct(DriverInterface|null $driver, array $collections)
     {
         $this->collections = $collections;
         $this->driver = $driver;
     }
 
-    public static function create(DriverInterface $driver, array $collections): Query
+    public static function create(DriverInterface|null $driver = null, array $collections = []): Query
     {
         return new Query($driver, $collections);
     }
@@ -154,7 +154,7 @@ class Query
         string $onCollectionWithField,
         string|null $currentCollectionWithField = null
     ): Query {
-        
+
         $this->joins[] = [
             $join,
             $onCollectionWithField,
@@ -168,17 +168,20 @@ class Query
      * Create a filter to be used in the query to be executed.
      * 
      * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'])
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'], ['Age' => 25], Operator::NE)
-     * * Example use: $database->query('CollectionName')->filterOn([ 'Age' => [12, 23, 45] ], Operator::IN)
+     * * Example use: $database->query('CollectionName')->filterOn(['UserID' => [12, 23, 45] ], Operator::IN)
+     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John', 'UserID' => 25], logicalOperator: LogicalOperator::OR)
+     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John', 'UserID' => 25], groupFilter: true)
      */
     public function filterOn(
         array $fieldsWithValues,
         Operator $operator = Operator::EQ,
-        LogicalOperator $logicalOperator = LogicalOperator::AND
+        LogicalOperator $logicalOperator = LogicalOperator::AND,
+        bool $groupFilter = false
     ): Query {
 
+        $filters = [];
         foreach ($fieldsWithValues as $field => $value) {
-            $this->filters[] = [
+            $filters[] = [
                 $field,
                 $operator,
                 $value,
@@ -186,15 +189,20 @@ class Query
             ];
         }
 
+        if ($groupFilter)
+            $filters = [$filters];
+
+        $this->filters[] = $filters;
+
         return $this;
     }
 
     /**
      * Group the query result.
      * 
-     * * Example use: $database->query('CollectionName')->groupOn('Name')->get('*')
-     * * Example use: $database->query('CollectionName')->groupOn('Name', 'Age')->get('*')
-     * * Example use: $database->query('CollectionName')->groupOn('Name, Age')->get('*')
+     * * Example use: $database->query('CollectionName')->groupOn('Name')
+     * * Example use: $database->query('CollectionName')->groupOn('Name', 'Age')
+     * * Example use: $database->query('CollectionName')->groupOn('Name, Age')
      */
     public function groupOn(string ...$fields): Query
     {
@@ -205,7 +213,8 @@ class Query
     /**
      * Sort the query result.
      * 
-     * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])->get('*')
+     * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])
+     * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::ASC, 'Age' => Sorts::DESC])
      */
     public function sortOn(array $sortFields): Query
     {
@@ -217,7 +226,8 @@ class Query
     /**
      * Limit the query result.
      * 
-     * * Example use: $database->query('CollectionName')->limit(10)->get('*')
+     * * Example use: $database->query('CollectionName')->limit(10)
+     * * Example use: $database->query('CollectionName')->limit('10')
      */
     public function limit(int|string $limit): Query
     {
