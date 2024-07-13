@@ -11,9 +11,10 @@ use Projom\Storage\Database\Query\Operator;
 
 class Filter implements AccessorInterface
 {
+	private readonly string $filters;
+
 	private array $queryFilters = [];
-	private string $filters = '';
-	private array $filterParts = [];
+	private array $filterGroups = [];
 	private array $params = [];
 	private int $filterID = 0;
 
@@ -52,10 +53,10 @@ class Filter implements AccessorInterface
 	{
 		foreach ($this->queryFilters as $groupIndex => $queryFilter) {
 
-			$hasNestedFilters = is_array($queryFilter[0] ?? '');
-			if ($hasNestedFilters) {
-				foreach ($queryFilter as $nestedQueryFilter) {
-					$this->parseFilter($nestedQueryFilter, $groupIndex);
+			$hasGroupedFilters = is_array($queryFilter[0] ?? '');
+			if ($hasGroupedFilters) {
+				foreach ($queryFilter as $groupedQueryFilter) {
+					$this->parseFilter($groupedQueryFilter, $groupIndex);
 				}
 				continue;
 			}
@@ -64,40 +65,39 @@ class Filter implements AccessorInterface
 		}
 
 		$filterParts = [];
-		foreach ($this->filterParts as $groupIndex => $groupFilters) {
+		foreach ($this->filterGroups as $groupIndex => $filterGroups) {
 
-			$groupFilterParts = [];
-			foreach ($groupFilters as [$filter, $logicalOperator]) {
-				$groupFilterParts[] = $filter;
-				$groupFilterParts[] = $logicalOperator;
-			}
-
-			$logicalOperator = array_pop($groupFilterParts);
+			// Flatten filters and logical operators in current order.
+			$filterGroups = array_merge(...$filterGroups);
 			
-			$groupFilterParts = $this->addParentheses($groupFilterParts);
-			$filterParts = [...$filterParts, ...$groupFilterParts];
+			// Remove the last element, the logical operator, and push it back after adding parentheses.
+			$logicalOperator = array_pop($filterGroups);			
+			$filterGroups = $this->addParenthesesToFilter($filterGroups);
+
+			// Merge this filter group with previously added filter groups.
+			$filterParts = [...$filterParts, ...$filterGroups];
 			
 			$filterParts[] = $logicalOperator;
 		}
 
-		// Remove the last logical operator, it is not used.
+		// Remove the last element, the logical operator as it is not used.
+		// And add parentheses.
 		array_pop($filterParts);
-
-		$filterParts = $this->addParentheses($filterParts);
+		$filterParts = $this->addParenthesesToFilter($filterParts);
 
 		$this->filters = Util::join($filterParts, ' ');
 	}
 
-	private function addParentheses(array $filterParts): array
+	private function addParenthesesToFilter(array $filter): array
 	{
-		$filterPartsCount = count($filterParts);
+		$filterCount = count($filter);
 
-		if ($filterPartsCount > 1) {
-			array_unshift($filterParts, '(');
-			$filterParts[] = ')';
+		if ($filterCount > 1) {
+			array_unshift($filter, '(');
+			$filter[] = ')';
 		}
 
-		return $filterParts;
+		return $filter;
 	}
 
 	private function parseFilter(array $queryFilter, int $groupIndex): void
@@ -109,7 +109,7 @@ class Filter implements AccessorInterface
 		if ($params)
 			$this->params[] = $params;
 
-		$this->filterParts[$groupIndex][] = [$filter, $logicalOperator->value];
+		$this->filterGroups[$groupIndex][] = [$filter, $logicalOperator->value];
 	}
 
 	private function buildFilterAndParams(string $field, Operator $operator, mixed $value): array
