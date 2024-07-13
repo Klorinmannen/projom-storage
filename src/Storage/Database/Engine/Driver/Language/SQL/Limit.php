@@ -8,7 +8,7 @@ use Projom\Storage\Database\Engine\Driver\Language\AccessorInterface;
 
 class Limit implements AccessorInterface
 {
-	private int|string|null $limit = null;
+	private readonly int|string $limit;
 
 	public function __construct(int|string $limit)
 	{

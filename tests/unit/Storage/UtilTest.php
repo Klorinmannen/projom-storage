@@ -82,4 +82,18 @@ class UtilTest extends TestCase
 		$result = Util::join(['123', '456'], '_');
 		$this->assertEquals($expected, $result);
 	}
+
+	#[Test]
+	public function split(): void
+	{
+		$string = '123,456';
+		$result = Util::split($string);
+		$expected = ['123', '456'];
+		$this->assertEquals($expected, $result);
+
+		$string = '123_456';
+		$result = Util::split($string, '_');
+		$expected = ['123', '456'];
+		$this->assertEquals($expected, $result);
+	}
 }

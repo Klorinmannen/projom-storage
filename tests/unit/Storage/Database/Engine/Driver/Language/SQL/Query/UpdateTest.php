@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Update;
+use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
@@ -21,11 +22,16 @@ class UpdateTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					fieldsWithValues: ['Name' => 'John'],
-					filters: [['UserID', Operator::EQ, 10, LogicalOperator::AND]]
+					joins: [[Join::INNER, 'User.UserID = UserRole.UserID', null]],
+					filters: [
+						['UserRole.Role', Operator::EQ, 'leader', LogicalOperator::AND]
+					]
 				),
 				[
-					'UPDATE `User` SET `Name` = :set_name_1 WHERE `UserID` = :filter_userid_1',
-					['set_name_1' => 'John', 'filter_userid_1' => 10]
+					'UPDATE `User` SET `Name` = :set_name_1' .
+					' INNER JOIN `User` ON `UserRole`.`UserID` = `User`.`UserID`' .
+					' WHERE `UserRole`.`Role` = :filter_userrole_role_1',
+					['set_name_1' => 'John', 'filter_userrole_role_1' => 'leader']
 				]
 			],
 			[

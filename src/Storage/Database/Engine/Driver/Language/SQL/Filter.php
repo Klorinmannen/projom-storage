@@ -11,8 +11,10 @@ use Projom\Storage\Database\Query\Operator;
 
 class Filter implements AccessorInterface
 {
+	private readonly string $filters;
+
 	private array $queryFilters = [];
-	private array $filters = [];
+	private array $filterGroups = [];
 	private array $params = [];
 	private int $filterID = 0;
 
@@ -29,7 +31,7 @@ class Filter implements AccessorInterface
 
 	public function __toString(): string
 	{
-		return Util::join($this->filters, " ");
+		return $this->filters;
 	}
 
 	public function empty(): bool
@@ -42,44 +44,76 @@ class Filter implements AccessorInterface
 		return array_merge(...$this->params);
 	}
 
-	public function merge(Filter ...$others): Filter
-	{
-		foreach ($others as $other) {
-			$this->queryFilters = array_merge($this->queryFilters, $other->queryFilters());
-			$this->parse($other->queryFilters());
-		}
-
-		return $this;
-	}
-
 	public function queryFilters(): array
 	{
 		return $this->queryFilters;
 	}
 
-	private function parse(array $queryFilters): void
+	private function parse(): void
 	{
-		foreach ($queryFilters as $queryFilter) {
+		foreach ($this->queryFilters as $groupIndex => $queryFilter) {
 
-			[$field, $operator, $value, $logicalOperator] = $queryFilter;
-			[$filter, $params] = $this->build($field, $operator, $value);
+			$hasGroupedFilters = is_array($queryFilter[0] ?? '');
+			if ($hasGroupedFilters) {
+				foreach ($queryFilter as $groupedQueryFilter) {
+					$this->parseFilter($groupedQueryFilter, $groupIndex);
+				}
+				continue;
+			}
 
-			if (empty($this->filters))
-				$this->filters[] = $filter;
-			else
-				$this->filters[] = "{$logicalOperator->value} $filter";
-
-			if ($params)
-				$this->params[] = $params;
+			$this->parseFilter($queryFilter, $groupIndex);
 		}
+
+		$filterParts = [];
+		foreach ($this->filterGroups as $groupIndex => $filterGroups) {
+
+			// Flatten filters and logical operators in current order.
+			$filterGroups = array_merge(...$filterGroups);
+			
+			// Remove the last element, the logical operator, and push it back after adding parentheses.
+			$logicalOperator = array_pop($filterGroups);			
+			$filterGroups = $this->addParenthesesToFilter($filterGroups);
+
+			// Merge this filter group with previously added filter groups.
+			$filterParts = [...$filterParts, ...$filterGroups];
+			
+			$filterParts[] = $logicalOperator;
+		}
+
+		// Remove the last element, the logical operator as it is not used.
+		// And add parentheses.
+		array_pop($filterParts);
+		$filterParts = $this->addParenthesesToFilter($filterParts);
+
+		$this->filters = Util::join($filterParts, ' ');
 	}
 
-	private function build(
-		string $field,
-		Operator $operator,
-		mixed $value
-	): array {
+	private function addParenthesesToFilter(array $filter): array
+	{
+		$filterCount = count($filter);
 
+		if ($filterCount > 1) {
+			array_unshift($filter, '(');
+			$filter[] = ')';
+		}
+
+		return $filter;
+	}
+
+	private function parseFilter(array $queryFilter, int $groupIndex): void
+	{
+		[$field, $operator, $value, $logicalOperator] = $queryFilter;
+
+		[$filter, $params] = $this->buildFilterAndParams($field, $operator, $value);
+
+		if ($params)
+			$this->params[] = $params;
+
+		$this->filterGroups[$groupIndex][] = [$filter, $logicalOperator->value];
+	}
+
+	private function buildFilterAndParams(string $field, Operator $operator, mixed $value): array
+	{
 		$this->filterID++;
 		$column = Column::create([$field]);
 
@@ -115,7 +149,7 @@ class Filter implements AccessorInterface
 
 	private function inFilter(Column $column, Operator $operator, array $values): array
 	{
-		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
+		$parameterName = $this->parameterName($column->fields(), $this->filterID);
 
 		$parameters = [];
 		$params = [];
@@ -126,7 +160,7 @@ class Filter implements AccessorInterface
 			$params[$parameter] = $value;
 		}
 
-		$parameterString = implode(', ', $parameters);
+		$parameterString = Util::join($parameters, ', ');
 		$filter = "$column {$operator->value} ( $parameterString )";
 
 		return [
@@ -137,7 +171,7 @@ class Filter implements AccessorInterface
 
 	private function defaultFilter(Column $column, Operator $operator, mixed $value): array
 	{
-		$parameterName = $this->parameterName($column->joined('_'), $this->filterID);
+		$parameterName = $this->parameterName($column->fields(), $this->filterID);
 
 		$filter = "$column {$operator->value} :{$parameterName}";
 		$params = [
@@ -150,9 +184,11 @@ class Filter implements AccessorInterface
 		];
 	}
 
-	private function parameterName(string $column, int $id): string
+	private function parameterName(array $columns, int $id): string
 	{
-		$colString = strtolower($column);
+		$colString = Util::join($columns, '_');
+		$colString = str_replace(['.', ','], '_', $colString);
+		$colString = strtolower($colString);
 		return "filter_{$colString}_{$id}";
 	}
 }

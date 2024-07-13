@@ -17,6 +17,13 @@ class GroupTest extends TestCase
 	{
 		return [
 			[
+				[],
+				''
+			],
+			[
+				['field1'],
+				'`field1`'
+			],			[
 				['field1', 'field2', 'field3'],
 				'`field1`, `field2`, `field3`'
 			],
@@ -25,9 +32,13 @@ class GroupTest extends TestCase
 				'`field1`, `field2`, `field3`'
 			],
 			[
-				['field1'],
-				'`field1`'
+				['User.Name', 'UserRole.Role'],
+				'`User`.`Name`, `UserRole`.`Role`'
 			],
+			[
+				['User.Name, UserRole.Role'],
+				'`User`.`Name`, `UserRole`.`Role`'
+			]
 		];
 	}
 

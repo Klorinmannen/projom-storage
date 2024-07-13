@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2024-06-30 19:19:43
+  2024-07-03 12:20:46
 
  Summary:
-  Classes: 83.33% (20/24)
-  Methods: 96.64% (115/119)
-  Lines:   97.00% (356/367)
+  Classes: 84.62% (22/26)
+  Methods: 96.18% (126/131)
+  Lines:   94.41% (405/429)
 
 Projom\Storage\DB
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
@@ -16,30 +16,34 @@ Projom\Storage\Database\Engine\Config
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  9/  9)
 Projom\Storage\Database\Engine\DriverFactory
   Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  9/  9)
+Projom\Storage\Database\Engine\Driver\Language\SQL
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Column
-  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 10/ 10)
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 11/ 11)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Filter
-  Methods:  92.31% (12/13)   Lines:  98.44% ( 63/ 64)
+  Methods:  81.82% ( 9/11)   Lines:  93.85% ( 61/ 65)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Group
-  Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 12/ 12)
+  Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 10/ 10)
+Projom\Storage\Database\Engine\Driver\Language\SQL\Join
+  Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 23/ 23)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Limit
   Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Order
-  Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 16/ 16)
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 12/ 12)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Delete
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 10/ 10)
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 13/ 13)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Insert
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 10/ 10)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Select
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 22/ 22)
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 25/ 25)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Update
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 11/ 11)
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 14/ 14)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Set
-  Methods: 100.00% (13/13)   Lines: 100.00% ( 21/ 21)
+  Methods: 100.00% (11/11)   Lines: 100.00% ( 26/ 26)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Table
   Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  5/  5)
 Projom\Storage\Database\Engine\Driver\Language\Util
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  6/  6)
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  9/  9)
 Projom\Storage\Database\Engine\Driver\MySQL
   Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 25/ 25)
 Projom\Storage\Database\Engine\SourceFactory
@@ -49,8 +53,8 @@ Projom\Storage\Database\Engine\Source\DSN
 Projom\Storage\Database\Engine\Source\PDO
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  4/  4)
 Projom\Storage\Database\Query
-  Methods:  93.33% (14/15)   Lines:  95.92% ( 47/ 49)
+  Methods:  94.12% (16/17)   Lines:  82.86% ( 58/ 70)
 Projom\Storage\Database\Query\QueryObject
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
 Projom\Storage\Database\Util
-  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 14/ 14)
+  Methods: 100.00% ( 7/ 7)   Lines: 100.00% ( 15/ 15)

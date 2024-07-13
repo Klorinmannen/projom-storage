@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Database\Engine\Driver;
 
 use Projom\Storage\Database\Engine\DriverInterface;
-use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Delete;
-use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Insert;
-use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Select;
-use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Update;
+use Projom\Storage\Database\Engine\Driver\Language\SQL;
 use Projom\Storage\Database\Query\QueryObject;
 
 class MySQL implements DriverInterface
@@ -28,7 +25,7 @@ class MySQL implements DriverInterface
 
 	public function select(QueryObject $queryObject): array
 	{
-		$select = Select::create($queryObject);
+		$select = SQL::select($queryObject);
 
 		[$query, $params] = $select->query();
 
@@ -39,7 +36,7 @@ class MySQL implements DriverInterface
 
 	public function update(QueryObject $queryObject): int
 	{
-		$update = Update::create($queryObject);
+		$update = SQL::update($queryObject);
 
 		[$query, $params] = $update->query();
 
@@ -50,7 +47,7 @@ class MySQL implements DriverInterface
 
 	public function insert(QueryObject $queryObject): int
 	{
-		$inserted = Insert::create($queryObject);
+		$inserted = SQL::insert($queryObject);
 
 		[$query, $params] = $inserted->query();
 
@@ -61,7 +58,7 @@ class MySQL implements DriverInterface
 
 	public function delete(QueryObject $queryObject): int
 	{
-		$delete = Delete::create($queryObject);
+		$delete = SQL::delete($queryObject);
 
 		[$query, $params] = $delete->query();
 

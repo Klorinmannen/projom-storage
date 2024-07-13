@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Driver\MySQL;
 use Projom\Storage\Database\Query;
+use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 
@@ -106,6 +107,19 @@ class QueryTest extends TestCase
 	}
 
 	#[Test]
+	public function joinOn(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+
+		$driver = MySQL::create($pdo);
+		$query = Query::create($driver, ['User']);
+
+		$query = $query->joinOn(Join::INNER, 'User.UserID = UserRole.UserID')
+			->joinOn(Join::INNER, 'UserRole.Role, UserAccess.Role');
+		$this->assertInstanceOf(Query::class, $query);
+	}
+
+	#[Test]
 	public function filterOn(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
@@ -121,6 +135,18 @@ class QueryTest extends TestCase
 			['Age' => null],
 			Operator::IS_NOT_NULL
 		);
+		$this->assertInstanceOf(Query::class, $query);
+	}
+
+	#[Test]
+	public function groupOn(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+
+		$driver = MySQL::create($pdo);
+		$query = Query::create($driver, ['User']);
+
+		$query = $query->groupOn('Username')->groupOn('Name', 'Age')->groupOn('Lastname, Age');
 		$this->assertInstanceOf(Query::class, $query);
 	}
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\Engine\DriverInterface;
+use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
@@ -15,16 +16,17 @@ class Query
     private array $collections = [];
     private array $filters = [];
     private array $sorts = [];
-    private int|string $limit = '';
+    private array $joins = [];
     private array $groups = [];
+    private int|string $limit = '';
 
-    public function __construct(DriverInterface $driver, array $collections)
+    public function __construct(DriverInterface|null $driver, array $collections)
     {
         $this->collections = $collections;
         $this->driver = $driver;
     }
 
-    public static function create(DriverInterface $driver, array $collections): Query
+    public static function create(DriverInterface|null $driver = null, array $collections = []): Query
     {
         return new Query($driver, $collections);
     }
@@ -33,7 +35,7 @@ class Query
      * Simple query mechanism to find record(s) by a field and its value.
      * 
      * * Example use: $database->query('CollectionName')->fetch('Name', 'John')
-     * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operators::IN)
+     * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operator::IN)
      */
     public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): array
     {
@@ -42,7 +44,7 @@ class Query
     }
 
     /**
-     * Executes a query finding record(s) and returns the result.
+     * Execute a query finding record(s) and returns the result.
      * 
      * * Example use: $database->query('CollectionName')->select('*')
      * * Example use: $database->query('CollectionName')->select('Name', 'Age')
@@ -57,8 +59,9 @@ class Query
             fields: $fields,
             filters: $this->filters,
             sorts: $this->sorts,
+            groups: $this->groups,
             limit: $this->limit,
-            groups: $this->groups
+            joins: $this->joins
         );
         return $this->driver->select($queryObject);
     }
@@ -72,7 +75,7 @@ class Query
     }
 
     /**
-     * Executes a query updating record(s) and returns the number of affected rows.
+     * Execute a query updating record(s) and returns the number of affected rows.
      * 
      * * Example use: $database->query('CollectionName')->update(['Active' => 1])
      * * Example use: $database->query('CollectionName')->filterOn( ... )->update(['Username' => 'Jane', 'Password' => 'password'])
@@ -82,7 +85,8 @@ class Query
         $queryObject = new QueryObject(
             collections: $this->collections,
             fieldsWithValues: $fieldsWithValues,
-            filters: $this->filters
+            filters: $this->filters,
+            joins: $this->joins
         );
         return $this->driver->update($queryObject);
     }
@@ -95,7 +99,7 @@ class Query
     }
 
     /**
-     * Executes a query inserting a record and returns the latest inserted primary id.
+     * Execute a query inserting a record and returns the latest inserted primary id.
      * 
      * * Example use: $database->query('CollectionName')->insert(['Username' => 'John', 'Password' => '1234'])
      */
@@ -117,7 +121,7 @@ class Query
     }
 
     /**
-     * Executes a query to delete record(s) and returns the number of affected rows.
+     * Execute a query to delete record(s) and returns the number of affected rows.
      * 
      * * Example use: $database->query('CollectionName')->filterOn( ... )->delete()
      */
@@ -125,7 +129,8 @@ class Query
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
-            filters: $this->filters
+            filters: $this->filters,
+            joins: $this->joins
         );
         return $this->driver->delete($queryObject);
     }
@@ -139,20 +144,44 @@ class Query
     }
 
     /**
-     * Creating a filter to be used in the query to be executed.
+     * Join collections to the query.
+     * 
+     * * Example use: $database->query('CollectionName')->join(Join::INNER, 'Collection1.Field', 'Collection2.Field')
+     * * Example use: $database->query('CollectionName')->join(Join::LEFT, 'Collection1.Field = Collection2.Field')
+     */
+    public function joinOn(
+        Join $join,
+        string $onCollectionWithField,
+        string|null $currentCollectionWithField = null
+    ): Query {
+
+        $this->joins[] = [
+            $join,
+            $onCollectionWithField,
+            $currentCollectionWithField
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Create a filter to be used in the query to be executed.
      * 
      * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'])
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'], ['Age' => 25], Operators::NE)
-     * * Example use: $database->query('CollectionName')->filterOn([ 'Age' => [12, 23, 45] ], Operators::IN)
+     * * Example use: $database->query('CollectionName')->filterOn(['UserID' => [12, 23, 45] ], Operator::IN)
+     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John', 'UserID' => 25], logicalOperator: LogicalOperator::OR)
+     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John', 'UserID' => 25], groupFilter: true)
      */
     public function filterOn(
         array $fieldsWithValues,
         Operator $operator = Operator::EQ,
-        LogicalOperator $logicalOperator = LogicalOperator::AND
+        LogicalOperator $logicalOperator = LogicalOperator::AND,
+        bool $groupFilter = false
     ): Query {
 
+        $filters = [];
         foreach ($fieldsWithValues as $field => $value) {
-            $this->filters[] = [
+            $filters[] = [
                 $field,
                 $operator,
                 $value,
@@ -160,13 +189,20 @@ class Query
             ];
         }
 
+        if ($groupFilter)
+            $filters = [$filters];
+
+        $this->filters[] = $filters;
+
         return $this;
     }
 
     /**
-     * Grouping the result of the query.
+     * Group the query result.
      * 
-     * * Example use: $database->query('CollectionName')->groupOn('Name')->get('*')
+     * * Example use: $database->query('CollectionName')->groupOn('Name')
+     * * Example use: $database->query('CollectionName')->groupOn('Name', 'Age')
+     * * Example use: $database->query('CollectionName')->groupOn('Name, Age')
      */
     public function groupOn(string ...$fields): Query
     {
@@ -175,9 +211,10 @@ class Query
     }
 
     /**
-     * Sorts the result of the query.
+     * Sort the query result.
      * 
-     * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])->get('*')
+     * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])
+     * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::ASC, 'Age' => Sorts::DESC])
      */
     public function sortOn(array $sortFields): Query
     {
@@ -187,9 +224,10 @@ class Query
     }
 
     /**
-     * Limits the result of the query.
+     * Limit the query result.
      * 
-     * * Example use: $database->query('CollectionName')->limit(10)->get('*')
+     * * Example use: $database->query('CollectionName')->limit(10)
+     * * Example use: $database->query('CollectionName')->limit('10')
      */
     public function limit(int|string $limit): Query
     {
