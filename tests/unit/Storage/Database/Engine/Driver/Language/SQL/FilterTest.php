@@ -111,8 +111,15 @@ class FilterTest extends TestCase
 				],
 				'( ( `UpdatedAt` < :filter_updatedat_1 AND `DeletedAt` <= :filter_deletedat_2 AND `CreatedAt` >= :filter_createdat_3 )' .
 					' OR ( `UserID` IN ( :filter_userid_4_1, :filter_userid_4_2, :filter_userid_4_3 ) AND `Username` IS NOT NULL ) )'
+			],
+			[
+				[
+					['Username', Operator::LIKE, 'A__a', LogicalOperator::AND],
+					['Username', Operator::NOT_LIKE, 'J%', LogicalOperator::AND]
+				],
+				['filter_username_1' => 'A__a', 'filter_username_2' => 'J%'],
+				'( `Username` LIKE :filter_username_1 AND `Username` NOT LIKE :filter_username_2 )'
 			]
-
 		];
 	}
 

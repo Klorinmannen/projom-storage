@@ -132,6 +132,8 @@ class Filter implements AccessorInterface
 			case Operator::GTE:
 			case Operator::LT:
 			case Operator::LTE:
+			case Operator::LIKE:
+			case Operator::NOT_LIKE:
 				return $this->defaultFilter($column, $operator, $value);
 
 			default:
