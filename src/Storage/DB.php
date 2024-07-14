@@ -7,15 +7,15 @@ namespace Projom\Storage;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query;
 
-class DB extends Engine
+class DB
 {
 	public static function query(string $table): Query
 	{
-		return static::dispatch(collections: [$table]);
+		return Engine::dispatch(collections: [$table]);
 	}
 
 	public static function sql(string $query, array|null $params = null): mixed
 	{
-		return static::dispatch(query: $query, params: $params);
+		return Engine::dispatch(query: $query, params: $params);
 	}
 }
