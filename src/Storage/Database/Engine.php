@@ -23,8 +23,6 @@ class Engine
 	): object|array {
 
 		$driver = static::driver();
-		if ($driver === null)
-			throw new \Exception("Engine driver not set", 400);
 
 		if ($collections !== null)
 			return new Query($driver, $collections);
@@ -35,9 +33,13 @@ class Engine
 		throw new \Exception("Invalid dispatch", 400);
 	}
 
-	public static function driver(): DriverInterface|null
+	public static function driver(): DriverInterface
 	{
-		return static::$drivers[static::$currentDriver?->value] ?? null;
+		$driver = static::$drivers[static::$currentDriver?->value] ?? null;
+		if ($driver === null)
+			throw new \Exception("Engine driver not set", 400);
+
+		return $driver;
 	}
 
 	public static function useDriver(Driver $driver): void
@@ -64,16 +66,16 @@ class Engine
 		static::$currentDriver = $driver;
 	}
 
-	public static function setDriverFactory(DriverFactory $driverFactory): void
-	{
-		static::$driverFactory = $driverFactory;
-	}
-
 	public static function start(): void
 	{
 		$sourceFactory = SourceFactory::create();
 		$driverFactory = DriverFactory::create($sourceFactory);
 		static::setDriverFactory($driverFactory);
+	}
+
+	public static function setDriverFactory(DriverFactory $driverFactory): void
+	{
+		static::$driverFactory = $driverFactory;
 	}
 
 	public static function clear(): void
