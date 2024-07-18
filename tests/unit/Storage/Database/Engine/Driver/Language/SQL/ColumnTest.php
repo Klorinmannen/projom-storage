@@ -26,6 +26,10 @@ class ColumnTest extends TestCase
 			[
 				['Collection.Field', 'Collection.OtherField'],
 				'`Collection`.`Field`, `Collection`.`OtherField`'				
+			],
+			[
+				[ 'COUNT(*)', 'AVG(Collection.Field)', 'SUM(Collection.OtherField)', 'Username' ],
+				'COUNT(*), AVG(`Collection`.`Field`), SUM(`Collection`.`OtherField`), `Username`'
 			]
 		];
 	}
