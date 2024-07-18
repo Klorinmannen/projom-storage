@@ -9,6 +9,7 @@ use Projom\Storage\Database\Engine\Driver\Language\SQL\Set;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Table;
 use Projom\Storage\Database\Engine\Driver\Language\QueryInterface;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Join;
+use Projom\Storage\Database\Engine\Driver\Language\Util;
 use Projom\Storage\Database\Query\QueryObject;
 
 class Update implements QueryInterface
@@ -33,17 +34,20 @@ class Update implements QueryInterface
 
 	public function query(): array
 	{
-		$query = "UPDATE {$this->table} SET {$this->set}";
+		$queryParts[] = "UPDATE {$this->table} SET {$this->set}";
 
 		if (!$this->join->empty())
-			$query .= " {$this->join}";
+			$queryParts[] = "{$this->join}";
 
 		if (!$this->filter->empty())
-			$query .= " WHERE {$this->filter}";
+			$queryParts[] = "WHERE {$this->filter}";
+
+		$query = Util::join($queryParts, ' ');
+		$params = ($this->set->params() + $this->filter->params()) ?: null;
 
 		return [
 			$query,
-			($this->set->params() + $this->filter->params()) ?: null
+			$params
 		];
 	}
 }

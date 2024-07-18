@@ -31,10 +31,11 @@ class Insert implements QueryInterface
 		$positionalParams = $this->set->positionalParams();
 
 		$query = "INSERT INTO {$this->table} ({$positionalFields}) VALUES ({$positionalParams})";
+		$params = $this->set->positionalParamValues() ?: null;
 
 		return [
 			$query,
-			$this->set->positionalParamValues() ?: null
+			$params
 		];
 	}
 }
