@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Engine\Driver\Language\SQL;
 
-use Projom\Storage\Database\Query\AggregateFunction;
 use Projom\Storage\Database\Engine\Driver\Language\AccessorInterface;
 use Projom\Storage\Database\Engine\Driver\Language\Util;
+use Projom\Storage\Database\Query\AggregateFunction;
 
 class Column implements AccessorInterface
 {
@@ -39,45 +39,42 @@ class Column implements AccessorInterface
 		$fields = Util::cleanList($fields);
 
 		$parts = [];
-		foreach ($fields as $field)
-			$parts[] = $this->parseField($field);
+		foreach ($fields as $field) {
+			if ($aggregates = $this->isAggregateFunction($field))
+				$parts[] = $this->buildAggregateFunctionField(...$aggregates);
+			else
+				$parts[] = $this->buildField($field);
+		}
 
 		$this->fieldString = Util::join($parts, ', ');
 	}
 
-	public function parseField(string $field): string
+	public function buildField(string $field): string
 	{
-		if ($aggregateField = $this->parseAggregateFunction($field))
-			return $aggregateField;
-
 		return Util::splitAndQuoteThenJoin($field, '.');
 	}
 
-	public function parseAggregateFunction(string $field): string|null
+	public function buildAggregateFunctionField(AggregateFunction $function, string $field): string|null
+	{
+		$column = Util::splitAndQuoteThenJoin($field, '.');
+		$aggregateFunctionfield = "{$function->value}($column)";
+		return $aggregateFunctionfield;
+	}
+
+	public function isAggregateFunction(string $field): array|null
 	{
 		$pattern = '/(COUNT|AVG|SUM|MIN|MAX)\(([\w\.\*]+)\)/i';
 		if (preg_match($pattern, $field, $matches) !== 1)
 			return null;
 
-		$function = strtoupper($matches[1] ?? '');
-		if (!$this->matchAggregateFunction($function))
+		$matchedFunction = strtoupper($matches[1] ?? '');
+		if (!$aggregateFunction = AggregateFunction::tryFrom($matchedFunction))
 			return null;
 
-		if (!$column = $matches[2] ?? '')
+		if (!$field = $matches[2] ?? '')
 			return null;
 
-		$aggregateFunction = AggregateFunction::tryFrom($function);
-
-		$column = Util::splitAndQuoteThenJoin($column, '.');
-		$field = "{$aggregateFunction->value}($column)";
-
-		return $field;
-	}
-
-	public function matchAggregateFunction(string $function): bool 
-	{
-		$aggregateFunction = AggregateFunction::tryFrom($function);
-		return $aggregateFunction !== null;
+		return [ $aggregateFunction, $field ];
 	}
 
 	public function fields(): array
