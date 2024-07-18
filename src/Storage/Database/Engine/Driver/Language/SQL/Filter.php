@@ -11,7 +11,7 @@ use Projom\Storage\Database\Query\Operator;
 
 class Filter implements AccessorInterface
 {
-	private readonly string $filters;
+	private readonly string $filterString;
 
 	private array $queryFilters = [];
 	private array $filterGroups = [];
@@ -31,12 +31,12 @@ class Filter implements AccessorInterface
 
 	public function __toString(): string
 	{
-		return $this->filters;
+		return $this->filterString;
 	}
 
 	public function empty(): bool
 	{
-		return empty($this->filters);
+		return empty($this->filterString);
 	}
 
 	public function params(): array
@@ -64,31 +64,38 @@ class Filter implements AccessorInterface
 			$this->parseFilter($queryFilter, $groupIndex);
 		}
 
+		$filterParts = $this->parseFilterGroups();
+
+		$this->filterString = Util::join($filterParts, ' ');
+	}
+
+	private function parseFilterGroups(): array
+	{
 		$filterParts = [];
-		foreach ($this->filterGroups as $groupIndex => $filterGroups) {
+		foreach ($this->filterGroups as $filterGroups) {
 
 			// Flatten filters and logical operators in current order.
-			$filterGroups = array_merge(...$filterGroups);
-			
+			$filterGroups = Util::flatten($filterGroups);
+
 			// Remove the last element, the logical operator, and push it back after adding parentheses.
-			$logicalOperator = array_pop($filterGroups);			
-			$filterGroups = $this->addParenthesesToFilter($filterGroups);
+			$logicalOperator = array_pop($filterGroups);
+			$filterGroups = $this->addParentheses($filterGroups);
 
 			// Merge this filter group with previously added filter groups.
-			$filterParts = [...$filterParts, ...$filterGroups];
-			
+			$filterParts = Util::merge($filterParts, $filterGroups);
+
 			$filterParts[] = $logicalOperator;
 		}
 
 		// Remove the last element, the logical operator as it is not used.
 		// And add parentheses.
 		array_pop($filterParts);
-		$filterParts = $this->addParenthesesToFilter($filterParts);
+		$filterParts = $this->addParentheses($filterParts);
 
-		$this->filters = Util::join($filterParts, ' ');
+		return $filterParts;
 	}
 
-	private function addParenthesesToFilter(array $filter): array
+	private function addParentheses(array $filter): array
 	{
 		$filterCount = count($filter);
 
