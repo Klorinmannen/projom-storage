@@ -63,7 +63,7 @@ class Column implements AccessorInterface
 
 	public function isAggregateFunction(string $field): array|null
 	{
-		$pattern = '/(COUNT|AVG|SUM|MIN|MAX)\(([\w\.\*]+)\)/i';
+		$pattern = '/^(COUNT|AVG|SUM|MIN|MAX)\(([\w\.\*]+)\)$/i';
 		if (preg_match($pattern, $field, $matches) !== 1)
 			return null;
 
