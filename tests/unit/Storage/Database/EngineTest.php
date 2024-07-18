@@ -44,8 +44,6 @@ class EngineTest extends TestCase
 	#[Test]
 	public function driver(): void
 	{
-		$this->assertNull(Engine::driver());
-
 		$pdo = $this->createMock(\PDO::class);
 		$mysql = MySQL::create($pdo);
 		Engine::setDriver($mysql, Driver::MySQL);
@@ -127,8 +125,13 @@ class EngineTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$mysql = MySQL::create($pdo);
 		Engine::setDriver($mysql, Driver::MySQL);
-
+		
 		Engine::clear();
-		$this->assertNull(Engine::driver());
+		
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage("Engine driver not set");
+		$this->expectExceptionCode(400);
+
+		Engine::driver();
 	}
 }

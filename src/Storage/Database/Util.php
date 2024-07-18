@@ -51,4 +51,14 @@ class Util
     {
         return explode($delimeter, $subject);
     }
+
+    public static function flatten(array $collection): array
+    {
+        return array_merge(...$collection);
+    }
+
+    public static function merge(array $collection, array $otherCollection): array
+    {
+        return [ ...$collection, ...$otherCollection ];
+    }
 }

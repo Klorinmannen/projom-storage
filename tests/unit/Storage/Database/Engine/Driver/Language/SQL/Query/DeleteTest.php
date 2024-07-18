@@ -21,7 +21,7 @@ class DeleteTest extends TestCase
 			[
 				new QueryObject(
 					collections: ['User'],
-					joins: [[Join::INNER, 'UserRole.UserID = User.UserID', null]],
+					joins: [['UserRole.UserID = User.UserID', Join::INNER, null]],
 					filters: [['UserRole.Role', Operator::EQ, 'leader', LogicalOperator::AND]]
 				),
 				[

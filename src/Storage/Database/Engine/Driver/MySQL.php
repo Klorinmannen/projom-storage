@@ -47,9 +47,9 @@ class MySQL implements DriverInterface
 
 	public function insert(QueryObject $queryObject): int
 	{
-		$inserted = SQL::insert($queryObject);
+		$insert = SQL::insert($queryObject);
 
-		[$query, $params] = $inserted->query();
+		[$query, $params] = $insert->query();
 
 		$this->execute($query, $params);
 

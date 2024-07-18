@@ -150,15 +150,15 @@ class Query
      * * Example use: $database->query('CollectionName')->join(Join::LEFT, 'Collection1.Field = Collection2.Field')
      */
     public function joinOn(
+        string $currentCollectionWithField,
         Join $join,
-        string $onCollectionWithField,
-        string|null $currentCollectionWithField = null
+        string|null $onCollectionWithField = null
     ): Query {
 
         $this->joins[] = [
+            $currentCollectionWithField,
             $join,
-            $onCollectionWithField,
-            $currentCollectionWithField
+            $onCollectionWithField
         ];
 
         return $this;

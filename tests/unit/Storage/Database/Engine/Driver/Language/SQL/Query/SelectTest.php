@@ -24,7 +24,7 @@ class SelectTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					fields: ['UserID', 'Name'],
-					joins: [[Join::INNER, 'Log.UserID', 'User.UserID']],
+					joins: [['User.UserID', Join::INNER, 'Log.UserID']],
 					filters: [
 						['UserID', Operator::EQ, 10, LogicalOperator::AND],
 						['Log.RequestType', Operator::EQ, 'GET', LogicalOperator::AND]

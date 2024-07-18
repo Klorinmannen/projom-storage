@@ -16,4 +16,6 @@ enum Operator: string
 	case IS_NOT_NULL = 'IS NOT NULL';
 	case IN = 'IN';
 	case NOT_IN = 'NOT IN';
+	case LIKE = 'LIKE';
+	case NOT_LIKE = 'NOT LIKE';
 }
