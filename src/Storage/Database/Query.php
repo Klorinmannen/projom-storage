@@ -146,8 +146,8 @@ class Query
     /**
      * Join collections to the query.
      * 
-     * * Example use: $database->query('CollectionName')->join(Join::INNER, 'Collection1.Field', 'Collection2.Field')
-     * * Example use: $database->query('CollectionName')->join(Join::LEFT, 'Collection1.Field = Collection2.Field')
+     * * Example use: $database->query('CollectionName')->join('Collection1.Field', Join::INNER, 'Collection2.Field')
+     * * Example use: $database->query('CollectionName')->join('Collection1.Field = Collection2.Field', Join::LEFT)
      */
     public function joinOn(
         string $currentCollectionWithField,
