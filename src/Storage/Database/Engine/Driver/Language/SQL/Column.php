@@ -40,7 +40,7 @@ class Column implements AccessorInterface
 
 		$parts = [];
 		foreach ($fields as $field) {
-			if ($aggregates = $this->isAggregateFunction($field))
+			if ($aggregates = $this->matchAggregateFunction($field))
 				$parts[] = $this->buildAggregateFunctionField(...$aggregates);
 			else
 				$parts[] = $this->buildField($field);
@@ -61,7 +61,7 @@ class Column implements AccessorInterface
 		return $aggregateFunctionfield;
 	}
 
-	public function isAggregateFunction(string $field): array|null
+	public function matchAggregateFunction(string $field): array|null
 	{
 		$pattern = '/^(COUNT|AVG|SUM|MIN|MAX)\(([\w\.\*]+)\)$/i';
 		if (preg_match($pattern, $field, $matches) !== 1)
