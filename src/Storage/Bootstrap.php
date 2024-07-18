@@ -8,8 +8,9 @@ use Projom\Storage\Database\Engine;
 
 class Bootstrap
 {
-	public static function start(): void
+	public static function start(array $config): void
 	{
 		Engine::start();
+		Engine::loadDriver($config);
 	}
 }
