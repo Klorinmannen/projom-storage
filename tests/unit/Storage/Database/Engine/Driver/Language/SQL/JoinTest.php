@@ -16,26 +16,26 @@ class JoinTest extends TestCase
 	public static function createProvider(): array
 	{
 		return [
-			 1 => [
+			1 => [
 				[],
 				''
 			],
 			2 => [
 				[
-					[QueryJoin::INNER, 'Log.UserID', 'User.UserID'],
+					['User.UserID', QueryJoin::INNER, 'Log.UserID'],
 				],
 				'INNER JOIN `Log` ON `User`.`UserID` = `Log`.`UserID`',
 			],
 			3 => [
 				[
-					[QueryJoin::STRAIGHT, 'Log.UserID = User.UserID', null],
+					['Log.UserID = User.UserID', QueryJoin::STRAIGHT, null],
 				],
 				'STRAIGHT JOIN `Log` ON `User`.`UserID` = `Log`.`UserID`'
 			],
 			4 => [
 				[
-					[QueryJoin::LEFT, 'UserRole.UserID', 'User.UserID'],
-					[QueryJoin::LEFT, 'UserAccess.UserRoleID = UserRole.UserRoleID', null]
+					['User.UserID', QueryJoin::LEFT, 'UserRole.UserID'],
+					['UserAccess.UserRoleID = UserRole.UserRoleID', QueryJoin::LEFT, null]
 				],
 				'LEFT JOIN `UserRole` ON `User`.`UserID` = `UserRole`.`UserID`' .
 				' LEFT JOIN `UserAccess` ON `UserRole`.`UserRoleID` = `UserAccess`.`UserRoleID`'

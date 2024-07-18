@@ -114,8 +114,8 @@ class QueryTest extends TestCase
 		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
-		$query = $query->joinOn(Join::INNER, 'User.UserID = UserRole.UserID')
-			->joinOn(Join::INNER, 'UserRole.Role, UserAccess.Role');
+		$query = $query->joinOn('User.UserID = UserRole.UserID', Join::INNER)
+			->joinOn('UserRole.Role, UserAccess.Role', Join::INNER);
 		$this->assertInstanceOf(Query::class, $query);
 	}
 

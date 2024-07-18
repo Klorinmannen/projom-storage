@@ -22,7 +22,7 @@ class UpdateTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					fieldsWithValues: ['Name' => 'John'],
-					joins: [[Join::INNER, 'User.UserID = UserRole.UserID', null]],
+					joins: [['User.UserID = UserRole.UserID', Join::INNER, null]],
 					filters: [
 						['UserRole.Role', Operator::EQ, 'leader', LogicalOperator::AND]
 					]

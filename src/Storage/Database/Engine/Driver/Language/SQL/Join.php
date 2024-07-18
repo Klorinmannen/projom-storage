@@ -25,27 +25,27 @@ class Join implements AccessorInterface
 	private function parse(array $joins): void
 	{
 		$joinStrings = [];
-		foreach ($joins as [$join, $onCollectionWithField, $collectionWithField])
-			$joinStrings[] = $this->buildJoinString($join, $onCollectionWithField, $collectionWithField);
+		foreach ($joins as [$currentCollectionWithField, $join, $onCollectionWithField])
+			$joinStrings[] = $this->buildJoinString($currentCollectionWithField, $join, $onCollectionWithField);
 
 		$this->joined = Util::join($joinStrings, ' ');
 	}
 
 	private function buildJoinString(
+		string $currentCollectionWithField,
 		QueryJoin $join,
-		string $onCollectionWithField,
-		string|null $collectionWithField
+		string|null $onCollectionWithField
 	): string {
 
-		if ($collectionWithField === null)
-			return $this->buildCustomJoinString($join, $onCollectionWithField);
+		if ($onCollectionWithField === null)
+			return $this->buildCustomJoinString($currentCollectionWithField, $join);
 
-		$collectionWithField = Util::splitThenQuoteAndJoin($collectionWithField, '.');
+		$currentCollectionWithField = Util::splitThenQuoteAndJoin($currentCollectionWithField, '.');
 		$onCollectionWithField = Util::splitThenQuoteAndJoin($onCollectionWithField, '.');
 
 		[$onCollection, $onCollectionField] = Util::split($onCollectionWithField, '.');
 
-		$joinString = $this->joinString($join->value, $onCollection, $collectionWithField, $onCollectionWithField);
+		$joinString = $this->joinString($join->value, $onCollection, $currentCollectionWithField, $onCollectionWithField);
 
 		return $joinString;
 	}
@@ -53,7 +53,7 @@ class Join implements AccessorInterface
 	/**
 	 * * Format: $join->buildCustomString(QueryJoin::INNER, 'UserRole.UserID = User.UserID')
 	 */
-	private function buildCustomJoinString(QueryJoin $join,	string $customString): string
+	private function buildCustomJoinString(string $customString, QueryJoin $join): string
 	{
 		$stringParts = Util::split($customString, '=');
 
@@ -71,11 +71,11 @@ class Join implements AccessorInterface
 	private function joinString(
 		string $join,
 		string $onCollection,
-		string $collectionWithValue,
-		string $onCollectionWithValue,
+		string $currentCollection,
+		string $on,
 	): string {
 
-		return "{$join} {$onCollection} ON {$collectionWithValue} = {$onCollectionWithValue}";
+		return "{$join} {$onCollection} ON {$currentCollection} = {$on}";
 	}
 
 	public function empty()
