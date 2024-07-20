@@ -83,4 +83,19 @@ class MySQL implements DriverInterface
 
 		return $this->statement->fetchAll();
 	}
+
+	public function startTransaction(): void
+	{
+		$this->pdo->beginTransaction();
+	}
+
+	public function endTransaction(): void
+	{
+		$this->pdo->commit();
+	}
+
+	public function revertTransaction(): void
+	{
+		$this->pdo->rollBack();
+	}
 }
