@@ -18,4 +18,19 @@ class DB
 	{
 		return Engine::dispatch(query: $query, params: $params);
 	}
+
+	public static function startTransaction(): void
+	{
+		Engine::driver()->startTransaction();
+	}
+
+	public static function endTransaction(): void
+	{
+		Engine::driver()->endTransaction();
+	}
+
+	public static function revertTransaction(): void
+	{
+		Engine::driver()->revertTransaction();
+	}
 }
