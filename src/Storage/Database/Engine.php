@@ -28,7 +28,7 @@ class Engine
 			return new Query($driver, $collections);
 
 		if ($query !== null)
-			return $driver->query($query, $params);
+			return $driver->execute($query, $params);
 
 		throw new \Exception("Invalid dispatch", 400);
 	}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Engine\Driver;
 
+use Projom\Storage\Database\Engine\Driver\Language\QueryInterface;
 use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Driver\Language\SQL;
 use Projom\Storage\Database\Query\QueryObject;
@@ -27,9 +28,7 @@ class MySQL implements DriverInterface
 	{
 		$select = SQL::select($queryObject);
 
-		[$query, $params] = $select->query();
-
-		$this->execute($query, $params);
+		$this->executeQuery($select);
 
 		return $this->statement->fetchAll();
 	}
@@ -38,9 +37,7 @@ class MySQL implements DriverInterface
 	{
 		$update = SQL::update($queryObject);
 
-		[$query, $params] = $update->query();
-
-		$this->execute($query, $params);
+		$this->executeQuery($update);
 
 		return $this->statement->rowCount();
 	}
@@ -49,9 +46,7 @@ class MySQL implements DriverInterface
 	{
 		$insert = SQL::insert($queryObject);
 
-		[$query, $params] = $insert->query();
-
-		$this->execute($query, $params);
+		$this->executeQuery($insert);
 
 		return (int) $this->pdo->lastInsertId();
 	}
@@ -60,14 +55,26 @@ class MySQL implements DriverInterface
 	{
 		$delete = SQL::delete($queryObject);
 
-		[$query, $params] = $delete->query();
-
-		$this->execute($query, $params);
+		$this->executeQuery($delete);
 
 		return (int) $this->statement->rowCount();
 	}
 
-	public function execute(string $sql, array|null $params): void
+	public function execute(string $sql, array|null $params): array
+	{
+		$this->prepareAndExecute($sql, $params);
+
+		return $this->statement->fetchAll();
+	}
+
+	private function executeQuery(QueryInterface $query): void
+	{
+		[$query, $params] = $query->query();
+
+		$this->prepareAndExecute($query, $params);
+	}
+
+	private function prepareAndExecute(string $sql, array|null $params): void
 	{
 		if (!$statement = $this->pdo->prepare($sql))
 			throw new \Exception("Failed to prepare statement", 500);
@@ -75,13 +82,6 @@ class MySQL implements DriverInterface
 		$this->statement = $statement;
 		if (!$this->statement->execute($params))
 			throw new \Exception("Failed to execute statement", 500);
-	}
-
-	public function query(string $sql, array|null $params): array
-	{
-		$this->execute($sql, $params);
-
-		return $this->statement->fetchAll();
 	}
 
 	public function startTransaction(): void

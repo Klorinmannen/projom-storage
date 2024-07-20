@@ -178,7 +178,7 @@ class MySQLTest extends TestCase
 		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
 		$mysql = MySQL::create($pdo);
-		$query = $mysql->query($sql, $params);
+		$query = $mysql->execute($sql, $params);
 		$this->assertEquals($expected, $query);
 	}
 }
