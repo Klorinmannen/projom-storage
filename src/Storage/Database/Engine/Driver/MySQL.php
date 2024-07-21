@@ -60,13 +60,6 @@ class MySQL implements DriverInterface
 		return (int) $this->statement->rowCount();
 	}
 
-	public function execute(string $sql, array|null $params): array
-	{
-		$this->prepareAndExecute($sql, $params);
-
-		return $this->statement->fetchAll();
-	}
-
 	private function executeQuery(QueryInterface $query): void
 	{
 		[$query, $params] = $query->query();
@@ -82,6 +75,13 @@ class MySQL implements DriverInterface
 		$this->statement = $statement;
 		if (!$this->statement->execute($params))
 			throw new \Exception("Failed to execute statement", 500);
+	}
+
+	public function execute(string $sql, array|null $params): array
+	{
+		$this->prepareAndExecute($sql, $params);
+
+		return $this->statement->fetchAll();
 	}
 
 	public function startTransaction(): void
