@@ -17,18 +17,17 @@ class Engine
 	protected static DriverFactory|null $driverFactory = null;
 
 	public static function dispatch(
-		array|null $collections = null,
-		string|null $query = null,
-		array|null $params = null
+		array|null $query = null,
+		array|null $execute = null,
 	): object|array {
 
 		$driver = static::driver();
 
-		if ($collections !== null)
-			return new Query($driver, $collections);
-
 		if ($query !== null)
-			return $driver->execute($query, $params);
+			return new Query($driver, $query);
+
+		if ($execute !== null)
+			return $driver->execute(...$execute);
 
 		throw new \Exception("Invalid dispatch", 400);
 	}
