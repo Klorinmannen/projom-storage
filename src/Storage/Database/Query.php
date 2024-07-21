@@ -84,7 +84,7 @@ class Query
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
-            fieldsWithValues: $fieldsWithValues,
+            fieldsWithValues: [$fieldsWithValues],
             filters: $this->filters,
             joins: $this->joins
         );
@@ -101,7 +101,7 @@ class Query
     /**
      * Execute a query inserting a record and returns the latest inserted primary id.
      * 
-     * * Example use: $database->query('CollectionName')->insert(['Username' => 'John', 'Password' => '1234'])
+     * * Example use: $database->query('CollectionName')->insert([['Username' => 'John', 'Password' => '1234']])
      */
     public function insert(array $fieldsWithValues): int
     {

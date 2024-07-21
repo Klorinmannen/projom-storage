@@ -52,7 +52,7 @@ class MySQLTest extends TestCase
 		$mysql = MySQL::create($pdo);
 		$queryObject = new QueryObject(
 			collections: ['User'],
-			fieldsWithValues: ['Name' => 'John']
+			fieldsWithValues: [['Name' => 'John']]
 		);
 
 		$result = $mysql->update($queryObject);
@@ -74,7 +74,7 @@ class MySQLTest extends TestCase
 		$mysql = MySQL::create($pdo);
 		$queryObject = new QueryObject(
 			collections: ['User'],
-			fieldsWithValues: ['Name' => 'John', 'Age' => 25]
+			fieldsWithValues: [['Name' => 'John', 'Age' => 25]]
 		);
 
 		$result = $mysql->insert($queryObject);

@@ -77,10 +77,10 @@ class QueryTest extends TestCase
 		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
-		$result = $query->insert(['Name' => 'Jane', 'Age' => 21]);
+		$result = $query->insert([['Name' => 'Jane', 'Age' => 21]]);
 		$this->assertEquals((int) $expected, $result);
 
-		$result = $query->add(['Name' => 'Jane', 'Age' => 21]);
+		$result = $query->add([['Name' => 'Jane', 'Age' => 21]]);
 		$this->assertEquals((int) $expected, $result);
 	}
 

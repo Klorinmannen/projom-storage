@@ -21,7 +21,7 @@ class UpdateTest extends TestCase
 			[
 				new QueryObject(
 					collections: ['User'],
-					fieldsWithValues: ['Name' => 'John'],
+					fieldsWithValues: [['Name' => 'John']],
 					joins: [['User.UserID = UserRole.UserID', Join::INNER, null]],
 					filters: [
 						['UserRole.Role', Operator::EQ, 'leader', LogicalOperator::AND]
@@ -37,7 +37,7 @@ class UpdateTest extends TestCase
 			[
 				new QueryObject(
 					collections: ['User'],
-					fieldsWithValues: ['Name' => 'John']
+					fieldsWithValues: [['Name' => 'John']]
 				),
 				[
 					'UPDATE `User` SET `Name` = :set_name_1',
