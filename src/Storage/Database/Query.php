@@ -212,15 +212,24 @@ class Query
     }
 
     /**
-     * Sort the query result.
+     * Order the query result.
      * 
      * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])
      * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::ASC, 'Age' => Sorts::DESC])
      */
-    public function sortOn(array $sortFields): Query
+    public function orderOn(array $sortFields): Query
     {
         foreach ($sortFields as $field => $sort)
             $this->sorts[] = [$field, $sort];
+        return $this;
+    }
+
+    /**
+     * Alias for order method.
+     */
+    public function sortOn(array $sortFields): Query
+    {
+        return $this->orderOn($sortFields);
         return $this;
     }
 
