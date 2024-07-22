@@ -12,6 +12,7 @@ class Set implements AccessorInterface
 	private readonly array $sets;
 	private readonly array $fields;
 	private readonly array $params;
+	private readonly array $positionalParams;
 	private int $id = 0;
 
 	public function __construct(array $fieldsWithValues)
@@ -39,19 +40,27 @@ class Set implements AccessorInterface
 		$sets = [];
 		$fields = [];
 		$params = [];
-		
-		foreach ($fieldsWithValues as $field => $value) {
-			$this->id++;
-			$valueField = $this->createValueField($field, $this->id);
-			$quotedField = Util::splitAndQuoteThenJoin($field, '.');
-			$sets[] = $this->createSet($quotedField, $valueField);
-			$fields[$valueField] = $quotedField;
-			$params[$valueField] = $value;
+
+		foreach ($fieldsWithValues as $index => $fieldValueList) {
+			foreach ($fieldValueList as $field => $value) {
+				$this->id++;
+				$valueField = $this->createValueField($field, $this->id);
+				$quotedField = Util::splitAndQuoteThenJoin($field, '.');
+				$sets[] = $this->createSet($quotedField, $valueField);
+				$fields[$quotedField] = $quotedField;
+				$params[$index][$valueField] = $value;
+			}
 		}
 
 		$this->sets = $sets;
 		$this->fields = $fields;
-		$this->params = $params;
+		$this->params = Util::flatten($params);
+
+		$positionalParams = [];
+		foreach ($params as $parameters)
+			$positionalParams[] = array_fill(0, count($parameters), '?');
+
+		$this->positionalParams = $positionalParams;
 	}
 
 	private function createSet(string $quotedField, string $valueField): string
@@ -76,10 +85,12 @@ class Set implements AccessorInterface
 		return Util::join($this->fields, ', ');
 	}
 
-	public function positionalParams(): string
+	public function positionalParams(): array
 	{
-		$positionalParams = array_fill(0, count($this->params), '?');
-		return Util::join($positionalParams, ', ');
+		return array_map(
+			fn ($positionalParams) => Util::join($positionalParams, ', '),
+			$this->positionalParams
+		);
 	}
 
 	public function positionalParamValues(): array

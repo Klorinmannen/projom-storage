@@ -7,6 +7,7 @@ namespace Projom\Storage\Database\Engine\Driver\Language\SQL\Query;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Set;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Table;
 use Projom\Storage\Database\Engine\Driver\Language\QueryInterface;
+use Projom\Storage\Database\Engine\Driver\Language\Util;
 use Projom\Storage\Database\Query\QueryObject;
 
 class Insert implements QueryInterface
@@ -30,7 +31,15 @@ class Insert implements QueryInterface
 		$positionalFields = $this->set->positionalFields();
 		$positionalParams = $this->set->positionalParams();
 
-		$query = "INSERT INTO {$this->table} ({$positionalFields}) VALUES ({$positionalParams})";
+		$queryParts[] = "INSERT INTO {$this->table} ({$positionalFields}) VALUES";
+
+		$paramParts = [];
+		foreach ($positionalParams as $params)
+			$paramParts[] = "({$params})";
+
+		$queryParts[] = Util::join($paramParts, ', ');
+
+		$query = Util::join($queryParts, ' ');
 		$params = $this->set->positionalParamValues() ?: null;
 
 		return [

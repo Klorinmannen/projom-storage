@@ -11,12 +11,12 @@ class DB
 {
 	public static function query(string $table): Query
 	{
-		return Engine::dispatch(collections: [$table]);
+		return Engine::dispatch(query: [$table]);
 	}
 
 	public static function sql(string $query, array|null $params = null): mixed
 	{
-		return Engine::dispatch(query: $query, params: $params);
+		return Engine::dispatch(execute: [$query, $params]);
 	}
 
 	public static function startTransaction(): void

@@ -75,7 +75,7 @@ class Query
     }
 
     /**
-     * Execute a query updating record(s) and returns the number of affected rows.
+     * Execute a query updating record(s) and return the number of affected rows.
      * 
      * * Example use: $database->query('CollectionName')->update(['Active' => 1])
      * * Example use: $database->query('CollectionName')->filterOn( ... )->update(['Username' => 'Jane', 'Password' => 'password'])
@@ -84,12 +84,13 @@ class Query
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
-            fieldsWithValues: $fieldsWithValues,
+            fieldsWithValues: [$fieldsWithValues],
             filters: $this->filters,
             joins: $this->joins
         );
         return $this->driver->update($queryObject);
     }
+
     /**
      * Alias for update method.
      */
@@ -99,9 +100,9 @@ class Query
     }
 
     /**
-     * Execute a query inserting a record and returns the latest inserted primary id.
+     * Execute a query inserting record(s) and returns the first inserted primary id.
      * 
-     * * Example use: $database->query('CollectionName')->insert(['Username' => 'John', 'Password' => '1234'])
+     * * Example use: $database->query('CollectionName')->insert([['Username' => 'John', 'Password' => '1234']])
      */
     public function insert(array $fieldsWithValues): int
     {

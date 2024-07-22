@@ -18,11 +18,21 @@ class InsertTest extends TestCase
 			[
 				new QueryObject(
 					collections: ['User'],
-					fieldsWithValues: ['Name' => 'John', 'Age' => 25]
+					fieldsWithValues: [['Name' => 'John', 'Age' => 25]]
 				),
 				[
 					'INSERT INTO `User` (`Name`, `Age`) VALUES (?, ?)',
 					['John', 25]
+				]
+			],
+			[
+				new QueryObject(
+					collections: ['User'],
+					fieldsWithValues: [['Name' => 'John', 'Age' => 25], ['Name' => 'Jane', 'Age' => 30]]
+				),
+				[
+					'INSERT INTO `User` (`Name`, `Age`) VALUES (?, ?), (?, ?)',
+					['John', 25, 'Jane', 30]
 				]
 			]
 		];

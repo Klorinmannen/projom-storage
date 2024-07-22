@@ -51,7 +51,7 @@ class Join implements AccessorInterface
 	}
 
 	/**
-	 * * Format: $join->buildCustomString(QueryJoin::INNER, 'UserRole.UserID = User.UserID')
+	 * * Format: $join->buildCustomString('UserRole.UserID = User.UserID', QueryJoin::INNER)
 	 */
 	private function buildCustomJoinString(string $customString, QueryJoin $join): string
 	{
