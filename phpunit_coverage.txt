@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2024-07-23 19:17:17
+  2024-07-23 21:01:51
 
  Summary:
-  Classes: 64.52% (20/31)
-  Methods: 88.67% (133/150)
-  Lines:   88.98% (420/472)
+  Classes: 74.19% (23/31)
+  Methods: 92.11% (140/152)
+  Lines:   95.80% (456/476)
 
 Projom\Storage\DB
   Methods:  40.00% ( 2/ 5)   Lines:  40.00% (  2/  5)
@@ -21,11 +21,15 @@ Projom\Storage\Database\Engine\Driver\Language\SQL
 Projom\Storage\Database\Engine\Driver\Language\SQL\Column
   Methods:  88.89% ( 8/ 9)   Lines:  92.31% ( 24/ 26)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Filter
-  Methods:  88.89% ( 8/ 9)   Lines:  77.27% ( 34/ 44)
+  Methods:  90.00% ( 9/10)   Lines:  97.87% ( 46/ 47)
+Projom\Storage\Database\Engine\Driver\Language\SQL\Filter\In
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 15/ 15)
+Projom\Storage\Database\Engine\Driver\Language\SQL\Filter\Nullable
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  6/  6)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Filter\Standard
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 10/ 10)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Filter\Util
-  Methods:  50.00% ( 1/ 2)   Lines:  77.78% (  7/  9)
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  9/  9)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Group
   Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 10/ 10)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Join
@@ -61,4 +65,4 @@ Projom\Storage\Database\Query
 Projom\Storage\Database\Query\QueryObject
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
 Projom\Storage\Database\Util
-  Methods:  88.89% ( 8/ 9)   Lines:  94.12% ( 16/ 17)
+  Methods:  90.00% ( 9/10)   Lines:  94.44% ( 17/ 18)
