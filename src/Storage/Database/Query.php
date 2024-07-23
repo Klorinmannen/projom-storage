@@ -39,7 +39,7 @@ class Query
      */
     public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): array
     {
-        $this->filterOn([$field => $value], $operator);
+        $this->filterOn([[$field, $operator, $value]]);
         return $this->select('*');
     }
 
@@ -168,32 +168,16 @@ class Query
     /**
      * Create a filter to be used in the query to be executed.
      * 
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'])
-     * * Example use: $database->query('CollectionName')->filterOn(['UserID' => [12, 23, 45] ], Operator::IN)
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John', 'UserID' => 25], logicalOperator: LogicalOperator::OR)
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John', 'UserID' => 25], groupFilter: true)
+     * * Example use: $database->query('CollectionName')->filterOn([['Name', Operator::EQ, 'John'], ['UserID', Operator::NE, 25]])
+     * * Example use: $database->query('CollectionName')->filterOn([['UserID' Operator::IN, [12, 23, 45]], ['Name', Operator::LIKE, 'J%']])
+     * * Example use: $database->query('CollectionName')->filterOn([['Name', Operator::EQ, 'John'], ['UserID', Operator::LT, 25]], LogicalOperator::OR)
      */
     public function filterOn(
-        array $fieldsWithValues,
-        Operator $operator = Operator::EQ,
-        LogicalOperator $logicalOperator = LogicalOperator::AND,
-        bool $groupFilter = false
+        array $filterGroup,
+        LogicalOperator $groupLogicalOperator = LogicalOperator::AND
     ): Query {
 
-        $filters = [];
-        foreach ($fieldsWithValues as $field => $value) {
-            $filters[] = [
-                $field,
-                $operator,
-                $value,
-                $logicalOperator
-            ];
-        }
-
-        if ($groupFilter)
-            $filters = [$filters];
-
-        $this->filters[] = $filters;
+        $this->filters[] = [ $filterGroup, $groupLogicalOperator ];
 
         return $this;
     }

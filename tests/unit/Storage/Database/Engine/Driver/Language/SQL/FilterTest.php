@@ -19,63 +19,103 @@ class FilterTest extends TestCase
 		return [
 			[
 				[
-					['Name', Operator::EQ, 'John', LogicalOperator::AND]
+					[
+						[['Name', Operator::EQ, 'John']],
+						LogicalOperator::AND
+					]
 				],
 				['filter_name_1' => 'John'],
-				'`Name` = :filter_name_1'
+				'( `Name` = :filter_name_1 )'
 			],
 			[
 				[
-					['Updated', Operator::LT, '2024-01-01 00:00:00', LogicalOperator::AND],
-					['Deleted', Operator::LTE, '2024-01-01 00:00:00', LogicalOperator::OR],
-					['Created', Operator::GTE, '2024-01-01 00:00:00', LogicalOperator::AND]
+					[
+						[
+							['UpdatedAt', Operator::LT, '2024-01-01 00:00:00'],
+							['DeletedAt', Operator::LTE, '2024-01-01 00:00:00'],
+							['CreatedAt', Operator::GTE, '2024-01-01 00:00:00']
+						],
+						LogicalOperator::AND
+					]
 				],
 				[
-					'filter_updated_1' => '2024-01-01 00:00:00',
-					'filter_deleted_2' => '2024-01-01 00:00:00',
-					'filter_created_3' => '2024-01-01 00:00:00'
+					'filter_updatedat_1' => '2024-01-01 00:00:00',
+					'filter_deletedat_2' => '2024-01-01 00:00:00',
+					'filter_createdat_3' => '2024-01-01 00:00:00'
 				],
-				'( `Updated` < :filter_updated_1 AND `Deleted` <= :filter_deleted_2 OR `Created` >= :filter_created_3 )'
+				'( `UpdatedAt` < :filter_updatedat_1 AND `DeletedAt` <= :filter_deletedat_2 AND `CreatedAt` >= :filter_createdat_3 )'
 			],
 			[
 				[
-					['DeletedAt', Operator::IS_NULL, null, LogicalOperator::AND]
+					[
+						[
+							['DeletedAt', Operator::IS_NULL, null]
+						],
+						LogicalOperator::AND
+					]
 				],
 				[],
-				'`DeletedAt` IS NULL'
+				'( `DeletedAt` IS NULL )'
 			],
 			[
 				[
-					['UserID', Operator::IS_NOT_NULL, null, LogicalOperator::AND]
+					[
+						[
+							['UserID', Operator::IS_NOT_NULL, null]
+						],
+						LogicalOperator::AND
+					]
 				],
 				[],
-				'`UserID` IS NOT NULL'
+				'( `UserID` IS NOT NULL )'
 			],
 			[
 				[
-					['UserID', Operator::IN, [1, 2, 3], LogicalOperator::AND]
+					[
+						[
+							['UserID', Operator::IN, [1, 2, 3]]
+						],
+						LogicalOperator::AND
+					]
 				],
 				['filter_userid_1_1' => 1, 'filter_userid_1_2' => 2, 'filter_userid_1_3' => 3],
-				'`UserID` IN ( :filter_userid_1_1, :filter_userid_1_2, :filter_userid_1_3 )'
+				'( `UserID` IN ( :filter_userid_1_1, :filter_userid_1_2, :filter_userid_1_3 ) )'
 			],
 			[
 				[
-					['UserRole.Name', Operator::EQ, 'leader', LogicalOperator::AND]
+					[
+						[
+							['UserRole.Name', Operator::EQ, 'leader']
+						],
+						LogicalOperator::AND
+					]
 				],
 				['filter_userrole_name_1' => 'leader'],
-				'`UserRole`.`Name` = :filter_userrole_name_1'
+				'( `UserRole`.`Name` = :filter_userrole_name_1 )'
 			],
 			[
 				[
 					[
-						['UpdatedAt', Operator::LT, '2024-01-01 00:00:00', LogicalOperator::AND],
-						['DeletedAt', Operator::LTE, '2024-01-01 00:00:00', LogicalOperator::AND],
-						['CreatedAt', Operator::GTE, '2024-01-01 00:00:00', LogicalOperator::AND],
+						[
+							['UpdatedAt', Operator::LT, '2024-01-01 00:00:00'],
+							['DeletedAt', Operator::LTE, '2024-01-01 00:00:00'],
+							['CreatedAt', Operator::GTE, '2024-01-01 00:00:00']
+						],
+						LogicalOperator::AND
 					],
-					['UserID', Operator::IN, [10, 20, 30], LogicalOperator::OR],
 					[
-						['Password', Operator::IS_NOT_NULL, null, LogicalOperator::AND],
-						['Username', Operator::IS_NOT_NULL, null, LogicalOperator::AND],
+						[
+							['UserID', Operator::IN, [10, 20, 30]]
+						],
+						LogicalOperator::OR
+					],
+					[
+						[
+
+							['Password', Operator::IS_NOT_NULL, null],
+							['Username', Operator::IS_NOT_NULL, null]
+						],
+						LogicalOperator::OR
 					]
 				],
 				[
@@ -87,18 +127,24 @@ class FilterTest extends TestCase
 					'filter_userid_4_3' => 30
 				],
 				'( ( `UpdatedAt` < :filter_updatedat_1 AND `DeletedAt` <= :filter_deletedat_2 AND `CreatedAt` >= :filter_createdat_3 )' .
-					' AND `UserID` IN ( :filter_userid_4_1, :filter_userid_4_2, :filter_userid_4_3 ) OR ( `Password` IS NOT NULL AND `Username` IS NOT NULL ) )'
+					' OR ( `UserID` IN ( :filter_userid_4_1, :filter_userid_4_2, :filter_userid_4_3 ) ) OR ( `Password` IS NOT NULL AND `Username` IS NOT NULL ) )'
 			],
 			[
 				[
 					[
-						['UpdatedAt', Operator::LT, '2024-01-01 00:00:00', LogicalOperator::AND],
-						['DeletedAt', Operator::LTE, '2024-01-01 00:00:00', LogicalOperator::AND],
-						['CreatedAt', Operator::GTE, '2024-01-01 00:00:00', LogicalOperator::OR],
+						[
+							['UpdatedAt', Operator::LT, '2024-01-01 00:00:00'],
+							['DeletedAt', Operator::LTE, '2024-01-01 00:00:00'],
+							['CreatedAt', Operator::GTE, '2024-01-01 00:00:00']
+						],
+						LogicalOperator::AND
 					],
 					[
-						['UserID', Operator::IN, [10, 20, 30], LogicalOperator::AND],
-						['Username', Operator::IS_NOT_NULL, null, LogicalOperator::AND],
+						[
+							['UserID', Operator::IN, [10, 20, 30]],
+							['Username', Operator::IS_NOT_NULL, null]
+						],
+						LogicalOperator::OR
 					]
 				],
 				[
@@ -114,8 +160,13 @@ class FilterTest extends TestCase
 			],
 			[
 				[
-					['Username', Operator::LIKE, 'A__a', LogicalOperator::AND],
-					['Username', Operator::NOT_LIKE, 'J%', LogicalOperator::AND]
+					[
+						[
+							['Username', Operator::LIKE, 'A__a'],
+							['Username', Operator::NOT_LIKE, 'J%']
+						],
+						LogicalOperator::AND
+					]
 				],
 				['filter_username_1' => 'A__a', 'filter_username_2' => 'J%'],
 				'( `Username` LIKE :filter_username_1 AND `Username` NOT LIKE :filter_username_2 )'
@@ -149,7 +200,7 @@ class FilterTest extends TestCase
 				default => $value
 			};
 
-			Filter::create([['Name', $case, $value, LogicalOperator::AND]]);
+			Filter::create([[[['Name', $case, $value]], LogicalOperator::AND]]);
 		}
 	}
 

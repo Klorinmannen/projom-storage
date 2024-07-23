@@ -52,13 +52,18 @@ class Util
         return explode($delimeter, $subject);
     }
 
-    public static function flatten(array $collection): array
+    public static function flatten(array $list): array
     {
-        return array_merge(...$collection);
+        return array_merge(...$list);
     }
 
-    public static function merge(array $collection, array $otherCollection): array
+    public static function merge(array $list, array $otherList): array
     {
-        return [ ...$collection, ...$otherCollection ];
+        return [ ...$list, ...$otherList ];
+    }
+
+    public static function removeEmpty(array $list): array
+    {
+        return array_filter($list);
     }
 }

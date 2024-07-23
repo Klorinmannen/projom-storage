@@ -24,13 +24,16 @@ class UpdateTest extends TestCase
 					fieldsWithValues: [['Name' => 'John']],
 					joins: [['UserRole.UserID = User.UserID', Join::INNER, null]],
 					filters: [
-						['UserRole.Role', Operator::EQ, 'leader', LogicalOperator::AND]
+						[
+							[['UserRole.Role', Operator::EQ, 'leader']],
+							LogicalOperator::AND
+						]
 					]
 				),
 				[
 					'UPDATE `User` SET `Name` = :set_name_1' .
-					' INNER JOIN `UserRole` ON `User`.`UserID` = `UserRole`.`UserID`' .
-					' WHERE `UserRole`.`Role` = :filter_userrole_role_1',
+						' INNER JOIN `UserRole` ON `User`.`UserID` = `UserRole`.`UserID`' .
+						' WHERE ( `UserRole`.`Role` = :filter_userrole_role_1 )',
 					['set_name_1' => 'John', 'filter_userrole_role_1' => 'leader']
 				]
 			],

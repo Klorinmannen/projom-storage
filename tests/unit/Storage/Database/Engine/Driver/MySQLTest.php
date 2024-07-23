@@ -96,7 +96,7 @@ class MySQLTest extends TestCase
 		$mysql = MySQL::create($pdo);
 		$queryObject = new QueryObject(
 			collections: ['User'],
-			filters: [['UserID', Operator::EQ, '10', LogicalOperator::AND]]
+			filters: [[[['UserID', Operator::EQ, '10']], LogicalOperator::AND]]
 		);
 
 		$result = $mysql->delete($queryObject);
