@@ -57,9 +57,9 @@ class Util
         return array_merge(...$list);
     }
 
-    public static function merge(array $list, array $otherList): array
+    public static function merge(array ...$lists): array
     {
-        return [ ...$list, ...$otherList ];
+        return array_merge(...$lists);
     }
 
     public static function removeEmpty(array $list): array

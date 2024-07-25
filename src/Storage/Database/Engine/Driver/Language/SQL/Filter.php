@@ -64,20 +64,24 @@ class Filter implements AccessorInterface
 		$filterGroups = [];
 		$filterParams = [];
 
-		foreach ($queryFilters as [$queryFilterList, $logicalOperator]) {
+		foreach ($queryFilters as [$queryFilterList, $outerLogicalOperator]) {
 
 			$filterGroup = [];
-			foreach ($queryFilterList as [$field, $operator, $value]) {
+			foreach ($queryFilterList as [$field, $operator, $value, $innerLogicalOperator]) {
 
 				[$filter, $params] = $this->buildFilterWithParams($field, $operator, $value);
+
+				if ($filterGroup)
+					$filterGroup[] = $innerLogicalOperator->value;
+
 				$filterGroup[] = $filter;
 				$filterParams[] = $params;
 			}
 
 			if ($filterGroups)
-				$filterGroups[] = $logicalOperator->value;
+				$filterGroups[] = $outerLogicalOperator->value;
 
-			$filterGroups[] = $this->filterGroupToFilterString($filterGroup, LogicalOperator::AND);
+			$filterGroups[] = $this->filterGroupToFilterString($filterGroup);
 		}
 
 		$filterGroups = Util::addParentheses($filterGroups);
@@ -85,9 +89,9 @@ class Filter implements AccessorInterface
 		return [$filterGroups, $filterParams];
 	}
 
-	private function filterGroupToFilterString(array $filterGroup, LogicalOperator $operator): string
+	private function filterGroupToFilterString(array $filterGroup): string
 	{
-		$filterGroupString = Util::join($filterGroup, " {$operator->value} ");
+		$filterGroupString = Util::join($filterGroup, ' ');
 		$filterGroupString = "( $filterGroupString )";
 		return $filterGroupString;
 	}

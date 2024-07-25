@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\Engine\DriverInterface;
+use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
@@ -39,7 +40,8 @@ class Query
      */
     public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): array
     {
-        $this->filterOn([[$field, $operator, $value]]);
+        $filter = Filter::buildGroup([$field => $value], $operator);
+        $this->filterOnGroup($filter);
         return $this->select('*');
     }
 
@@ -168,16 +170,51 @@ class Query
     /**
      * Create a filter to be used in the query to be executed.
      * 
-     * * Example use: $database->query('CollectionName')->filterOn([['Name', Operator::EQ, 'John'], ['UserID', Operator::NE, 25]])
-     * * Example use: $database->query('CollectionName')->filterOn([['UserID' Operator::IN, [12, 23, 45]], ['Name', Operator::LIKE, 'J%']])
-     * * Example use: $database->query('CollectionName')->filterOn([['Name', Operator::EQ, 'John'], ['UserID', Operator::LT, 25]], LogicalOperator::OR)
+     * @param array $filterOnGroup [['Name', Operator::EQ, 'John', LogicalOperator::AND], [ ... ], [ ... ]]
      */
-    public function filterOn(
+    public function filterOnGroup(
         array $filterGroup,
         LogicalOperator $groupLogicalOperator = LogicalOperator::AND
     ): Query {
 
-        $this->filters[] = [ $filterGroup, $groupLogicalOperator ];
+        $this->filters[] = [$filterGroup, $groupLogicalOperator];
+
+        return $this;
+    }
+
+    /**
+     * Create a filter to be used in the query to be executed.
+     * 
+     * @param array $fieldsWithValues ['Name' => 'John', 'Lastname' => 'Doe', 'UserID' => 25, ..., ...]
+     *
+     * * Example use: $database->query('CollectionName')->filterList(['Name' => 'John', 'Deleted' => 0 ], Operator::EQ)
+     */
+    public function filterOnList(
+        array $fieldsWithValues,
+        Operator $operator = Operator::EQ,
+        LogicalOperator $logicalOperator = LogicalOperator::AND
+    ): Query {
+
+        $filter = Filter::buildGroup($fieldsWithValues, $operator, $logicalOperator);
+        $this->filterOnGroup($filter);
+
+        return $this;
+    }
+
+    /**
+     * Create a filter to be used in the query to be executed.
+     * 
+     * * Example use: $database->query('CollectionName')->filterOn('Name', 'John')
+     */
+    public function filterOn(
+        string $field,
+        mixed $value,
+        Operator $operator = Operator::EQ,
+        LogicalOperator $logicalOperator = LogicalOperator::AND
+    ): Query {
+
+        $filter = Filter::buildGroup([$field => $value], $operator, $logicalOperator);
+        $this->filterOnGroup($filter);
 
         return $this;
     }
