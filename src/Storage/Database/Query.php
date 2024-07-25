@@ -40,8 +40,7 @@ class Query
      */
     public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): array
     {
-        $filter = Filter::buildGroup([$field => $value], $operator);
-        $this->filterOnGroup($filter);
+        $this->filterOn($field, $value, $operator);
         return $this->select('*');
     }
 
