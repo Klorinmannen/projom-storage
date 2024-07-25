@@ -9,10 +9,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Delete;
+use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\QueryObject;
-use Projom\Storage\Database\Query\Operator;
 
 class DeleteTest extends TestCase
 {
@@ -23,12 +23,17 @@ class DeleteTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					joins: [['UserRole.UserID = User.UserID', Join::INNER, null]],
-					filters: [[[['UserRole.Role', Operator::EQ, 'leader']], LogicalOperator::AND]]
+					filters: [
+						[
+							Filter::buildGroup(['UserRole.Role' => 'leader']),
+							LogicalOperator::AND
+						]
+					]
 				),
 				[
 					'DELETE FROM `User`' .
-					' INNER JOIN `UserRole` ON `User`.`UserID` = `UserRole`.`UserID`' .
-					' WHERE ( `UserRole`.`Role` = :filter_userrole_role_1 )',
+						' INNER JOIN `UserRole` ON `User`.`UserID` = `UserRole`.`UserID`' .
+						' WHERE ( `UserRole`.`Role` = :filter_userrole_role_1 )',
 					['filter_userrole_role_1' => 'leader']
 				]
 			],

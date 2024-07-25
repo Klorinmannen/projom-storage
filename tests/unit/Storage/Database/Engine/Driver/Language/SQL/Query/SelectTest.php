@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Select;
+use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\LogicalOperator;
-use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
 use Projom\Storage\Database\Query\Sort;
 use Projom\Storage\Database\Query\Join;
@@ -27,7 +27,7 @@ class SelectTest extends TestCase
 					joins: [['User.UserID', Join::INNER, 'Log.UserID']],
 					filters: [
 						[
-							[['UserID', Operator::EQ, 10], ['Log.RequestType', Operator::EQ, 'GET']],
+							Filter::buildGroup(['UserID' => 10, 'Log.RequestType' => 'GET']),
 							LogicalOperator::AND
 						]
 					],

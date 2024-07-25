@@ -11,30 +11,31 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Filter;
+use Projom\Storage\Database\Query\Filter as QueryFilter;
 
 class FilterTest extends TestCase
 {
 	public static function createProvider(): array
 	{
 		return [
-			[
+			'Simple' => [
 				[
 					[
-						[['Name', Operator::EQ, 'John']],
+						QueryFilter::buildGroup(['Name' => 'John']),
 						LogicalOperator::AND
 					]
 				],
 				['filter_name_1' => 'John'],
 				'( `Name` = :filter_name_1 )'
 			],
-			[
+			'Combine filters' => [
 				[
 					[
-						[
-							['UpdatedAt', Operator::LT, '2024-01-01 00:00:00'],
-							['DeletedAt', Operator::LTE, '2024-01-01 00:00:00'],
-							['CreatedAt', Operator::GTE, '2024-01-01 00:00:00']
-						],
+						QueryFilter::combine(
+							QueryFilter::build('UpdatedAt', '2024-01-01 00:00:00', Operator::LT),
+							QueryFilter::build('DeletedAt', '2024-01-01 00:00:00', Operator::LTE),
+							QueryFilter::build('CreatedAt', '2024-01-01 00:00:00', Operator::GTE)
+						),
 						LogicalOperator::AND
 					]
 				],
@@ -43,79 +44,71 @@ class FilterTest extends TestCase
 					'filter_deletedat_2' => '2024-01-01 00:00:00',
 					'filter_createdat_3' => '2024-01-01 00:00:00'
 				],
-				'( `UpdatedAt` < :filter_updatedat_1 AND `DeletedAt` <= :filter_deletedat_2 AND `CreatedAt` >= :filter_createdat_3 )'
+				'( `UpdatedAt` < :filter_updatedat_1' .
+					' AND `DeletedAt` <= :filter_deletedat_2' .
+					' AND `CreatedAt` >= :filter_createdat_3 )'
 			],
-			[
+			'IS_NULL' => [
 				[
 					[
-						[
-							['DeletedAt', Operator::IS_NULL, null]
-						],
+						QueryFilter::buildGroup(['DeletedAt' => null], Operator::IS_NULL),
 						LogicalOperator::AND
 					]
 				],
 				[],
 				'( `DeletedAt` IS NULL )'
 			],
-			[
+			'IS_NOT_NULL' => [
 				[
 					[
-						[
-							['UserID', Operator::IS_NOT_NULL, null]
-						],
+						QueryFilter::buildGroup(['UserID' => null], Operator::IS_NOT_NULL),
 						LogicalOperator::AND
 					]
 				],
 				[],
 				'( `UserID` IS NOT NULL )'
 			],
-			[
+			'IN' => [
 				[
 					[
-						[
-							['UserID', Operator::IN, [1, 2, 3]]
-						],
+						QueryFilter::buildGroup(['UserID' => [1, 2, 3]], Operator::IN),
 						LogicalOperator::AND
 					]
 				],
 				['filter_userid_1_1' => 1, 'filter_userid_1_2' => 2, 'filter_userid_1_3' => 3],
 				'( `UserID` IN ( :filter_userid_1_1, :filter_userid_1_2, :filter_userid_1_3 ) )'
 			],
-			[
+			'Tesing "Table.Field"' => [
 				[
 					[
-						[
-							['UserRole.Name', Operator::EQ, 'leader']
-						],
+						QueryFilter::buildGroup(['UserRole.Role' => 'leader'], Operator::EQ),
 						LogicalOperator::AND
 					]
 				],
-				['filter_userrole_name_1' => 'leader'],
-				'( `UserRole`.`Name` = :filter_userrole_name_1 )'
+				['filter_userrole_role_1' => 'leader'],
+				'( `UserRole`.`Role` = :filter_userrole_role_1 )'
 			],
-			[
+			'Complex filter' => [
 				[
 					[
-						[
-							['UpdatedAt', Operator::LT, '2024-01-01 00:00:00'],
-							['DeletedAt', Operator::LTE, '2024-01-01 00:00:00'],
-							['CreatedAt', Operator::GTE, '2024-01-01 00:00:00']
-						],
+						QueryFilter::combine(
+							QueryFilter::build('UpdatedAt', '2024-01-01 00:00:00', Operator::LT),
+							QueryFilter::build('DeletedAt', '2024-01-01 00:00:00', Operator::LTE),
+							QueryFilter::build('CreatedAt', '2024-01-01 00:00:00', Operator::GTE)
+						),
 						LogicalOperator::AND
 					],
 					[
-						[
-							['UserID', Operator::IN, [10, 20, 30]]
-						],
+						QueryFilter::buildGroup(['UserID' => [10, 20, 30]], Operator::IN),
 						LogicalOperator::OR
 					],
 					[
-						[
-
-							['Password', Operator::IS_NOT_NULL, null],
-							['Username', Operator::IS_NOT_NULL, null]
-						],
-						LogicalOperator::OR
+						QueryFilter::buildGroup(
+							['Password' => null, 'Username' => null, 'Name' => null],
+							Operator::IS_NOT_NULL,
+							LogicalOperator::OR
+						),
+						LogicalOperator::AND
 					]
 				],
 				[
@@ -127,23 +120,24 @@ class FilterTest extends TestCase
 					'filter_userid_4_3' => 30
 				],
 				'( ( `UpdatedAt` < :filter_updatedat_1 AND `DeletedAt` <= :filter_deletedat_2 AND `CreatedAt` >= :filter_createdat_3 )' .
-					' OR ( `UserID` IN ( :filter_userid_4_1, :filter_userid_4_2, :filter_userid_4_3 ) ) OR ( `Password` IS NOT NULL AND `Username` IS NOT NULL ) )'
+					' OR ( `UserID` IN ( :filter_userid_4_1, :filter_userid_4_2, :filter_userid_4_3 ) )' .
+					' AND ( `Password` IS NOT NULL OR `Username` IS NOT NULL OR `Name` IS NOT NULL ) )'
 			],
-			[
+			'Complex filter 2' => [
 				[
 					[
-						[
-							['UpdatedAt', Operator::LT, '2024-01-01 00:00:00'],
-							['DeletedAt', Operator::LTE, '2024-01-01 00:00:00'],
-							['CreatedAt', Operator::GTE, '2024-01-01 00:00:00']
-						],
+						QueryFilter::buildGroup([
+							'UpdatedAt' => '2024-01-01 00:00:00',
+							'DeletedAt' => '2024-01-01 00:00:00',
+							'CreatedAt' => '2024-01-01 00:00:00'
+						], Operator::LT),
 						LogicalOperator::AND
 					],
 					[
-						[
-							['UserID', Operator::IN, [10, 20, 30]],
-							['Username', Operator::IS_NOT_NULL, null]
-						],
+						QueryFilter::combine(
+							QueryFilter::build('UserID', [10, 20, 30], Operator::IN),
+							QueryFilter::build('Username', null, Operator::IS_NOT_NULL)
+						),
 						LogicalOperator::OR
 					]
 				],
@@ -155,16 +149,16 @@ class FilterTest extends TestCase
 					'filter_userid_4_2' => 20,
 					'filter_userid_4_3' => 30
 				],
-				'( ( `UpdatedAt` < :filter_updatedat_1 AND `DeletedAt` <= :filter_deletedat_2 AND `CreatedAt` >= :filter_createdat_3 )' .
+				'( ( `UpdatedAt` < :filter_updatedat_1 AND `DeletedAt` < :filter_deletedat_2 AND `CreatedAt` < :filter_createdat_3 )' .
 					' OR ( `UserID` IN ( :filter_userid_4_1, :filter_userid_4_2, :filter_userid_4_3 ) AND `Username` IS NOT NULL ) )'
 			],
-			[
+			'LIKE / NOT LIKE' => [
 				[
 					[
-						[
-							['Username', Operator::LIKE, 'A__a'],
-							['Username', Operator::NOT_LIKE, 'J%']
-						],
+						QueryFilter::combine(
+							QueryFilter::build('Username', 'A__a', Operator::LIKE),
+							QueryFilter::build('Username', 'J%', Operator::NOT_LIKE)
+						),
 						LogicalOperator::AND
 					]
 				],
@@ -200,7 +194,8 @@ class FilterTest extends TestCase
 				default => $value
 			};
 
-			Filter::create([[[['Name', $case, $value]], LogicalOperator::AND]]);
+			$filter = QueryFilter::buildGroup(['Name' => $value], $case);
+			Filter::create([[$filter, LogicalOperator::AND]]);
 		}
 	}
 
