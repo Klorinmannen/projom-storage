@@ -101,17 +101,36 @@ class Query
     }
 
     /**
-     * Execute a query inserting record(s) and returns the first inserted primary id.
+     * Execute a query inserting multiple records in a single statement.
+     * Returns the primary id of the first inserted record.
      * 
      * * Example use: $database->query('CollectionName')->insert([['Username' => 'John', 'Password' => '1234']])
      */
-    public function insert(array $fieldsWithValues): int
+    public function insertMultiple(array $fieldsWithValues): int
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
             fieldsWithValues: $fieldsWithValues
         );
         return $this->driver->insert($queryObject);
+    }
+
+    /**
+     * Alias for insert multiple method.
+     */
+    public function addMultiple(array $fieldsWithValues): int
+    {
+        return $this->insertMultiple($fieldsWithValues);
+    }
+
+    /**
+     * Execute a query inserting a record and returns the corresponding primary id.
+     * 
+     * * Example use: $database->query('CollectionName')->insert(['Username' => 'John', 'Password' => '1234'])
+     */
+    public function insert(array $fieldsWithValues): int
+    {
+        return $this->insertMultiple([$fieldsWithValues]);
     }
 
     /**
@@ -140,7 +159,7 @@ class Query
     /**
      * Alias for delete method.
      */
-    public function remove(): int
+    public function destroy(): int
     {
         return $this->delete();
     }
@@ -186,7 +205,7 @@ class Query
      * 
      * @param array $fieldsWithValues ['Name' => 'John', 'Lastname' => 'Doe', 'UserID' => 25, ..., ...]
      *
-     * * Example use: $database->query('CollectionName')->filterList(['Name' => 'John', 'Deleted' => 0 ], Operator::EQ)
+     * * Example use: $database->query('CollectionName')->filterList(['Name' => 'John', 'Deleted' => 0 ])
      */
     public function filterOnList(
         array $fieldsWithValues,
