@@ -130,7 +130,11 @@ class Query
      */
     public function insert(array $fieldsWithValues): int
     {
-        return $this->insertMultiple([$fieldsWithValues]);
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fieldsWithValues: [$fieldsWithValues]
+        );
+        return $this->driver->insert($queryObject);
     }
 
     /**
