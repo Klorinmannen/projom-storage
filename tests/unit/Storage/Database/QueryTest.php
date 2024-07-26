@@ -77,15 +77,21 @@ class QueryTest extends TestCase
 		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
-		$result = $query->insert([['Name' => 'Jane', 'Age' => 21]]);
+		$result = $query->insert(['Name' => 'Jane', 'Age' => 21]);
 		$this->assertEquals((int) $expected, $result);
 
-		$result = $query->add([['Name' => 'Jane', 'Age' => 21]]);
+		$result = $query->add(['Name' => 'Jane', 'Age' => 21]);
+		$this->assertEquals((int) $expected, $result);
+
+		$result = $query->insertMultiple([['Name' => 'Jane', 'Age' => 21]]);
+		$this->assertEquals((int) $expected, $result);
+
+		$result = $query->addMultiple([['Name' => 'Jane', 'Age' => 21]]);
 		$this->assertEquals((int) $expected, $result);
 	}
 
 	#[Test]
-	public function delete_remove(): void
+	public function delete_destroy(): void
 	{
 		$expected = 2;
 
@@ -102,7 +108,7 @@ class QueryTest extends TestCase
 		$result = $query->delete();
 		$this->assertEquals($expected, $result);
 
-		$result = $query->remove();
+		$result = $query->destroy();
 		$this->assertEquals($expected, $result);
 	}
 
