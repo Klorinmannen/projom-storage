@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\Engine\DriverInterface;
+use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
@@ -39,7 +40,7 @@ class Query
      */
     public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): array
     {
-        $this->filterOn([$field => $value], $operator);
+        $this->filterOn($field, $value, $operator);
         return $this->select('*');
     }
 
@@ -100,15 +101,38 @@ class Query
     }
 
     /**
-     * Execute a query inserting record(s) and returns the first inserted primary id.
+     * Execute a query inserting multiple records in a single statement.
+     * Returns the primary id of the first inserted record.
      * 
      * * Example use: $database->query('CollectionName')->insert([['Username' => 'John', 'Password' => '1234']])
+     */
+    public function insertMultiple(array $fieldsWithValues): int
+    {
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fieldsWithValues: $fieldsWithValues
+        );
+        return $this->driver->insert($queryObject);
+    }
+
+    /**
+     * Alias for insert multiple method.
+     */
+    public function addMultiple(array $fieldsWithValues): int
+    {
+        return $this->insertMultiple($fieldsWithValues);
+    }
+
+    /**
+     * Execute a query inserting a record and returns the corresponding primary id.
+     * 
+     * * Example use: $database->query('CollectionName')->insert(['Username' => 'John', 'Password' => '1234'])
      */
     public function insert(array $fieldsWithValues): int
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
-            fieldsWithValues: $fieldsWithValues
+            fieldsWithValues: [$fieldsWithValues]
         );
         return $this->driver->insert($queryObject);
     }
@@ -139,7 +163,7 @@ class Query
     /**
      * Alias for delete method.
      */
-    public function remove(): int
+    public function destroy(): int
     {
         return $this->delete();
     }
@@ -168,32 +192,51 @@ class Query
     /**
      * Create a filter to be used in the query to be executed.
      * 
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John'])
-     * * Example use: $database->query('CollectionName')->filterOn(['UserID' => [12, 23, 45] ], Operator::IN)
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John', 'UserID' => 25], logicalOperator: LogicalOperator::OR)
-     * * Example use: $database->query('CollectionName')->filterOn(['Name' => 'John', 'UserID' => 25], groupFilter: true)
+     * @param array $filterOnGroup [['Name', Operator::EQ, 'John', LogicalOperator::AND], [ ... ], [ ... ]]
      */
-    public function filterOn(
-        array $fieldsWithValues,
-        Operator $operator = Operator::EQ,
-        LogicalOperator $logicalOperator = LogicalOperator::AND,
-        bool $groupFilter = false
+    public function filterOnGroup(
+        array $filterGroup,
+        LogicalOperator $groupLogicalOperator = LogicalOperator::AND
     ): Query {
 
-        $filters = [];
-        foreach ($fieldsWithValues as $field => $value) {
-            $filters[] = [
-                $field,
-                $operator,
-                $value,
-                $logicalOperator
-            ];
-        }
+        $this->filters[] = [$filterGroup, $groupLogicalOperator];
 
-        if ($groupFilter)
-            $filters = [$filters];
+        return $this;
+    }
 
-        $this->filters[] = $filters;
+    /**
+     * Create a filter to be used in the query to be executed.
+     * 
+     * @param array $fieldsWithValues ['Name' => 'John', 'Lastname' => 'Doe', 'UserID' => 25, ..., ...]
+     *
+     * * Example use: $database->query('CollectionName')->filterList(['Name' => 'John', 'Deleted' => 0 ])
+     */
+    public function filterOnList(
+        array $fieldsWithValues,
+        Operator $operator = Operator::EQ,
+        LogicalOperator $logicalOperator = LogicalOperator::AND
+    ): Query {
+
+        $filter = Filter::buildGroup($fieldsWithValues, $operator, $logicalOperator);
+        $this->filterOnGroup($filter);
+
+        return $this;
+    }
+
+    /**
+     * Create a filter to be used in the query to be executed.
+     * 
+     * * Example use: $database->query('CollectionName')->filterOn('Name', 'John')
+     */
+    public function filterOn(
+        string $field,
+        mixed $value,
+        Operator $operator = Operator::EQ,
+        LogicalOperator $logicalOperator = LogicalOperator::AND
+    ): Query {
+
+        $filter = Filter::buildGroup([$field => $value], $operator, $logicalOperator);
+        $this->filterOnGroup($filter);
 
         return $this;
     }
@@ -212,15 +255,24 @@ class Query
     }
 
     /**
-     * Sort the query result.
+     * Order the query result.
      * 
      * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])
      * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::ASC, 'Age' => Sorts::DESC])
      */
-    public function sortOn(array $sortFields): Query
+    public function orderOn(array $sortFields): Query
     {
         foreach ($sortFields as $field => $sort)
             $this->sorts[] = [$field, $sort];
+        return $this;
+    }
+
+    /**
+     * Alias for order method.
+     */
+    public function sortOn(array $sortFields): Query
+    {
+        return $this->orderOn($sortFields);
         return $this;
     }
 

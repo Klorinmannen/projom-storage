@@ -77,15 +77,21 @@ class QueryTest extends TestCase
 		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
-		$result = $query->insert([['Name' => 'Jane', 'Age' => 21]]);
+		$result = $query->insert(['Name' => 'Jane', 'Age' => 21]);
 		$this->assertEquals((int) $expected, $result);
 
-		$result = $query->add([['Name' => 'Jane', 'Age' => 21]]);
+		$result = $query->add(['Name' => 'Jane', 'Age' => 21]);
+		$this->assertEquals((int) $expected, $result);
+
+		$result = $query->insertMultiple([['Name' => 'Jane', 'Age' => 21]]);
+		$this->assertEquals((int) $expected, $result);
+
+		$result = $query->addMultiple([['Name' => 'Jane', 'Age' => 21]]);
 		$this->assertEquals((int) $expected, $result);
 	}
 
 	#[Test]
-	public function delete_remove(): void
+	public function delete_destroy(): void
 	{
 		$expected = 2;
 
@@ -102,7 +108,7 @@ class QueryTest extends TestCase
 		$result = $query->delete();
 		$this->assertEquals($expected, $result);
 
-		$result = $query->remove();
+		$result = $query->destroy();
 		$this->assertEquals($expected, $result);
 	}
 
@@ -120,6 +126,32 @@ class QueryTest extends TestCase
 	}
 
 	#[Test]
+	public function filterOnGroup(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+
+		$driver = MySQL::create($pdo);
+		$query = Query::create($driver, ['User']);
+
+		$query = $query->filterOnGroup([['Name', Operator::IN, ['John', 'Jane']]], LogicalOperator::AND)
+			->filterOnGroup([['Age', Operator::IS_NOT_NULL, null]], LogicalOperator::OR);
+		$this->assertInstanceOf(Query::class, $query);
+	}
+
+	#[Test]
+	public function filterOnList(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+
+		$driver = MySQL::create($pdo);
+		$query = Query::create($driver, ['User']);
+
+		$query = $query->filterOnList(['Name' => ['John', 'Jane']], Operator::IN, LogicalOperator::AND)
+			->filterOnList(['Age' => null], Operator::IS_NOT_NULL, LogicalOperator::OR);
+		$this->assertInstanceOf(Query::class, $query);
+	}
+
+	#[Test]
 	public function filterOn(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
@@ -127,14 +159,8 @@ class QueryTest extends TestCase
 		$driver = MySQL::create($pdo);
 		$query = Query::create($driver, ['User']);
 
-		$query = $query->filterOn(
-			['Name' => ['John', 'Jane']],
-			Operator::IN,
-			LogicalOperator::OR
-		)->filterOn(
-			['Age' => null],
-			Operator::IS_NOT_NULL
-		);
+		$query = $query->filterOn('Name', ['John', 'Jane'], Operator::IN, LogicalOperator::AND)
+			->filterOn('Age', null, Operator::IS_NOT_NULL, LogicalOperator::OR);
 		$this->assertInstanceOf(Query::class, $query);
 	}
 

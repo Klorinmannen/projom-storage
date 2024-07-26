@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Driver\MySQL;
+use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
@@ -96,7 +97,12 @@ class MySQLTest extends TestCase
 		$mysql = MySQL::create($pdo);
 		$queryObject = new QueryObject(
 			collections: ['User'],
-			filters: [['UserID', Operator::EQ, '10', LogicalOperator::AND]]
+			filters: [
+				[
+					Filter::buildGroup(['UserID' => 10, 'Name' => 'John']),
+					LogicalOperator::AND
+				]
+			]
 		);
 
 		$result = $mysql->delete($queryObject);

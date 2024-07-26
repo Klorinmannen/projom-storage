@@ -10,6 +10,7 @@ use Projom\Storage\Database\Engine\Driver\Language\SQL\Filter\In;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Filter\Nullable;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Filter\Standard;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Filter\Util;
+use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 
 class Filter implements AccessorInterface
@@ -48,12 +49,11 @@ class Filter implements AccessorInterface
 	{
 		[$filterGroups, $filterParams] = $this->parseQueryFilters($queryFilters);
 
-		$filterGroupParts = $this->parseFilterGroups($filterGroups);
-		$filter = Util::join($filterGroupParts, ' ');
+		$filter = Util::join($filterGroups, ' ');
 
 		// Remove empty params and set.
-		$filterParams = array_filter($filterParams);
-		$params = array_merge(...$filterParams);
+		$filterParams = Util::removeEmpty($filterParams);
+		$params = Util::flatten($filterParams);
 
 		$this->filter = $filter;
 		$this->params = $params;
@@ -63,68 +63,50 @@ class Filter implements AccessorInterface
 	{
 		$filterGroups = [];
 		$filterParams = [];
-	
-		foreach ($queryFilters as $groupIndex => $queryFilter) {
 
-			$hasGroupedFilters = is_array($queryFilter[0] ?? '');
-			if ($hasGroupedFilters) {
+		foreach ($queryFilters as [$queryFilterList, $outerLogicalOperator]) {
 
-				foreach ($queryFilter as $groupedQueryFilter) {
-					[$filter, $params, $logicalOperator] = $this->buildFilterWithParams($groupedQueryFilter);
-					$filterGroups[$groupIndex][] = [$filter, $logicalOperator];
-					$filterParams[] = $params;
-				}
+			$filterGroup = [];
+			foreach ($queryFilterList as [$field, $operator, $value, $innerLogicalOperator]) {
 
-				continue;
+				[$filter, $params] = $this->buildFilterWithParams($field, $operator, $value);
+
+				if ($filterGroup)
+					$filterGroup[] = $innerLogicalOperator->value;
+
+				$filterGroup[] = $filter;
+				$filterParams[] = $params;
 			}
 
-			[$filter, $params, $logicalOperator] = $this->buildFilterWithParams($queryFilter);
-			$filterGroups[$groupIndex][] = [$filter, $logicalOperator];
-			$filterParams[] = $params;
+			if ($filterGroups)
+				$filterGroups[] = $outerLogicalOperator->value;
+
+			$filterGroups[] = $this->filterGroupToFilterString($filterGroup);
 		}
+
+		$filterGroups = Util::addParentheses($filterGroups);
 
 		return [$filterGroups, $filterParams];
 	}
 
-	private function parseFilterGroups(array $filterGroups): array
+	private function filterGroupToFilterString(array $filterGroup): string
 	{
-		$filterGroupParts = [];
-		foreach ($filterGroups as $filterGroup) {
-
-			// Flatten filters and logical operators in current order.
-			$filterGroup = Util::flatten($filterGroup);
-
-			// Remove the last element, the logical operator and save for later.			
-			$logicalOperator = array_pop($filterGroup);
-			
-			$filterGroup = Util::addParentheses($filterGroup);
-
-			// Merge this filter group with previously added filter groups.
-			$filterGroupParts = Util::merge($filterGroupParts, $filterGroup);
-
-			// Push the previously removed logical operator back to the group.
-			$filterGroupParts[] = $logicalOperator;
-		}
-
-		// Remove the last element, the logical operator, as it is not used.
-		array_pop($filterGroupParts);
-
-		// Add parentheses to the whole filter.
-		$filterGroupParts = Util::addParentheses($filterGroupParts);
-
-		return $filterGroupParts;
+		$filterGroupString = Util::join($filterGroup, ' ');
+		$filterGroupString = "( $filterGroupString )";
+		return $filterGroupString;
 	}
 
-	private function buildFilterWithParams(array $queryFilter): array
-	{
+	private function buildFilterWithParams(
+		string $field,
+		Operator $operator,
+		mixed $value
+	): array {
+
 		$this->filterID++;
-
-		[$field, $operator, $value, $logicalOperator] = $queryFilter;
-
 		$column = Column::create([$field]);
 		[$filter, $params] = $this->createFilterWithParams($column, $operator, $value);
 
-		return [$filter, $params, $logicalOperator->value];
+		return [$filter, $params];
 	}
 
 	private function createFilterWithParams(Column $column, Operator $operator, mixed $value): array

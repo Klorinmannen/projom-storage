@@ -8,9 +8,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Update;
+use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
-use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\QueryObject;
 
 class UpdateTest extends TestCase
@@ -24,13 +24,16 @@ class UpdateTest extends TestCase
 					fieldsWithValues: [['Name' => 'John']],
 					joins: [['UserRole.UserID = User.UserID', Join::INNER, null]],
 					filters: [
-						['UserRole.Role', Operator::EQ, 'leader', LogicalOperator::AND]
+						[
+							Filter::buildGroup(['UserRole.Role' => 'leader']),
+							LogicalOperator::AND
+						]
 					]
 				),
 				[
 					'UPDATE `User` SET `Name` = :set_name_1' .
-					' INNER JOIN `UserRole` ON `User`.`UserID` = `UserRole`.`UserID`' .
-					' WHERE `UserRole`.`Role` = :filter_userrole_role_1',
+						' INNER JOIN `UserRole` ON `User`.`UserID` = `UserRole`.`UserID`' .
+						' WHERE ( `UserRole`.`Role` = :filter_userrole_role_1 )',
 					['set_name_1' => 'John', 'filter_userrole_role_1' => 'leader']
 				]
 			],
