@@ -217,8 +217,8 @@ class Query
         LogicalOperator $logicalOperator = LogicalOperator::AND
     ): Query {
 
-        $filter = Filter::buildGroup($fieldsWithValues, $operator, $logicalOperator);
-        $this->filterOnGroup($filter);
+        $filter = Filter::buildGroup($fieldsWithValues, $operator);
+        $this->filterOnGroup($filter, $logicalOperator);
 
         return $this;
     }
