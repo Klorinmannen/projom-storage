@@ -66,4 +66,12 @@ class Util
     {
         return array_filter($list);
     }
+
+    public static function match(string $pattern, string $subject): array
+    {
+        if (preg_match($pattern, $subject, $matches) === 1)
+            return $matches;
+
+        return [];
+    }
 }

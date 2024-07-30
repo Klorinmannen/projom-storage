@@ -34,37 +34,39 @@ class Column implements AccessorInterface
 		return empty($this->fields);
 	}
 
+	public function fields(): array
+	{
+		return $this->fields;
+	}
+
 	private function parse(array $fields): void
 	{
 		$fields = Util::cleanList($fields);
 
 		$parts = [];
-		foreach ($fields as $field) {
-			if ($aggregates = $this->matchAggregateFunction($field))
-				$parts[] = $this->buildAggregateFunctionField(...$aggregates);
-			else
-				$parts[] = $this->buildField($field);
-		}
+		foreach ($fields as $field)
+			$parts[] = $this->createField($field);
 
 		$this->fieldString = Util::join($parts, ', ');
 	}
 
-	public function buildField(string $field): string
+	private function createField(string $field)
 	{
+		if ($aggregates = $this->matchAggregateFunction($field))
+			return $this->buildAggregateFunctionField(...$aggregates);
+
+		if ($this->isFieldValid($field) === false)
+			throw new \Exception("Invalid field: $field");
+
 		return Util::splitAndQuoteThenJoin($field, '.');
 	}
 
-	public function buildAggregateFunctionField(AggregateFunction $function, string $field): string|null
+	private function matchAggregateFunction(string $field): array|null
 	{
-		$column = Util::splitAndQuoteThenJoin($field, '.');
-		$aggregateFunctionfield = "{$function->value}($column)";
-		return $aggregateFunctionfield;
-	}
-
-	public function matchAggregateFunction(string $field): array|null
-	{
-		$pattern = '/^(COUNT|AVG|SUM|MIN|MAX)\(([\w\.\*]+)\)$/i';
-		if (preg_match($pattern, $field, $matches) !== 1)
+		$values = AggregateFunction::values();
+		$cases = Util::join($values, '|');
+		$pattern = "/^({$cases})\(([\w\.\*]+)\)$/i";
+		if (!$matches = Util::match($pattern, $field))
 			return null;
 
 		$matchedFunction = strtoupper($matches[1] ?? '');
@@ -74,11 +76,21 @@ class Column implements AccessorInterface
 		if (!$field = $matches[2] ?? '')
 			return null;
 
-		return [ $aggregateFunction, $field ];
+		return [$aggregateFunction, $field];
 	}
 
-	public function fields(): array
+	private function buildAggregateFunctionField(AggregateFunction $function, string $field): string|null
 	{
-		return $this->fields;
+		$column = Util::splitAndQuoteThenJoin($field, '.');
+		$aggregateFunctionfield = "{$function->value}($column)";
+		return $aggregateFunctionfield;
+	}
+
+	private function isFieldValid(string $field): bool
+	{
+		// Allow . as the construction "Table.Field" is viable.
+		$pattern = '/([^\w\.\*]+)/i';
+		$isValid = Util::match($pattern, $field) ? false : true;
+		return $isValid;
 	}
 }
