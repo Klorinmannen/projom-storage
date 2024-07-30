@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\Engine\DriverInterface;
+use Projom\Storage\Database\Query\AggregateFunction;
 use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
@@ -20,6 +21,8 @@ class Query
     private array $joins = [];
     private array $groups = [];
     private int|string $limit = '';
+
+    private const DEFAULT_SELECT = '*';
 
     public function __construct(DriverInterface|null $driver, array $collections)
     {
@@ -55,6 +58,8 @@ class Query
      */
     public function select(string ...$fields): array
     {
+        $fields = $fields ?: [static::DEFAULT_SELECT];
+
         $queryObject = new QueryObject(
             collections: $this->collections,
             fields: $fields,
