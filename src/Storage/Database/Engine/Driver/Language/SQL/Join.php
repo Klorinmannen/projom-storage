@@ -22,6 +22,16 @@ class Join implements AccessorInterface
 		return new Join($joins);
 	}
 
+	public function __toString(): string
+	{
+		return $this->joined;
+	}
+
+	public function empty()
+	{
+		return empty($this->joined);
+	}
+
 	private function parse(array $joins): void
 	{
 		$joinStrings = [];
@@ -76,15 +86,5 @@ class Join implements AccessorInterface
 	): string {
 
 		return "{$join} {$onCollection} ON {$currentCollection} = {$on}";
-	}
-
-	public function empty()
-	{
-		return empty($this->joined);
-	}
-
-	public function __toString(): string
-	{
-		return $this->joined;
 	}
 }

@@ -27,6 +27,11 @@ class Order implements AccessorInterface
 		return Util::join($this->orders, ', ');
 	}
 
+	public function empty(): bool
+	{
+		return empty($this->orders);
+	}
+
 	private function parse(array $sortFields): void
 	{
 		$orders = [];
@@ -43,10 +48,5 @@ class Order implements AccessorInterface
 		$sortUC = strtoupper($sort->value);
 		$quotedField = Util::splitAndQuoteThenJoin($field, '.');
 		return "{$quotedField} {$sortUC}";
-	}
-
-	public function empty(): bool
-	{
-		return empty($this->orders);
 	}
 }
