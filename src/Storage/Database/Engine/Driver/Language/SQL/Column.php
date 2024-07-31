@@ -41,56 +41,64 @@ class Column implements AccessorInterface
 
 	private function parse(array $fields): void
 	{
-		$fields = Util::cleanList($fields);
-
 		$parts = [];
-		foreach ($fields as $field)
-			$parts[] = $this->createField($field);
+		foreach ($fields as $field) {
+
+			// If a field does not match it will be ignored.
+			if (!$matches = $this->matchField($field))
+				continue;
+
+			$parts[] = $this->createField($matches);
+		}
 
 		$this->fieldString = Util::join($parts, ', ');
 	}
-
-	private function createField(string $field)
+	private function matchField(string $field): array
 	{
-		if ($aggregates = $this->matchAggregateFunction($field))
-			return $this->buildAggregateFunctionField(...$aggregates);
-
-		if ($this->isFieldValid($field) === false)
-			throw new \Exception("Invalid field: $field");
-
-		return Util::splitAndQuoteThenJoin($field, '.');
+		$cases = Util::join(AggregateFunction::values(), '|');
+		$pattern = "/^({$cases})?\(?([\w\.\*]+)\)?( as [\w\. ]+)?$/i";
+		$matches = Util::match($pattern, $field);
+		return $matches;
 	}
 
-	private function matchAggregateFunction(string $field): array|null
+	private function createField(array $matches): null|string
 	{
-		$values = AggregateFunction::values();
-		$cases = Util::join($values, '|');
-		$pattern = "/^({$cases})\(([\w\.\*]+)\)$/i";
-		if (!$matches = Util::match($pattern, $field))
-			return null;
+		$function = Util::cleanString($matches[1]);
+		$field = Util::cleanString($matches[2]);
+		$alias = Util::cleanString($matches[3] ?? '');
 
-		$matchedFunction = strtoupper($matches[1] ?? '');
-		if (!$aggregateFunction = AggregateFunction::tryFrom($matchedFunction))
-			return null;
+		if ($alias)
+			$alias = $this->transformAlias($alias);
 
-		if (!$field = $matches[2] ?? '')
-			return null;
+		if ($function)
+			return $this->buildAggregateFunction($function, $field, $alias);
 
-		return [$aggregateFunction, $field];
+		return $this->buildField($field, $alias);
 	}
 
-	private function buildAggregateFunctionField(AggregateFunction $function, string $field): string|null
+	private function transformAlias(string $alias): string
 	{
-		$column = Util::splitAndQuoteThenJoin($field, '.');
-		$aggregateFunctionfield = "{$function->value}($column)";
-		return $aggregateFunctionfield;
+		$alias = substr($alias, 2);
+		return $alias;
 	}
 
-	private function isFieldValid(string $field): bool
+	private function buildAggregateFunction(string $function, string $field, string $alias): null|string
 	{
-		// Allow . as the construction "Table.Field" is viable.
-		$pattern = '/([^\w\.\*]+)/i';
-		$isValid = Util::match($pattern, $field) ? false : true;
-		return $isValid;
+		$function = strtoupper($function);
+		if (!$function = AggregateFunction::tryFrom($function))
+			return null;
+
+		$field = Util::splitAndQuoteThenJoin($field, '.');
+		$aggregateFunction = $function->build($field, $alias);
+
+		return $aggregateFunction;
+	}
+
+	private function buildField(string $field, string $alias): string
+	{
+		$field = Util::splitAndQuoteThenJoin($field, '.');
+		if ($alias)
+			return "$field AS $alias";
+		return $field;
 	}
 }

@@ -30,7 +30,31 @@ class ColumnTest extends TestCase
 			[
 				[ 'COUNT(*)', 'AVG(Collection.Field)', 'SUM(Collection.OtherField)', 'Username' ],
 				'COUNT(*), AVG(`Collection`.`Field`), SUM(`Collection`.`OtherField`), `Username`'
-			]
+			],
+			[
+				['Field1 as Alias1'],
+				'`Field1` AS Alias1'
+			],
+			[
+				['COUNT(*) AS Total'],
+				'COUNT(*) AS Total'
+			],
+			[
+				['SUM(Collection.Field) as Total'],
+				'SUM(`Collection`.`Field`) AS Total'
+			],
+			[
+				['Table.Field'],
+				'`Table`.`Field`'
+			],
+			[
+				['Field AS Alias'],
+				'`Field` AS Alias'
+			],
+			[
+				[ 'COUNT(*) as Total', 'AVG(Collection.Field) AS div', 'SUM(Collection.OtherField) As summ', 'Username' ],
+				'COUNT(*) AS Total, AVG(`Collection`.`Field`) AS div, SUM(`Collection`.`OtherField`) AS summ, `Username`'
+			],
 		];
 	}
 
