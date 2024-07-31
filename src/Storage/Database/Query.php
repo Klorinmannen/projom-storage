@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\Engine\DriverInterface;
+use Projom\Storage\Database\Query\Action;
 use Projom\Storage\Database\Query\AggregateFunction;
 use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Join;
@@ -78,6 +79,20 @@ class Query
     public function get(string ...$fields): array
     {
         return $this->select(...$fields);
+    }
+
+    public function count(string $field = '*'): int
+    {
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fields: [$field],
+            filters: $this->filters,
+            sorts: $this->sorts,
+            groups: $this->groups,
+            limit: $this->limit,
+            joins: $this->joins
+        );
+        return $this->driver->dispatch(Action::COUNT, $queryObject);
     }
 
     /**
