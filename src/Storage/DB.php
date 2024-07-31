@@ -11,7 +11,7 @@ class DB
 {
 	public static function query(string $table): Query
 	{
-		return Engine::dispatch(query: [$table]);
+		return Engine::dispatch(collections: [$table]);
 	}
 
 	public static function sql(string $query, array|null $params = null): mixed

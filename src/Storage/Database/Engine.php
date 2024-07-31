@@ -9,6 +9,7 @@ use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine\DriverFactory;
 use Projom\Storage\Database\Engine\SourceFactory;
+use Projom\Storage\Database\Query\Action;
 
 class Engine
 {
@@ -16,18 +17,15 @@ class Engine
 	protected static Driver|null $currentDriver = null;
 	protected static DriverFactory|null $driverFactory = null;
 
-	public static function dispatch(
-		array|null $query = null,
-		array|null $execute = null,
-	): object|array {
-
+	public static function dispatch(array|null $collections = null, array|null $execute = null): object|array
+	{
 		$driver = static::driver();
 
-		if ($query !== null)
-			return new Query($driver, $query);
+		if ($collections !== null)
+			return $driver->dispatch(Action::QUERY, $collections);
 
 		if ($execute !== null)
-			return $driver->execute(...$execute);
+			return $driver->dispatch(Action::EXECUTE, $execute);
 
 		throw new \Exception("Invalid dispatch", 400);
 	}
@@ -37,7 +35,6 @@ class Engine
 		$driver = static::$drivers[static::$currentDriver?->value] ?? null;
 		if ($driver === null)
 			throw new \Exception("Engine driver not set", 400);
-
 		return $driver;
 	}
 
@@ -45,7 +42,6 @@ class Engine
 	{
 		if (!array_key_exists($driver->value, static::$drivers))
 			throw new \Exception("Driver not loaded", 400);
-
 		static::$currentDriver = $driver;
 	}
 

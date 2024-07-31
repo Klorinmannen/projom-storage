@@ -7,6 +7,9 @@ namespace Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine\Driver\Language\QueryInterface;
 use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Driver\Language\SQL;
+use Projom\Storage\Database\Query;
+use Projom\Storage\Database\Query\Action;
+use Projom\Storage\Database\Query\AggregateFunction;
 use Projom\Storage\Database\Query\QueryObject;
 
 class MySQL implements DriverInterface
@@ -77,11 +80,45 @@ class MySQL implements DriverInterface
 			throw new \Exception("Failed to execute statement", 500);
 	}
 
-	public function execute(string $sql, array|null $params): array
+	public function dispatch(Action $action, mixed $args): mixed
+	{
+		return match ($action) {
+			Action::EXECUTE => $this->execute(...$args),
+			Action::QUERY => $this->query($args),
+			Action::COUNT => $this->count($args),
+			default => throw new \Exception("Action: $action is not supported", 400),
+		};
+	}
+
+	private function execute(string $sql, array|null $params): array
 	{
 		$this->prepareAndExecute($sql, $params);
 
 		return $this->statement->fetchAll();
+	}
+
+	private function count(QueryObject $queryObject): int
+	{
+		$field = array_pop($queryObject->fields);
+		$alias = 'count';
+		$functionField = AggregateFunction::COUNT->build($field, $alias);
+		$queryObject->fields = [$functionField];
+
+		$select = SQL::select($queryObject);
+		$this->executeQuery($select);
+
+		if (!$result = $this->statement->fetchAll())
+			return 0;
+
+		$result = array_pop($result);
+		$count = (int) $result[$alias] ?? 0;
+
+		return $count;
+	}
+
+	private function query(array $collections): Query
+	{
+		return Query::create($this, $collections);
 	}
 
 	public function startTransaction(): void
