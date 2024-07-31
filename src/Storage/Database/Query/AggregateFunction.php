@@ -17,8 +17,13 @@ enum AggregateFunction: string
 		return array_map(fn ($case) => $case->value, static::cases());
 	}
 
-	public static function build(AggregateFunction $function, string $field): string
-	{
-		return "{$function->value}({$field})";
+	public function build(string $field, string $alias = ''): string
+	{		
+		$function = "{$this->value}({$field})";
+
+		if ($alias)
+			return "$function AS $alias";
+
+		return $function;
 	}
 }
