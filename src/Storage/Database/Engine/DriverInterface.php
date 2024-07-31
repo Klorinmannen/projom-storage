@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Engine;
 
+use Projom\Storage\Database\Query\Action;
 use Projom\Storage\Database\Query\QueryObject;
 
 interface DriverInterface
@@ -12,7 +13,7 @@ interface DriverInterface
 	public function update(QueryObject $queryObject): int;
 	public function insert(QueryObject $queryObject): int;
 	public function delete(QueryObject $queryObject): int;
-	public function execute(string $sql, array|null $params): array;
+	public function dispatch(Action $action, mixed $args): mixed;
 	public function startTransaction(): void;
 	public function endTransaction(): void;
 	public function revertTransaction(): void;
