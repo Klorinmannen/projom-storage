@@ -56,7 +56,7 @@ class Column implements AccessorInterface
 	private function matchField(string $field): array
 	{
 		$cases = Util::join(AggregateFunction::values(), '|');
-		$pattern = "/^({$cases})?\(?([\w\.\*]+)\)?( as [\w\. ]+)?$/i";
+		$pattern = "/^({$cases})?\(?([\w\.\*]+)\)?(\s+as\s+[\w\.]+)?$/i";
 		$matches = Util::match($pattern, $field);
 		return $matches;
 	}
