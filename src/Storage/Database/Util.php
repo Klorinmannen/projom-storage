@@ -6,11 +6,6 @@ namespace Projom\Storage\Database;
 
 class Util
 {
-    public static function padSpaceEven(string $subject): string
-    {
-        return str_pad($subject, strlen($subject) + 2, ' ', STR_PAD_BOTH);
-    }
-
     public static function stringToList(array|string $subject, string $delimeter = ','): array
     {
         if (is_array($subject))

@@ -12,14 +12,6 @@ use Projom\Storage\Database\Util;
 
 class UtilTest extends TestCase
 {
-	#[Test]
-	public function padSpaceEven(): void
-	{
-		$expected = ' 123 ';
-		$result = Util::padSpaceEven('123');
-		$this->assertEquals($expected, $result);
-	}
-
 	public static function stringToListProvider(): array
 	{
 		return [
