@@ -35,10 +35,8 @@ class Order implements AccessorInterface
 	private function parse(array $sortFields): void
 	{
 		$orders = [];
-		foreach ($sortFields as $sortField) {
-			[$field, $sort] = $sortField;
+		foreach ($sortFields as [$field, $sort])
 			$orders[] = $this->buildSortField($field, $sort);
-		}
 
 		$this->orders = $orders;
 	}
