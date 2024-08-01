@@ -24,6 +24,7 @@ class DBTest extends TestCase
 	public function query()
 	{
 		$mysql = $this->createMock(MySQL::class);
+		$mysql->expects($this->once())->method('dispatch')->willReturn(Query::create());
 		Engine::setDriver($mysql, Driver::MySQL);
 
 		$query = DB::query('User');
@@ -43,7 +44,7 @@ class DBTest extends TestCase
 		$expected = [0 => [ 'id' => 1, 'name' => 'John' ]];
 
 		$mysql = $this->createMock(MySQL::class);
-		$mysql->expects($this->once())->method('execute')->willReturn($expected);
+		$mysql->expects($this->once())->method('dispatch')->willReturn($expected);
 		Engine::setDriver($mysql, Driver::MySQL);
 
 		$actual = DB::sql('SELECT * FROM User');

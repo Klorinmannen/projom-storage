@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Driver\MySQL;
+use Projom\Storage\Database\Query\Action;
 use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
@@ -136,7 +137,7 @@ class MySQLTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('Failed to prepare statement');
 		$this->expectExceptionCode(500);
-		$mysql->execute('Select * FROM User', null);
+		$mysql->dispatch(Action::EXECUTE, ['Select * FROM User', null]);
 	}
 
 	#[Test]
@@ -153,7 +154,7 @@ class MySQLTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('Failed to execute statement');
 		$this->expectExceptionCode(500);
-		$mysql->execute('Select * FROM User', null);
+		$mysql->dispatch(Action::EXECUTE, ['Select * FROM User', null]);
 	}
 
 	public static function query_provider(): array
@@ -184,7 +185,7 @@ class MySQLTest extends TestCase
 		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
 		$mysql = MySQL::create($pdo);
-		$query = $mysql->execute($sql, $params);
+		$query = $mysql->dispatch(Action::EXECUTE, [$sql, $params]);
 		$this->assertEquals($expected, $query);
 	}
 }

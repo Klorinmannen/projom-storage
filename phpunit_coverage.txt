@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2024-07-30 10:49:20
+  2024-08-01 06:14:35
 
  Summary:
-  Classes: 78.12% (25/32)
-  Methods: 92.59% (150/162)
-  Lines:   96.06% (488/508)
+  Classes: 75.00% (24/32)
+  Methods: 90.42% (151/167)
+  Lines:   92.04% (497/540)
 
 Projom\Storage\DB
   Methods:  40.00% ( 2/ 5)   Lines:  40.00% (  2/  5)
@@ -19,7 +19,7 @@ Projom\Storage\Database\Engine\DriverFactory
 Projom\Storage\Database\Engine\Driver\Language\SQL
   Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Column
-  Methods:  80.00% ( 8/10)   Lines:  90.91% ( 30/ 33)
+  Methods:  81.82% ( 9/11)   Lines:  94.44% ( 34/ 36)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Filter
   Methods:  90.00% ( 9/10)   Lines:  97.96% ( 48/ 49)
 Projom\Storage\Database\Engine\Driver\Language\SQL\Filter\In
@@ -53,7 +53,7 @@ Projom\Storage\Database\Engine\Driver\Language\SQL\Table
 Projom\Storage\Database\Engine\Driver\Language\Util
   Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  9/  9)
 Projom\Storage\Database\Engine\Driver\MySQL
-  Methods:  75.00% ( 9/12)   Lines:  88.46% ( 23/ 26)
+  Methods:  60.00% ( 9/15)   Lines:  59.52% ( 25/ 42)
 Projom\Storage\Database\Engine\SourceFactory
   Methods:  66.67% ( 2/ 3)   Lines:  65.00% ( 13/ 20)
 Projom\Storage\Database\Engine\Source\DSN
@@ -61,12 +61,12 @@ Projom\Storage\Database\Engine\Source\DSN
 Projom\Storage\Database\Engine\Source\PDO
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  4/  4)
 Projom\Storage\Database\Query
-  Methods: 100.00% (21/21)   Lines: 100.00% ( 66/ 66)
+  Methods:  95.45% (21/22)   Lines:  86.84% ( 66/ 76)
 Projom\Storage\Database\Query\AggregateFunction
-  Methods:  50.00% ( 1/ 2)   Lines:  50.00% (  1/  2)
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  5/  5)
 Projom\Storage\Database\Query\Filter
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  6/  6)
 Projom\Storage\Database\Query\QueryObject
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
 Projom\Storage\Database\Util
-  Methods: 100.00% (11/11)   Lines: 100.00% ( 21/ 21)
+  Methods:  90.91% (10/11)   Lines:  95.24% ( 20/ 21)
