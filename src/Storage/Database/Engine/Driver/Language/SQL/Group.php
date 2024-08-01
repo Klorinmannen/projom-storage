@@ -21,16 +21,9 @@ class Group implements AccessorInterface
 		return new Group($fields);
 	}
 
-	private function parse(array $fields): void
+	public function __toString(): string
 	{
-		$parts = [];
-		foreach ($fields as $field) {			
-			$commaSplitFields = Util::split($field, ',');
-			foreach ($commaSplitFields as $commaSplitField)
-				$parts[] = Util::splitAndQuoteThenJoin($commaSplitField, '.');
-		}
-
-		$this->groups = Util::join($parts, ', ');
+		return $this->groups;
 	}
 
 	public function empty()
@@ -38,8 +31,22 @@ class Group implements AccessorInterface
 		return empty($this->groups);
 	}
 
-	public function __toString(): string
+	private function parse(array $queryFields): void
 	{
-		return $this->groups;
+		$parts = [];
+		foreach ($queryFields as $queryField)
+			$parts = Util::merge($parts, $this->parseQueryField($queryField));
+
+		$this->groups = Util::join($parts, ', ');
+	}
+
+	private function parseQueryField(string $queryField): array
+	{
+		$parts = [];
+		$fields = Util::split($queryField, ',');
+		foreach ($fields as $field)
+			$parts[] = Util::splitAndQuoteThenJoin($field, '.');
+
+		return $parts;
 	}
 }
