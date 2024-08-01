@@ -101,7 +101,7 @@ class MySQL implements DriverInterface
 	{
 		$field = array_pop($queryObject->fields);
 		$alias = 'count';
-		$functionField = AggregateFunction::COUNT->build($field, $alias);
+		$functionField = AggregateFunction::COUNT->buildSQL($field, $alias);
 		$queryObject->fields = [$functionField];
 
 		$select = SQL::select($queryObject);

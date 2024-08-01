@@ -17,7 +17,7 @@ enum AggregateFunction: string
 		return array_map(fn ($case) => $case->value, static::cases());
 	}
 
-	public function build(string $field, string $alias = ''): string
+	public function buildSQL(string $field, string $alias = ''): string
 	{		
 		$function = "{$this->value}({$field})";
 

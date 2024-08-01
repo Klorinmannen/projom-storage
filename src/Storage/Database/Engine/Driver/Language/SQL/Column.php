@@ -89,7 +89,7 @@ class Column implements AccessorInterface
 			return null;
 
 		$field = Util::splitAndQuoteThenJoin($field, '.');
-		$aggregateFunction = $function->build($field, $alias);
+		$aggregateFunction = $function->buildSQL($field, $alias);
 
 		return $aggregateFunction;
 	}
