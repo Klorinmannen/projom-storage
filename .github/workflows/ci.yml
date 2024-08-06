@@ -8,13 +8,8 @@ on:
 
 jobs:
   unit-tests:
-    name: Test on php ${{ matrix.php_version }} and ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        php_version: ["8.2"]
-        os: [ubuntu-latest]
+    name: PHPUnit tests on ubuntu-latest
+    runs-on: [ubuntu-latest]
     permissions:
       contents: read
 
@@ -37,3 +32,25 @@ jobs:
 
       - name: Coverage summary
         run: cat phpunit_coverage.txt >> $GITHUB_STEP_SUMMARY
+  
+  psalm-security-scan:
+    name: Psalm static security analysis on ubuntu-latest
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # For actions/checkout to fetch code
+      security-events: write # For github/codeql-action/upload-sarif to upload results
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Psalm security scan
+        uses: docker://ghcr.io/psalm/psalm-github-actions
+        with:
+          security_analysis: true
+          report_file: results.sarif
+
+      - name: Upload security analysis results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
