@@ -9,6 +9,7 @@
 !composer.lock
 !phpunit.xml
 !phpunit_coverage.txt
+!psalm.xml
 
 # White-list entire directories.
 !src/

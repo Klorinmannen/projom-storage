@@ -6,6 +6,44 @@ permissions:
   contents: read
 
 jobs:
+  static-analysis:
+    name: Static analysis on php ${{ matrix.php_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        php_version: ["8.2"]
+        os: [ubuntu-latest]
+
+    steps:  
+      - uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: none
+          coverage: none
+          tools: psalm
+
+      - name: Run psalm static analysis
+        run: psalm --report="static_results.sarif"
+
+      - name: Upload static analysis results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: static_results.sarif
+          category: Psalm static analysis
+
+      - name: Run psalm taint analysis
+        run: psalm --report="taint_results.sarif"
+
+      - name: Upload taint analysis results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: taint_results.sarif
+          category: Psalm taint analysis
+
   unit-tests:
     name: Test on php ${{ matrix.php_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -15,7 +53,7 @@ jobs:
         php_version: ["8.2"]
         os: [ubuntu-latest]
 
-    steps:      
+    steps:  
       - uses: actions/checkout@v4
 
       - name: Install PHP
