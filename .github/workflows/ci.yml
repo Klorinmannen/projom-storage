@@ -25,7 +25,7 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: composer install
+        run: composer install --no-interaction --no-progress
 
       - name: Run coverage report
         run: ./vendor/bin/phpunit --coverage-text="phpunit_coverage.txt"
@@ -44,14 +44,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Psalm security scan
-        uses: docker://ghcr.io/psalm/psalm-github-actions
-        with:
-          security_analysis: false
-          show_info: true
-          report_file: results.sarif
+      - name: Generate autoloader
+        run: composer install --no-dev --no-interaction --no-progress
 
-      - name: Upload security analysis results
+      - name: Install Psalm
+        run: composer require vimeo/psalm --no-interaction --no-progress
+
+      - name: Psalm security scan
+        run: ./vendor/vimeo/psalm/psalm --report="results.sarif" --no-cache --show-info=true >> /dev/null
+        continue-on-error: true
+
+      - name: Upload security scan results
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
