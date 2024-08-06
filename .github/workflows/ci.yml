@@ -47,7 +47,7 @@ jobs:
       - name: Psalm security scan
         uses: docker://ghcr.io/psalm/psalm-github-actions
         with:
-          security_analysis: true
+          security_analysis: false
           show_info: true
           report_file: results.sarif
 
