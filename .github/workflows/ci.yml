@@ -2,9 +2,6 @@ name: CI
 
 on: [push]
 
-permissions:
-  contents: write
-
 jobs:
   static-analysis:
     name: Static analysis on php ${{ matrix.php_version }} and ${{ matrix.os }}
@@ -14,6 +11,9 @@ jobs:
       matrix:
         php_version: ["8.2"]
         os: [ubuntu-latest]
+    permissions:
+      contents: read # For actions/checkout@v4
+      security-events: write # For github/codeql-action/upload-sarif to upload results
 
     steps:  
       - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
         run: composer install --no-dev
 
       - name: Run psalm static analysis
-        run: psalm --report="static_results.sarif" --no-progress --no-cache >> /dev/null
+        run: psalm --report="static_results.sarif" --debug
 
       - name: Run psalm taint analysis
         run: psalm --report="taint_results.sarif" --no-progress --no-cache >> /dev/null
@@ -54,6 +54,8 @@ jobs:
       matrix:
         php_version: ["8.2"]
         os: [ubuntu-latest]
+    permissions:
+      contents: read
 
     steps:  
       - uses: actions/checkout@v4
