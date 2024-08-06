@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Psalm security scan
-        run: docker://ghcr.io/psalm/psalm-github-actions
+        uses: docker://ghcr.io/psalm/psalm-github-actions
         with:
           security_analysis: false
           show_info: true
