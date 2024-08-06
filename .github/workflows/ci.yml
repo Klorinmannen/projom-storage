@@ -18,33 +18,16 @@ jobs:
     steps:  
       - uses: actions/checkout@v4
 
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
+      - name: Psalm
+        uses: docker://ghcr.io/psalm/psalm-github-actions
         with:
-          php-version: "8.2"
-          coverage: none
-          tools: composer, psalm
+         security_analysis: true
+         report_file: psalm_results.sarif
 
-      - name: Generate composer autoloader
-        run: composer install --no-dev
-
-      - name: Run psalm static analysis
-        run: sudo psalm --report="static_results.sarif" --no-progress --no-cache >> /dev/null
-
-      - name: Run psalm taint analysis
-        run: sudo psalm --report="taint_results.sarif" --taint-analysis --no-progress --no-cache >> /dev/null
-
-      - name: Upload static analysis results
+      - name: Upload Security Analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: static_results.sarif
-          category: Psalm static analysis
-
-      - name: Upload taint analysis results
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: taint_results.sarif
-          category: Psalm taint analysis
+         sarif_file: psalm_results.sarif
 
   unit-tests:
     name: Test on php ${{ matrix.php_version }} and ${{ matrix.os }}
