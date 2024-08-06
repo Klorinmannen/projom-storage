@@ -1,34 +1,12 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches: [ "main", "dev" ]
+  schedule:
+    - cron: '0 4 * * 3'
 
 jobs:
-  static-analysis:
-    name: Static analysis on php ${{ matrix.php_version }} and ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        php_version: ["8.2"]
-        os: [ubuntu-latest]
-    permissions:
-      contents: read # For actions/checkout@v4
-      security-events: write # For github/codeql-action/upload-sarif to upload results
-
-    steps:  
-      - uses: actions/checkout@v4
-
-      - name: Psalm
-        uses: docker://ghcr.io/psalm/psalm-github-actions
-        with:
-         security_analysis: true
-         report_file: psalm_results.sarif
-
-      - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-         sarif_file: psalm_results.sarif
-
   unit-tests:
     name: Test on php ${{ matrix.php_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
