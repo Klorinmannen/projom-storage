@@ -44,17 +44,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Generate autoloader
-        run: composer install --no-dev --no-interaction --no-progress
-
-      - name: Install Psalm
-        run: composer require vimeo/psalm --no-interaction --no-progress
-
       - name: Psalm security scan
-        run: ./vendor/vimeo/psalm/psalm --report="results.sarif" --no-cache --show-info=true >> /dev/null
+        run: docker://ghcr.io/psalm/psalm-github-actions
+        with:
+          security_analysis: false
+          show_info: true
+          report_file: results.sarif
         continue-on-error: true
 
-      - name: Upload security scan results
+      - name: Upload security analysis results
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
