@@ -48,6 +48,7 @@ jobs:
         uses: docker://ghcr.io/psalm/psalm-github-actions
         with:
           security_analysis: true
+          show_info: true
           report_file: results.sarif
 
       - name: Upload security analysis results
