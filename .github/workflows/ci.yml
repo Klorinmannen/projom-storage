@@ -29,10 +29,10 @@ jobs:
         run: composer install --no-dev
 
       - name: Run psalm static analysis
-        run: psalm --report="static_results.sarif"
+        run: psalm --report="static_results.sarif" --no-progress --no-cache >> /dev/null
 
       - name: Run psalm taint analysis
-        run: psalm --report="taint_results.sarif"
+        run: psalm --report="taint_results.sarif" --no-progress --no-cache >> /dev/null
 
       - name: Upload static analysis results
         uses: github/codeql-action/upload-sarif@v3
