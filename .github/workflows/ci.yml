@@ -23,19 +23,22 @@ jobs:
         with:
           php-version: "8.2"
           coverage: none
-          tools: psalm
+          tools: composer, psalm
+
+      - name: Install dependencies
+        run: composer install --no-dev
 
       - name: Run psalm static analysis
         run: psalm --report="static_results.sarif"
+
+      - name: Run psalm taint analysis
+        run: psalm --report="taint_results.sarif"
 
       - name: Upload static analysis results
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: static_results.sarif
           category: Psalm static analysis
-
-      - name: Run psalm taint analysis
-        run: psalm --report="taint_results.sarif"
 
       - name: Upload taint analysis results
         uses: github/codeql-action/upload-sarif@v3
