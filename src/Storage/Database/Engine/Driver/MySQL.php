@@ -89,6 +89,9 @@ class MySQL implements DriverInterface
 			Action::UPDATE => $this->update($args),
 			Action::INSERT => $this->insert($args),
 			Action::DELETE => $this->delete($args),
+			Action::START_TRANSACTION => $this->startTransaction(),
+			Action::END_TRANSACTION => $this->endTransaction(),
+			Action::REVERT_TRANSACTION => $this->revertTransaction(),
 			Action::COUNT => $this->count($args),
 			default => throw new \Exception("Action: $action is not supported", 400),
 		};
