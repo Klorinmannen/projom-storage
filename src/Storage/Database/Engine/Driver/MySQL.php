@@ -85,6 +85,9 @@ class MySQL implements DriverInterface
 		return match ($action) {
 			Action::EXECUTE => $this->execute(...$args),
 			Action::QUERY => $this->query($args),
+			Action::START_TRANSACTION => $this->startTransaction(),
+			Action::END_TRANSACTION => $this->endTransaction(),
+			Action::REVERT_TRANSACTION => $this->revertTransaction(),
 			Action::COUNT => $this->count($args),
 			default => throw new \Exception("Action: $action is not supported", 400),
 		};
