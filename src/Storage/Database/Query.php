@@ -70,7 +70,7 @@ class Query
             limit: $this->limit,
             joins: $this->joins
         );
-        return $this->driver->select($queryObject);
+        return $this->driver->dispatch(Action::SELECT, $queryObject);
     }
 
     /**
@@ -109,7 +109,7 @@ class Query
             filters: $this->filters,
             joins: $this->joins
         );
-        return $this->driver->update($queryObject);
+        return $this->driver->dispatch(Action::UPDATE, $queryObject);
     }
 
     /**
@@ -132,7 +132,7 @@ class Query
             collections: $this->collections,
             fieldsWithValues: $fieldsWithValues
         );
-        return $this->driver->insert($queryObject);
+        return $this->driver->dispatch(Action::INSERT, $queryObject);
     }
 
     /**
@@ -154,7 +154,7 @@ class Query
             collections: $this->collections,
             fieldsWithValues: [$fieldsWithValues]
         );
-        return $this->driver->insert($queryObject);
+        return $this->driver->dispatch(Action::INSERT, $queryObject);
     }
 
     /**
@@ -177,7 +177,7 @@ class Query
             filters: $this->filters,
             joins: $this->joins
         );
-        return $this->driver->delete($queryObject);
+        return $this->driver->dispatch(Action::DELETE, $queryObject);
     }
 
     /**
