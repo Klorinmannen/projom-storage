@@ -27,7 +27,28 @@ class MySQL implements DriverInterface
 		return new MySQL($pdo);
 	}
 
-	public function select(QueryObject $queryObject): array
+	public function dispatch(Action $action, mixed $args): mixed
+	{
+		return match ($action) {
+			Action::SELECT => $this->select($args),
+			Action::UPDATE => $this->update($args),
+			Action::INSERT => $this->insert($args),
+			Action::DELETE => $this->delete($args),
+			Action::EXECUTE => $this->execute(...$args),
+			Action::QUERY => $this->query($args),
+			Action::COUNT => $this->count($args),
+			Action::SUM => $this->sum($args),
+			Action::AVG => $this->avg($args),
+			Action::MAX => $this->max($args),
+			Action::MIN => $this->min($args),
+			Action::START_TRANSACTION => $this->startTransaction(),
+			Action::END_TRANSACTION => $this->endTransaction(),
+			Action::REVERT_TRANSACTION => $this->revertTransaction(),
+			default => throw new \Exception("Action: $action is not supported", 400),
+		};
+	}
+
+	private function select(QueryObject $queryObject): array
 	{
 		$select = SQL::select($queryObject);
 
@@ -36,7 +57,7 @@ class MySQL implements DriverInterface
 		return $this->statement->fetchAll();
 	}
 
-	public function update(QueryObject $queryObject): int
+	private function update(QueryObject $queryObject): int
 	{
 		$update = SQL::update($queryObject);
 
@@ -45,7 +66,7 @@ class MySQL implements DriverInterface
 		return $this->statement->rowCount();
 	}
 
-	public function insert(QueryObject $queryObject): int
+	private function insert(QueryObject $queryObject): int
 	{
 		$insert = SQL::insert($queryObject);
 
@@ -54,7 +75,7 @@ class MySQL implements DriverInterface
 		return (int) $this->pdo->lastInsertId();
 	}
 
-	public function delete(QueryObject $queryObject): int
+	private function delete(QueryObject $queryObject): int
 	{
 		$delete = SQL::delete($queryObject);
 
@@ -78,27 +99,6 @@ class MySQL implements DriverInterface
 		$this->statement = $statement;
 		if (!$this->statement->execute($params))
 			throw new \Exception("Failed to execute statement", 500);
-	}
-
-	public function dispatch(Action $action, mixed $args): mixed
-	{
-		return match ($action) {
-			Action::EXECUTE => $this->execute(...$args),
-			Action::QUERY => $this->query($args),
-			Action::SELECT => $this->select($args),
-			Action::UPDATE => $this->update($args),
-			Action::INSERT => $this->insert($args),
-			Action::DELETE => $this->delete($args),
-			Action::START_TRANSACTION => $this->startTransaction(),
-			Action::END_TRANSACTION => $this->endTransaction(),
-			Action::REVERT_TRANSACTION => $this->revertTransaction(),
-			Action::COUNT => $this->count($args),
-			Action::SUM => $this->sum($args),
-			Action::AVG => $this->avg($args),
-			Action::MAX => $this->max($args),
-			Action::MIN => $this->min($args),
-			default => throw new \Exception("Action: $action is not supported", 400),
-		};
 	}
 
 	private function execute(string $sql, array|null $params): array
@@ -131,7 +131,7 @@ class MySQL implements DriverInterface
 		if (!$result = $this->statement->fetch())
 			return null;
 
-		$sum = array_pop($result);
+		$sum = (string) array_pop($result);
 
 		if (Util::is_int($sum))
 			return (int) $sum;
@@ -186,17 +186,17 @@ class MySQL implements DriverInterface
 		return Query::create($this, $collections);
 	}
 
-	public function startTransaction(): void
+	private function startTransaction(): void
 	{
 		$this->pdo->beginTransaction();
 	}
 
-	public function endTransaction(): void
+	private function endTransaction(): void
 	{
 		$this->pdo->commit();
 	}
 
-	public function revertTransaction(): void
+	private function revertTransaction(): void
 	{
 		$this->pdo->rollBack();
 	}
