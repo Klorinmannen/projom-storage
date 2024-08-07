@@ -17,7 +17,7 @@ class Engine
 	protected static Driver|null $currentDriver = null;
 	protected static DriverFactory|null $driverFactory = null;
 
-	public static function dispatch(Action $action, mixed $args = null): object|array
+	public static function dispatch(Action $action, mixed $args = null): mixed
 	{
 		$driver = static::driver();
 		return $driver->dispatch($action, $args);
