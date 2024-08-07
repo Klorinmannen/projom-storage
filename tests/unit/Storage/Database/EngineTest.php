@@ -11,6 +11,7 @@ use Projom\Storage\Database\Engine\Driver\MySQL;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Engine\DriverFactory;
+use Projom\Storage\Database\Query\Action;
 
 class EngineTest extends TestCase
 {
@@ -25,20 +26,26 @@ class EngineTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Engine driver not set");
 		$this->expectExceptionCode(400);
-		Engine::dispatch();
+		Engine::dispatch(Action::QUERY, 'table');
 	}
 
 	#[Test]
 	public function dispatch_invalid_dispatch_exception(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQL::create($pdo);
+		$mysql = $this->createMock(MySQL::class);
 		Engine::setDriver($mysql, Driver::MySQL);
 
-		$this->expectException(\Exception::class);
-		$this->expectExceptionMessage("Invalid dispatch");
-		$this->expectExceptionCode(400);
-		Engine::dispatch();
+		$this->expectNotToPerformAssertions();
+
+		$actions = Action::cases();
+		foreach ($actions as $action) {
+
+			$value = null;
+			if ($action === Action::EXECUTE)
+				$value = ['query', ['params']];
+
+			Engine::dispatch($action, $value);
+		}
 	}
 
 	#[Test]
@@ -125,9 +132,9 @@ class EngineTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$mysql = MySQL::create($pdo);
 		Engine::setDriver($mysql, Driver::MySQL);
-		
+
 		Engine::clear();
-		
+
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Engine driver not set");
 		$this->expectExceptionCode(400);
