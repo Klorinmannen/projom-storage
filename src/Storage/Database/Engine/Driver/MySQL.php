@@ -85,6 +85,13 @@ class MySQL implements DriverInterface
 		return match ($action) {
 			Action::EXECUTE => $this->execute(...$args),
 			Action::QUERY => $this->query($args),
+			Action::SELECT => $this->select($args),
+			Action::UPDATE => $this->update($args),
+			Action::INSERT => $this->insert($args),
+			Action::DELETE => $this->delete($args),
+			Action::START_TRANSACTION => $this->startTransaction(),
+			Action::END_TRANSACTION => $this->endTransaction(),
+			Action::REVERT_TRANSACTION => $this->revertTransaction(),
 			Action::COUNT => $this->count($args),
 			Action::SUM => $this->sum($args),
 			Action::AVG => $this->avg($args),

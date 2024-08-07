@@ -17,17 +17,10 @@ class Engine
 	protected static Driver|null $currentDriver = null;
 	protected static DriverFactory|null $driverFactory = null;
 
-	public static function dispatch(array|null $collections = null, array|null $execute = null): object|array
+	public static function dispatch(Action $action, mixed $args = null): object|array
 	{
 		$driver = static::driver();
-
-		if ($collections !== null)
-			return $driver->dispatch(Action::QUERY, $collections);
-
-		if ($execute !== null)
-			return $driver->dispatch(Action::EXECUTE, $execute);
-
-		throw new \Exception("Invalid dispatch", 400);
+		return $driver->dispatch($action, $args);
 	}
 
 	public static function driver(): DriverInterface
