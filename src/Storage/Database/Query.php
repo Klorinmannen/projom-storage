@@ -81,7 +81,7 @@ class Query
         return $this->select(...$fields);
     }
 
-    public function count(string $field = '*'): int
+    public function count(string $field = '*'): null|int
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
@@ -93,6 +93,62 @@ class Query
             joins: $this->joins
         );
         return $this->driver->dispatch(Action::COUNT, $queryObject);
+    }
+
+    public function sum(string $field): null|int|float
+    {
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fields: [$field],
+            filters: $this->filters,
+            sorts: $this->sorts,
+            groups: $this->groups,
+            limit: $this->limit,
+            joins: $this->joins
+        );
+        return $this->driver->dispatch(Action::SUM, $queryObject);
+    }
+
+    public function avg(string $field): null|float
+    {
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fields: [$field],
+            filters: $this->filters,
+            sorts: $this->sorts,
+            groups: $this->groups,
+            limit: $this->limit,
+            joins: $this->joins
+        );
+        return $this->driver->dispatch(Action::AVG, $queryObject);
+    }
+
+    public function max(string $field): null|string
+    {
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fields: [$field],
+            filters: $this->filters,
+            sorts: $this->sorts,
+            groups: $this->groups,
+            limit: $this->limit,
+            joins: $this->joins
+        );
+        return $this->driver->dispatch(Action::MAX, $queryObject);
+    }
+
+    public function min(string $field): null|string
+    {
+        $queryObject = new QueryObject(
+            collections: $this->collections,
+            fields: [$field],
+            filters: $this->filters,
+            sorts: $this->sorts,
+            groups: $this->groups,
+            limit: $this->limit,
+            joins: $this->joins
+        );
+        return $this->driver->dispatch(Action::MIN, $queryObject);
     }
 
     /**

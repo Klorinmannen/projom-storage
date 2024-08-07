@@ -9,8 +9,8 @@ use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Driver\Language\SQL;
 use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\Action;
-use Projom\Storage\Database\Query\AggregateFunction;
 use Projom\Storage\Database\Query\QueryObject;
+use Projom\Storage\Database\Util;
 
 class MySQL implements DriverInterface
 {
@@ -86,6 +86,10 @@ class MySQL implements DriverInterface
 			Action::EXECUTE => $this->execute(...$args),
 			Action::QUERY => $this->query($args),
 			Action::COUNT => $this->count($args),
+			Action::SUM => $this->sum($args),
+			Action::AVG => $this->avg($args),
+			Action::MAX => $this->max($args),
+			Action::MIN => $this->min($args),
 			default => throw new \Exception("Action: $action is not supported", 400),
 		};
 	}
@@ -97,23 +101,77 @@ class MySQL implements DriverInterface
 		return $this->statement->fetchAll();
 	}
 
-	private function count(QueryObject $queryObject): int
+	private function count(QueryObject $queryObject): null|int
 	{
-		$field = array_pop($queryObject->fields);
-		$alias = 'count';
-		$functionField = AggregateFunction::COUNT->buildSQL($field, $alias);
-		$queryObject->fields = [$functionField];
-
 		$select = SQL::select($queryObject);
+
 		$this->executeQuery($select);
 
-		if (!$result = $this->statement->fetchAll())
-			return 0;
+		if (!$result = $this->statement->fetch())
+			return null;
 
-		$result = array_pop($result);
-		$count = (int) $result[$alias] ?? 0;
+		$count = array_pop($result);
 
-		return $count;
+		return (int) $count;
+	}
+
+	private function sum(QueryObject $queryObject): null|int|float
+	{
+		$select = SQL::select($queryObject);
+
+		$this->executeQuery($select);
+
+		if (!$result = $this->statement->fetch())
+			return null;
+
+		$sum = array_pop($result);
+
+		if (Util::is_int($sum))
+			return (int) $sum;
+
+		return (float) $sum;
+	}
+
+	private function avg(QueryObject $queryObject): null|float
+	{
+		$select = SQL::select($queryObject);
+
+		$this->executeQuery($select);
+
+		if (!$result = $this->statement->fetch())
+			return null;
+
+		$avg = array_pop($result);
+
+		return (float) $avg;
+	}
+
+	private function max(QueryObject $queryObject): null|string
+	{
+		$select = SQL::select($queryObject);
+
+		$this->executeQuery($select);
+
+		if (!$result = $this->statement->fetch())
+			return null;
+
+		$max = array_pop($result);
+
+		return (string) $max;
+	}
+
+	private function min(QueryObject $queryObject): null|string
+	{
+		$select = SQL::select($queryObject);
+
+		$this->executeQuery($select);
+
+		if (!$result = $this->statement->fetch())
+			return null;
+
+		$max = array_pop($result);
+
+		return (string) $max;
 	}
 
 	private function query(array $collections): Query
