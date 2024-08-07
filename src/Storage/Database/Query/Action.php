@@ -6,12 +6,12 @@ namespace Projom\Storage\Database\Query;
 
 enum Action
 {
-	case EXECUTE;
-	case QUERY;
 	case SELECT;
 	case INSERT;
 	case UPDATE;
 	case DELETE;
+	case EXECUTE;
+	case QUERY;
 	case COUNT;
 	case SUM;
 	case AVG;
