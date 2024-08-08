@@ -8,24 +8,24 @@ use Projom\Storage\Database\Engine\Driver;
 
 class Config
 {
-	public string $host = '';
-	public string $port = '';
-	public string $username = '';
-	public string $password = '';
-	public string $database = '';
-	public Driver|null $driver = null;
-	public string $charset = '';
-	public string $collation = '';
-	public array $options = [];
+	public readonly Driver|null $driver;
+	public readonly string $username;
+	public readonly string $password;
+	public readonly string $host;
+	public readonly string $port;
+	public readonly string $database;
+	public readonly string $charset;
+	public readonly string $collation;
+	public readonly array $options;
 
-	public function __construct(array $config) 
+	public function __construct(array $config)
 	{
-		$this->host = $config['host'] ?? '';
-		$this->port = $config['port'] ?? '';
+		$this->driver = Driver::tryFrom($config['driver'] ?? '');
 		$this->username = $config['username'] ?? '';
 		$this->password = $config['password'] ?? '';
+		$this->host = $config['host'] ?? '';
+		$this->port = $config['port'] ?? '';
 		$this->database = $config['database'] ?? '';
-		$this->driver = Driver::tryFrom($config['driver'] ?? '');
 		$this->charset = $config['charset'] ?? '';
 		$this->collation = $config['collation'] ?? '';
 		$this->options = $config['options'] ?? [];
