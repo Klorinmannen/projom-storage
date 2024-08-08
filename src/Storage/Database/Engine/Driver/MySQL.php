@@ -44,7 +44,7 @@ class MySQL implements DriverInterface
 			Action::START_TRANSACTION => $this->startTransaction(),
 			Action::END_TRANSACTION => $this->endTransaction(),
 			Action::REVERT_TRANSACTION => $this->revertTransaction(),
-			default => throw new \Exception("Action: $action is not supported", 400),
+			default => throw new \Exception("Action: $action is not supported", 400)
 		};
 	}
 
