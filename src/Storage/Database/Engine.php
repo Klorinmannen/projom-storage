@@ -54,7 +54,7 @@ class Engine
 		static::setDriver($engineDriver, $config->driver);
 	}
 
-	public static function driver(): DriverInterface
+	private static function driver(): DriverInterface
 	{
 		$driver = static::$drivers[static::$currentDriver?->value] ?? null;
 		if ($driver === null)
@@ -62,13 +62,13 @@ class Engine
 		return $driver;
 	}
 
-	public static function setDriver(DriverInterface $engineDriver, Driver $driver): void
+	private static function setDriver(DriverInterface $engineDriver, Driver $driver): void
 	{
 		static::$drivers[$driver->value] = $engineDriver;
 		static::$currentDriver = $driver;
 	}
 
-	public static function setDriverFactory(DriverFactory $driverFactory): void
+	private static function setDriverFactory(DriverFactory $driverFactory): void
 	{
 		static::$driverFactory = $driverFactory;
 	}
