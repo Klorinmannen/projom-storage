@@ -17,8 +17,8 @@ class PDOTest extends TestCase
 		return [
 			[
 				'attributes' => [
-					'ATTR_DEFAULT_FETCH_MODE' => 'FETCH_ASSOC',
-					'ATTR_ERRMODE' => 'ERRMODE_EXCEPTION'
+					'PDO::ATTR_DEFAULT_FETCH_MODE' => 'PDO::FETCH_ASSOC',
+					'PDO::ATTR_ERRMODE' => 'PDO::ERRMODE_EXCEPTION'
 				],
 				'expected' => [
 					\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
@@ -41,7 +41,7 @@ class PDOTest extends TestCase
 	{
 		$this->expectException(\Error::class);
 		$this->expectExceptionMessage('Undefined constant PDO::DEFAULT_FETCH_MODE');
-		PDO::parseAttributes([ 'DEFAULT_FETCH_MODE' => 'FETCH_ASSOC']);
+		PDO::parseAttributes([ 'PDO::DEFAULT_FETCH_MODE' => 'PDO::FETCH_ASSOC']);
 	}
 
 	#[Test]
@@ -49,7 +49,7 @@ class PDOTest extends TestCase
 	{
 		$this->expectException(\Error::class);
 		$this->expectExceptionMessage('Undefined constant PDO::FETCH_DEFAULT_ASSOC');
-		PDO::parseAttributes([ 'ATTR_DEFAULT_FETCH_MODE' => 'FETCH_DEFAULT_ASSOC']);
+		PDO::parseAttributes([ 'PDO::ATTR_DEFAULT_FETCH_MODE' => 'PDO::FETCH_DEFAULT_ASSOC']);
 	}
 
 	#[Test]
@@ -60,6 +60,6 @@ class PDOTest extends TestCase
 			\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
 		];
 		
-		$this->assertEquals(PDO::DEFAULT_PDO_ATTRIBUTES, $defaultAttributes);
+		$this->assertEquals(PDO::DEFAULT_ATTRIBUTES, $defaultAttributes);
 	}
 }
