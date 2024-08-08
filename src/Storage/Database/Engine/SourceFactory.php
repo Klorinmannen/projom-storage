@@ -23,7 +23,7 @@ class SourceFactory
 			default => throw new \Exception('Driver is not supported', 400)
 		};
 
-		$parsedAttributes = PDO::parseAttributes($config->options);
+		$parsedAttributes = PDO::parseAttributes($config->options['pdo_attributes'] ?? []);
 
 		$pdo = $this->PDO(
 			$dsn,
