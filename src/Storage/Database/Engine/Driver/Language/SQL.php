@@ -8,6 +8,7 @@ use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Delete;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Insert;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Select;
 use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Update;
+use Projom\Storage\Database\Query\AggregateFunction;
 use Projom\Storage\Database\Query\QueryObject;
 
 class SQL
