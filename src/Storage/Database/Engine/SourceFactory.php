@@ -38,8 +38,8 @@ class SourceFactory
 
 	public function PDO(
 		string $dsn,
-		string $username = null,
-		string $password = null,
+		string|null $username = null,
+		string|null $password = null,
 		array $attributes = []
 	): \PDO {
 
