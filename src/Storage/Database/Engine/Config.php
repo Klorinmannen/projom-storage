@@ -16,6 +16,7 @@ class Config
 	public readonly string $database;
 	public readonly string $charset;
 	public readonly string $collation;
+	public readonly string $dsn;
 	public readonly array $options;
 
 	public function __construct(array $config)
@@ -28,6 +29,7 @@ class Config
 		$this->database = $config['database'] ?? '';
 		$this->charset = $config['charset'] ?? '';
 		$this->collation = $config['collation'] ?? '';
+		$this->dsn = $config['dsn'] ?? '';
 		$this->options = $config['options'] ?? [];
 	}
 }

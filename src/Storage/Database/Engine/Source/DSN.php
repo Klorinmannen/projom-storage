@@ -10,6 +10,9 @@ class DSN
 {
 	public static function MySQL(Config $config): string
 	{
+		if ($config->dsn)
+			return $config->dsn;
+
 		if (!$host = $config->host)
 			throw new \Exception('Config is missing host', 400);
 		if (!$port = $config->port)
