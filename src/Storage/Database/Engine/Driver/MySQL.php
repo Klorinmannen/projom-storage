@@ -108,7 +108,7 @@ class MySQL implements DriverInterface
 		return $this->statement->fetchAll();
 	}
 
-	private function count(QueryObject $queryObject): null|int
+	private function count(QueryObject $queryObject): int|null
 	{
 		$select = SQL::select($queryObject);
 
@@ -122,7 +122,7 @@ class MySQL implements DriverInterface
 		return (int) $count;
 	}
 
-	private function sum(QueryObject $queryObject): null|int|float
+	private function sum(QueryObject $queryObject): int|float|null
 	{
 		$select = SQL::select($queryObject);
 
@@ -139,7 +139,7 @@ class MySQL implements DriverInterface
 		return (float) $sum;
 	}
 
-	private function avg(QueryObject $queryObject): null|float
+	private function avg(QueryObject $queryObject): float|null
 	{
 		$select = SQL::select($queryObject);
 
@@ -153,7 +153,7 @@ class MySQL implements DriverInterface
 		return (float) $avg;
 	}
 
-	private function max(QueryObject $queryObject): null|string
+	private function max(QueryObject $queryObject): string|null
 	{
 		$select = SQL::select($queryObject);
 
@@ -167,7 +167,7 @@ class MySQL implements DriverInterface
 		return (string) $max;
 	}
 
-	private function min(QueryObject $queryObject): null|string
+	private function min(QueryObject $queryObject): string|null
 	{
 		$select = SQL::select($queryObject);
 
