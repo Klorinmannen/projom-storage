@@ -54,22 +54,22 @@ class Engine
 		static::setDriver($engineDriver, $config->driver);
 	}
 
+	public static function setDriver(DriverInterface $engineDriver, Driver $driver): void
+	{
+		static::$drivers[$driver->value] = $engineDriver;
+		static::$currentDriver = $driver;
+	}
+
+	public static function setDriverFactory(DriverFactory $driverFactory): void
+	{
+		static::$driverFactory = $driverFactory;
+	}
+
 	private static function driver(): DriverInterface
 	{
 		$driver = static::$drivers[static::$currentDriver?->value] ?? null;
 		if ($driver === null)
 			throw new \Exception("Engine driver not set", 400);
 		return $driver;
-	}
-
-	private static function setDriver(DriverInterface $engineDriver, Driver $driver): void
-	{
-		static::$drivers[$driver->value] = $engineDriver;
-		static::$currentDriver = $driver;
-	}
-
-	private static function setDriverFactory(DriverFactory $driverFactory): void
-	{
-		static::$driverFactory = $driverFactory;
 	}
 }
