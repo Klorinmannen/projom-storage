@@ -14,7 +14,7 @@ use Projom\Storage\Database\Util;
 
 class MySQL implements DriverInterface
 {
-	private \PDO $pdo;
+	private readonly \PDO $pdo;
 	private \PDOStatement|null $statement = null;
 
 	public function __construct(\PDO $pdo)
