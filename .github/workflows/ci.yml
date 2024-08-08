@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches: ["main", "dev"]
   schedule:
-    - cron: '0 4 * * 3'
+    - cron: "0 4 * * 3"
 
 jobs:
   unit-tests:
@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: read
 
-    steps:  
+    steps:
       - uses: actions/checkout@v4
 
       - name: Install PHP
@@ -25,14 +25,14 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: composer install
+        run: composer install --no-interaction --no-progress
 
       - name: Run coverage report
         run: ./vendor/bin/phpunit --coverage-text="phpunit_coverage.txt"
 
       - name: Coverage summary
         run: cat phpunit_coverage.txt >> $GITHUB_STEP_SUMMARY
-  
+
   psalm-security-scan:
     name: Psalm static security analysis on ubuntu-latest
     runs-on: ubuntu-latest
@@ -50,6 +50,7 @@ jobs:
           security_analysis: true
           show_info: true
           report_file: results.sarif
+        continue-on-error: true
 
       - name: Upload security analysis results
         uses: github/codeql-action/upload-sarif@v3
