@@ -15,7 +15,7 @@ class PDO
 	{
 		$parsedAttributes = [];
 		foreach ($attributes as $key => $value)
-			$parsedAttributes[constant("PDO::$key")] = constant("PDO::$value");
+			$parsedAttributes[constant($key)] = constant($value);
 
 		return $parsedAttributes;
 	}
