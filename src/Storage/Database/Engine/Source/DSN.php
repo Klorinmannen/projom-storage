@@ -32,6 +32,8 @@ class DSN
 		if ($collation = $config->collation)
 			$parts[] = "collation=$collation";
 
-		return 'mysql:' . implode(';', $parts);
+		$driver = $config->driver->value;
+
+		return "$driver:" . implode(';', $parts);
 	}
 }
