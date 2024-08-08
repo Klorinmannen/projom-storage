@@ -11,11 +11,11 @@ class DSN
 	public static function MySQL(Config $config): string
 	{
 		if (!$host = $config->host)
-			throw new \Exception('DNS missing server host', 400);
+			throw new \Exception('Config is missing host', 400);
 		if (!$port = $config->port)
-			throw new \Exception('DNS missing server port', 400);
+			throw new \Exception('Config is missing port', 400);
 		if (!$database = $config->database)
-			throw new \Exception('DNS missing database name', 400);
+			throw new \Exception('Config is missing database', 400);
 
 		$parts = [
 			"host=$host",
