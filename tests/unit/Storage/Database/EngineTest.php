@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Database\Engine\Driver\MySQL;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine;
-use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\DriverFactory;
 use Projom\Storage\Database\Query\Action;
 use Projom\Storage\Database\Query\QueryObject;
@@ -52,7 +51,7 @@ class EngineTest extends TestCase
 			elseif ($action ===  Action::QUERY)
 				$value = [ 'User' ];
 			else 
-				$value = new QueryObject(collections: ['User']);
+				$value = new QueryObject(collections: ['User'], fields: ['Name']);
 
 			Engine::dispatch($action, $value);
 		}
