@@ -24,12 +24,13 @@ class SourceFactory
 		};
 
 		$parsedAttributes = PDO::parseAttributes($config->options['pdo_attributes'] ?? []);
+		$attributes = $parsedAttributes + PDO::DEFAULT_ATTRIBUTES;
 
 		$pdo = $this->PDO(
 			$dsn,
 			$config->username,
 			$config->password,
-			$parsedAttributes
+			$attributes
 		);
 
 		return $pdo;
@@ -39,14 +40,14 @@ class SourceFactory
 		string $dsn,
 		string $username = null,
 		string $password = null,
-		array $parsedAttributes = []
+		array $attributes = []
 	): \PDO {
 
 		$pdo = new \PDO(
 			$dsn,
 			$username,
 			$password,
-			$parsedAttributes + PDO::DEFAULT_PDO_ATTRIBUTES
+			$attributes
 		);
 
 		return $pdo;
