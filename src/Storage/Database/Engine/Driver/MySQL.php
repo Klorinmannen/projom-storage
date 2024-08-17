@@ -9,12 +9,13 @@ use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Driver\Language\SQL;
 use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\Action;
+use Projom\Storage\Database\Query\AggregateFunction;
 use Projom\Storage\Database\Query\QueryObject;
 use Projom\Storage\Database\Util;
 
 class MySQL implements DriverInterface
 {
-	private \PDO $pdo;
+	private readonly \PDO $pdo;
 	private \PDOStatement|null $statement = null;
 
 	public function __construct(\PDO $pdo)
@@ -44,7 +45,7 @@ class MySQL implements DriverInterface
 			Action::START_TRANSACTION => $this->startTransaction(),
 			Action::END_TRANSACTION => $this->endTransaction(),
 			Action::REVERT_TRANSACTION => $this->revertTransaction(),
-			default => throw new \Exception("Action: $action is not supported", 400),
+			default => throw new \Exception("Action: $action is not supported", 400)
 		};
 	}
 
@@ -108,30 +109,22 @@ class MySQL implements DriverInterface
 		return $this->statement->fetchAll();
 	}
 
-	private function count(QueryObject $queryObject): null|int
+	private function count(QueryObject $queryObject): int|null
 	{
-		$select = SQL::select($queryObject);
+		$count = $this->aggregationQuery($queryObject, AggregateFunction::COUNT);
 
-		$this->executeQuery($select);
-
-		if (!$result = $this->statement->fetch())
+		if ($count === null)
 			return null;
-
-		$count = array_pop($result);
 
 		return (int) $count;
 	}
 
-	private function sum(QueryObject $queryObject): null|int|float
+	private function sum(QueryObject $queryObject): int|float|null
 	{
-		$select = SQL::select($queryObject);
+		$sum = $this->aggregationQuery($queryObject, AggregateFunction::SUM);
 
-		$this->executeQuery($select);
-
-		if (!$result = $this->statement->fetch())
+		if ($sum === null)
 			return null;
-
-		$sum = (string) array_pop($result);
 
 		if (Util::is_int($sum))
 			return (int) $sum;
@@ -139,46 +132,52 @@ class MySQL implements DriverInterface
 		return (float) $sum;
 	}
 
-	private function avg(QueryObject $queryObject): null|float
+	private function avg(QueryObject $queryObject): float|null
 	{
-		$select = SQL::select($queryObject);
+		$avg = $this->aggregationQuery($queryObject, AggregateFunction::AVG);
 
-		$this->executeQuery($select);
-
-		if (!$result = $this->statement->fetch())
+		if ($avg === null)
 			return null;
-
-		$avg = array_pop($result);
 
 		return (float) $avg;
 	}
 
-	private function max(QueryObject $queryObject): null|string
+	private function max(QueryObject $queryObject): string|null
 	{
-		$select = SQL::select($queryObject);
+		$max = $this->aggregationQuery($queryObject, AggregateFunction::MAX);
 
-		$this->executeQuery($select);
-
-		if (!$result = $this->statement->fetch())
+		if ($max === null)
 			return null;
-
-		$max = array_pop($result);
 
 		return (string) $max;
 	}
 
-	private function min(QueryObject $queryObject): null|string
+	private function min(QueryObject $queryObject): string|null
 	{
+		$min = $this->aggregationQuery($queryObject, AggregateFunction::MIN);
+
+		if ($min === null)
+			return null;
+
+		return (string) $min;
+	}
+
+	private function aggregationQuery(QueryObject $queryObject, AggregateFunction $function): string|null
+	{
+		$field = array_pop($queryObject->fields);
+		$field = $function->buildSQL($field);
+		$queryObject->fields = [$field];
+
 		$select = SQL::select($queryObject);
 
 		$this->executeQuery($select);
 
 		if (!$result = $this->statement->fetch())
 			return null;
+	
+		$value = array_pop($result);
 
-		$max = array_pop($result);
-
-		return (string) $max;
+		return (string) $value;
 	}
 
 	private function query(array $collections): Query

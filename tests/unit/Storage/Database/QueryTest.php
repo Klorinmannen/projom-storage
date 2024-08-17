@@ -41,6 +41,71 @@ class QueryTest extends TestCase
 	}
 
 	#[Test]
+	public function counts(): void
+	{
+		$expected = 2;
+
+		$driver = $this->createMock(MySQL::class);
+		$driver->expects($this->once())->method('dispatch')->willReturn($expected);		
+		$query = Query::create($driver, ['User']);
+
+		$result = $query->count();
+		$this->assertEquals($expected, $result);
+	}
+
+	#[Test]
+	public function sum(): void
+	{
+		$expected = 3301653;
+
+		$driver = $this->createMock(MySQL::class);
+		$driver->expects($this->once())->method('dispatch')->willReturn($expected);
+		$query = Query::create($driver, ['Invoice']);
+
+		$result = $query->sum('Amount');
+		$this->assertEquals($expected, $result);
+	}
+
+	#[Test]
+	public function avg(): void
+	{
+		$expected = 165082.65;
+
+		$driver = $this->createMock(MySQL::class);
+		$driver->expects($this->once())->method('dispatch')->willReturn($expected);
+		$query = Query::create($driver, ['Invoice']);
+
+		$result = $query->avg('Amount');
+		$this->assertEquals($expected, $result);
+	}
+
+	#[Test]
+	public function max(): void
+	{
+		$expected = '2024-01-01';
+
+		$driver = $this->createMock(MySQL::class);
+		$driver->expects($this->once())->method('dispatch')->willReturn($expected);
+		$query = Query::create($driver, ['Invoice']);
+
+		$result = $query->max('Created');
+		$this->assertEquals($expected, $result);
+	}
+
+	#[Test]
+	public function min(): void
+	{
+		$expected = '2019-01-01';
+
+		$driver = $this->createMock(MySQL::class);
+		$driver->expects($this->once())->method('dispatch')->willReturn($expected);
+		$query = Query::create($driver, ['Invoice']);
+
+		$result = $query->min('Created');
+		$this->assertEquals($expected, $result);
+	}
+
+	#[Test]
 	public function update_modify(): void
 	{
 		$expected = 1;

@@ -70,8 +70,9 @@ class Util
         return [];
     }
 
-    public static function is_int(string $subject): bool
+    public static function is_int(string|int|float $subject): bool
     {
+        $subject = (string) $subject;
         return is_numeric($subject) && strpos($subject, '.') === false;
     }
 }

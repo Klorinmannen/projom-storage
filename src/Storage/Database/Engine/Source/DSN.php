@@ -10,12 +10,15 @@ class DSN
 {
 	public static function MySQL(Config $config): string
 	{
+		if ($config->dsn)
+			return $config->dsn;
+
 		if (!$host = $config->host)
-			throw new \Exception('DNS missing server host', 400);
+			throw new \Exception('Config is missing host', 400);
 		if (!$port = $config->port)
-			throw new \Exception('DNS missing server port', 400);
+			throw new \Exception('Config is missing port', 400);
 		if (!$database = $config->database)
-			throw new \Exception('DNS missing database name', 400);
+			throw new \Exception('Config is missing database', 400);
 
 		$parts = [
 			"host=$host",
@@ -29,6 +32,8 @@ class DSN
 		if ($collation = $config->collation)
 			$parts[] = "collation=$collation";
 
-		return 'mysql:' . implode(';', $parts);
+		$driver = $config->driver->value;
+
+		return "$driver:" . implode(';', $parts);
 	}
 }

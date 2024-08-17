@@ -17,12 +17,16 @@ class DSNTest extends TestCase
 	{
 		return [
 			[ 
-				'config' => new Config([ 'host' => 'localhost', 'port' => '3306', 'database' => 'test', 'charset' => 'utf8mb4', 'collation' => 'utf8mb4_unicode_ci' ]), 
+				'config' => new Config([ 'driver' => 'mysql', 'host' => 'localhost', 'port' => '3306', 'database' => 'test', 'charset' => 'utf8mb4', 'collation' => 'utf8mb4_unicode_ci' ]), 
 				'expected' => 'mysql:host=localhost;port=3306;dbname=test;charset=utf8mb4;collation=utf8mb4_unicode_ci' 
 			],
 			[
-				'config' => new Config([ 'host' => 'localhost', 'port' => '3306', 'database' => 'test' ]),
+				'config' => new Config([ 'driver' => 'mysql', 'host' => 'localhost', 'port' => '3306', 'database' => 'test' ]),
 				'expected' => 'mysql:host=localhost;port=3306;dbname=test'
+			],
+			[
+				'config' => new Config([ 'dsn' => 'mysql:host=localhost;port=3306;dbname=test;charset=utf8mb4;collation=utf8mb4_unicode_ci' ]),
+				'expected' => 'mysql:host=localhost;port=3306;dbname=test;charset=utf8mb4;collation=utf8mb4_unicode_ci'
 			]
 		];
 	}
@@ -39,7 +43,7 @@ class DSNTest extends TestCase
 	public function MySQL_exception_missingHost(): void
 	{
 		$this->expectException(\Exception::class);
-		$this->expectExceptionMessage('DNS missing server host');
+		$this->expectExceptionMessage('Config is missing host');
 		$this->expectExceptionCode(400);
 
 		DSN::MySQL(new Config([ 'port' => '3306', 'database' => 'test' ]));
@@ -49,7 +53,7 @@ class DSNTest extends TestCase
 	public function MySQL_exception_missingPort(): void
 	{
 		$this->expectException(\Exception::class);
-		$this->expectExceptionMessage('DNS missing server port');
+		$this->expectExceptionMessage('Config is missing port');
 		$this->expectExceptionCode(400);
 
 		DSN::MySQL(new Config([ 'host' => 'localhost', 'database' => 'test' ]));
@@ -59,7 +63,7 @@ class DSNTest extends TestCase
 	public function MySQL_exception_missingDatabase(): void
 	{
 		$this->expectException(\Exception::class);
-		$this->expectExceptionMessage('DNS missing database name');
+		$this->expectExceptionMessage('Config is missing database');
 		$this->expectExceptionCode(400);
 
 		DSN::MySQL(new Config([ 'host' => 'localhost', 'port' => '3306' ]));

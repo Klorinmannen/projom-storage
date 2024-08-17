@@ -23,13 +23,14 @@ class SourceFactory
 			default => throw new \Exception('Driver is not supported', 400)
 		};
 
-		$parsedAttributes = PDO::parseAttributes($config->options);
+		$parsedAttributes = PDO::parseAttributes($config->options['pdo_attributes'] ?? []);
+		$attributes = $parsedAttributes + PDO::DEFAULT_ATTRIBUTES;
 
 		$pdo = $this->PDO(
 			$dsn,
 			$config->username,
 			$config->password,
-			$parsedAttributes
+			$attributes
 		);
 
 		return $pdo;
@@ -37,16 +38,16 @@ class SourceFactory
 
 	public function PDO(
 		string $dsn,
-		string $username = null,
-		string $password = null,
-		array $parsedAttributes = []
+		string|null $username = null,
+		string|null $password = null,
+		array $attributes = []
 	): \PDO {
 
 		$pdo = new \PDO(
 			$dsn,
 			$username,
 			$password,
-			$parsedAttributes + PDO::DEFAULT_PDO_ATTRIBUTES
+			$attributes
 		);
 
 		return $pdo;

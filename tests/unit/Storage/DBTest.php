@@ -50,4 +50,31 @@ class DBTest extends TestCase
 		$actual = DB::sql('SELECT * FROM User');
 		$this->assertEquals($expected, $actual);
 	}
+
+	#[Test]
+	public function startTransaction()
+	{
+		$mysql = $this->createMock(MySQL::class);
+		$mysql->expects($this->once())->method('dispatch')->willReturn(true);
+		Engine::setDriver($mysql, Driver::MySQL);
+		DB::startTransaction();
+	}
+
+	#[Test]
+	public function endTransaction()
+	{
+		$mysql = $this->createMock(MySQL::class);
+		$mysql->expects($this->once())->method('dispatch')->willReturn(true);
+		Engine::setDriver($mysql, Driver::MySQL);
+		DB::endTransaction();
+	}
+
+	#[Test]
+	public function revertTransaction()
+	{
+		$mysql = $this->createMock(MySQL::class);
+		$mysql->expects($this->once())->method('dispatch')->willReturn(true);
+		Engine::setDriver($mysql, Driver::MySQL);
+		DB::revertTransaction();
+	}
 }

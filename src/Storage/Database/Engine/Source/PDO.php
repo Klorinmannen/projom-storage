@@ -6,7 +6,7 @@ namespace Projom\Storage\Database\Engine\Source;
 
 class PDO
 {
-	const DEFAULT_PDO_ATTRIBUTES = [
+	const DEFAULT_ATTRIBUTES = [
 		\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
 		\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
 	];
@@ -15,7 +15,7 @@ class PDO
 	{
 		$parsedAttributes = [];
 		foreach ($attributes as $key => $value)
-			$parsedAttributes[constant("PDO::$key")] = constant("PDO::$value");
+			$parsedAttributes[constant($key)] = constant($value);
 
 		return $parsedAttributes;
 	}
