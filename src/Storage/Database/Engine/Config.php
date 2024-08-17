@@ -12,7 +12,7 @@ class Config
 	public readonly string $username;
 	public readonly string $password;
 	public readonly string $host;
-	public readonly string $port;
+	public readonly string|int $port;
 	public readonly string $database;
 	public readonly string $charset;
 	public readonly string $collation;
