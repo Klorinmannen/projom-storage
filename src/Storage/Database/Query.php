@@ -6,7 +6,6 @@ namespace Projom\Storage\Database;
 
 use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Query\Action;
-use Projom\Storage\Database\Query\AggregateFunction;
 use Projom\Storage\Database\Query\Filter;
 use Projom\Storage\Database\Query\Join;
 use Projom\Storage\Database\Query\LogicalOperator;
