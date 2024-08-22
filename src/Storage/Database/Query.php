@@ -83,7 +83,7 @@ class Query
     /**
      * Execute a query counting all from the matching set.
      */
-    public function count(string $field = '*'): null|int
+    public function count(string $field = '*'): int|null
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
@@ -100,7 +100,7 @@ class Query
     /**
      * Execute a query summing all from the matching set.
      */
-    public function sum(string $field): null|int|float
+    public function sum(string $field): int|float|null
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
@@ -117,7 +117,7 @@ class Query
     /**
      * Execute a query averaging all from the matching set.
      */
-    public function avg(string $field): null|float
+    public function avg(string $field): float|null
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
@@ -134,7 +134,7 @@ class Query
     /**
      * Execute a query finding the maximum value from the matching set.
      */
-    public function max(string $field): null|string
+    public function max(string $field): string|null
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
@@ -151,7 +151,7 @@ class Query
     /**
      * Execute a query finding the minimum value from the matching set.
      */
-    public function min(string $field): null|string
+    public function min(string $field): string|null
     {
         $queryObject = new QueryObject(
             collections: $this->collections,
