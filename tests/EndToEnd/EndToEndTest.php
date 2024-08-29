@@ -31,10 +31,10 @@ class EndToEndTest extends TestCase
 	#[Test]
 	public function fetch()
 	{
-		$users = DB::query('Users')->fetch('UserID', 1);
+		$users = DB::query('User')->fetch('UserID', 1);
 		$this->assertNotEmpty($users);
 
-		$users = DB::query('Users')->fetch('Username', '%Sofie%', Operator::LIKE);
+		$users = DB::query('User')->fetch('Username', '%Sofie%', Operator::LIKE);
 		$this->assertNotEmpty($users);
 	}
 }
