@@ -2,17 +2,17 @@ name: CI
 
 on:
   push:
-    branches: ["main", "dev"]
+    branches: ["main", "dev", "end-to-end-test"]
   schedule:
-    - cron: "0 4 * * 3"
+    - cron: "0 4 * * 3" # Every Wednesday at 4:00 UTC
+
+permissions:
+  contents: read # For actions/checkout@v4
 
 jobs:
   unit-tests:
     name: PHPUnit tests on ubuntu-latest
     runs-on: [ubuntu-latest]
-    permissions:
-      contents: read
-
     steps:
       - uses: actions/checkout@v4
 
@@ -28,16 +28,53 @@ jobs:
         run: composer install --no-interaction --no-progress
 
       - name: Run coverage report
-        run: ./vendor/bin/phpunit --coverage-text="phpunit_coverage.txt"
+        run: ./vendor/bin/phpunit --testsuite="unit" --coverage-text="phpunit_coverage.txt"
 
       - name: Coverage summary
         run: cat phpunit_coverage.txt >> $GITHUB_STEP_SUMMARY
 
+  EndToEnd:
+    needs: unit-tests
+    name: EndToEnd tests on ubuntu-latest
+    runs-on: [ubuntu-latest]
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 # Test communication
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, pdo_mysql
+          coverage: xdebug
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Start MySQL service
+        run: sudo systemctl start mysql.service
+
+      - name: Create database and load data
+        run: sudo mysql --user=root --password=root < ./tests/EndToEnd/EndToEnd.sql
+
+      - name: Run EndToEnd tests
+        run: ./vendor/bin/phpunit --testsuite="EndToEnd"
+
   psalm-security-scan:
+    needs: end-to-end
     name: Psalm static security analysis on ubuntu-latest
     runs-on: ubuntu-latest
     permissions:
-      contents: read # For actions/checkout to fetch code
       security-events: write # For github/codeql-action/upload-sarif to upload results
 
     steps:
