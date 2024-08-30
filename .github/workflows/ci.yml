@@ -71,7 +71,6 @@ jobs:
         run: ./vendor/bin/phpunit --testsuite="EndToEnd"
 
   psalm-security-scan:
-    needs: EndToEnd
     name: Psalm static security analysis on ubuntu-latest
     runs-on: ubuntu-latest
     permissions:
