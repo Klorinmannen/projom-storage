@@ -31,19 +31,21 @@ class Group implements AccessorInterface
 		return empty($this->groups);
 	}
 
-	private function parse(array $queryFields): void
+	private function parse(array $groupOn): void
 	{
 		$parts = [];
-		foreach ($queryFields as $queryField)
-			$parts = Util::merge($parts, $this->parseQueryField($queryField));
+		foreach ($groupOn as $gruopOnSets)
+			foreach ($gruopOnSets as $groupOnSet)
+				$parts = Util::merge($parts, $this->parseGruopOnSet($groupOnSet));
 
 		$this->groups = Util::join($parts, ', ');
 	}
 
-	private function parseQueryField(string $queryField): array
+	private function parseGruopOnSet(string $gruopOnSet): array
 	{
 		$parts = [];
-		$fields = Util::split($queryField, ',');
+
+		$fields = Util::split($gruopOnSet, ',');
 		foreach ($fields as $field)
 			$parts[] = Util::splitAndQuoteThenJoin($field, '.');
 

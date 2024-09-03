@@ -21,22 +21,22 @@ class GroupTest extends TestCase
 				''
 			],
 			[
-				['field1'],
+				[['field1']],
 				'`field1`'
 			],			[
-				['field1', 'field2', 'field3'],
+				[['field1', 'field2', 'field3']],
 				'`field1`, `field2`, `field3`'
 			],
 			[
-				['field1, field2, field3'],
+				[['field1, field2, field3']],
 				'`field1`, `field2`, `field3`'
 			],
 			[
-				['User.Name', 'UserRole.Role'],
+				[['User.Name', 'UserRole.Role']],
 				'`User`.`Name`, `UserRole`.`Role`'
 			],
 			[
-				['User.Name, UserRole.Role'],
+				[['User.Name, UserRole.Role']],
 				'`User`.`Name`, `UserRole`.`Role`'
 			]
 		];
@@ -53,7 +53,7 @@ class GroupTest extends TestCase
 	#[Test]
 	public function createEmpty(): void
 	{
-		$group = Group::create([]);
+		$group = Group::create([[]]);
 		$this->assertTrue($group->empty());
 		$this->assertEquals('', "$group");
 	}
@@ -61,7 +61,7 @@ class GroupTest extends TestCase
 	#[Test]
 	public function createNoneEmpty(): void
 	{
-		$group = Group::create(['field1, field2']);
+		$group = Group::create([['field1, field2']]);
 		$this->assertFalse($group->empty());
 	}
 }
