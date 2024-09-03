@@ -1,4 +1,6 @@
-CREATE DATABASE IF NOT EXISTS `EndToEnd` DEFAULT CHARACTER
+DROP DATABASE IF EXISTS `EndToEnd`;
+
+CREATE DATABASE `EndToEnd` DEFAULT CHARACTER
 SET
 	utf8 COLLATE utf8_general_ci;
 
@@ -22,27 +24,42 @@ CREATE TABLE
 DELETE FROM `EndToEnd`.`User`;
 
 INSERT INTO
-	`EndToEnd`.`User` (`Username`, `Password`, `Firstname`, `Lastname`)
+	`EndToEnd`.`User` (
+		`Username`,
+		`Password`,
+		`Firstname`,
+		`Lastname`,
+		`Active`
+	)
 VALUES
-	('system', 'system', NULL, NULL),
-	('john.doe@example.com', 'pass1234', 'John', 'Doe'),
+	('system', 'system', NULL, NULL, 1),
+	(
+		'john.doe@example.com',
+		'pass1234',
+		'John',
+		'Doe',
+		1
+	),
 	(
 		'jane.doe@example.com',
 		'qwerty1234',
 		'Jane',
-		'Doe'
+		'Doe',
+		1
 	),
 	(
 		'sofie.doe@example.com',
 		'asdf1234',
 		'Sofie',
-		'Doe'
+		'Doe',
+		0
 	),
 	(
 		'andrew.doe@example.com',
 		'zxcv1234',
 		'Andrew',
-		'Doe'
+		'Doe',
+		0
 	);
 
 DROP TABLE IF EXISTS `EndToEnd`.`Role`;
