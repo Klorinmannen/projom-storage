@@ -341,7 +341,8 @@ class Query
      */
     public function groupOn(string ...$fields): Query
     {
-        $this->groups[] = $fields;
+        if ($fields)
+            $this->groups[] = $fields;
         return $this;
     }
 
