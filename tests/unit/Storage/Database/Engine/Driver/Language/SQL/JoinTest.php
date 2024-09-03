@@ -28,14 +28,14 @@ class JoinTest extends TestCase
 			],
 			3 => [
 				[
-					['Log.UserID = User.UserID', QueryJoin::STRAIGHT, null],
+					['User.UserID = Log.UserID', QueryJoin::STRAIGHT, null],
 				],
 				'STRAIGHT JOIN `Log` ON `User`.`UserID` = `Log`.`UserID`'
 			],
 			4 => [
 				[
 					['User.UserID', QueryJoin::LEFT, 'UserRole.UserID'],
-					['UserAccess.UserRoleID = UserRole.UserRoleID', QueryJoin::LEFT, null]
+					['UserRole.UserRoleID = UserAccess.UserRoleID', QueryJoin::LEFT, null]
 				],
 				'LEFT JOIN `UserRole` ON `User`.`UserID` = `UserRole`.`UserID`' .
 				' LEFT JOIN `UserAccess` ON `UserRole`.`UserRoleID` = `UserAccess`.`UserRoleID`'
