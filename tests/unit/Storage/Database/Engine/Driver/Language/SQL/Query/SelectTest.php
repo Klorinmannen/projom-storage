@@ -33,7 +33,7 @@ class SelectTest extends TestCase
 					],
 					sorts: [['UserID', Sort::ASC], ['Name', Sort::DESC]],
 					limit: 10,
-					groups: ['Name']
+					groups: [['Name']]
 				),
 				[
 					'SELECT `UserID`, `Name` FROM `User` INNER JOIN `Log` ON `User`.`UserID` = `Log`.`UserID`' .

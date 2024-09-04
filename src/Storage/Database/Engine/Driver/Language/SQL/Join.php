@@ -68,12 +68,14 @@ class Join implements AccessorInterface
 		$stringParts = Util::split($customString, '=');
 
 		$firstParts = Util::split(array_shift($stringParts), '.');
-		$onCollection = Util::quote($firstParts[0]);
-		$onCollectionWithValue = Util::quoteAndJoin($firstParts, '.');
+		$secondParts = Util::split(array_shift($stringParts), '.');
 
-		$collectionWithValue = Util::splitThenQuoteAndJoin(array_shift($stringParts), '.');
+		$onCollection = Util::quote($secondParts[0]);
+		$onCollectionWithValue = Util::quoteAndJoin($secondParts, '.');
 
-		$joinString = $this->joinString($join->value, $onCollection, $collectionWithValue, $onCollectionWithValue);
+		$currentCollectionWithValue = Util::quoteAndJoin($firstParts, '.');
+
+		$joinString = $this->joinString($join->value, $onCollection, $currentCollectionWithValue, $onCollectionWithValue);
 
 		return $joinString;
 	}
