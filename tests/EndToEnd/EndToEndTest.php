@@ -19,11 +19,9 @@ class EndToEndTest extends TestCase
 	{
 		$config = [
 			'driver' => 'mysql',
-			'username' => 'root',
-			#'username' => 'projom',
-			'password' => 'root',
-			#'password' => 'projom',
-			'host' => '127.0.0.1',
+			'username' => 'projom',
+			'password' => 'projom',
+			'host' => 'localhost',
 			#'host' => '192.168.2.6',
 			'port' => 3306,
 			'database' => 'EndToEnd'

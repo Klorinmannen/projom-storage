@@ -38,15 +38,6 @@ jobs:
     name: EndToEnd tests on ubuntu-latest
     runs-on: [ubuntu-latest]
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3 # Test communication
-
     steps:
       - uses: actions/checkout@v4
 
@@ -61,13 +52,19 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress
 
-      - name: Start MySQL service
-        run: sudo systemctl start mysql.service
+      - name: Change permissions
+        run: |
+          chmod +x ./tests/EndToEnd/mariadb_install.sh
+          chmod +x ./tests/EndToEnd/mariadb_create_database_with_user.sql
+          chmod +x ./tests/EndToEnd/EndToEnd.sql
 
-      - name: Create database and load data
-        run: sudo mysql --user=root --password=root < ./tests/EndToEnd/EndToEnd.sql
+      - name: Install MariaDB and create database with user
+        run: ./tests/EndToEnd/mariadb_install.sh projom EndToEnd
 
-      - name: Run EndToEnd tests
+      - name: Creating database tables with mock data
+        run: mysql --user=projom --password=projom < ./tests/EndToEnd/EndToEnd.sql
+
+      - name: Run test suite
         run: ./vendor/bin/phpunit --testsuite="EndToEnd"
 
   psalm-security-scan:
