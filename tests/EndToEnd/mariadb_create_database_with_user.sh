@@ -38,7 +38,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo -e "Setting up grants on $DATABASE_NAME.* for $USERNAME @ $REMOTE_IP .. \n"
-sudo mysql -e "GRANT CREATE, CREATE TEMPORARY TABLES ON $DATABASE_NAME.* TO '$USERNAME'@'$REMOTE_IP';"
+sudo mysql -e "GRANT DROP, CREATE, CREATE TEMPORARY TABLES ON $DATABASE_NAME.* TO '$USERNAME'@'$REMOTE_IP';"
 sudo mysql -e "GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE ON $DATABASE_NAME.* TO '$USERNAME'@'$REMOTE_IP';"
 if [ $? -ne 0 ]; then
 	echo "Error setting grants: $DATABASE_NAME.* TO $USERNAME @ $REMOTE_IP"
