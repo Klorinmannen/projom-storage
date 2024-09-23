@@ -109,12 +109,6 @@ class EndToEndTest extends TestCase
 		$expectedRecords = 3;
 		$this->assertEquals($expectedRecords, $actualRecords);
 
-		/*
-		$actualCount = DB::query('User')->groupOn('Firstname', 'Lastname')->count();
-		$expectedCount = 2;
-		$this->assertEquals($expectedCount, $actualCount);
-		*/
-
 		// Add user
 		$newUser = [
 			'Username' => 'newuser',
