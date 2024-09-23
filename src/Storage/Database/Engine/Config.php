@@ -8,15 +8,15 @@ use Projom\Storage\Database\Engine\Driver;
 
 class Config
 {
-	public readonly Driver|null $driver;
-	public readonly string|null $username;
-	public readonly string|null $password;
-	public readonly string|null $host;
-	public readonly string|int|null $port;
-	public readonly string|null $database;
-	public readonly string|null $charset;
-	public readonly string|null $collation;
-	public readonly string|null $dsn;
+	public readonly null|Driver $driver;
+	public readonly null|string $username;
+	public readonly null|string $password;
+	public readonly null|string $host;
+	public readonly null|string|int $port;
+	public readonly null|string $database;
+	public readonly null|string $charset;
+	public readonly null|string $collation;
+	public readonly null|string $dsn;
 	public readonly array $options;
 
 	public function __construct(array $config)
