@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Projom\tests\EndToEnd;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Query\Join;
-use Projom\Storage\Database\Query\LogicalOperator;
 use Projom\Storage\Database\Query\Operator;
 use Projom\Storage\Database\Query\Sort;
 use Projom\Storage\DB;
@@ -21,12 +19,12 @@ class EndToEndTest extends TestCase
 	{
 		$config = [
 			'driver' => 'mysql',
-			#'username' => 'root',
-			#'password' => 'root',
-			#'host' => '127.0.0.1',
-			'username' => 'projom',
-			'password' => 'projom',
-			'host' => 'localhost',
+			'username' => 'root',
+			#'username' => 'projom',
+			'password' => 'root',
+			#'password' => 'projom',
+			'host' => '127.0.0.1',
+			#'host' => '192.168.2.6',
 			'port' => 3306,
 			'database' => 'EndToEnd'
 		];
@@ -100,7 +98,7 @@ class EndToEndTest extends TestCase
 		$expectedFields = ['Username', 'UserID', 'RoleID', 'Role'];
 		$this->assertEquals($expectedFields, $actualFields);
 
-		$actualUserID = $record['UserID'] ?? 0;
+		$actualUserID = $record['UserID'];
 		$expectedUserID = 5;
 		$this->assertEquals($expectedUserID, $actualUserID);
 
@@ -109,7 +107,6 @@ class EndToEndTest extends TestCase
 			->joinOn('UserRole.RoleID', Join::INNER, 'Role.RoleID')
 			->filterOn('UserRole.RoleID', 3)
 			->sortOn(['User.UserID' => Sort::DESC])
-			//->limit(1)
 			->select('User.Username', 'UserRole.UserID', 'UserRole.RoleID', 'Role.Role');
 		$actualRecords = count($records);
 		$expectedRecords = 3;
@@ -118,7 +115,7 @@ class EndToEndTest extends TestCase
 		/*
 		$actualCount = DB::query('User')->groupOn('Firstname', 'Lastname')->count();
 		$expectedCount = 2;
-		$this->assertEquals($expectedRecords, $actualCount);
+		$this->assertEquals($expectedCount, $actualCount);
 		*/
 
 		// Add user
