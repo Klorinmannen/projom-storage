@@ -55,7 +55,7 @@ jobs:
       - name: Change permissions
         run: |
           chmod +x ./tests/EndToEnd/mariadb_install.sh
-          chmod +x ./tests/EndToEnd/mariadb_create_database_with_user.sql
+          chmod +x ./tests/EndToEnd/mariadb_create_database_with_user.sh
           chmod +x ./tests/EndToEnd/EndToEnd.sql
 
       - name: Install MariaDB and create database with user
