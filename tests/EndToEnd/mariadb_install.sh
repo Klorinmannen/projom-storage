@@ -17,7 +17,7 @@ sudo apt-get update
 sudo apt-get -y install mariadb-server
 sudo apt-get -y install openssl
 
-bash ./scripts/mariadb_create_database_with_user.sh $USER $DATABASE "localhost" "projom"
+bash ./tests/EndToEnd/mariadb_create_database_with_user.sh $USER $DATABASE "localhost" "projom"
 if [ $? -ne 0 ]; then
 	echo "Error creating database: $DATABASE with user: $USER"
 	exit 1
