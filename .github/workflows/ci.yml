@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["main", "dev"]
+    branches: ["**"]
   schedule:
     - cron: "0 4 * * 3" # Every Wednesday at 4:00 UTC
 
@@ -28,10 +28,20 @@ jobs:
         run: composer install --no-interaction --no-progress
 
       - name: Run coverage report
-        run: ./vendor/bin/phpunit --testsuite="unit" --coverage-text="phpunit_coverage.txt"
+        run: ./vendor/bin/phpunit --testsuite="unit" --coverage-text="coverage_text.txt" --coverage-html="coverage_html"
 
-      - name: Coverage summary
-        run: cat phpunit_coverage.txt >> $GITHUB_STEP_SUMMARY
+      - name: Send coverage text to step summary
+        run: cat coverage_text.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: Create archive for coverage html
+        run: tar -czvf coverage_html.tar.gz coverage_html
+
+      - name: Upload coverage html archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          overwrite: true
+          path: ./coverage_html.tar.gz
 
   EndToEnd:
     needs: unit-tests
