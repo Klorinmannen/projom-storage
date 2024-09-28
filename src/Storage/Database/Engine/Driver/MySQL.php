@@ -9,9 +9,7 @@ use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Driver\Language\SQL;
 use Projom\Storage\Database\Query;
 use Projom\Storage\Database\Query\Action;
-use Projom\Storage\Database\Query\AggregateFunction;
 use Projom\Storage\Database\Query\QueryObject;
-use Projom\Storage\Database\Util;
 
 class MySQL implements DriverInterface
 {
@@ -37,11 +35,6 @@ class MySQL implements DriverInterface
 			Action::DELETE => $this->delete($args),
 			Action::EXECUTE => $this->execute(...$args),
 			Action::QUERY => $this->query($args),
-			Action::COUNT => $this->count($args),
-			Action::SUM => $this->sum($args),
-			Action::AVG => $this->avg($args),
-			Action::MAX => $this->max($args),
-			Action::MIN => $this->min($args),
 			Action::START_TRANSACTION => $this->startTransaction(),
 			Action::END_TRANSACTION => $this->endTransaction(),
 			Action::REVERT_TRANSACTION => $this->revertTransaction(),
@@ -107,77 +100,6 @@ class MySQL implements DriverInterface
 		$this->prepareAndExecute($sql, $params);
 
 		return $this->statement->fetchAll();
-	}
-
-	private function count(QueryObject $queryObject): int|null
-	{
-		$count = $this->aggregationQuery($queryObject, AggregateFunction::COUNT);
-
-		if ($count === null)
-			return null;
-
-		return (int) $count;
-	}
-
-	private function sum(QueryObject $queryObject): int|float|null
-	{
-		$sum = $this->aggregationQuery($queryObject, AggregateFunction::SUM);
-
-		if ($sum === null)
-			return null;
-
-		if (Util::is_int($sum))
-			return (int) $sum;
-
-		return (float) $sum;
-	}
-
-	private function avg(QueryObject $queryObject): float|null
-	{
-		$avg = $this->aggregationQuery($queryObject, AggregateFunction::AVG);
-
-		if ($avg === null)
-			return null;
-
-		return (float) $avg;
-	}
-
-	private function max(QueryObject $queryObject): string|null
-	{
-		$max = $this->aggregationQuery($queryObject, AggregateFunction::MAX);
-
-		if ($max === null)
-			return null;
-
-		return (string) $max;
-	}
-
-	private function min(QueryObject $queryObject): string|null
-	{
-		$min = $this->aggregationQuery($queryObject, AggregateFunction::MIN);
-
-		if ($min === null)
-			return null;
-
-		return (string) $min;
-	}
-
-	private function aggregationQuery(QueryObject $queryObject, AggregateFunction $function): string|null
-	{
-		$field = array_pop($queryObject->fields);
-		$field = $function->buildSQL($field);
-		$queryObject->fields = [$field];
-
-		$select = SQL::select($queryObject);
-
-		$this->executeQuery($select);
-
-		if (!$result = $this->statement->fetch())
-			return null;
-	
-		$value = array_pop($result);
-
-		return (string) $value;
 	}
 
 	private function query(array $collections): Query
