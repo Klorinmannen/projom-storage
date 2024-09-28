@@ -6,7 +6,7 @@ namespace Projom\Storage\Database\Engine\Driver\Language\SQL;
 
 use Projom\Storage\Database\Engine\Driver\Language\AccessorInterface;
 use Projom\Storage\Database\Engine\Driver\Language\Util;
-use Projom\Storage\Database\Query\AggregateFunction;
+use Projom\Storage\Database\Query\Aggregate;
 
 class Column implements AccessorInterface
 {
@@ -55,7 +55,7 @@ class Column implements AccessorInterface
 	}
 	private function matchField(string $field): array
 	{
-		$cases = Util::join(AggregateFunction::values(), '|');
+		$cases = Util::join(Aggregate::values(), '|');
 		$pattern = "/^({$cases})?\(?([\w\.\*]+)\)?(\s+as\s+[\w\.]+)?$/i";
 		$matches = Util::match($pattern, $field);
 		return $matches;
@@ -71,7 +71,7 @@ class Column implements AccessorInterface
 			$alias = $this->transformAlias($alias);
 
 		if ($function)
-			return $this->buildAggregateFunction($function, $field, $alias);
+			return $this->buildAggregate($function, $field, $alias);
 
 		return $this->buildField($field, $alias);
 	}
@@ -82,16 +82,16 @@ class Column implements AccessorInterface
 		return $alias;
 	}
 
-	private function buildAggregateFunction(string $function, string $field, string $alias): null|string
+	private function buildAggregate(string $function, string $field, string $alias): null|string
 	{
 		$function = strtoupper($function);
-		if (!$function = AggregateFunction::tryFrom($function))
+		if (!$function = Aggregate::tryFrom($function))
 			return null;
 
 		$field = Util::splitAndQuoteThenJoin($field, '.');
-		$aggregateFunction = $function->buildSQL($field, $alias);
+		$aggregate = $function->buildSQL($field, $alias);
 
-		return $aggregateFunction;
+		return $aggregate;
 	}
 
 	private function buildField(string $field, string $alias): string
