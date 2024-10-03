@@ -8,7 +8,7 @@ use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine\DriverFactory;
-use Projom\Storage\Database\Engine\SourceFactory;
+use Projom\Storage\Database\Engine\Driver\SourceFactory;
 use Projom\Storage\Database\Query\Action;
 
 class Engine
@@ -31,8 +31,11 @@ class Engine
 		static::$driverFactory = null;
 	}
 
-	public static function dispatch(Action $action, mixed $args = null): mixed
+	public static function dispatch(Action $action, null|Driver $driver = null, mixed $args = null): mixed
 	{
+		if ($driver !== null)
+			static::useDriver($driver);
+
 		$driver = static::driver();
 		return $driver->dispatch($action, $args);
 	}

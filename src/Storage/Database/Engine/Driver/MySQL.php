@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Engine\Driver;
 
-use Projom\Storage\Database\Engine\Driver\Language\QueryInterface;
+use Projom\Storage\Database\Language\SQL\QueryInterface;
 use Projom\Storage\Database\Engine\DriverInterface;
-use Projom\Storage\Database\Engine\Driver\Language\SQL;
-use Projom\Storage\Database\Query;
+use Projom\Storage\Database\Language\SQL;
+use Projom\Storage\Database\MySQL\QueryBuilder;
 use Projom\Storage\Database\Query\Action;
-use Projom\Storage\Database\Query\QueryObject;
+use Projom\Storage\Database\MySQL\QueryObject;
 
 class MySQL implements DriverInterface
 {
@@ -102,9 +102,9 @@ class MySQL implements DriverInterface
 		return $this->statement->fetchAll();
 	}
 
-	private function query(array $collections): Query
+	private function query(array $collections): QueryBuilder
 	{
-		return Query::create($this, $collections);
+		return QueryBuilder::create($this, $collections);
 	}
 
 	private function startTransaction(): void
