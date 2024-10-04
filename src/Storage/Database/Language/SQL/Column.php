@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Projom\Storage\Database\Language\SQL;
 
 use Projom\Storage\Database\Language\SQL\AccessorInterface;
-use Projom\Storage\Database\Language\SQL\Util\Aggregate;
 use Projom\Storage\Database\Language\SQL\Util;
+use Projom\Storage\Database\MySQL\Aggregate;
 
 class Column implements AccessorInterface
 {

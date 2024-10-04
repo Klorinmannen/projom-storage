@@ -9,7 +9,7 @@ use Projom\Storage\Database\Language\SQL\QueryInterface;
 use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Language\SQL;
 use Projom\Storage\Database\MySQL\QueryBuilder;
-use Projom\Storage\Database\MySQL\QueryObject;
+use Projom\Storage\Database\Language\SQL\QueryObject;
 
 class MySQL implements DriverInterface
 {

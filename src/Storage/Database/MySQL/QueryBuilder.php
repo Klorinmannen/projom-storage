@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\MySQL;
 
+use Projom\Storage\Database\Action;
 use Projom\Storage\Database\Engine\DriverInterface;
+use Projom\Storage\Database\Language\SQL\QueryObject;
 use Projom\Storage\Database\MySQL\Join;
 use Projom\Storage\Database\MySQL\LogicalOperator;
 use Projom\Storage\Database\MySQL\Operator;
 use Projom\Storage\Database\MySQL\Filter;
-use Projom\Storage\Database\MySQL\QueryObject;
-use Projom\Storage\Database\Query\Action;
 
 class QueryBuilder
 {

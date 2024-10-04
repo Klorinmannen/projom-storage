@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\MySQL;
+namespace Projom\Storage\Database\Language\SQL;
 
 /**
- * DTO for a mysql query.
+ * DTO for a sql query.
  */
 class QueryObject
 {

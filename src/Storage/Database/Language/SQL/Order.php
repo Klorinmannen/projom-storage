@@ -6,7 +6,7 @@ namespace Projom\Storage\Database\Language\SQL;
 
 use Projom\Storage\Database\Language\SQL\AccessorInterface;
 use Projom\Storage\Database\Language\SQL\Util;
-use Projom\Storage\Database\Language\SQL\Util\Sort;
+use Projom\Storage\Database\MySQL\Sort;
 
 class Order implements AccessorInterface
 {

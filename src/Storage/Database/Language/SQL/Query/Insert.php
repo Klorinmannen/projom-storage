@@ -8,7 +8,7 @@ use Projom\Storage\Database\Language\SQL\Set;
 use Projom\Storage\Database\Language\SQL\Table;
 use Projom\Storage\Database\Language\SQL\QueryInterface;
 use Projom\Storage\Database\Language\SQL\Util;
-use Projom\Storage\Database\MySQL\QueryObject;
+use Projom\Storage\Database\Language\SQL\QueryObject;
 
 class Insert implements QueryInterface
 {

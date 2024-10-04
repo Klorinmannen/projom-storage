@@ -9,7 +9,7 @@ use Projom\Storage\Database\Language\SQL\Table;
 use Projom\Storage\Database\Language\SQL\Join;
 use Projom\Storage\Database\Language\SQL\QueryInterface;
 use Projom\Storage\Database\Language\SQL\Util;
-use Projom\Storage\Database\MySQL\QueryObject;
+use Projom\Storage\Database\Language\SQL\QueryObject;
 
 class Delete implements QueryInterface
 {

@@ -8,7 +8,7 @@ use Projom\Storage\Database\Language\SQL\Query\Delete;
 use Projom\Storage\Database\Language\SQL\Query\Insert;
 use Projom\Storage\Database\Language\SQL\Query\Select;
 use Projom\Storage\Database\Language\SQL\Query\Update;
-use Projom\Storage\Database\MySQL\QueryObject;
+use Projom\Storage\Database\Language\SQL\QueryObject;
 
 class SQL
 {
