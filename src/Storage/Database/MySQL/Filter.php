@@ -6,7 +6,7 @@ namespace Projom\Storage\Database\MySQL;
 
 use Projom\Storage\Database\MySQL\LogicalOperator;
 use Projom\Storage\Database\MySQL\Operator;
-use Projom\Storage\Database\Language\Util;
+use Projom\Storage\Database\Util;
 
 class Filter
 {
