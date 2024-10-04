@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Language\SQL\Util;
+namespace Projom\Storage\Database\MySQL;
 
 enum Sort: string
 {
