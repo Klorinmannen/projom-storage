@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Language\SQL\Query;
 
+use Projom\Storage\Database\Language\QueryInterface;
 use Projom\Storage\Database\Language\SQL\Filter;
 use Projom\Storage\Database\Language\SQL\Set;
 use Projom\Storage\Database\Language\SQL\Table;
-use Projom\Storage\Database\Language\SQL\QueryInterface;
 use Projom\Storage\Database\Language\SQL\Join;
-use Projom\Storage\Database\Language\SQL\Util;
 use Projom\Storage\Database\Language\SQL\QueryObject;
+use Projom\Storage\Database\Language\SQL\Util;
 
 class Update implements QueryInterface
 {

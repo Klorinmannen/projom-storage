@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Language\SQL;
+namespace Projom\Storage\Database\Language;
 
 interface AccessorInterface
 {

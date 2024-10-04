@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Language\SQL;
 
-use Projom\Storage\Database\Language\SQL\AccessorInterface;
+use Projom\Storage\Database\Language\AccessorInterface;
 
 class Limit implements AccessorInterface
 {
