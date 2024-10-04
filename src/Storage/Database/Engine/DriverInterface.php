@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database\Engine;
 
-use Projom\Storage\Database\Query\Action;
+use Projom\Storage\Database\Action;
 
 interface DriverInterface
 {

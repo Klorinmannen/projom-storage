@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Database;
 
+use Projom\Storage\Database\Action;
 use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine\DriverFactory;
 use Projom\Storage\Database\Engine\Driver\SourceFactory;
-use Projom\Storage\Database\Query\Action;
 
 class Engine
 {
