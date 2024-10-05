@@ -7,7 +7,7 @@ namespace Projom\Storage\Database;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Action;
 
-class DB
+class Query
 {
 	public static function query(string $collection): mixed
 	{
