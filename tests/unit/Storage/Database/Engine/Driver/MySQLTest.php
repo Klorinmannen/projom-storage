@@ -8,11 +8,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use Projom\Storage\Database\Action;
 use Projom\Storage\Database\Engine\Driver\MySQL;
-use Projom\Storage\Database\Query\Action;
-use Projom\Storage\Database\Query\Filter;
-use Projom\Storage\Database\Query\LogicalOperator;
-use Projom\Storage\Database\Query\QueryObject;
+use Projom\Storage\Database\Language\SQL\QueryObject;
+use Projom\Storage\Database\MySQL\Filter;
+use Projom\Storage\Database\MySQL\LogicalOperator;
 
 class MySQLTest extends TestCase
 {

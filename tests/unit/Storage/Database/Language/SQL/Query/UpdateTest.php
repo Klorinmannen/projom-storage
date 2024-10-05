@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Driver\Language\SQL\Query;
+namespace Projom\tests\unit\Storage\Database\Language\SQL\Query;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Update;
-use Projom\Storage\Database\Query\Filter;
-use Projom\Storage\Database\Query\Join;
-use Projom\Storage\Database\Query\LogicalOperator;
-use Projom\Storage\Database\Query\QueryObject;
+use Projom\Storage\Database\Language\SQL\QueryObject;
+use Projom\Storage\Database\Language\SQL\Query\Update;
+use Projom\Storage\Database\MySQL\Filter;
+use Projom\Storage\Database\MySQL\Join;
+use Projom\Storage\Database\MySQL\LogicalOperator;
 
 class UpdateTest extends TestCase
 {

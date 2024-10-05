@@ -11,8 +11,8 @@ use Projom\Storage\Database\Engine\Driver\MySQL;
 use Projom\Storage\Database\Engine\Driver;
 use Projom\Storage\Database\Engine;
 use Projom\Storage\Database\Engine\DriverFactory;
-use Projom\Storage\Database\Query\Action;
-use Projom\Storage\Database\Query\QueryObject;
+use Projom\Storage\Database\Action;
+use Projom\Storage\Database\Language\SQL\QueryObject;
 
 class EngineTest extends TestCase
 {
@@ -27,7 +27,7 @@ class EngineTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Engine driver not set");
 		$this->expectExceptionCode(400);
-		Engine::dispatch(Action::QUERY, 'User');
+		Engine::dispatch(Action::QUERY, args: ['User']);
 	}
 
 	#[Test]
@@ -53,7 +53,7 @@ class EngineTest extends TestCase
 			else 
 				$value = new QueryObject(collections: ['User'], fields: ['Name']);
 
-			Engine::dispatch($action, $value);
+			Engine::dispatch($action, args: $value);
 		}
 	}
 

@@ -11,7 +11,7 @@ use Projom\Storage\Database\Engine\Config;
 use Projom\Storage\Database\Engine\DriverFactory;
 use Projom\Storage\Database\Engine\DriverInterface;
 use Projom\Storage\Database\Engine\Driver\MySQL;
-use Projom\Storage\Database\Engine\SourceFactory;
+use Projom\Storage\Database\Engine\Driver\SourceFactory;
 
 class DriverFactoryTest extends TestCase
 {

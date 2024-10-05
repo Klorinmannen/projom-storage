@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Engine;
+namespace Projom\tests\unit\Storage\Database\Engine\Driver;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine\Config;
-use Projom\Storage\Database\Engine\SourceFactory;
+use Projom\Storage\Database\Engine\Driver\SourceFactory;
 
 class SourceFactoryStub extends SourceFactory
 {

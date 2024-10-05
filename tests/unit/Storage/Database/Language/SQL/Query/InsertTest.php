@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Driver\Language\SQL\Query;
+namespace Projom\tests\unit\Storage\Database\Language\SQL\Query;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine\Driver\Language\SQL\Query\Insert;
-use Projom\Storage\Database\Query\QueryObject;
+use Projom\Storage\Database\Language\SQL\Query\Insert;
+use Projom\Storage\Database\Language\SQL\QueryObject;
 
 class InsertTest extends TestCase
 {

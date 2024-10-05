@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Engine\Driver\Language\SQL;
+namespace Projom\tests\unit\Storage\Database\Language\SQL;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine\Driver\Language\SQL\Join;
-use Projom\Storage\Database\Query\Join as QueryJoin;
+use Projom\Storage\Database\Language\SQL\Join;
+use Projom\Storage\Database\MySQL\Join as QueryJoin;
 
 class JoinTest extends TestCase
 {

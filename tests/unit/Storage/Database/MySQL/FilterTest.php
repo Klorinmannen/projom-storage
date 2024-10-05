@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Query;
+namespace Projom\tests\unit\Storage\Database\MySQL;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Query\LogicalOperator;
-use Projom\Storage\Database\Query\Operator;
-use Projom\Storage\Database\Query\Filter;
+use Projom\Storage\Database\MySQL\LogicalOperator;
+use Projom\Storage\Database\MySQL\Operator;
+use Projom\Storage\Database\MySQL\Filter;
 
 class FilterTest extends TestCase
 {

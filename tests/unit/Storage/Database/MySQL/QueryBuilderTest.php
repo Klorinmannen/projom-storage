@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database;
+namespace Projom\tests\unit\Storage\Database\MySQL;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine\Driver\MySQL;
-use Projom\Storage\Database\Query;
-use Projom\Storage\Database\Query\Join;
-use Projom\Storage\Database\Query\LogicalOperator;
-use Projom\Storage\Database\Query\Operator;
+use Projom\Storage\Database\Engine\Driver\MySQL as MySQLDriver;
+use Projom\Storage\Database\MySQL\Join;
+use Projom\Storage\Database\MySQL\LogicalOperator;
+use Projom\Storage\Database\MySQL\Operator;
+use Projom\Storage\Database\MySQL\QueryBuilder;
 
-class QueryTest extends TestCase
+class QueryBuilderTest extends TestCase
 {
 	#[Test]
 	public function fetch_select_get(): void
@@ -27,8 +27,8 @@ class QueryTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$result = $query->fetch('Name', 'John', Operator::EQ);
 		$this->assertEquals($expected, $result);
@@ -52,8 +52,8 @@ class QueryTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$result = $query->update(['Name' => 'Jane', 'Age' => 21]);
 		$this->assertEquals($expected, $result);
@@ -74,8 +74,8 @@ class QueryTest extends TestCase
 		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 		$pdo->expects($this->atLeastOnce())->method('lastInsertId')->willReturn($expected);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$result = $query->insert(['Name' => 'Jane', 'Age' => 21]);
 		$this->assertEquals((int) $expected, $result);
@@ -102,8 +102,8 @@ class QueryTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$result = $query->delete();
 		$this->assertEquals($expected, $result);
@@ -117,12 +117,12 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->joinOn('User.UserID = UserRole.UserID', Join::INNER)
 			->joinOn('UserRole.Role, UserAccess.Role', Join::INNER);
-		$this->assertInstanceOf(Query::class, $query);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
@@ -130,12 +130,12 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->filterOnGroup([['Name', Operator::IN, ['John', 'Jane']]], LogicalOperator::AND)
 			->filterOnGroup([['Age', Operator::IS_NOT_NULL, null]], LogicalOperator::OR);
-		$this->assertInstanceOf(Query::class, $query);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
@@ -143,12 +143,12 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->filterOnList(['Name' => ['John', 'Jane']], Operator::IN, LogicalOperator::AND)
 			->filterOnList(['Age' => null], Operator::IS_NOT_NULL, LogicalOperator::OR);
-		$this->assertInstanceOf(Query::class, $query);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
@@ -156,12 +156,12 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->filterOn('Name', ['John', 'Jane'], Operator::IN, LogicalOperator::AND)
 			->filterOn('Age', null, Operator::IS_NOT_NULL, LogicalOperator::OR);
-		$this->assertInstanceOf(Query::class, $query);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
@@ -169,11 +169,11 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->groupOn('Username')->groupOn('Name', 'Age')->groupOn('Lastname, Age');
-		$this->assertInstanceOf(Query::class, $query);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
@@ -181,11 +181,11 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->sortOn(['Name' => 'ASC'])->sortOn(['Age' => 'DESC']);
-		$this->assertInstanceOf(Query::class, $query);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
@@ -193,10 +193,10 @@ class QueryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$driver = MySQL::create($pdo);
-		$query = Query::create($driver, ['User']);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->limit(10);
-		$this->assertInstanceOf(Query::class, $query);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 }

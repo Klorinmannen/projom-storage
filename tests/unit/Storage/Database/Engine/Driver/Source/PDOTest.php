@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\unit\Storage\Database\Engine\Source;
+namespace Projom\tests\unit\Storage\Database\Engine\Driver\Source;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine\Source\PDO;
+use Projom\Storage\Database\Engine\Driver\Source\PDO;
 
 class PDOTest extends TestCase
 {

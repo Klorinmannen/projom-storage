@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Database\Driver\Language\SQL;
+namespace Projom\Storage\Database\Language\SQL;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine\Driver\Language\SQL\Group;
+use Projom\Storage\Database\Language\SQL\Group;
 
 class GroupTest extends TestCase
 {

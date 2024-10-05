@@ -8,10 +8,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Database\Engine;
-use Projom\Storage\Database\Query\Join;
-use Projom\Storage\Database\Query\Operator;
-use Projom\Storage\Database\Query\Sort;
-use Projom\Storage\DB;
+use Projom\Storage\Database\MySQL;
+use Projom\Storage\Database\MySQL\Join;
+use Projom\Storage\Database\MySQL\Operator;
+use Projom\Storage\Database\MySQL\Sort;
 
 class EndToEndTest extends TestCase
 {
@@ -33,17 +33,17 @@ class EndToEndTest extends TestCase
 	#[Test]
 	public function fetch(): void
 	{
-		$users = DB::query('User')->fetch('UserID', 1);
+		$users = MySQL::query('User')->fetch('UserID', 1);
 		$this->assertNotEmpty($users);
 
-		$users = DB::query('User')->fetch('Username', '%Sofie%', Operator::LIKE);
+		$users = MySQL::query('User')->fetch('Username', '%Sofie%', Operator::LIKE);
 		$this->assertNotEmpty($users);
 	}
 
 	#[Test]
 	public function test(): void
 	{
-		$users = DB::query('User')->select('*');
+		$users = MySQL::query('User')->select('*');
 		$actualRecords = count($users);
 		$expectedRecords = 5;
 		$this->assertEquals($expectedRecords, $actualRecords);
@@ -62,7 +62,7 @@ class EndToEndTest extends TestCase
 		];
 		$this->assertEquals($expectedFields, $actualFields);
 
-		[$user] = DB::query('User')->filterOn('UserID', 2)->get('Firstname');
+		[$user] = MySQL::query('User')->filterOn('UserID', 2)->get('Firstname');
 		$actualFirstname = $user['Firstname'] ?? '';
 		$expectedFirstname = 'John';
 		$this->assertEquals($expectedFirstname, $actualFirstname);
@@ -71,7 +71,7 @@ class EndToEndTest extends TestCase
 		$actualFields = array_keys($user);
 		$this->assertEquals($expectedFields, $actualFields);
 
-		$users = DB::query('User')
+		$users = MySQL::query('User')
 			->filterOn('Active', 0, Operator::NE)
 			->filterOn('Firstname', '%e', Operator::LIKE)
 			->select();
@@ -79,7 +79,7 @@ class EndToEndTest extends TestCase
 		$expectedRecords = 1;
 		$this->assertEquals($expectedRecords, $actualRecords);
 
-		$records = DB::query('User')
+		$records = MySQL::query('User')
 			->joinOn('User.UserID', Join::INNER, 'UserRole.UserID')
 			->joinOn('UserRole.RoleID', Join::INNER, 'Role.RoleID')
 			->filterOn('UserRole.RoleID', 3)
@@ -99,7 +99,7 @@ class EndToEndTest extends TestCase
 		$expectedUserID = 5;
 		$this->assertEquals($expectedUserID, $actualUserID);
 
-		$records = DB::query('User')
+		$records = MySQL::query('User')
 			->joinOn('User.UserID', Join::INNER, 'UserRole.UserID')
 			->joinOn('UserRole.RoleID', Join::INNER, 'Role.RoleID')
 			->filterOn('UserRole.RoleID', 3)
@@ -117,35 +117,35 @@ class EndToEndTest extends TestCase
 			'Lastname' => 'User',
 			'Active' => 0
 		];
-		$userID = DB::query('User')->insert($newUser);
+		$userID = MySQL::query('User')->insert($newUser);
 		$this->assertGreaterThan(0, $userID);
 
 		// Find added user
-		[$user] = DB::query('User')
+		[$user] = MySQL::query('User')
 			->filterOn('UserID', $userID)
 			->filterOn('Active', 0)
 			->get('Active');
 		$this->assertNotEmpty($user);
 
 		// Update user
-		$affectedRows = DB::query('User')->filterOn('UserID', $userID)->update(['Active' => 1]);
+		$affectedRows = MySQL::query('User')->filterOn('UserID', $userID)->update(['Active' => 1]);
 		$expectedRows = 1;
 		$this->assertEquals($expectedRows, $affectedRows);
 
 		// Find updated user
-		[$user] = DB::query('User')
+		[$user] = MySQL::query('User')
 			->filterOn('UserID', $userID)
 			->filterOn('Active', 0, Operator::NE)
 			->get();
 		$this->assertNotEmpty($user);
 
 		// Delete user
-		$affectedRows = DB::query('User')->filterOn('UserID', $userID)->delete();
+		$affectedRows = MySQL::query('User')->filterOn('UserID', $userID)->delete();
 		$expectedRows = 1;
 		$this->assertEquals($expectedRows, $affectedRows);
 
 		// Try to find deleted user
-		$affectedRows = DB::query('User')->filterOn('UserID', $userID)->delete();
+		$affectedRows = MySQL::query('User')->filterOn('UserID', $userID)->delete();
 		$expectedRows = 0;
 		$this->assertEquals($expectedRows, $affectedRows);
 
@@ -153,7 +153,7 @@ class EndToEndTest extends TestCase
 			'UserID' => [2, 3, 4, 5],
 			'Active' => [1]
 		];
-		$users = DB::query('User')->filterOnList($filterLists, Operator::IN)->select();
+		$users = MySQL::query('User')->filterOnList($filterLists, Operator::IN)->select();
 		$actualRecords = count($users);
 		$expectedRecords = 2;
 		$this->assertEquals($expectedRecords, $actualRecords);
