@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Projom\Storage\Database\Engine\Driver;
 
 use Projom\Storage\Database\Action;
-use Projom\Storage\Database\Language\SQL\QueryInterface;
 use Projom\Storage\Database\Engine\DriverInterface;
+use Projom\Storage\Database\Language\QueryInterface;
 use Projom\Storage\Database\Language\SQL;
-use Projom\Storage\Database\MySQL\QueryBuilder;
 use Projom\Storage\Database\Language\SQL\QueryObject;
+use Projom\Storage\Database\MySQL\QueryBuilder;
 
 class MySQL implements DriverInterface
 {
