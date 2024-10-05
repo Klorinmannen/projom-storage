@@ -30,6 +30,20 @@ class InTest extends TestCase
 						'filter_userid_1_3' => 3
 					]
 				]
+			],
+			[
+				Column::create(['UserID']),
+				Operator::NOT_IN,
+				[1, 2, 3],
+				1,
+				'expected' => [
+					'`UserID` NOT IN ( :filter_userid_1_1, :filter_userid_1_2, :filter_userid_1_3 )',
+					[
+						'filter_userid_1_1' => 1,
+						'filter_userid_1_2' => 2,
+						'filter_userid_1_3' => 3
+					]
+				]
 			]
 		];
 	}
