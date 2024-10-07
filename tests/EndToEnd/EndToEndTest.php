@@ -7,11 +7,11 @@ namespace Projom\tests\EndToEnd;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Database\Engine;
-use Projom\Storage\Database\MySQL;
-use Projom\Storage\Database\MySQL\Join;
-use Projom\Storage\Database\MySQL\Operator;
-use Projom\Storage\Database\MySQL\Sort;
+use Projom\Storage\Engine;
+use Projom\Storage\MySQL;
+use Projom\Storage\SQL\Util\Join;
+use Projom\Storage\SQL\Util\Operator;
+use Projom\Storage\SQL\Util\Sort;
 
 class EndToEndTest extends TestCase
 {
