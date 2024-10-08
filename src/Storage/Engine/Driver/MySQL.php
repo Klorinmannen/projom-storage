@@ -45,13 +45,17 @@ class MySQL implements DriverInterface
 		};
 	}
 
-	private function select(QueryObject $queryObject): array
+	private function select(QueryObject $queryObject): null|array
 	{
 		$select = Select::create($queryObject);
 
 		$this->executeStatement($select);
 
-		return $this->statement->fetchAll();
+		$result = $this->statement->fetchAll();
+		if (!$result)
+			return null;
+
+		return $result;
 	}
 
 	private function update(QueryObject $queryObject): int
