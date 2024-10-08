@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\test\unit\Storage\SQL\Component\Filter;
+namespace Projom\Tests\Unit\Storage\SQL\Component\Filter;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
