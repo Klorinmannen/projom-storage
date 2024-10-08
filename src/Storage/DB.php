@@ -4,34 +4,23 @@ declare(strict_types=1);
 
 namespace Projom\Storage;
 
-use Projom\Storage\Database\Engine;
-use Projom\Storage\Database\Query;
-use Projom\Storage\Database\Query\Action;
+use Projom\Storage\Engine;
+use Projom\Storage\Action;
 
 class DB
 {
-	public static function query(string $collection): Query
+	public static function query(string $collection): mixed
 	{
-		return Engine::dispatch(Action::QUERY, [$collection]);
+		return Engine::dispatch(Action::QUERY, args: [$collection]);
 	}
 
-	public static function sql(string $query, array|null $params = null): mixed
+	public static function execute(array $args): mixed
 	{
-		return Engine::dispatch(Action::EXECUTE, [$query, $params]);
+		return Engine::dispatch(Action::EXECUTE, args: $args);
 	}
 
-	public static function startTransaction(): void
+	public static function run(Action $action, array $args): mixed
 	{
-		Engine::dispatch(Action::START_TRANSACTION);
-	}
-
-	public static function endTransaction(): void
-	{
-		Engine::dispatch(Action::END_TRANSACTION);
-	}
-
-	public static function revertTransaction(): void
-	{
-		Engine::dispatch(Action::REVERT_TRANSACTION);
+		return Engine::dispatch($action, args: $args);
 	}
 }
