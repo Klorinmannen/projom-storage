@@ -95,12 +95,8 @@ class Filter implements ComponentInterface
 		return $filterGroupString;
 	}
 
-	private function buildFilterWithParams(
-		string $field,
-		Operator $operator,
-		mixed $value
-	): array {
-
+	private function buildFilterWithParams(string $field, Operator $operator, mixed $value): array 
+	{
 		$this->filterID++;
 		$column = Column::create([$field]);
 		[$filter, $params] = $this->createFilterWithParams($column, $operator, $value);
