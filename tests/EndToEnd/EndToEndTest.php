@@ -159,8 +159,8 @@ class EndToEndTest extends TestCase
 		$this->assertEquals($expectedRecords, $actualRecords);
 
 		// No records found, should return null
-		MySQL::query('User')->delete();
-		$actualRecords = MySQL::query('User')->select();
+		MySQL::query('UserRole')->delete();
+		$actualRecords = MySQL::query('UserRole')->select();
 		$expectedRecords = null;
 		$this->assertEquals($expectedRecords, $actualRecords);
 	}
