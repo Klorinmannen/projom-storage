@@ -18,6 +18,7 @@ readonly class Config
 	public null|string $collation;
 	public null|string $dsn;
 	public array $options;
+	public array $driverOptions;
 
 	public function __construct(array $config)
 	{
@@ -31,5 +32,6 @@ readonly class Config
 		$this->collation = $config['collation'] ?? null;
 		$this->dsn = $config['dsn'] ?? null;
 		$this->options = $config['options'] ?? [];
+		$this->driverOptions = $config['driver_options'] ?? [];
 	}
 }
