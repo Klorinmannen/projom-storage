@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage;
 
 use Projom\Storage\Action;
-use Projom\Storage\Engine\DriverInterface;
+use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\Engine\Config;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\DriverFactory;
@@ -57,7 +57,7 @@ class Engine
 		static::setDriver($engineDriver, $config->driver);
 	}
 
-	public static function setDriver(DriverInterface $engineDriver, Driver $driver): void
+	public static function setDriver(DriverBase $engineDriver, Driver $driver): void
 	{
 		static::$drivers[$driver->value] = $engineDriver;
 		static::$currentDriver = $driver;
@@ -68,7 +68,7 @@ class Engine
 		static::$driverFactory = $driverFactory;
 	}
 
-	private static function driver(): DriverInterface
+	private static function driver(): DriverBase
 	{
 		$driver = static::$drivers[static::$currentDriver?->value] ?? null;
 		if ($driver === null)

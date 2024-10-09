@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Engine\Driver;
 
 use Projom\Storage\Action;
-use Projom\Storage\Engine\DriverInterface;
+use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\QueryBuilder;
 use Projom\Storage\SQL\StatementInterface;
@@ -14,7 +14,7 @@ use Projom\Storage\SQL\Statement\Insert;
 use Projom\Storage\SQL\Statement\Select;
 use Projom\Storage\SQL\Statement\Update;
 
-class MySQL implements DriverInterface
+class MySQL extends DriverBase
 {
 	private readonly \PDO $pdo;
 	private null|\PDOStatement $statement = null;
@@ -54,6 +54,10 @@ class MySQL implements DriverInterface
 		$result = $this->statement->fetchAll();
 		if (!$result)
 			return null;
+
+		if ($this->returnSingleRecord)
+			if (count($result) === 1)
+				return $result[0];
 
 		return $result;
 	}

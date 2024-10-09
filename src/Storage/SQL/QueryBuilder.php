@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\SQL;
 
 use Projom\Storage\Action;
-use Projom\Storage\Engine\DriverInterface;
+use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;
@@ -14,7 +14,7 @@ use Projom\Storage\SQL\Util\Filter;
 
 class QueryBuilder
 {
-    private null|DriverInterface $driver = null;
+    private null|DriverBase $driver = null;
     private array $collections = [];
     private array $fields = [];
     private array $filters = [];
@@ -25,13 +25,13 @@ class QueryBuilder
 
     private const DEFAULT_SELECT = '*';
 
-    public function __construct(null|DriverInterface $driver, array $collections)
+    public function __construct(null|DriverBase $driver, array $collections)
     {
         $this->collections = $collections;
         $this->driver = $driver;
     }
 
-    public static function create(null|DriverInterface $driver = null, array $collections = []): QueryBuilder
+    public static function create(null|DriverBase $driver = null, array $collections = []): QueryBuilder
     {
         return new QueryBuilder($driver, $collections);
     }
