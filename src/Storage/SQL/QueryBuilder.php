@@ -42,7 +42,7 @@ class QueryBuilder
      * * Example use: $database->query('CollectionName')->fetch('Name', 'John')
      * * Example use: $database->query('CollectionName')->fetch('Age', [25, 55], Operator::IN)
      */
-    public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): array
+    public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): null|array
     {
         $this->filterOn($field, $value, $operator);
         return $this->select(static::DEFAULT_SELECT);
@@ -57,7 +57,7 @@ class QueryBuilder
      * * Example use: $database->query('CollectionName')->select('Name as Username')
      * * Example use: $database->query('CollectionName')->select([ 'Name', 'Age', 'Username' ])
      */
-    public function select(string ...$fields): array
+    public function select(string ...$fields): null|array
     {
         $this->fields += $fields ?: [static::DEFAULT_SELECT];
 
@@ -76,7 +76,7 @@ class QueryBuilder
     /**
      * Alias for select method.
      */
-    public function get(string ...$fields): array
+    public function get(string ...$fields): null|array
     {
         return $this->select(...$fields);
     }

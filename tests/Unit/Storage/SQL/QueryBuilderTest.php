@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Tests\Unit\Storage\SQL;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -15,19 +16,29 @@ use Projom\Storage\SQL\QueryBuilder;
 
 class QueryBuilderTest extends TestCase
 {
-	#[Test]
-	public function fetch_select_get(): void
+	public static function fetchSelectGetProvider(): array
 	{
-		$expected = [0 => ['Name' => 'John', 'Age' => 25]];
+		return [
+			[
+				[
+					0 => [
+						'Name' => 'John',
+						'Age' => 25
+					]
+				]
+			],
+			[
+				null
+			]
+		];
+	}
 
-		$pdoStatement = $this->createMock(\PDOStatement::class);
-		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
-		$pdoStatement->expects($this->atLeastOnce())->method('fetchAll')->willReturn($expected);
-
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
-
-		$driver = MySQLDriver::create($pdo);
+	#[Test]
+	#[DataProvider('fetchSelectGetProvider')]
+	public function fetchSelectGet(null|array $expected): void
+	{
+		$driver = $this->createMock(MySQLDriver::class);
+		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$result = $query->fetch('Name', 'John', Operator::EQ);
@@ -41,18 +52,12 @@ class QueryBuilderTest extends TestCase
 	}
 
 	#[Test]
-	public function update_modify(): void
+	public function updateModify(): void
 	{
 		$expected = 1;
 
-		$pdoStatement = $this->createMock(\PDOStatement::class);
-		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
-		$pdoStatement->expects($this->atLeastOnce())->method('rowCount')->willReturn($expected);
-
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
-
-		$driver = MySQLDriver::create($pdo);
+		$driver = $this->createMock(MySQLDriver::class);
+		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$result = $query->update(['Name' => 'Jane', 'Age' => 21]);
@@ -63,18 +68,12 @@ class QueryBuilderTest extends TestCase
 	}
 
 	#[Test]
-	public function insert_add(): void
+	public function insertAdd(): void
 	{
-		$expected = '1';
+		$expected = 1;
 
-		$pdoStatement = $this->createMock(\PDOStatement::class);
-		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
-
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
-		$pdo->expects($this->atLeastOnce())->method('lastInsertId')->willReturn($expected);
-
-		$driver = MySQLDriver::create($pdo);
+		$driver = $this->createMock(MySQLDriver::class);
+		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$result = $query->insert(['Name' => 'Jane', 'Age' => 21]);
@@ -91,18 +90,12 @@ class QueryBuilderTest extends TestCase
 	}
 
 	#[Test]
-	public function delete_destroy(): void
+	public function deleteDestroy(): void
 	{
 		$expected = 2;
 
-		$pdoStatement = $this->createMock(\PDOStatement::class);
-		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
-		$pdoStatement->expects($this->atLeastOnce())->method('rowCount')->willReturn($expected);
-
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
-
-		$driver = MySQLDriver::create($pdo);
+		$driver = $this->createMock(MySQLDriver::class);
+		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$result = $query->delete();
@@ -129,7 +122,6 @@ class QueryBuilderTest extends TestCase
 	public function filterOnGroup(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
-
 		$driver = MySQLDriver::create($pdo);
 		$query = QueryBuilder::create($driver, ['User']);
 

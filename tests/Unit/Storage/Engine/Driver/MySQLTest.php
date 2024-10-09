@@ -16,14 +16,26 @@ use Projom\Storage\SQL\Util\LogicalOperator;
 
 class MySQLTest extends TestCase
 {
-	#[Test]
-	public function select(): void
+	public static function selectProvider(): array
 	{
-		$expected = [0 => ['UserID' => '10', 'Name' => 'John']];
-
+		return [
+			[
+				[0 => ['UserID' => '10', 'Name' => 'John']],
+				[0 => ['UserID' => '10', 'Name' => 'John']]
+			],
+			[
+				null,
+				[]
+			]
+		];
+	}
+	#[Test]
+	#[DataProvider('selectProvider')]
+	public function select(null|array $expected, array $records): void
+	{
 		$pdoStatement = $this->createMock(\PDOStatement::class);
 		$pdoStatement->expects($this->once())->method('execute')->willReturn(true);
-		$pdoStatement->expects($this->once())->method('fetchAll')->willReturn($expected);
+		$pdoStatement->expects($this->once())->method('fetchAll')->willReturn($records);
 
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
@@ -109,24 +121,8 @@ class MySQLTest extends TestCase
 		$this->assertEquals($expected, $result);
 	}
 
-	public static function execute_provider(): array
-	{
-		return [
-			[
-				true,
-				false,
-				'Failed to execute statement'
-			],
-			[
-				false,
-				true,
-				'Failed to prepare statement'
-			]
-		];
-	}
-
 	#[Test]
-	public function execute_failed_to_prepare_statement(): void
+	public function executeFailedToPrepareStatement(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->once())->method('prepare')->willReturn(false);
@@ -140,7 +136,7 @@ class MySQLTest extends TestCase
 	}
 
 	#[Test]
-	public function execute_failed_to_execute_statement(): void
+	public function executeFailedToExecuteStatement(): void
 	{
 		$pdoStatement = $this->createMock(\PDOStatement::class);
 		$pdoStatement->method('execute')->willReturn(false);
@@ -156,7 +152,7 @@ class MySQLTest extends TestCase
 		$mysql->dispatch(Action::EXECUTE, ['Select * FROM User', null]);
 	}
 
-	public static function query_provider(): array
+	public static function queryProvider(): array
 	{
 		return [
 			[
@@ -173,7 +169,7 @@ class MySQLTest extends TestCase
 	}
 
 	#[Test]
-	#[DataProvider('query_provider')]
+	#[DataProvider('queryProvider')]
 	public function query(string $sql, array|null $params, array $expected): void
 	{
 		$pdoStatement = $this->createMock(\PDOStatement::class);
