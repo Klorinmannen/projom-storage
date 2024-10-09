@@ -55,6 +55,10 @@ class MySQL extends DriverBase
 		if (!$result)
 			return null;
 
+		if ($this->returnSingleRecord)
+			if (count($result) === 1)
+				return $result[0];
+
 		return $result;
 	}
 
