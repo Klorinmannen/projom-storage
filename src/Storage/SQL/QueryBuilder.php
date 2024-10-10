@@ -136,11 +136,7 @@ class QueryBuilder
      */
     public function insert(array $fieldsWithValues): int
     {
-        $queryObject = new QueryObject(
-            collections: $this->collections,
-            fieldsWithValues: [$fieldsWithValues]
-        );
-        return $this->driver->dispatch(Action::INSERT, $queryObject);
+        return $this->insertMultiple([$fieldsWithValues]);
     }
 
     /**
@@ -148,7 +144,7 @@ class QueryBuilder
      */
     public function add(array $fieldsWithValues): int
     {
-        return $this->insert($fieldsWithValues);
+        return $this->insertMultiple([$fieldsWithValues]);
     }
 
     /**
