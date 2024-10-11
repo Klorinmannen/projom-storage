@@ -51,15 +51,18 @@ class MySQL extends DriverBase
 
 		$this->executeStatement($select);
 
-		$result = $this->statement->fetchAll();
-		if (!$result)
+		$records = $this->statement->fetchAll();
+		if (!$records)
 			return null;
 
-		if ($this->returnSingleRecord)
-			if (count($result) === 1)
-				return $result[0];
+		if ($formatting = $queryObject->formatting)
+			$records = $this->formatRecords($records, ...$formatting);
 
-		return $result;
+		if ($this->returnSingleRecord)
+			if (count($records) === 1)
+				$records = $records[0];
+
+		return $records;
 	}
 
 	private function update(QueryObject $queryObject): int
