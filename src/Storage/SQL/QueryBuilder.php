@@ -31,6 +31,7 @@ class QueryBuilder
     {
         $this->collections = $collections;
         $this->driver = $driver;
+        $this->fields = [static::DEFAULT_SELECT];
         $this->formatting = [Format::ARRAY, null];
     }
 
@@ -74,7 +75,8 @@ class QueryBuilder
      */
     public function select(string ...$fields): null|array
     {
-        $this->fields += $fields ?: [static::DEFAULT_SELECT];
+        if ($fields)
+            $this->fields = $fields;
 
         $queryObject = new QueryObject(
             collections: $this->collections,
