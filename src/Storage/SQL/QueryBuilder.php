@@ -39,7 +39,6 @@ class QueryBuilder
         return new QueryBuilder($driver, $collections);
     }
 
-
     /**
      * Format the query result.
      * 
