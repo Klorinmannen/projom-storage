@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
+use Projom\Storage\Format;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;
 use Projom\Storage\SQL\Util\Operator;
@@ -16,6 +17,16 @@ use Projom\Storage\SQL\QueryBuilder;
 
 class QueryBuilderTest extends TestCase
 {
+	#[Test]
+	public function formatAs(): void
+	{
+		$driver = $this->createMock(MySQLDriver::class);
+		$query = QueryBuilder::create($driver, ['User']);
+
+		$query = $query->formatAs(Format::STD_CLASS);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
+	}
+
 	public static function fetchSelectGetProvider(): array
 	{
 		return [
