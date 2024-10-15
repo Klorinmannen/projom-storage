@@ -39,6 +39,13 @@ class QueryBuilder
         return new QueryBuilder($driver, $collections);
     }
 
+
+    /**
+     * Format the query result.
+     * 
+     * * Example use: $database->query('CollectionName')->formatAs(Format::STD_CLASS)
+     * * Example use: $database->query('CollectionName')->formatAs(Format::CUSTOM_OBJECT, ClassName::class)
+     */
     public function formatAs(Format $format, mixed $args = null): QueryBuilder
     {
         $this->formatting = [$format, $args];
