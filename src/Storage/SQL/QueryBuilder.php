@@ -6,6 +6,7 @@ namespace Projom\Storage\SQL;
 
 use Projom\Storage\Action;
 use Projom\Storage\Engine\DriverBase;
+use Projom\Storage\Format;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;
@@ -22,6 +23,7 @@ class QueryBuilder
     private array $joins = [];
     private array $groups = [];
     private int|string $limit = '';
+    private array $formatting = [];
 
     private const DEFAULT_SELECT = '*';
 
@@ -29,11 +31,24 @@ class QueryBuilder
     {
         $this->collections = $collections;
         $this->driver = $driver;
+        $this->formatting = [Format::ARRAY, null];
     }
 
     public static function create(null|DriverBase $driver = null, array $collections = []): QueryBuilder
     {
         return new QueryBuilder($driver, $collections);
+    }
+
+    /**
+     * Format the query result.
+     * 
+     * * Example use: $database->query('CollectionName')->formatAs(Format::STD_CLASS)
+     * * Example use: $database->query('CollectionName')->formatAs(Format::CUSTOM_OBJECT, ClassName::class)
+     */
+    public function formatAs(Format $format, mixed $args = null): QueryBuilder
+    {
+        $this->formatting = [$format, $args];
+        return $this;
     }
 
     /**
@@ -68,7 +83,8 @@ class QueryBuilder
             sorts: $this->sorts,
             groups: $this->groups,
             limit: $this->limit,
-            joins: $this->joins
+            joins: $this->joins,
+            formatting: $this->formatting
         );
         return $this->driver->dispatch(Action::SELECT, $queryObject);
     }
