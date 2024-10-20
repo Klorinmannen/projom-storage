@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace Projom\Storage\MySQL;
 
 use Projom\Storage\MySQL;
-use Projom\Storage\SQL\Util\Filter;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Util;
 
+/**
+ * The Model class serves as a base class for interacting with a mysql database.
+ * 
+ * Create a class named as the table in the database and extend this class.
+ * Define the PRIMARY_FIELD constant as the name of the primary field from the table.
+ * 
+ * * Example use: User extends Model
+ */
 class Model
 {
 	private static $class = null;
@@ -28,11 +35,23 @@ class Model
 	}
 
 	/**
-	 * Find a record.
+	 * Create a record.
+	 * 
+	 * * Example use: User::create(['Name' => 'John'])
+	 */
+	public static function create(array $record): int|string
+	{
+		static::invoke();
+		$primaryID = MySQL::query(static::$class)->insert($record);
+		return $primaryID;
+	}
+
+	/**
+	 * Get a record filtering on primary id.
 	 * 
 	 * * Example use: User::find($userID = 3)
 	 */
-	public static function find(string|int $primaryID): null|array
+	public static function get(string|int $primaryID): null|array
 	{
 		static::invoke();
 
@@ -44,109 +63,25 @@ class Model
 	}
 
 	/**
-	 * Get all records.
-	 * 
-	 * * Example use: User::all()
-	 */
-	public static function all(): null|array
-	{
-		static::invoke();
-
-		$records = MySQL::query(static::$class)->select();
-		if (!$records)
-			return null;
-
-		$keydRecords = Util::rekey($records, static::$primaryField);
-
-		return $keydRecords;
-	}
-
-	/**
-	 * Get a record.
-	 * 
-	 * * Example use: User::get('Email', 'John.doe@example.com')
-	 */
-	public static function get(string $field, mixed $value): null|array
-	{
-		static::invoke();
-
-		$records = MySQL::query(static::$class)->fetch($field, $value);
-		if (!$records)
-			return null;
-
-		$keydRecords = Util::rekey($records, static::$primaryField);
-
-		return $keydRecords;
-	}
-
-	/**
-	 * Update a record.
+	 * Update a record filtering on primary id.
 	 * 
 	 * * Example use: User::update($userID = 3, ['Name' => 'A new name'])
 	 */
-	public static function update(string|int $primaryID, array $data): int
+	public static function update(string|int $primaryID, array $data): void
 	{
 		static::invoke();
-
-		$rowsAffected = MySQL::query(static::$class)->filterOn(static::$primaryField, $primaryID)->update($data);
-
-		return $rowsAffected;
+		MySQL::query(static::$class)->filterOn(static::$primaryField, $primaryID)->update($data);
 	}
 
 	/**
-	 * Delete a record.
+	 * Delete a record filtering on primary id.
 	 * 
 	 * * Example use: User::delete($userID = 3)
 	 */
 	public static function delete(string|int $primaryID): void
 	{
 		static::invoke();
-
 		MySQL::query(static::$class)->filterOn(static::$primaryField, $primaryID)->delete();
-	}
-
-	/**
-	 * Delete all records.
-	 * 
-	 * * Example use: User::deleteAll()
-	 */
-	public static function deleteAll(): void
-	{
-		static::invoke();
-
-		MySQL::query(static::$class)->delete();
-	}
-
-	/**
-	 * Create a record.
-	 * 
-	 * * Example use: User::create(['Name' => 'John'])
-	 */
-	public static function create(array $record): int|string
-	{
-		static::invoke();
-
-		$primaryID = MySQL::query(static::$class)->insert($record);
-
-		return $primaryID;
-	}
-
-	/**
-	 * Search for records.
-	 * 
-	 * * Example use: User::search('Name', '%John%')
-	 */
-	public static function search(string $field, mixed $value): null|array
-	{
-		static::invoke();
-
-		$records = MySQL::query(static::$class)->filterOn($field, $value, Operator::LIKE)->select();
-		if (!$records)
-			return null;
-
-		$keydRecords = Util::rekey($records, static::$primaryField);
-
-		return $keydRecords;
 	}
 
 	/**
@@ -177,23 +112,77 @@ class Model
 	}
 
 	/**
+	 * Get all records.
+	 * 
+	 * * Example use: User::all()
+	 */
+	public static function all(): null|array
+	{
+		static::invoke();
+
+		$records = MySQL::query(static::$class)->select();
+		if (!$records)
+			return null;
+
+		$keydRecords = Util::rekey($records, static::$primaryField);
+
+		return $keydRecords;
+	}
+
+	/**
+	 * Search for records filtering on field like value.
+	 * 
+	 * * Example use: User::search('Name', '%John%')
+	 */
+	public static function search(string $field, mixed $value): null|array
+	{
+		static::invoke();
+
+		$records = MySQL::query(static::$class)->filterOn($field, $value, Operator::LIKE)->select();
+		if (!$records)
+			return null;
+
+		$keydRecords = Util::rekey($records, static::$primaryField);
+
+		return $keydRecords;
+	}
+
+	/**
+	 * Find a record by filtering on field with value.
+	 * 
+	 * * Example use: User::get('Email', 'John.doe@example.com')
+	 */
+	public static function find(string $field, mixed $value): null|array
+	{
+		static::invoke();
+
+		$records = MySQL::query(static::$class)->fetch($field, $value);
+		if (!$records)
+			return null;
+
+		$keydRecords = Util::rekey($records, static::$primaryField);
+
+		return $keydRecords;
+	}
+
+	/**
 	 * Count the number of records.
 	 * 
 	 * * Example use: User::count()
 	 * * Example use: User::count($filter)
 	 */
-	public static function count(null|array $filter = null): int
+	public static function count(string $field = '*', null|array $filter = null): null|int
 	{
 		static::invoke();
 
 		$records = [];
 		if ($filter !== null)
-			$records = MySQL::query(static::$class)->filterOnGroup([$filter])->select('COUNT(*) as count');
+			$records = MySQL::query(static::$class)->filterOnGroup([$filter])->select("COUNT($field) as count");
 		else
-			$records = MySQL::query(static::$class)->select('COUNT(*) as count');
+			$records = MySQL::query(static::$class)->select("COUNT($field) as count");
 
 		if (!$records)
-			return 0;
+			return null;
 
 		$record = array_pop($records);
 		return (int) $record['count'];
