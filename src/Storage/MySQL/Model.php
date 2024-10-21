@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Projom\Storage\MySQL;
 
 use Projom\Storage\MySQL;
+use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Util;
 
 /**
- * The Model class serves as a base class for interacting with a mysql database.
+ * The Model class serves as a base class for interacting with a mysql database table.
  * 
  * Create a class named as the table in the database and extend this class.
  * Define the PRIMARY_FIELD constant as the name of the primary field from the table.
- * 
- * * Example use: User extends Model
  */
 class Model
 {
@@ -51,7 +50,7 @@ class Model
 	 * 
 	 * * Example use: User::find($userID = 3)
 	 */
-	public static function get(string|int $primaryID): null|array
+	public static function find(string|int $primaryID): null|array
 	{
 		static::invoke();
 
@@ -101,9 +100,8 @@ class Model
 		$record = array_pop($records);
 		unset($record[static::$primaryField]);
 
-		foreach ($newRecord as $field => $value)
-			if (array_key_exists($field, $record))
-				$record[$field] = $value;
+		// Merge new record with existing record. Left-hand array takes precedence. 
+		$record = $newRecord + $record;
 
 		$clonePrimaryID = MySQL::query(static::$class)->insert($record);
 		$clonedRecords = MySQL::query(static::$class)->fetch(static::$primaryField, $clonePrimaryID);
@@ -152,7 +150,7 @@ class Model
 	 * 
 	 * * Example use: User::get('Email', 'John.doe@example.com')
 	 */
-	public static function find(string $field, mixed $value): null|array
+	public static function get(string $field, mixed $value): null|array
 	{
 		static::invoke();
 
@@ -171,15 +169,15 @@ class Model
 	 * * Example use: User::count()
 	 * * Example use: User::count($filter)
 	 */
-	public static function count(string $field = '*', null|array $filter = null): null|int
+	public static function count(array $filter): null|int
 	{
 		static::invoke();
 
 		$records = [];
 		if ($filter !== null)
-			$records = MySQL::query(static::$class)->filterOnGroup([$filter])->select("COUNT($field) as count");
+			$records = MySQL::query(static::$class)->filterOnGroup([$filter])->select('COUNT(*) as count');
 		else
-			$records = MySQL::query(static::$class)->select("COUNT($field) as count");
+			$records = MySQL::query(static::$class)->select('COUNT(*) as count');
 
 		if (!$records)
 			return null;
