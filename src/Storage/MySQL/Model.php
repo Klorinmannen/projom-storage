@@ -112,12 +112,18 @@ class Model
 	 * Get all records.
 	 * 
 	 * * Example use: User::all()
+	 * * Example use: User::all($filter1, $filter2)
 	 */
-	public static function all(): null|array
+	public static function all(array ...$filters): null|array
 	{
 		static::invoke();
 
-		$records = MySQL::query(static::$class)->select();
+		$query = MySQL::query(static::$class);
+
+		if ($filters)
+			$query->filterOnGroup($filters);
+
+		$records = $query->select();
 		if (!$records)
 			return null;
 
@@ -172,12 +178,12 @@ class Model
 	{
 		static::invoke();
 
-		$records = [];
-		if ($filter !== null)
-			$records = MySQL::query(static::$class)->filterOnGroup([$filter])->select('COUNT(*) as count');
-		else
-			$records = MySQL::query(static::$class)->select('COUNT(*) as count');
+		$query = MySQL::query(static::$class);
 
+		if ($filter !== null)
+			$query->filterOnGroup([$filter]);
+
+		$records = $query->select('COUNT(*) as count');
 		if (!$records)
 			return null;
 
