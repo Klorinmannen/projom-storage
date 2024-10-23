@@ -18,6 +18,7 @@ class QueryObject
 		public array $sorts = [],
 		public array $groups = [],
 		public int|string $limit = '',
+		public int $offset = 0,
 		public array $formatting = [],
 	) {}
 }
