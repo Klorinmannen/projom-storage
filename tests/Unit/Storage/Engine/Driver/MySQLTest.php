@@ -111,7 +111,7 @@ class MySQLTest extends TestCase
 			collections: ['User'],
 			filters: [
 				[
-					Filter::buildGroup(['UserID' => 10, 'Name' => 'John']),
+					Filter::list(['UserID' => 10, 'Name' => 'John']),
 					LogicalOperator::AND
 				]
 			]

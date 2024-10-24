@@ -27,7 +27,7 @@ class SelectTest extends TestCase
 					joins: [['User.UserID', Join::INNER, 'Log.UserID']],
 					filters: [
 						[
-							Filter::buildGroup(['UserID' => 10, 'Log.RequestType' => 'GET']),
+							Filter::list(['UserID' => 10, 'Log.RequestType' => 'GET']),
 							LogicalOperator::AND
 						]
 					],

@@ -50,7 +50,7 @@ class Filter
 		return static::build($field, $value, Operator::GT);
 	}
 
-	public static function ge(string $field, mixed $value): array
+	public static function gte(string $field, mixed $value): array
 	{
 		return static::build($field, $value, Operator::GTE);
 	}
@@ -60,7 +60,7 @@ class Filter
 		return static::build($field, $value, Operator::LT);
 	}
 
-	public static function le(string $field, mixed $value): array
+	public static function lte(string $field, mixed $value): array
 	{
 		return static::build($field, $value, Operator::LTE);
 	}
