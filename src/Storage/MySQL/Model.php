@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\MySQL;
 
 use Projom\Storage\MySQL;
+use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Util;
 
@@ -99,7 +100,7 @@ class Model
 		$record = array_pop($records);
 		unset($record[static::$primaryField]);
 
-		// Merge new record with existing record. Left-hand array takes precedence. 
+		// Merge new record with existing record. 
 		$record = $newRecord + $record;
 
 		$clonePrimaryID = MySQL::query(static::$class)->insert($record);
@@ -121,7 +122,7 @@ class Model
 		$query = MySQL::query(static::$class);
 
 		if ($filters)
-			$query->filterOnGroup($filters);
+			$query->filterOnFields($filters);
 
 		$records = $query->select();
 		if (!$records)
@@ -169,25 +170,57 @@ class Model
 	}
 
 	/**
-	 * Count the number of records.
+	 * Count records.
 	 * 
 	 * * Example use: User::count()
-	 * * Example use: User::count($filter)
+	 * * Example use: User::count($filterFields)
+	 * * Example use: User::count(['Name' => 'John'], 'Name')
 	 */
-	public static function count(array $filter): null|int
+	public static function count(null|array $filterFields = null, string $field = '*'): null|int
 	{
 		static::invoke();
 
 		$query = MySQL::query(static::$class);
 
-		if ($filter !== null)
-			$query->filterOnGroup([$filter]);
+		if ($filterFields !== null)
+			$query->filterOnFields($filterFields);
 
-		$records = $query->select('COUNT(*) as count');
+		if ($field !== '*')
+			$query->groupOn($field);
+
+		$aggregate = Aggregate::COUNT->buildSQL($field, 'count');
+		$records = $query->select($aggregate);
 		if (!$records)
 			return null;
 
 		$record = array_pop($records);
 		return (int) $record['count'];
+	}
+
+	/**
+	 * Paginate records.
+	 * 
+	 * * Example use: User::paginate(1, 10)
+	 * * Example use: User::paginate(1, 10, ['Name' => 'John'])
+	 */
+	public static function paginate(int $page, int $pageSize, null|array $filterFields = null): null|array
+	{
+		static::invoke();
+
+		$query = MySQL::query(static::$class);
+
+		if ($filterFields !== null)
+			$query->filterOnFields($filterFields);
+
+		$offset = ($page - 1) * $pageSize;
+		$query->offset($offset)->limit($pageSize);
+
+		$records = $query->select();
+		if (!$records)
+			return null;
+
+		$keydRecords = Util::rekey($records, static::$primaryField);
+
+		return $keydRecords;
 	}
 }
