@@ -27,7 +27,7 @@ class SelectTest extends TestCase
 					joins: [['User.UserID', Join::INNER, 'Log.UserID']],
 					filters: [
 						[
-							Filter::buildGroup(['UserID' => 10, 'Log.RequestType' => 'GET']),
+							Filter::list(['UserID' => 10, 'Log.RequestType' => 'GET']),
 							LogicalOperator::AND
 						]
 					],
@@ -60,10 +60,11 @@ class SelectTest extends TestCase
 				new QueryObject(
 					collections: ['User'],
 					fields: ['*'],
-					limit: 10
+					limit: 10,
+					offset: 5
 				),
 				[
-					'SELECT * FROM `User` LIMIT 10',
+					'SELECT * FROM `User` LIMIT 10 OFFSET 5',
 					null
 				]
 			],

@@ -130,27 +130,39 @@ class QueryBuilderTest extends TestCase
 	}
 
 	#[Test]
-	public function filterOnGroup(): void
+	public function filter(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
 		$driver = MySQLDriver::create($pdo);
 		$query = QueryBuilder::create($driver, ['User']);
 
-		$query = $query->filterOnGroup([['Name', Operator::IN, ['John', 'Jane']]], LogicalOperator::AND)
-			->filterOnGroup([['Age', Operator::IS_NOT_NULL, null]], LogicalOperator::OR);
+		$query = $query->filter(['Name', Operator::IN, ['John', 'Jane']], LogicalOperator::AND)
+			->filter(['Age', Operator::IS_NOT_NULL, null], LogicalOperator::OR);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
-	public function filterOnList(): void
+	public function filterList(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
+
+		$query = $query->filterList([['Name', Operator::IN, ['John', 'Jane']]], LogicalOperator::AND)
+			->filterList([['Age', Operator::IS_NOT_NULL, null]], LogicalOperator::OR);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
+	}
+
+	#[Test]
+	public function filterOnFields(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
 
 		$driver = MySQLDriver::create($pdo);
 		$query = QueryBuilder::create($driver, ['User']);
 
-		$query = $query->filterOnList(['Name' => ['John', 'Jane']], Operator::IN, LogicalOperator::AND)
-			->filterOnList(['Age' => null], Operator::IS_NOT_NULL, LogicalOperator::OR);
+		$query = $query->filterOnFields(['Name' => ['John', 'Jane']], Operator::IN, LogicalOperator::AND)
+			->filterOnFields(['Age' => null], Operator::IS_NOT_NULL, LogicalOperator::OR);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
@@ -200,6 +212,18 @@ class QueryBuilderTest extends TestCase
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->limit(10);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
+	}
+
+	#[Test]
+	public function offset(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
+
+		$query = $query->offset(5);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 }

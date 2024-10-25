@@ -25,7 +25,7 @@ class DeleteTest extends TestCase
 					joins: [['User.UserID = UserRole.UserID', Join::INNER, null]],
 					filters: [
 						[
-							Filter::buildGroup(['UserRole.Role' => 'leader']),
+							Filter::list(['UserRole.Role' => 'leader']),
 							LogicalOperator::AND
 						]
 					]
