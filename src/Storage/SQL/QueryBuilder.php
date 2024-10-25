@@ -214,32 +214,6 @@ class QueryBuilder
     /**
      * Create a filter to be used in the query to be executed.
      * 
-     * @param array $filter ['Name', Operator::EQ, 'John', LogicalOperator::AND]
-     * 
-     * * Example use: $database->query('CollectionName')->filter(['Name', Operator::EQ, 'John', LogicalOperator::AND])
-     */
-    public function filter(array $filter, LogicalOperator $groupLogicalOperator = LogicalOperator::AND): QueryBuilder 
-    {
-        $this->filters[] = [[$filter], $groupLogicalOperator];
-        return $this;
-    }
-
-    /**
-     * Create a filter to be used in the query to be executed.
-     * 
-     * @param array $filters [['Name', Operator::EQ, 'John', LogicalOperator::AND], [ ... ], [ ... ]]
-     * 
-     * * Example use: $database->query('CollectionName')->filterList([['Name', Operator::EQ, 'John', LogicalOperator::AND]])
-     */
-    public function filterList(array $filters, LogicalOperator $groupLogicalOperator = LogicalOperator::AND): QueryBuilder
-    {
-        $this->filters[] = [$filters, $groupLogicalOperator];
-        return $this;
-    }
-
-    /**
-     * Create a filter to be used in the query to be executed.
-     * 
      * @param array $fieldsWithValues ['Name' => 'John', 'Lastname' => 'Doe', 'UserID' => 25, ..., ...]
      *
      * * Example use: $database->query('CollectionName')->filterList(['Name' => 'John', 'Deleted' => 0 ])
@@ -253,6 +227,19 @@ class QueryBuilder
         $filters = Filter::list($fieldsWithValues, $operator);
         $this->filterList($filters, $logicalOperator);
 
+        return $this;
+    }
+
+    /**
+     * Add a filter list to be used in the query to be executed.
+     * 
+     * @param array $filters [['Name', Operator::EQ, 'John', LogicalOperator::AND], [ ... ], [ ... ]]
+     * 
+     * * Example use: $database->query('CollectionName')->filterList([['Name', Operator::EQ, 'John', LogicalOperator::AND]])
+     */
+    public function filterList(array $filters, LogicalOperator $groupLogicalOperator = LogicalOperator::AND): QueryBuilder
+    {
+        $this->filters[] = [$filters, $groupLogicalOperator];
         return $this;
     }
 
@@ -274,6 +261,19 @@ class QueryBuilder
         $filter = Filter::build($field, $value, $operator);
         $this->filter($filter, $logicalOperator);
 
+        return $this;
+    }
+
+    /**
+     * Add a filter to be used in the query to be executed.
+     * 
+     * @param array $filter ['Name', Operator::EQ, 'John', LogicalOperator::AND]
+     * 
+     * * Example use: $database->query('CollectionName')->filter(['Name', Operator::EQ, 'John', LogicalOperator::AND])
+     */
+    public function filter(array $filter, LogicalOperator $groupLogicalOperator = LogicalOperator::AND): QueryBuilder
+    {
+        $this->filters[] = [[$filter], $groupLogicalOperator];
         return $this;
     }
 
