@@ -214,4 +214,16 @@ class QueryBuilderTest extends TestCase
 		$query = $query->limit(10);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
+
+	#[Test]
+	public function offset(): void
+	{
+		$pdo = $this->createMock(\PDO::class);
+
+		$driver = MySQLDriver::create($pdo);
+		$query = QueryBuilder::create($driver, ['User']);
+
+		$query = $query->offset(5);
+		$this->assertInstanceOf(QueryBuilder::class, $query);
+	}
 }
