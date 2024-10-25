@@ -135,19 +135,19 @@ class UtilTest extends TestCase
 	public function is_int(): void
 	{
 		$subject = 123;
-		$result = Util::is_int($subject);
+		$result = Util::isInt($subject);
 		$this->assertTrue($result);
 
 		$subject = 123.456;
-		$result = Util::is_int($subject);
+		$result = Util::isInt($subject);
 		$this->assertFalse($result);
 
 		$subject = '123';
-		$result = Util::is_int($subject);
+		$result = Util::isInt($subject);
 		$this->assertTrue($result);
 
 		$subject = '123.456';
-		$result = Util::is_int($subject);
+		$result = Util::isInt($subject);
 		$this->assertFalse($result);
 	}
 }
