@@ -80,7 +80,7 @@ class FilterTest extends TestCase
 	#[DataProvider('buildGroupProvider')]
 	public function buildGroup(array $filters, array $expected): void
 	{
-		$filter = Filter::buildGroup(...$filters);
+		$filter = Filter::list(...$filters);
 		$this->assertEquals($expected, $filter);
 	}
 
@@ -100,7 +100,7 @@ class FilterTest extends TestCase
 				]
 			],
 			[
-				Filter::buildGroup(['Name' => 'John', 'Username' => 'Doe'], Operator::NE),
+				Filter::list(['Name' => 'John', 'Username' => 'Doe'], Operator::NE),
 				[
 					['Name', Operator::NE, 'John', LogicalOperator::AND],
 					['Username', Operator::NE, 'Doe', LogicalOperator::AND]
@@ -115,5 +115,101 @@ class FilterTest extends TestCase
 	{
 		$filter = Filter::combine(...$filters);
 		$this->assertEquals($expected, $filter);
+	}
+
+	#[Test]
+	public function eq(): void
+	{
+		$actual = Filter::eq('Name', 'John');
+		$expected = ['Name', Operator::EQ, 'John', LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function ne(): void
+	{
+		$actual = Filter::ne('Name', 'John');
+		$expected = ['Name', Operator::NE, 'John', LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function gt(): void
+	{
+		$actual = Filter::gt('Age', 25);
+		$expected = ['Age', Operator::GT, 25, LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function gte(): void
+	{
+		$actual = Filter::gte('Age', 25);
+		$expected = ['Age', Operator::GTE, 25, LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function lt(): void
+	{
+		$actual = Filter::lt('Age', 25);
+		$expected = ['Age', Operator::LT, 25, LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function lte(): void
+	{
+		$actual = Filter::lte('Age', 25);
+		$expected = ['Age', Operator::LTE, 25, LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function like(): void
+	{
+		$actual = Filter::like('Name', 'John');
+		$expected = ['Name', Operator::LIKE, 'John', LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function notLike(): void
+	{
+		$actual = Filter::notLike('Name', 'John');
+		$expected = ['Name', Operator::NOT_LIKE, 'John', LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function in(): void
+	{
+		$actual = Filter::in('UserID', [1, 2, 3]);
+		$expected = ['UserID', Operator::IN, [1, 2, 3], LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function notIn(): void
+	{
+		$actual = Filter::notIn('UserID', [1, 2, 3]);
+		$expected = ['UserID', Operator::NOT_IN, [1, 2, 3], LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function isNulls(): void
+	{
+		$actual = Filter::isNull('Name');
+		$expected = ['Name', Operator::IS_NULL, null, LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function isNotNull(): void
+	{
+		$actual = Filter::isNotNull('Name');
+		$expected = ['Name', Operator::IS_NOT_NULL, null, LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
 	}
 }

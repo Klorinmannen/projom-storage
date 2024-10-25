@@ -21,7 +21,7 @@ class FilterTest extends TestCase
 			'Simple' => [
 				[
 					[
-						QueryFilter::buildGroup(['Name' => 'John']),
+						QueryFilter::list(['Name' => 'John']),
 						LogicalOperator::AND
 					]
 				],
@@ -51,7 +51,7 @@ class FilterTest extends TestCase
 			'IS_NULL' => [
 				[
 					[
-						QueryFilter::buildGroup(['DeletedAt' => null], Operator::IS_NULL),
+						QueryFilter::list(['DeletedAt' => null], Operator::IS_NULL),
 						LogicalOperator::AND
 					]
 				],
@@ -61,7 +61,7 @@ class FilterTest extends TestCase
 			'IS_NOT_NULL' => [
 				[
 					[
-						QueryFilter::buildGroup(['UserID' => null], Operator::IS_NOT_NULL),
+						QueryFilter::list(['UserID' => null], Operator::IS_NOT_NULL),
 						LogicalOperator::AND
 					]
 				],
@@ -71,7 +71,7 @@ class FilterTest extends TestCase
 			'IN' => [
 				[
 					[
-						QueryFilter::buildGroup(['UserID' => [1, 2, 3]], Operator::IN),
+						QueryFilter::list(['UserID' => [1, 2, 3]], Operator::IN),
 						LogicalOperator::AND
 					]
 				],
@@ -81,7 +81,7 @@ class FilterTest extends TestCase
 			'Tesing "Table.Field"' => [
 				[
 					[
-						QueryFilter::buildGroup(['UserRole.Role' => 'leader'], Operator::EQ),
+						QueryFilter::list(['UserRole.Role' => 'leader'], Operator::EQ),
 						LogicalOperator::AND
 					]
 				],
@@ -99,11 +99,11 @@ class FilterTest extends TestCase
 						LogicalOperator::AND
 					],
 					[
-						QueryFilter::buildGroup(['UserID' => [10, 20, 30]], Operator::IN),
+						QueryFilter::list(['UserID' => [10, 20, 30]], Operator::IN),
 						LogicalOperator::OR
 					],
 					[
-						QueryFilter::buildGroup(
+						QueryFilter::list(
 							['Password' => null, 'Username' => null, 'Name' => null],
 							Operator::IS_NOT_NULL,
 							LogicalOperator::OR
@@ -126,7 +126,7 @@ class FilterTest extends TestCase
 			'Complex filter 2' => [
 				[
 					[
-						QueryFilter::buildGroup([
+						QueryFilter::list([
 							'UpdatedAt' => '2024-01-01 00:00:00',
 							'DeletedAt' => '2024-01-01 00:00:00',
 							'CreatedAt' => '2024-01-01 00:00:00'
@@ -194,7 +194,7 @@ class FilterTest extends TestCase
 				default => $value
 			};
 
-			$filter = QueryFilter::buildGroup(['Name' => $value], $case);
+			$filter = QueryFilter::list(['Name' => $value], $case);
 			Filter::create([[$filter, LogicalOperator::AND]]);
 		}
 	}

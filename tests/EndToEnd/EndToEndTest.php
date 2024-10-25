@@ -153,7 +153,7 @@ class EndToEndTest extends TestCase
 			'UserID' => [2, 3, 4, 5],
 			'Active' => [1]
 		];
-		$users = MySQL::query('User')->filterOnList($filterLists, Operator::IN)->select();
+		$users = MySQL::query('User')->filterOnFields($filterLists, Operator::IN)->select();
 		$actualRecords = count($users);
 		$expectedRecords = 2;
 		$this->assertEquals($expectedRecords, $actualRecords);
