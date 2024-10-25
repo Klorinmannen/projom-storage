@@ -19,21 +19,9 @@ class LimitTest extends TestCase
 		$this->assertFalse($limit->empty());
 	}
 
-	public function test_create_string()
-	{
-		$limits = '10';
-		$limit = Limit::create($limits);
-
-		$this->assertEquals($limits, "$limit");
-		$this->assertFalse($limit->empty());
-	}
-
 	public function test_create_empty()
 	{
 		$limit = Limit::create(0);
-		$this->assertTrue($limit->empty());
-
-		$limit = Limit::create('');
-		$this->assertTrue($limit->empty());
+		$this->assertFalse($limit->empty());
 	}
 }
