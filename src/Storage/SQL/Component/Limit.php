@@ -8,14 +8,14 @@ use Projom\Storage\SQL\ComponentInterface;
 
 class Limit implements ComponentInterface
 {
-	private readonly int|string $limit;
+	private readonly null|int $limit;
 
-	public function __construct(int|string $limit)
+	public function __construct(null|int $limit)
 	{
 		$this->limit = $limit;
 	}
 
-	public static function create(int|string $limit): Limit
+	public static function create(null|int $limit): Limit
 	{
 		return new Limit($limit);
 	}
@@ -27,6 +27,6 @@ class Limit implements ComponentInterface
 
 	public function empty(): bool
 	{
-		return empty($this->limit);
+		return $this->limit === null;
 	}
 }

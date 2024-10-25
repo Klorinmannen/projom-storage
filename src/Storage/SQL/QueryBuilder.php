@@ -22,7 +22,7 @@ class QueryBuilder
     private array $sorts = [];
     private array $joins = [];
     private array $groups = [];
-    private int|string $limit = '';
+    private null|int $limit = null;
     private null|int $offset = null;
     private array $formatting = [];
 
@@ -304,7 +304,7 @@ class QueryBuilder
      * * Example use: $database->query('CollectionName')->limit(10)
      * * Example use: $database->query('CollectionName')->limit('10')
      */
-    public function limit(int|string $limit): QueryBuilder
+    public function limit(int $limit): QueryBuilder
     {
         $this->limit = $limit;
         return $this;
