@@ -23,6 +23,7 @@ class QueryBuilder
     private array $joins = [];
     private array $groups = [];
     private null|int $limit = null;
+    private null|int $offset = null;
     private array $formatting = [];
 
     private const DEFAULT_SELECT = '*';
@@ -85,6 +86,7 @@ class QueryBuilder
             sorts: $this->sorts,
             groups: $this->groups,
             limit: $this->limit,
+            offset: $this->offset,
             joins: $this->joins,
             formatting: $this->formatting
         );
@@ -305,6 +307,17 @@ class QueryBuilder
     public function limit(int $limit): QueryBuilder
     {
         $this->limit = $limit;
+        return $this;
+    }
+
+    /**
+     * Offset the query result.
+     * 
+     * * Example use: $database->query('CollectionName')->offset(10)
+     */
+    public function offset(int $offset): QueryBuilder
+    {
+        $this->limit = $offset;
         return $this;
     }
 }

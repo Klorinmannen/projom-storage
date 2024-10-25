@@ -9,6 +9,7 @@ use Projom\Storage\SQL\Component\Filter;
 use Projom\Storage\SQL\Component\Group;
 use Projom\Storage\SQL\Component\Join;
 use Projom\Storage\SQL\Component\Limit;
+use Projom\Storage\SQL\Component\Offset;
 use Projom\Storage\SQL\Component\Order;
 use Projom\Storage\SQL\Component\Table;
 use Projom\Storage\SQL\StatementInterface;
@@ -24,6 +25,7 @@ class Select implements StatementInterface
 	private readonly Group $group;
 	private readonly Order $order;
 	private readonly Limit $limit;
+	private readonly Offset $offset;
 
 	public function __construct(QueryObject $querySelect)
 	{
@@ -34,6 +36,7 @@ class Select implements StatementInterface
 		$this->group = Group::create($querySelect->groups);
 		$this->order = Order::create($querySelect->sorts);
 		$this->limit = Limit::create($querySelect->limit);
+		$this->offset = Offset::create($querySelect->offset);
 	}
 
 	public static function create(QueryObject $querySelect): Select
@@ -59,6 +62,9 @@ class Select implements StatementInterface
 
 		if (!$this->limit->empty())
 			$queryParts[] = "LIMIT {$this->limit}";
+
+		if (!$this->offset->empty())
+			$queryParts[] = "OFFSET {$this->offset}";
 
 		$query = Util::join($queryParts, ' ');
 		$params = $this->filter->params() ?: null;
