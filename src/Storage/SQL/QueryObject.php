@@ -17,7 +17,7 @@ class QueryObject
 		public array $filters = [],
 		public array $sorts = [],
 		public array $groups = [],
-		public int|string $limit = '',
+		public null|int $limit = null,
 		public array $formatting = [],
 	) {}
 }
