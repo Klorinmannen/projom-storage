@@ -22,7 +22,7 @@ class OffsetTest extends TestCase
 
 	public function test_create_empty()
 	{
-		$offset = Offset::create(0);
+		$offset = Offset::create(null);
 		$this->assertTrue($offset->empty());
 	}
 }
