@@ -23,7 +23,7 @@ class QueryBuilder
     private array $joins = [];
     private array $groups = [];
     private int|string $limit = '';
-    private int $offset = 0;
+    private null|int $offset = null;
     private array $formatting = [];
 
     private const DEFAULT_SELECT = '*';
