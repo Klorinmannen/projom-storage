@@ -8,14 +8,14 @@ use Projom\Storage\SQL\ComponentInterface;
 
 class Offset implements ComponentInterface
 {
-	private readonly int $offset;
+	private readonly null|int $offset;
 
-	public function __construct(int $offset)
+	public function __construct(null|int $offset)
 	{
 		$this->offset = $offset;
 	}
 
-	public static function create(int $offset): Offset
+	public static function create(null|int $offset): Offset
 	{
 		return new Offset($offset);
 	}
@@ -27,6 +27,6 @@ class Offset implements ComponentInterface
 
 	public function empty(): bool
 	{
-		return empty($this->offset);
+		return $this->offset === null;
 	}
 }
