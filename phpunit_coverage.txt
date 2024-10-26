@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2024-10-24 10:40:17
+  2024-10-26 12:17:48
 
  Summary:
-  Classes: 86.11% (31/36)
-  Methods: 97.28% (179/184)
-  Lines:   97.75% (564/577)
+  Classes: 84.21% (32/38)
+  Methods: 90.24% (185/205)
+  Lines:   80.42% (575/715)
 
 Projom\Storage\DB
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
@@ -46,6 +46,8 @@ Projom\Storage\SQL\Component\Join
   Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 24/ 24)
 Projom\Storage\SQL\Component\Limit
   Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
+Projom\Storage\SQL\Component\Offset
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
 Projom\Storage\SQL\Component\Order
   Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 11/ 11)
 Projom\Storage\SQL\Component\Set
@@ -53,7 +55,7 @@ Projom\Storage\SQL\Component\Set
 Projom\Storage\SQL\Component\Table
   Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  5/  5)
 Projom\Storage\SQL\QueryBuilder
-  Methods: 100.00% (23/23)   Lines: 100.00% ( 71/ 71)
+  Methods: 100.00% (24/24)   Lines: 100.00% ( 74/ 74)
 Projom\Storage\SQL\QueryObject
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
 Projom\Storage\SQL\Statement\Delete
@@ -61,7 +63,7 @@ Projom\Storage\SQL\Statement\Delete
 Projom\Storage\SQL\Statement\Insert
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 16/ 16)
 Projom\Storage\SQL\Statement\Select
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 25/ 25)
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 28/ 28)
 Projom\Storage\SQL\Statement\Update
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 16/ 16)
 Projom\Storage\SQL\Util
@@ -79,4 +81,4 @@ Projom\Storage\SQL\Util\Operator
 Projom\Storage\SQL\Util\Sort
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
 Projom\Storage\Util
-  Methods: 100.00% (11/11)   Lines: 100.00% ( 22/ 22)
+  Methods: 100.00% (12/12)   Lines: 100.00% ( 23/ 23)

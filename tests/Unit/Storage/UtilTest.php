@@ -132,7 +132,7 @@ class UtilTest extends TestCase
 	}
 
 	#[Test]
-	public function is_int(): void
+	public function isInt(): void
 	{
 		$subject = 123;
 		$result = Util::isInt($subject);
@@ -149,5 +149,20 @@ class UtilTest extends TestCase
 		$subject = '123.456';
 		$result = Util::isInt($subject);
 		$this->assertFalse($result);
+	}
+
+	#[Test]
+	public function rekey(): void
+	{
+		$records = [
+			['id' => 1, 'name' => 'John'],
+			['id' => 2, 'name' => 'Jane'],
+		];
+		$result = Util::rekey($records, 'id');
+		$expected = [
+			1 => ['id' => 1, 'name' => 'John'],
+			2 => ['id' => 2, 'name' => 'Jane'],
+		];
+		$this->assertEquals($expected, $result);
 	}
 }
