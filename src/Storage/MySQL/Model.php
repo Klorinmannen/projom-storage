@@ -113,7 +113,7 @@ class Model
 	 * Get all records.
 	 * 
 	 * * Example use: User::all()
-	 * * Example use: User::all(['Active' => 0])
+	 * * Example use: User::all($filters = ['Active' => 0])
 	 */
 	public static function all(null|array $filters): null|array
 	{
