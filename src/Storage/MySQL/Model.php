@@ -133,15 +133,15 @@ class Model
 	}
 
 	/**
-	 * Search for records filtering on field like value.
+	 * Search for records filtering on field like %value%.
 	 * 
-	 * * Example use: User::search('Name', '%John%')
+	 * * Example use: User::search('Name', 'John')
 	 */
 	public static function search(string $field, mixed $value): null|array
 	{
 		static::invoke();
 
-		$records = MySQL::query(static::$class)->filterOn($field, $value, Operator::LIKE)->select();
+		$records = MySQL::query(static::$class)->filterOn($field, "%$value%", Operator::LIKE)->select();
 		if (!$records)
 			return null;
 
