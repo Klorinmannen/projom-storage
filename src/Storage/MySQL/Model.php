@@ -17,20 +17,23 @@ use Projom\Storage\Util;
  */
 class Model
 {
-	private static $class = null;
+	private static $table = null;
 	private static $primaryField = null;
 
 	private static function invoke()
 	{
-		if (static::$class !== null)
+		if (static::$table !== null)
 			return;
 
-		static::$class = basename(get_called_class());
+		$calledClass = get_called_class();
+		$class = str_replace('\\', '/', $calledClass);
+		$class = basename($class);
+		static::$table = $class;
 
-		if (!defined(static::$class . '::PRIMARY_FIELD'))
+		if (!defined("{$calledClass}::PRIMARY_FIELD"))
 			throw new \Exception('PRIMARY_FIELD constant not defined', 400);
 
-		static::$primaryField = static::$class::PRIMARY_FIELD;
+		static::$primaryField = $calledClass::PRIMARY_FIELD;
 	}
 
 	/**
@@ -41,7 +44,7 @@ class Model
 	public static function create(array $record): int|string
 	{
 		static::invoke();
-		$primaryID = MySQL::query(static::$class)->insert($record);
+		$primaryID = MySQL::query(static::$table)->insert($record);
 		return $primaryID;
 	}
 
@@ -54,7 +57,7 @@ class Model
 	{
 		static::invoke();
 
-		$records = MySQL::query(static::$class)->fetch(static::$primaryField, $primaryID);
+		$records = MySQL::query(static::$table)->fetch(static::$primaryField, $primaryID);
 		if (!$records)
 			return null;
 
@@ -69,7 +72,7 @@ class Model
 	public static function update(string|int $primaryID, array $data): void
 	{
 		static::invoke();
-		MySQL::query(static::$class)->filterOn(static::$primaryField, $primaryID)->update($data);
+		MySQL::query(static::$table)->filterOn(static::$primaryField, $primaryID)->update($data);
 	}
 
 	/**
@@ -80,7 +83,7 @@ class Model
 	public static function delete(string|int $primaryID): void
 	{
 		static::invoke();
-		MySQL::query(static::$class)->filterOn(static::$primaryField, $primaryID)->delete();
+		MySQL::query(static::$table)->filterOn(static::$primaryField, $primaryID)->delete();
 	}
 
 	/**
@@ -93,7 +96,7 @@ class Model
 	{
 		static::invoke();
 
-		$records = MySQL::query(static::$class)->fetch(static::$primaryField, $primaryID);
+		$records = MySQL::query(static::$table)->fetch(static::$primaryField, $primaryID);
 		if (!$records)
 			return throw new \Exception('Record to clone not found', 400);
 
@@ -103,8 +106,8 @@ class Model
 		// Merge new record with existing record. 
 		$record = $newRecord + $record;
 
-		$clonePrimaryID = MySQL::query(static::$class)->insert($record);
-		$clonedRecords = MySQL::query(static::$class)->fetch(static::$primaryField, $clonePrimaryID);
+		$clonePrimaryID = MySQL::query(static::$table)->insert($record);
+		$clonedRecords = MySQL::query(static::$table)->fetch(static::$primaryField, $clonePrimaryID);
 
 		return array_pop($clonedRecords);
 	}
@@ -119,7 +122,7 @@ class Model
 	{
 		static::invoke();
 
-		$query = MySQL::query(static::$class);
+		$query = MySQL::query(static::$table);
 		if ($filters)
 			$query->filterOnFields($filters);
 
@@ -141,7 +144,7 @@ class Model
 	{
 		static::invoke();
 
-		$records = MySQL::query(static::$class)->filterOn($field, "%$value%", Operator::LIKE)->select();
+		$records = MySQL::query(static::$table)->filterOn($field, "%$value%", Operator::LIKE)->select();
 		if (!$records)
 			return null;
 
@@ -159,7 +162,7 @@ class Model
 	{
 		static::invoke();
 
-		$records = MySQL::query(static::$class)->fetch($field, $value);
+		$records = MySQL::query(static::$table)->fetch($field, $value);
 		if (!$records)
 			return null;
 
@@ -182,7 +185,7 @@ class Model
 	{
 		static::invoke();
 
-		$query = MySQL::query(static::$class);
+		$query = MySQL::query(static::$table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -213,7 +216,7 @@ class Model
 	{
 		static::invoke();
 
-		$query = MySQL::query(static::$class);
+		$query = MySQL::query(static::$table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -244,7 +247,7 @@ class Model
 	{
 		static::invoke();
 
-		$query = MySQL::query(static::$class);
+		$query = MySQL::query(static::$table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -275,7 +278,7 @@ class Model
 	{
 		static::invoke();
 
-		$query = MySQL::query(static::$class);
+		$query = MySQL::query(static::$table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -306,7 +309,7 @@ class Model
 	{
 		static::invoke();
 
-		$query = MySQL::query(static::$class);
+		$query = MySQL::query(static::$table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -336,7 +339,7 @@ class Model
 	{
 		static::invoke();
 
-		$query = MySQL::query(static::$class);
+		$query = MySQL::query(static::$table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
