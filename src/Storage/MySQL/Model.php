@@ -27,7 +27,7 @@ class Model
 
 		static::$class = basename(get_called_class());
 
-		if (!defined(static::$class::PRIMARY_FIELD))
+		if (!defined(static::$class . '::PRIMARY_FIELD'))
 			throw new \Exception('PRIMARY_FIELD constant not defined', 400);
 
 		static::$primaryField = static::$class::PRIMARY_FIELD;
@@ -115,12 +115,12 @@ class Model
 	 * * Example use: User::all()
 	 * * Example use: User::all($filters = ['Active' => 0])
 	 */
-	public static function all(null|array $filters): null|array
+	public static function all(array $filters = []): null|array
 	{
 		static::invoke();
 
 		$query = MySQL::query(static::$class);
-		if ($filters !== null)
+		if ($filters)
 			$query->filterOnFields($filters);
 
 		$records = $query->select();
@@ -178,13 +178,13 @@ class Model
 	 * * Example use: User::count(filters: ['Active' => 0])
 	 * * Example use: User::count('UserID', groupFields: ['Active'])
 	 */
-	public static function count(string $countField = '*',  null|array $filters = null, string ...$groupByFields): null|array
+	public static function count(string $countField = '*',  array $filters = [], array $groupByFields = []): null|array
 	{
 		static::invoke();
 
 		$query = MySQL::query(static::$class);
 
-		if ($filters !== null)
+		if ($filters)
 			$query->filterOnFields($filters);
 
 		$aggregate = Aggregate::COUNT->buildSQL($countField, 'count');
@@ -192,7 +192,7 @@ class Model
 
 		if ($groupByFields) {
 			$query->groupOn(...$groupByFields);
-			$fields = Util::merge($groupByFields, $fields);
+			$fields = Util::merge($fields, $groupByFields);
 		}
 
 		$records = $query->select(...$fields);
@@ -206,16 +206,16 @@ class Model
 	 * Sum records.
 	 * 
 	 * * Example use: Invoice::sum('Amount')
-	 * * Example use: Invoice::sum('Amount', filters: ['Paid' => 0, 'Due' => '2024-07-25'])
+	 * * Example use: Invoice::sum('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
 	 * * Example use: Invoice::sum('Amount', groupFields: ['Paid'])
 	 */
-	public static function sum(string $sumField, null|array $filters = null, string ...$groupByFields): null|array
+	public static function sum(string $sumField, array $filters = [], array $groupByFields = []): null|array
 	{
 		static::invoke();
 
 		$query = MySQL::query(static::$class);
 
-		if ($filters !== null)
+		if ($filters)
 			$query->filterOnFields($filters);
 
 		$aggregate = Aggregate::SUM->buildSQL($sumField, 'sum');
@@ -223,7 +223,7 @@ class Model
 
 		if ($groupByFields) {
 			$query->groupOn(...$groupByFields);
-			$fields = Util::merge($groupByFields, $fields);
+			$fields = Util::merge($fields, $groupByFields);
 		}
 
 		$records = $query->select(...$fields);
@@ -237,24 +237,24 @@ class Model
 	 * Average records.
 	 * 
 	 * * Example use: Invoice::avg('Amount')
-	 * * Example use: Invoice::avg('Amount', filters: ['Paid' => 0, 'Due' => '2024-07-25'])
+	 * * Example use: Invoice::avg('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
 	 * * Example use: Invoice::avg('Amount', groupFields: ['Paid'])
 	 */
-	public static function avg(string $averageField, null|array $filters = null, string ...$groupByFields): null|array
+	public static function avg(string $averageField, array $filters = [], array $groupByFields = []): null|array
 	{
 		static::invoke();
 
 		$query = MySQL::query(static::$class);
 
-		if ($filters !== null)
+		if ($filters)
 			$query->filterOnFields($filters);
 
-		$aggregate = Aggregate::AVG->buildSQL($averageField, 'average');
+		$aggregate = Aggregate::AVG->buildSQL($averageField, 'avg');
 		$fields = [$aggregate];
 
 		if ($groupByFields) {
 			$query->groupOn(...$groupByFields);
-			$fields = Util::merge($groupByFields, $fields);
+			$fields = Util::merge($fields, $groupByFields);
 		}
 
 		$records = $query->select(...$fields);
@@ -268,16 +268,16 @@ class Model
 	 * Min value of records.
 	 * 
 	 * * Example use: Invoice::min('Amount')
-	 * * Example use: Invoice::min('Amount', filters: ['Paid' => 0, 'Due' => '2024-07-25'])
+	 * * Example use: Invoice::min('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
 	 * * Example use: Invoice::min('Amount', groupFields: ['Paid'])
 	 */
-	public static function min(string $minField, null|array $filters = null, string ...$groupByFields): null|array
+	public static function min(string $minField, array $filters = [], array $groupByFields = []): null|array
 	{
 		static::invoke();
 
 		$query = MySQL::query(static::$class);
 
-		if ($filters !== null)
+		if ($filters)
 			$query->filterOnFields($filters);
 
 		$aggregate = Aggregate::MIN->buildSQL($minField, 'min');
@@ -285,7 +285,7 @@ class Model
 
 		if ($groupByFields) {
 			$query->groupOn(...$groupByFields);
-			$fields = Util::merge($groupByFields, $fields);
+			$fields = Util::merge($fields, $groupByFields);
 		}
 
 		$records = $query->select(...$fields);
@@ -299,16 +299,16 @@ class Model
 	 * Max value of records.
 	 * 
 	 * * Example use: Invoice::max('Amount')
-	 * * Example use: Invoice::max('Amount', filters: ['Paid' => 0, 'Due' => '2024-07-25'])
+	 * * Example use: Invoice::max('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
 	 * * Example use: Invoice::max('Amount', groupFields: ['Paid'])
 	 */
-	public static function max(string $maxField, null|array $filters = null, string ...$groupByFields): null|array
+	public static function max(string $maxField, array $filters = [], array $groupByFields = []): null|array
 	{
 		static::invoke();
 
 		$query = MySQL::query(static::$class);
 
-		if ($filters !== null)
+		if ($filters)
 			$query->filterOnFields($filters);
 
 		$aggregate = Aggregate::MAX->buildSQL($maxField, 'max');
@@ -316,7 +316,7 @@ class Model
 
 		if ($groupByFields) {
 			$query->groupOn(...$groupByFields);
-			$fields = Util::merge($groupByFields, $fields);
+			$fields = Util::merge($fields, $groupByFields);
 		}
 
 		$records = $query->select(...$fields);
@@ -332,13 +332,13 @@ class Model
 	 * * Example use: User::paginate(1, 10)
 	 * * Example use: User::paginate(1, 10, ['Name' => 'John'])
 	 */
-	public static function paginate(int $page, int $pageSize, null|array $filters = null): null|array
+	public static function paginate(int $page, int $pageSize, array $filters = []): null|array
 	{
 		static::invoke();
 
 		$query = MySQL::query(static::$class);
 
-		if ($filters !== null)
+		if ($filters)
 			$query->filterOnFields($filters);
 
 		$offset = ($page - 1) * $pageSize;
