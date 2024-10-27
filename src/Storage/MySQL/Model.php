@@ -137,7 +137,7 @@ class Model
 	 * 
 	 * * Example use: User::search('Name', 'John')
 	 */
-	public static function search(string $field, mixed $value): null|array
+	public static function search(string $field, string $value): null|array
 	{
 		static::invoke();
 
