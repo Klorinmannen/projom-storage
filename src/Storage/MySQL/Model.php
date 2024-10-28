@@ -19,6 +19,8 @@ class Model
 {
 	private static $table = null;
 	private static $primaryField = null;
+	private static $formatFields = [];
+	private static $redactedFields = [];
 
 	private static function invoke()
 	{
@@ -32,8 +34,63 @@ class Model
 
 		if (!defined("{$calledClass}::PRIMARY_FIELD"))
 			throw new \Exception('PRIMARY_FIELD constant not defined', 400);
-
 		static::$primaryField = $calledClass::PRIMARY_FIELD;
+
+		if (defined("{$calledClass}::FORMAT_FIELDS"))
+			static::$formatFields = $calledClass::FORMAT_FIELDS;
+
+		if (defined("{$calledClass}::REDACTED_FIELDS"))
+			static::$redactedFields = $calledClass::REDACTED_FIELDS;
+	}
+
+	private static function processRecords(array $records): array
+	{
+		$records = Util::rekey($records, static::$primaryField);
+
+		$processedRecords = [];
+		foreach ($records as $key => $record) {
+			$record = static::formatRecord($record);
+			$record = static::redactRecord($record);
+			$processedRecords[$key] = $record;
+		}
+
+		return $processedRecords;
+	}
+
+	private static function formatRecord(array $record): array
+	{
+		if (!static::$formatFields)
+			return $record;
+
+		$formattedRecord = [];
+		foreach ($record as $field => $value) {
+			if (array_key_exists($field, static::$formatFields)) {
+				$type = static::$formatFields[$field];
+				$formattedRecord[$field] = Util::format($value, $type);
+			} else {
+				$formattedRecord[$field] = $value;
+			}
+		}
+
+		var_dump($formattedRecord);
+
+		return $formattedRecord;
+	}
+
+	private static function redactRecord(array $record): array
+	{
+		if (!static::$redactedFields)
+			return $record;
+
+		$redactedRecord = [];
+		foreach ($record as $field => $value) {
+			if (in_array($field, static::$redactedFields))
+				$redactedRecord[$field] = '___REDACTED___';
+			else
+				$redactedRecord[$field] = $value;
+		}
+
+		return $redactedRecord;
 	}
 
 	/**
@@ -60,6 +117,8 @@ class Model
 		$records = MySQL::query(static::$table)->fetch(static::$primaryField, $primaryID);
 		if (!$records)
 			return null;
+
+		$records = static::processRecords($records);
 
 		return array_pop($records);
 	}
@@ -130,9 +189,9 @@ class Model
 		if (!$records)
 			return null;
 
-		$keydRecords = Util::rekey($records, static::$primaryField);
+		$records = static::processRecords($records);
 
-		return $keydRecords;
+		return $records;
 	}
 
 	/**
@@ -148,9 +207,9 @@ class Model
 		if (!$records)
 			return null;
 
-		$keydRecords = Util::rekey($records, static::$primaryField);
+		$records = static::processRecords($records);
 
-		return $keydRecords;
+		return $records;
 	}
 
 	/**
@@ -166,12 +225,12 @@ class Model
 		if (!$records)
 			return null;
 
+		$records = static::processRecords($records);
+
 		if (count($records) === 1)
 			return array_pop($records);
 
-		$keydRecords = Util::rekey($records, static::$primaryField);
-
-		return $keydRecords;
+		return $records;
 	}
 
 	/**
@@ -351,8 +410,8 @@ class Model
 		if (!$records)
 			return null;
 
-		$keydRecords = Util::rekey($records, static::$primaryField);
+		$records = static::processRecords($records);
 
-		return $keydRecords;
+		return $records;
 	}
 }
