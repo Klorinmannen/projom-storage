@@ -63,16 +63,14 @@ class Model
 			return $record;
 
 		$formattedRecord = [];
-		foreach ($record as $field => $value) {
-			if (array_key_exists($field, static::$formatFields)) {
-				$type = static::$formatFields[$field];
-				$formattedRecord[$field] = Util::format($value, $type);
-			} else {
-				$formattedRecord[$field] = $value;
-			}
+		foreach (static::$formatFields as $field => $format) {
+			if (!$value = $record[$field] ?? false)
+				throw new \Exception("The field: {$field}, is not found in record.", 400);
+			$formattedRecord[$field] = Util::format($value, $format);
 		}
 
-		var_dump($formattedRecord);
+		// Merge formatted record with existing record.
+		$formattedRecord = $formattedRecord + $record;
 
 		return $formattedRecord;
 	}
@@ -83,12 +81,11 @@ class Model
 			return $record;
 
 		$redactedRecord = [];
-		foreach ($record as $field => $value) {
-			if (in_array($field, static::$redactedFields))
-				$redactedRecord[$field] = '___REDACTED___';
-			else
-				$redactedRecord[$field] = $value;
-		}
+		foreach (static::$redactedFields as $field)
+			$redactedRecord[$field] = '___REDACTED___';
+
+		// Merge redacted record with existing record.		
+		$redactedRecord = $redactedRecord + $record;
 
 		return $redactedRecord;
 	}
@@ -106,7 +103,7 @@ class Model
 	}
 
 	/**
-	 * Get a record filtering on primary id.
+	 * Find a record by its primary id.
 	 * 
 	 * * Example use: User::find($userID = 3)
 	 */
@@ -124,7 +121,7 @@ class Model
 	}
 
 	/**
-	 * Update a record filtering on primary id.
+	 * Update a record by its primary id.
 	 * 
 	 * * Example use: User::update($userID = 3, ['Name' => 'A new name'])
 	 */
@@ -135,7 +132,7 @@ class Model
 	}
 
 	/**
-	 * Delete a record filtering on primary id.
+	 * Delete a record by its primary id.
 	 * 
 	 * * Example use: User::delete($userID = 3)
 	 */
@@ -147,6 +144,8 @@ class Model
 
 	/**
 	 * Clone a record.
+	 * 
+	 * @param array $newRecord used to write new values to fields from the cloned record.
 	 * 
 	 * * Example use: User::clone($userID = 3)
 	 * * Example use: User::clone($userID = 3, ['Name' => 'New Name'])
@@ -213,7 +212,7 @@ class Model
 	}
 
 	/**
-	 * Find a record by filtering on field with value.
+	 * Get a record by filtering on field with value.
 	 * 
 	 * * Example use: User::get('Email', 'John.doe@example.com')
 	 */
@@ -265,7 +264,7 @@ class Model
 	}
 
 	/**
-	 * Sum records.
+	 * Summarize records.
 	 * 
 	 * * Example use: Invoice::sum('Amount')
 	 * * Example use: Invoice::sum('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
@@ -327,7 +326,7 @@ class Model
 	}
 
 	/**
-	 * Min value of records.
+	 * Minimum of records.
 	 * 
 	 * * Example use: Invoice::min('Amount')
 	 * * Example use: Invoice::min('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
@@ -358,7 +357,7 @@ class Model
 	}
 
 	/**
-	 * Max value of records.
+	 * Maximum of records.
 	 * 
 	 * * Example use: Invoice::max('Amount')
 	 * * Example use: Invoice::max('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
