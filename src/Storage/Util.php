@@ -90,7 +90,8 @@ class Util
 			'bool' => (bool) $value,
 			'date' => date('Y-m-d', strtotime((string) $value)),
 			'datetime' => date('Y-m-d H:i:s', strtotime((string) $value)),
-			default => (string) $value,
+			'string' => (string) $value,
+			default => $value,
 		};
 	}
 }
