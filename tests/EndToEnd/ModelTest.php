@@ -13,6 +13,17 @@ use Projom\Storage\MySQL\Model;
 class User extends Model
 {
 	const PRIMARY_FIELD = 'UserID';
+	const REDACTED_FIELDS = ['Password'];
+	const FORMAT_FIELDS = [
+		'UserID' => 'int',
+		'Firstname' => 'string',
+		'Lastname' => 'string',
+		'Username ' => 'string',
+		'Password' => 'string',
+		'Active' => 'bool',
+		'Created' => 'date',
+		'Updated' => 'datetime'
+	];
 }
 
 class ModelTest extends TestCase
@@ -99,24 +110,38 @@ class ModelTest extends TestCase
 		$records = User::sum('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($records);
 
+		$records = User::count('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$this->assertNotNull($records);
+		$this->assertCount(1, $records);
+		$record = array_pop($records);
+		$this->assertEquals(4, (int) $record['count']);
+
 		$records = User::count();
 		$record = array_pop($records);
 		$allCount = (int) $record['count'];
+		$this->assertEquals(count($allUsers), $allCount);
+
 		$records = User::avg('UserID');
 		$this->assertNotNull($records);
-		$this->assertCount(1, $records);
+		$this->assertCount(1, $records);		
 		$record = array_pop($records);
 		$this->assertEquals(round($sum / $allCount), round((float) $record['avg']));
 
-		$records = User::min('UserID');
+		$records = User::avg('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$this->assertNotNull($records);
+		$this->assertCount(1, $records);
+
+		$records = User::min('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($records);
 		$this->assertCount(1, $records);
 		$record = array_pop($records);
-		$this->assertEquals(1, $record['min']);
+		$this->assertEquals(2, $record['min']);
 
-		$records = User::max('UserID');
+		$records = User::max('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($records);
 		$this->assertCount(1, $records);
+		$record = array_pop($records);
+		$this->assertEquals(5, $record['max']);
 
 		$records = User::paginate(2, 2, ['Lastname' => 'Doe']);
 		$this->assertNotNull($records);
