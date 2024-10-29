@@ -10,10 +10,16 @@ use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Util;
 
 /**
- * The Model class serves as a base class for a class representing a database table.
+ * This class provides a set of methods to interact with a database table.
+ * Extend this class to create a query-able "model" for that table.
+ * The extended class name should be the same as the table name.
+ *
+ * Required constants: 
+ * * PRIMARY_FIELD = 'FieldID'
  * 
- * Create a class named as the table in the database and extend this class.
- * Define the PRIMARY_FIELD constant as the name of the primary field from the table.
+ * Additional processing can be done on fields by defining the following optional constants:
+ * * FORMAT_FIELDS = [ 'Field' => 'Type' ]
+ * * REDACTED_FIELDS = [ 'Field', 'AnotherField' ]
  */
 class Model
 {
@@ -62,17 +68,14 @@ class Model
 		if (!static::$formatFields)
 			return $record;
 
-		$formattedRecord = [];
-		foreach (static::$formatFields as $field => $format) {
-			if (!$value = $record[$field] ?? false)
-				throw new \Exception("The field: {$field}, is not found in record.", 400);
-			$formattedRecord[$field] = Util::format($value, $format);
+		foreach (static::$formatFields as $field => $type) {
+			if (!array_key_exists($field, $record))
+				continue;
+			$value = $record[$field];
+			$record[$field] = Util::format($value, $type);
 		}
 
-		// Merge formatted record with existing record.
-		$formattedRecord = $formattedRecord + $record;
-
-		return $formattedRecord;
+		return $record;
 	}
 
 	private static function redactRecord(array $record): array
@@ -80,14 +83,13 @@ class Model
 		if (!static::$redactedFields)
 			return $record;
 
-		$redactedRecord = [];
-		foreach (static::$redactedFields as $field)
-			$redactedRecord[$field] = '___REDACTED___';
+		foreach (static::$redactedFields as $field) {
+			if (!array_key_exists($field, $record))
+				throw new \Exception("Field: {$field}, could not be redacted. Not found in record", 400);
+			$record[$field] = '__REDACTED__';
+		}
 
-		// Merge redacted record with existing record.		
-		$redactedRecord = $redactedRecord + $record;
-
-		return $redactedRecord;
+		return $record;
 	}
 
 	/**
@@ -163,10 +165,10 @@ class Model
 
 		// Merge new record with existing record. 
 		$record = $newRecord + $record;
-
 		$clonePrimaryID = MySQL::query(static::$table)->insert($record);
+		
 		$clonedRecords = MySQL::query(static::$table)->fetch(static::$primaryField, $clonePrimaryID);
-
+		$clonedRecords = static::processRecords($clonedRecords);
 		return array_pop($clonedRecords);
 	}
 
