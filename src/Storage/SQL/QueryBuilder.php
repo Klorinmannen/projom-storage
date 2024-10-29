@@ -331,7 +331,7 @@ class QueryBuilder
      */
     public function offset(int $offset): QueryBuilder
     {
-        $this->limit = $offset;
+        $this->offset = $offset;
         return $this;
     }
 }

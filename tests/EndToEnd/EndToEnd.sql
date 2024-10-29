@@ -1,4 +1,5 @@
-
+DROP TABLE IF EXISTS `EndToEnd`.`UserRole`;
+DROP TABLE IF EXISTS `EndToEnd`.`Role`;
 DROP TABLE IF EXISTS `EndToEnd`.`User`;
 
 CREATE TABLE
@@ -15,8 +16,6 @@ CREATE TABLE
 		KEY `FirstnameLastname` (`Firstname`, `Lastname`),
 		KEY `Active` (`Active`)
 	);
-
-DELETE FROM `EndToEnd`.`User`;
 
 INSERT INTO
 	`EndToEnd`.`User` (
@@ -57,8 +56,6 @@ VALUES
 		0
 	);
 
-DROP TABLE IF EXISTS `EndToEnd`.`Role`;
-
 CREATE TABLE
 	`EndToEnd`.`Role` (
 		`RoleID` INT PRIMARY KEY AUTO_INCREMENT,
@@ -71,8 +68,6 @@ CREATE TABLE
 		KEY `Active` (`Active`)
 	);
 
-DELETE FROM `EndToEnd`.`Role`;
-
 INSERT INTO
 	`EndToEnd`.`Role` (`Role`, `Description`)
 VALUES
@@ -80,8 +75,6 @@ VALUES
 	('Admin', 'Administrator'),
 	('User', 'Regular User'),
 	('Guest', 'Guest User');
-
-DROP TABLE IF EXISTS `EndToEnd`.`UserRole`;
 
 CREATE TABLE
 	`EndToEnd`.`UserRole` (
@@ -95,8 +88,6 @@ CREATE TABLE
 		FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`),
 		FOREIGN KEY (`RoleID`) REFERENCES `Role` (`RoleID`)
 	);
-
-DELETE FROM `EndToEnd`.`UserRole`;
 
 INSERT INTO
 	`EndToEnd`.`UserRole` (`UserID`, `RoleID`)

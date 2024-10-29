@@ -70,9 +70,28 @@ class Util
 		return [];
 	}
 
-	public static function is_int(int|float|string $subject): bool
+	public static function isInt(int|float|string $subject): bool
 	{
 		$subject = (string) $subject;
 		return is_numeric($subject) && strpos($subject, '.') === false;
+	}
+
+	public static function rekey(array $records, string $field): array
+	{
+		return array_column($records, null, $field);
+	}
+
+	public static function format(mixed $value, string $type): mixed
+	{
+		$type = strtolower($type);
+		return match ($type) {
+			'int' => (int) $value,
+			'float' => (float) $value,
+			'bool' => (bool) $value,
+			'date' => date('Y-m-d', strtotime((string) $value)),
+			'datetime' => date('Y-m-d H:i:s', strtotime((string) $value)),
+			'string' => (string) $value,
+			default => $value,
+		};
 	}
 }
