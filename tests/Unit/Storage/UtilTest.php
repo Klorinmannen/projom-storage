@@ -62,7 +62,7 @@ class UtilTest extends TestCase
 		$result = Util::clean($subject);
 		$this->assertEquals($expected, $result);
 	}
-	
+
 	#[Test]
 	public function join(): void
 	{
@@ -164,5 +164,35 @@ class UtilTest extends TestCase
 			2 => ['id' => 2, 'name' => 'Jane'],
 		];
 		$this->assertEquals($expected, $result);
+	}
+
+	public static function formatProvider(): array
+	{
+		return [
+			'date' => ['2024-10-29 07:32', 'date', '2024-10-29'],
+			'datetime' => ['2024-10-29 07:32:56', 'datetime', '2024-10-29 07:32:56'],
+			'datetime no seconds' => ['2024-10-29 07:32', 'datetime', '2024-10-29 07:32:00'],
+			'int string to int' => ['123', 'int', 123],
+			'int to int' => [123, 'int', 123],
+			'float string to float' => ['123.456', 'float', 123.456],
+			'float to float' => [123.456, 'float', 123.456],
+			'neg int to bool' => [-1, 'bool', true],
+			'zero int to bool' => [0, 'bool', false],
+			'int string to bool' => ['1', 'bool', true],
+			'bool to bool' => [true, 'bool', true],
+			'empty string' => ['', 'string', ''],
+			'string' => ['A text of some sort', 'string', 'A text of some sort'],
+			'null value on string type' => [null, 'string', ''],
+			'null value on empty type' => [null, '', null],
+			'string value on number type' => ['value', 'number', 'value'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('formatProvider')]
+	public function format(mixed $value, string $type, mixed $expected): void
+	{
+		$actual = Util::format($value, $type);
+		$this->assertEquals($expected, $actual);
 	}
 }
