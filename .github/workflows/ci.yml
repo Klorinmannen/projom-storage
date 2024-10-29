@@ -44,7 +44,6 @@ jobs:
           path: ./coverage_html.tar.gz
 
   EndToEnd:
-    needs: unit-tests
     name: EndToEnd tests on ubuntu-latest
     runs-on: [ubuntu-latest]
 
