@@ -7,7 +7,7 @@ namespace Projom\Tests\Unit\Storage\Engine\Driver;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Engine\Config;
+use Projom\Storage\Engine\Driver\Connection\Config;
 use Projom\Storage\Engine\Driver\ConnectionFactory;
 
 class ConnectionFactoryStub extends ConnectionFactory
@@ -29,7 +29,7 @@ class ConnectionFactoryStub extends ConnectionFactory
 	}
 }
 
-class SourceFactoryTest extends TestCase
+class ConnectionFactoryTest extends TestCase
 {
 	#[Test]
 	public function createPDO(): void
@@ -38,7 +38,7 @@ class SourceFactoryTest extends TestCase
 		$connectionFactory = new ConnectionFactoryStub($pdo);
 	
 		$config = new Config([
-			'driver' => 'mysql',
+			'dsn' => 'mysql:host=localhost;port=3306;dbname=test;charset=utf8mb4',
 			'host' => 'localhost',
 			'port' => '3306',
 			'database' => 'test',
@@ -59,7 +59,6 @@ class SourceFactoryTest extends TestCase
 	{
 		$sourceFactory = ConnectionFactory::create();
 		$config = new Config([
-			'driver' => 'unknown', // Unknown driver
 			'host' => 'localhost',
 			'port' => '3306',
 			'database' => 'test',
@@ -68,7 +67,7 @@ class SourceFactoryTest extends TestCase
 		]);
 
 		$this->expectException(\Exception::class);
-		$this->expectExceptionMessage('Driver is not supported');
+		$this->expectExceptionMessage('Connection config is missing dsn');
 		$this->expectExceptionCode(400);
 		$sourceFactory->createPDO($config);
 	}

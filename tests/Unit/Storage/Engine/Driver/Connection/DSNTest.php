@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Engine\Config;
+use Projom\Storage\Engine\Driver\Connection\Config;
 use Projom\Storage\Engine\Driver\Connection\DSN;
 
 class DSNTest extends TestCase
@@ -17,11 +17,11 @@ class DSNTest extends TestCase
 	{
 		return [
 			[ 
-				'config' => new Config([ 'driver' => 'mysql', 'host' => 'localhost', 'port' => '3306', 'database' => 'test', 'charset' => 'utf8mb4', 'collation' => 'utf8mb4_unicode_ci' ]), 
+				'config' => new Config([ 'host' => 'localhost', 'port' => '3306', 'database' => 'test', 'charset' => 'utf8mb4', 'collation' => 'utf8mb4_unicode_ci' ]),
 				'expected' => 'mysql:host=localhost;port=3306;dbname=test;charset=utf8mb4;collation=utf8mb4_unicode_ci' 
 			],
 			[
-				'config' => new Config([ 'driver' => 'mysql', 'host' => 'localhost', 'port' => '3306', 'database' => 'test' ]),
+				'config' => new Config([ 'host' => 'localhost', 'port' => '3306', 'database' => 'test' ]),
 				'expected' => 'mysql:host=localhost;port=3306;dbname=test'
 			],
 			[

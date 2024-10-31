@@ -34,7 +34,12 @@ class MySQL extends DriverBase
 		return new MySQL($pdo, $name);
 	}
 
-	private function changeConnection(string $connection): void
+	public function addConnection(\PDO $pdo, string $name): void
+	{
+		$this->connections[$name] = $pdo;
+	}
+
+	public function changeConnection(string $connection): void
 	{
 		$pdo = $this->connections[$connection] ?? null;
 		if ($pdo === null)

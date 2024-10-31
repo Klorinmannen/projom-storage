@@ -117,7 +117,7 @@ class EngineTest extends TestCase
 	public function start(): void
 	{
 		$this->expectException(\Exception::class);
-		$this->expectExceptionMessage('Config is missing host');
+		$this->expectExceptionMessage('No connections found in driver configuration');
 
 		Engine::start();
 		Engine::loadDriver(['driver' => 'mysql']);

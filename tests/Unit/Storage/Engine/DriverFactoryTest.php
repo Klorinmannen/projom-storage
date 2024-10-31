@@ -19,18 +19,22 @@ class DriverFactoryTest extends TestCase
 	public function createDriver(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
-
 		$connectionFactory = $this->createStub(ConnectionFactory::class);
 		$connectionFactory->method('createPDO')->willReturn($pdo);
-
 		$driverFactory = DriverFactory::create($connectionFactory);
 
 		$config = new Config([
 			'driver' => 'mysql',
-			'host' => 'localhost',
-			'port' => '3306',
-			'username' => 'root',
-			'password' => 'root'
+			'options' => [],
+			'connections' => [
+				'nicedbname' => [
+					'host' => 'localhost',
+					'port' => '3306',
+					'username' => 'root',
+					'password' => 'root',
+					'database' => 'nicedbname',
+				]
+			]
 		]);
 
 		$driver = $driverFactory->createDriver($config);

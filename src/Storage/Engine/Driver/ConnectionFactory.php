@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Engine\Driver;
 
-use Projom\Storage\Engine\Config;
-use Projom\Storage\Engine\Driver;
-use Projom\Storage\Engine\Driver\Connection\DSN;
+use Projom\Storage\Engine\Driver\Connection\Config;
 use Projom\Storage\Engine\Driver\Connection\PDO;
 
 class ConnectionFactory
@@ -18,16 +16,15 @@ class ConnectionFactory
 
 	public function createPDO(Config $config): \PDO
 	{
-		$dsn = match ($config->driver) {
-			Driver::MySQL => DSN::MySQL($config),
-			default => throw new \Exception('Driver is not supported', 400)
-		};
-
-		$parsedAttributes = PDO::parseAttributes($config->options['pdo_attributes'] ?? []);
+		$pdoAttributes = $config->options['pdo_attributes'] ?? [];
+		$parsedAttributes = PDO::parseAttributes($pdoAttributes);
 		$attributes = $parsedAttributes + PDO::DEFAULT_ATTRIBUTES;
 
+		if ($config->dsn === null)
+			throw new \Exception('Connection config is missing dsn', 400);
+
 		$pdo = $this->PDO(
-			$dsn,
+			$config->dsn,
 			$config->username,
 			$config->password,
 			$attributes
