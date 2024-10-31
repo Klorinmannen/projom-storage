@@ -6,14 +6,14 @@ namespace Projom\Storage\Engine\Driver;
 
 use Projom\Storage\Engine\Config;
 use Projom\Storage\Engine\Driver;
-use Projom\Storage\Engine\Driver\Source\DSN;
-use Projom\Storage\Engine\Driver\Source\PDO;
+use Projom\Storage\Engine\Driver\Connection\DSN;
+use Projom\Storage\Engine\Driver\Connection\PDO;
 
-class SourceFactory
+class ConnectionFactory
 {
-	public static function create(): SourceFactory
+	public static function create(): ConnectionFactory
 	{
-		return new SourceFactory();
+		return new ConnectionFactory();
 	}
 
 	public function createPDO(Config $config): \PDO

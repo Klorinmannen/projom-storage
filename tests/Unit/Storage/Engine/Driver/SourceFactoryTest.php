@@ -8,9 +8,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine\Config;
-use Projom\Storage\Engine\Driver\SourceFactory;
+use Projom\Storage\Engine\Driver\ConnectionFactory;
 
-class SourceFactoryStub extends SourceFactory
+class ConnectionFactoryStub extends ConnectionFactory
 {
 	private \PDO $pdo;
 
@@ -35,7 +35,7 @@ class SourceFactoryTest extends TestCase
 	public function createPDO(): void
 	{
 		$pdo = $this->createMock(\PDO::class);
-		$sourceFactory = new SourceFactoryStub($pdo);
+		$connectionFactory = new ConnectionFactoryStub($pdo);
 	
 		$config = new Config([
 			'driver' => 'mysql',
@@ -50,14 +50,14 @@ class SourceFactoryTest extends TestCase
 			]
 		]);
 
-		$pdo = $sourceFactory->createPDO($config);
+		$pdo = $connectionFactory->createPDO($config);
 		$this->assertInstanceOf(\PDO::class, $pdo);
 	}
 
 	#[Test]
 	public function createPDO_exception(): void
 	{
-		$sourceFactory = SourceFactory::create();
+		$sourceFactory = ConnectionFactory::create();
 		$config = new Config([
 			'driver' => 'unknown', // Unknown driver
 			'host' => 'localhost',

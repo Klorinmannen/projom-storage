@@ -8,20 +8,20 @@ use Projom\Storage\Engine\Config;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\Engine\Driver\MySQL;
-use Projom\Storage\Engine\Driver\SourceFactory;
+use Projom\Storage\Engine\Driver\ConnectionFactory;
 
 class DriverFactory
 {
-	private SourceFactory $sourceFactory;
+	private ConnectionFactory $connectionFactory;
 
-	public function __construct(SourceFactory $sourceFactory)
+	public function __construct(ConnectionFactory $connectionFactory)
 	{
-		$this->sourceFactory = $sourceFactory;
+		$this->connectionFactory = $connectionFactory;
 	}
 
-	public static function create(SourceFactory $sourceFactory): DriverFactory
+	public static function create(ConnectionFactory $connectionFactory): DriverFactory
 	{
-		return new DriverFactory($sourceFactory);
+		return new DriverFactory($connectionFactory);
 	}
 
 	public function createDriver(Config $config): DriverBase
@@ -36,7 +36,7 @@ class DriverFactory
 
 	public function MySQL(Config $config): MySQL
 	{
-		$pdo = $this->sourceFactory->createPDO($config);
+		$pdo = $this->connectionFactory->createPDO($config);
 		$mysql = MySQL::create($pdo);
 		$mysql->setOptions($config->driverOptions);
 		return $mysql;

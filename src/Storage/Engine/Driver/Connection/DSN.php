@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Engine\Driver\Source;
+namespace Projom\Storage\Engine\Driver\Connection;
 
 use Projom\Storage\Engine\Config;
 

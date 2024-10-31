@@ -9,7 +9,7 @@ use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\Engine\Config;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\DriverFactory;
-use Projom\Storage\Engine\Driver\SourceFactory;
+use Projom\Storage\Engine\Driver\ConnectionFactory;
 
 class Engine
 {
@@ -19,8 +19,8 @@ class Engine
 
 	public static function start(): void
 	{
-		$sourceFactory = SourceFactory::create();
-		$driverFactory = DriverFactory::create($sourceFactory);
+		$connectionFactory = ConnectionFactory::create();
+		$driverFactory = DriverFactory::create($connectionFactory);
 		static::setDriverFactory($driverFactory);
 	}
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\Engine\Driver\Source;
+namespace Projom\Tests\Unit\Storage\Engine\Driver\Connection;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine\Config;
-use Projom\Storage\Engine\Driver\Source\DSN;
+use Projom\Storage\Engine\Driver\Connection\DSN;
 
 class DSNTest extends TestCase
 {

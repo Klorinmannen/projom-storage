@@ -11,7 +11,7 @@ use Projom\Storage\Engine\Config;
 use Projom\Storage\Engine\DriverFactory;
 use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\Engine\Driver\MySQL;
-use Projom\Storage\Engine\Driver\SourceFactory;
+use Projom\Storage\Engine\Driver\ConnectionFactory;
 
 class DriverFactoryTest extends TestCase
 {
@@ -20,10 +20,10 @@ class DriverFactoryTest extends TestCase
 	{
 		$pdo = $this->createMock(\PDO::class);
 
-		$sourceFactory = $this->createStub(SourceFactory::class);
-		$sourceFactory->method('createPDO')->willReturn($pdo);
+		$connectionFactory = $this->createStub(ConnectionFactory::class);
+		$connectionFactory->method('createPDO')->willReturn($pdo);
 
-		$driverFactory = DriverFactory::create($sourceFactory);
+		$driverFactory = DriverFactory::create($connectionFactory);
 
 		$config = new Config([
 			'driver' => 'mysql',
@@ -41,8 +41,8 @@ class DriverFactoryTest extends TestCase
 	#[Test]
 	public function createDriver_exception(): void
 	{
-		$sourceFactory = SourceFactory::create();
-		$driverFactory = DriverFactory::create($sourceFactory);
+		$connectionFactory = ConnectionFactory::create();
+		$driverFactory = DriverFactory::create($connectionFactory);
 
 		$config = new Config([
 			'driver' => 'mysqli',
