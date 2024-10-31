@@ -16,17 +16,30 @@ use Projom\Storage\SQL\Statement\Update;
 
 class MySQL extends DriverBase
 {
-	private readonly \PDO $pdo;
+	private array $connections = [];
+	private null|\PDO $pdo;
 	private null|\PDOStatement $statement = null;
 
-	public function __construct(\PDO $pdo)
+	public function __construct(null|\PDO $pdo, string $name)
 	{
+		if ($pdo === null)
+			return;
+
+		$this->connections[$name] = $pdo;
 		$this->pdo = $pdo;
 	}
 
-	public static function create(\PDO $pdo): MySQL
+	public static function create(null|\PDO $pdo = null, string $name = 'default'): MySQL
 	{
-		return new MySQL($pdo);
+		return new MySQL($pdo, $name);
+	}
+
+	private function changeConnection(string $connection): void
+	{
+		$pdo = $this->connections[$connection] ?? null;
+		if ($pdo === null)
+			throw new \Exception("Connection: $connection does not exist", 400);
+		$this->pdo = $pdo;
 	}
 
 	public function dispatch(Action $action, mixed $args): mixed
@@ -38,6 +51,7 @@ class MySQL extends DriverBase
 			Action::DELETE => $this->delete($args),
 			Action::EXECUTE => $this->execute(...$args),
 			Action::QUERY => $this->query($args),
+			Action::CHANGE_CONNECTION => $this->changeConnection($args),
 			Action::START_TRANSACTION => $this->startTransaction(),
 			Action::END_TRANSACTION => $this->endTransaction(),
 			Action::REVERT_TRANSACTION => $this->revertTransaction(),

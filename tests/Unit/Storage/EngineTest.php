@@ -50,6 +50,8 @@ class EngineTest extends TestCase
 				$value = ['query', ['params']];
 			elseif ($action ===  Action::QUERY)
 				$value = [ 'User' ];
+			elseif ($action === Action::CHANGE_CONNECTION)
+				$value = 'default';
 			else 
 				$value = new QueryObject(collections: ['User'], fields: ['Name']);
 

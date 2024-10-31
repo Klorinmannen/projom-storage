@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Tests\Unit\Storage\Engine\Driver;
 
+use mysqli;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -127,7 +128,7 @@ class MySQLTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->once())->method('prepare')->willReturn(false);
 
-		$mysql = new MySQL($pdo);
+		$mysql = MySQL::create($pdo);
 
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('Failed to prepare statement');
@@ -144,7 +145,7 @@ class MySQLTest extends TestCase
 		$pdo = $this->createMock(\PDO::class);
 		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
-		$mysql = new MySQL($pdo);
+		$mysql = MySQL::create($pdo);
 
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('Failed to execute statement');
