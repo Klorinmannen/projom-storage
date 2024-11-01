@@ -94,4 +94,14 @@ class Filter
 	{
 		return static::build($field, null, Operator::IS_NOT_NULL);
 	}
+
+	public static function between(string $field, mixed $value1, mixed $value2): array
+	{
+		return static::build($field, [$value1, $value2], Operator::BETWEEN);
+	}
+
+	public static function notBetween(string $field, mixed $value1, mixed $value2): array
+	{
+		return static::build($field, [$value1, $value2], Operator::NOT_BETWEEN);
+	}
 }

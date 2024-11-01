@@ -18,6 +18,8 @@ enum Operator: string
 	case NOT_IN = 'NOT IN';
 	case IS_NULL = 'IS NULL';
 	case IS_NOT_NULL = 'IS NOT NULL';
+	case BETWEEN = 'BETWEEN';
+	case NOT_BETWEEN = 'NOT BETWEEN';
 
 	public static function values(): array
 	{

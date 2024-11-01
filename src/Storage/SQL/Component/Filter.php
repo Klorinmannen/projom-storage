@@ -6,6 +6,7 @@ namespace Projom\Storage\SQL\Component;
 
 use Projom\Storage\SQL\ComponentInterface;
 use Projom\Storage\SQL\Component\Column;
+use Projom\Storage\SQL\Component\Filter\Between;
 use Projom\Storage\SQL\Component\Filter\In;
 use Projom\Storage\SQL\Component\Filter\Nullable;
 use Projom\Storage\SQL\Component\Filter\Standard;
@@ -124,6 +125,11 @@ class Filter implements ComponentInterface
 			case Operator::LIKE:
 			case Operator::NOT_LIKE:
 				return Standard::create($column, $operator, $value, $this->filterID);
+
+			case Operator::BETWEEN:
+			case Operator::NOT_BETWEEN:
+				return Between::create($column, $operator, $value, $this->filterID);
+				
 
 			default:
 				throw new \Exception("Operator not implemented: {$operator->value}", 400);
