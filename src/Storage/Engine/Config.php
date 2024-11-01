@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Engine;
 
 use Projom\Storage\Engine\Driver;
-use Projom\Storage\Engine\Driver\Connection\Config as ConnectionConfig;
+use Projom\Storage\Engine\Driver\Config as ConnectionConfig;
 
 readonly class Config
 {

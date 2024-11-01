@@ -21,9 +21,9 @@ class MySQL
 		return Engine::dispatch(Action::EXECUTE, Driver::MySQL, [$sql, $params]);
 	}
 
-	public static function useConnection(string $connection): void
+	public static function useConnection(int|string $name): void
 	{
-		Engine::dispatch(Action::CHANGE_CONNECTION, Driver::MySQL, $connection);
+		Engine::dispatch(Action::CHANGE_CONNECTION, Driver::MySQL, $name);
 	}
 
 	public static function startTransaction(): void

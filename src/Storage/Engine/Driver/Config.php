@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Engine\Driver\Connection;
+namespace Projom\Storage\Engine\Driver;
 
 class Config
 {
@@ -19,7 +19,7 @@ class Config
 	public function __construct(array $config)
 	{
 		$this->options = $config['options'] ?? [];
-		$this->dsn = $config['dsn'] ?? null;		
+		$this->dsn = $config['dsn'] ?? null;
 		$this->username = $config['username'] ?? null;
 		$this->password = $config['password'] ?? null;
 		$this->host = $config['host'] ?? null;

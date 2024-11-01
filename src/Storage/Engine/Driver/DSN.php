@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Engine\Driver\Connection;
+namespace Projom\Storage\Engine\Driver;
 
 use Projom\Storage\Engine\Driver;
-use Projom\Storage\Engine\Driver\Connection\Config;
+use Projom\Storage\Engine\Driver\Config;
 
 class DSN
 {

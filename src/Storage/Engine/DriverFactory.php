@@ -7,7 +7,7 @@ namespace Projom\Storage\Engine;
 use Projom\Storage\Engine\Config;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\DriverBase;
-use Projom\Storage\Engine\Driver\Connection\DSN;
+use Projom\Storage\Engine\Driver\DSN;
 use Projom\Storage\Engine\Driver\MySQL;
 use Projom\Storage\Engine\Driver\ConnectionFactory;
 
@@ -27,6 +27,9 @@ class DriverFactory
 
 	public function createDriver(Config $config): DriverBase
 	{
+		if (!$config->connections)
+			throw new \Exception('No connections found in driver configuration', 400);
+
 		$driver = match ($config->driver) {
 			Driver::MySQL => $this->MySQL($config),
 			default => throw new \Exception('Driver is not supported', 400)
@@ -38,14 +41,11 @@ class DriverFactory
 	public function MySQL(Config $config): MySQL
 	{
 		$mysql = MySQL::create();
-
-		if (!$config->connections)
-			throw new \Exception('No connections found in driver configuration', 400);
-
 		foreach ($config->connections as $name => $connectionConfig) {
-			$connectionConfig->dsn = DSN::MySQL($connectionConfig);
-			$pdo = $this->connectionFactory->createPDO($connectionConfig);
-			$mysql->addConnection($pdo, $name);
+			if ($connectionConfig->dsn === null)
+				$connectionConfig->dsn = DSN::MySQL($connectionConfig);
+			$connection = $this->connectionFactory->PDOConnection($connectionConfig);
+			$mysql->setConnection($connection, $name);
 		}
 
 		$name = array_key_first($config->connections);

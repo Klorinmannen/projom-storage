@@ -4,49 +4,28 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Engine\Driver;
 
-use Projom\Storage\Engine\Driver\Connection\Config;
-use Projom\Storage\Engine\Driver\Connection\PDO;
+use Projom\Storage\Engine\Driver\Config;
 
 class ConnectionFactory
 {
+	const DEFAULT_PDO_ATTRIBUTES = [
+		\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+		\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+	];
+
 	public static function create(): ConnectionFactory
 	{
 		return new ConnectionFactory();
 	}
 
-	public function createPDO(Config $config): \PDO
+	public function PDOConnection(Config $config): PDOConnection
 	{
-		$pdoAttributes = $config->options['pdo_attributes'] ?? [];
-		$parsedAttributes = PDO::parseAttributes($pdoAttributes);
-		$attributes = $parsedAttributes + PDO::DEFAULT_ATTRIBUTES;
-
-		if ($config->dsn === null)
-			throw new \Exception('Connection config is missing dsn', 400);
-
-		$pdo = $this->PDO(
+		$connection = PDOConnection::create(
 			$config->dsn,
 			$config->username,
 			$config->password,
-			$attributes
+			$config->options
 		);
-
-		return $pdo;
-	}
-
-	public function PDO(
-		string $dsn,
-		null|string $username = null,
-		null|string $password = null,
-		array $attributes = []
-	): \PDO {
-
-		$pdo = new \PDO(
-			$dsn,
-			$username,
-			$password,
-			$attributes
-		);
-
-		return $pdo;
+		return $connection;
 	}
 }
