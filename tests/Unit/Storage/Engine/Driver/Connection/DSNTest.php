@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Engine\Driver\Connection\Config;
-use Projom\Storage\Engine\Driver\Connection\DSN;
+use Projom\Storage\Engine\Driver\Config;
+use Projom\Storage\Engine\Driver\DSN;
 
 class DSNTest extends TestCase
 {

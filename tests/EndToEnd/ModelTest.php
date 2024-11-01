@@ -32,11 +32,16 @@ class ModelTest extends TestCase
 	{
 		$config = [
 			'driver' => 'mysql',
-			'username' => 'projom',
-			'password' => 'projom',
-			'host' => 'localhost',
-			'port' => 3306,
-			'database' => 'EndToEnd'
+			'options' => [],
+			'connections' => [
+				[
+					'username' => 'projom',
+					'password' => 'projom',
+					'host' => 'localhost',
+					'port' => 3306,
+					'database' => 'EndToEnd'
+				]
+			]
 		];
 
 		Engine::start();
@@ -92,7 +97,7 @@ class ModelTest extends TestCase
 		$this->assertNotNull($records);
 
 		$allUsers = User::all();
-		$this->assertNotNull($allUsers);	
+		$this->assertNotNull($allUsers);
 
 		$sum = 0;
 		foreach ($allUsers as $user)
@@ -123,7 +128,7 @@ class ModelTest extends TestCase
 
 		$records = User::avg('UserID');
 		$this->assertNotNull($records);
-		$this->assertCount(1, $records);		
+		$this->assertCount(1, $records);
 		$record = array_pop($records);
 		$this->assertEquals(round($sum / $allCount), round((float) $record['avg']));
 

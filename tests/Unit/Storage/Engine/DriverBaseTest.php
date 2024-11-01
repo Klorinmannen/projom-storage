@@ -9,12 +9,17 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Action;
+use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\Format;
 use Projom\Storage\RecordInterface;
 
 class DriverStub extends DriverBase
 {
+
+	public function setConnection(ConnectionInterface $connection, int|string $name): void {}
+	public function changeConnection(int|string $name): void {}
+
 	public function dispatch(Action $action, mixed $args): mixed
 	{
 		return null;

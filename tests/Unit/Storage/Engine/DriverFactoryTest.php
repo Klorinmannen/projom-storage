@@ -12,15 +12,16 @@ use Projom\Storage\Engine\DriverFactory;
 use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\Engine\Driver\MySQL;
 use Projom\Storage\Engine\Driver\ConnectionFactory;
+use Projom\Storage\Engine\Driver\PDOConnection;
 
 class DriverFactoryTest extends TestCase
 {
 	#[Test]
 	public function createDriver(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
+		$connection = $this->createMock(PDOConnection::class);
 		$connectionFactory = $this->createStub(ConnectionFactory::class);
-		$connectionFactory->method('createPDO')->willReturn($pdo);
+		$connectionFactory->method('PDOConnection')->willReturn($connection);
 		$driverFactory = DriverFactory::create($connectionFactory);
 
 		$config = new Config([
@@ -43,17 +44,37 @@ class DriverFactoryTest extends TestCase
 	}
 
 	#[Test]
-	public function createDriver_exception(): void
+	public function createDriverExceptionNoConnections(): void
 	{
 		$connectionFactory = ConnectionFactory::create();
 		$driverFactory = DriverFactory::create($connectionFactory);
 
 		$config = new Config([
-			'driver' => 'mysqli',
-			'host' => 'localhost',
-			'port' => '3306',
-			'username' => 'root',
-			'password' => 'root'
+			'driver' => 'mysql',
+			'options' => [],
+			'connections' => []
+		]);
+
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage('No connections found in driver configuration');
+		$this->expectExceptionCode(400);
+		$driverFactory->createDriver($config);
+	}
+
+	#[Test]
+	public function createDriverExceptionBadDriverName(): void
+	{
+		$connectionFactory = ConnectionFactory::create();
+		$driverFactory = DriverFactory::create($connectionFactory);
+
+		$config = new Config([
+			'driver' => 'bad-driver-name',
+			'options' => [],
+			'connections' => [
+				'nicedbname' => [
+					'dsn' => 'sqlite::memory:'
+				]
+			]
 		]);
 
 		$this->expectException(\Exception::class);

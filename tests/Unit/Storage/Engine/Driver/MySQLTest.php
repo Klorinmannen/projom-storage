@@ -4,51 +4,80 @@ declare(strict_types=1);
 
 namespace Projom\Tests\Unit\Storage\Engine\Driver;
 
-use mysqli;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Action;
+use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Engine\Driver\MySQL;
+use Projom\Storage\Engine\Driver\PDOConnection;
+use Projom\Storage\Format;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util\Filter;
 use Projom\Storage\SQL\Util\LogicalOperator;
 
+class FakePDOConnection implements ConnectionInterface {}
+
 class MySQLTest extends TestCase
 {
+	#[Test]
+	public function setConnectionException(): void
+	{
+		$fakeConnection = new FakePDOConnection();
+		$mysql = MySQL::create();
+
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage('Provided connection is not a PDO connection');
+		$this->expectExceptionCode(400);
+		$mysql->setConnection($fakeConnection, 'fake');
+	}
+
+	#[Test]
+	public function changeConnectionException(): void
+	{
+		$mysql = MySQL::create();
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage("Connection: 'fake' does not exist.");
+		$this->expectExceptionCode(400);
+		$mysql->dispatch(Action::CHANGE_CONNECTION, 'fake');
+	}
+
 	public static function selectProvider(): array
 	{
 		return [
 			[
-				[0 => ['UserID' => '10', 'Name' => 'John']],
-				[0 => ['UserID' => '10', 'Name' => 'John']]
+				[['UserID' => '10', 'Name' => 'John']],
+				(object)['UserID' => '10', 'Name' => 'John']
 			],
 			[
-				null,
-				[]
+				[],
+				null
 			]
 		];
 	}
 	#[Test]
 	#[DataProvider('selectProvider')]
-	public function select(null|array $expected, array $records): void
+	public function select(array $records, null|object $expected): void
 	{
 		$pdoStatement = $this->createMock(\PDOStatement::class);
 		$pdoStatement->expects($this->once())->method('execute')->willReturn(true);
 		$pdoStatement->expects($this->once())->method('fetchAll')->willReturn($records);
 
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
+		$connection = $this->createMock(PDOConnection::class);
+		$connection->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
-		$mysql = MySQL::create($pdo);
+		$mysql = MySQL::create($connection);
 		$queryObject = new QueryObject(
 			collections: ['User'],
-			fields: ['*']
+			fields: ['*'],
+			formatting: [Format::STD_CLASS]
 		);
 
-		$result = $mysql->dispatch(Action::SELECT, $queryObject);
-		$this->assertEquals($expected, $result);
+		$mysql->setOptions(['return_single_record' => true]);
+
+		$actual = $mysql->dispatch(Action::SELECT, $queryObject);
+		$this->assertEquals($expected, $actual);
 	}
 
 	#[Test]
@@ -60,10 +89,10 @@ class MySQLTest extends TestCase
 		$pdoStatement->expects($this->once())->method('execute')->willReturn(true);
 		$pdoStatement->expects($this->once())->method('rowCount')->willReturn($expected);
 
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
+		$connection = $this->createMock(PDOConnection::class);
+		$connection->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
-		$mysql = MySQL::create($pdo);
+		$mysql = MySQL::create($connection);
 		$queryObject = new QueryObject(
 			collections: ['User'],
 			fieldsWithValues: [['Name' => 'John']]
@@ -81,11 +110,11 @@ class MySQLTest extends TestCase
 		$pdoStatement = $this->createMock(\PDOStatement::class);
 		$pdoStatement->expects($this->once())->method('execute')->willReturn(true);
 
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
-		$pdo->expects($this->once())->method('lastInsertId')->willReturn($expected);
+		$connection = $this->createMock(PDOConnection::class);
+		$connection->expects($this->once())->method('prepare')->willReturn($pdoStatement);
+		$connection->expects($this->once())->method('lastInsertId')->willReturn($expected);
 
-		$mysql = MySQL::create($pdo);
+		$mysql = MySQL::create($connection);
 		$queryObject = new QueryObject(
 			collections: ['User'],
 			fieldsWithValues: [['Name' => 'John', 'Age' => 25]]
@@ -104,10 +133,10 @@ class MySQLTest extends TestCase
 		$pdoStatement->expects($this->once())->method('execute')->willReturn(true);
 		$pdoStatement->expects($this->once())->method('rowCount')->willReturn($expected);
 
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
+		$connection = $this->createMock(PDOConnection::class);
+		$connection->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
-		$mysql = MySQL::create($pdo);
+		$mysql = MySQL::create($connection);
 		$queryObject = new QueryObject(
 			collections: ['User'],
 			filters: [
@@ -125,10 +154,10 @@ class MySQLTest extends TestCase
 	#[Test]
 	public function executeFailedToPrepareStatement(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn(false);
+		$connection = $this->createMock(PDOConnection::class);
+		$connection->expects($this->once())->method('prepare')->willReturn(false);
 
-		$mysql = MySQL::create($pdo);
+		$mysql = MySQL::create($connection);
 
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('Failed to prepare statement');
@@ -142,10 +171,10 @@ class MySQLTest extends TestCase
 		$pdoStatement = $this->createMock(\PDOStatement::class);
 		$pdoStatement->method('execute')->willReturn(false);
 
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
+		$connection = $this->createMock(PDOConnection::class);
+		$connection->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
-		$mysql = MySQL::create($pdo);
+		$mysql = MySQL::create($connection);
 
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('Failed to execute statement');
@@ -177,10 +206,10 @@ class MySQLTest extends TestCase
 		$pdoStatement->expects($this->once())->method('execute')->willReturn(true);
 		$pdoStatement->expects($this->once())->method('fetchAll')->willReturn($expected);
 
-		$pdo = $this->createMock(\PDO::class);
-		$pdo->expects($this->once())->method('prepare')->willReturn($pdoStatement);
+		$connection = $this->createMock(PDOConnection::class);
+		$connection->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
-		$mysql = MySQL::create($pdo);
+		$mysql = MySQL::create($connection);
 		$query = $mysql->dispatch(Action::EXECUTE, [$sql, $params]);
 		$this->assertEquals($expected, $query);
 	}
