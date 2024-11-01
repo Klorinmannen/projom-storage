@@ -32,9 +32,10 @@ class MySQLTest extends TestCase
 	}
 
 	#[Test]
-	public function query_missing_driver()
+	public function queryMissingDriver()
 	{
 		$this->expectExceptionCode(400);
+		$this->expectExceptionMessage('Driver not loaded');
 		MySQL::query('User');
 	}
 
@@ -49,6 +50,15 @@ class MySQLTest extends TestCase
 
 		$actual = MySQL::sql('SELECT * FROM User');
 		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function useConnection()
+	{
+		$mysql = $this->createMock(MySQLDriver::class);
+		$mysql->expects($this->once())->method('dispatch')->willReturn(true);
+		Engine::setDriver($mysql, Driver::MySQL);
+		MySQL::useConnection('default');
 	}
 
 	#[Test]

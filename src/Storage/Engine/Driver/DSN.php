@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Engine\Driver\Source;
+namespace Projom\Storage\Engine\Driver;
 
-use Projom\Storage\Engine\Config;
+use Projom\Storage\Engine\Driver;
+use Projom\Storage\Engine\Driver\Config;
 
 class DSN
 {
@@ -32,7 +33,7 @@ class DSN
 		if ($collation = $config->collation)
 			$parts[] = "collation=$collation";
 
-		$driver = $config->driver->value;
+		$driver = Driver::MySQL->value;
 
 		return "$driver:" . implode(';', $parts);
 	}

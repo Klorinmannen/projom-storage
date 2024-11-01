@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine\Config;
+use Projom\Storage\Engine\Driver;
 
 class ConfigTest extends TestCase
 {
@@ -15,21 +16,21 @@ class ConfigTest extends TestCase
 	public function construct(): void
 	{
 		$config = new Config([
-			'host' => 'localhost',
-			'port' => '3306',
-			'username' => 'root',
-			'password' => 'root',
-			'database' => 'example-com'
+			'driver' => 'mysql',
+			'options' => ['return_single_record' => true],
+			'connections' => [
+				'default' => [
+					'host' => 'localhost',
+					'port' => 3306,
+					'database' => 'test',
+					'username' => 'root',
+					'password' => 'root'
+				]
+			]
 		]);
 
-		$this->assertEquals('localhost', $config->host);
-		$this->assertEquals('3306', $config->port);
-		$this->assertEquals('root', $config->username);
-		$this->assertEquals('root', $config->password);
-		$this->assertEquals('example-com', $config->database);
-		$this->assertNull($config->driver);
-		$this->assertEquals('', $config->charset);
-		$this->assertEquals('', $config->collation);
-		$this->assertEquals([], $config->options);
+		$this->assertEquals(Driver::MySQL, $config->driver);
+		$this->assertEquals(['return_single_record' => true], $config->options);
+		$this->assertEquals(1, count($config->connections));
 	}
 }

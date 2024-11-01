@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Engine\Driver;
 
+use PDOStatement;
+
 use Projom\Storage\Action;
 use Projom\Storage\Engine\DriverBase;
+use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\QueryBuilder;
 use Projom\Storage\SQL\StatementInterface;
@@ -16,22 +19,28 @@ use Projom\Storage\SQL\Statement\Update;
 
 class MySQL extends DriverBase
 {
-	private readonly \PDO $pdo;
-	private null|\PDOStatement $statement = null;
+	private array $connections = [];
+	private null|PDOConnection $connection;
+	private null|PDOStatement $statement = null;
 
-	public function __construct(\PDO $pdo)
+	public function __construct(null|PDOConnection $connection, string $name)
 	{
-		$this->pdo = $pdo;
+		if ($connection === null)
+			return;
+
+		$this->setConnection($connection, $name);
+		$this->changeConnection($name);
 	}
 
-	public static function create(\PDO $pdo): MySQL
+	public static function create(null|PDOConnection $connection = null, string $name = 'default'): MySQL
 	{
-		return new MySQL($pdo);
+		return new MySQL($connection, $name);
 	}
 
 	public function dispatch(Action $action, mixed $args): mixed
 	{
 		return match ($action) {
+			Action::CHANGE_CONNECTION => $this->changeConnection($args),
 			Action::SELECT => $this->select($args),
 			Action::UPDATE => $this->update($args),
 			Action::INSERT => $this->insert($args),
@@ -45,7 +54,21 @@ class MySQL extends DriverBase
 		};
 	}
 
-	private function select(QueryObject $queryObject): null|array
+	public function changeConnection(int|string $name): void
+	{
+		if (!array_key_exists($name, $this->connections))
+			throw new \Exception("Connection: '$name' does not exist.", 400);
+		$this->connection = $this->connections[$name];
+	}
+
+	public function setConnection(ConnectionInterface $connection, int|string $name): void
+	{
+		if (!$connection instanceof PDOConnection)
+			throw new \Exception("Provided connection is not a PDO connection", 400);
+		$this->connections[$name] = $connection;
+	}
+
+	private function select(QueryObject $queryObject): null|array|object
 	{
 		$select = Select::create($queryObject);
 
@@ -80,7 +103,7 @@ class MySQL extends DriverBase
 
 		$this->executeStatement($insert);
 
-		return (int) $this->pdo->lastInsertId();
+		return (int) $this->connection->lastInsertId();
 	}
 
 	private function delete(QueryObject $queryObject): int
@@ -101,7 +124,7 @@ class MySQL extends DriverBase
 
 	private function prepareAndExecute(string $sql, null|array $params): void
 	{
-		if (!$statement = $this->pdo->prepare($sql))
+		if (!$statement = $this->connection->prepare($sql))
 			throw new \Exception("Failed to prepare statement", 500);
 
 		$this->statement = $statement;
@@ -123,16 +146,16 @@ class MySQL extends DriverBase
 
 	private function startTransaction(): void
 	{
-		$this->pdo->beginTransaction();
+		$this->connection->beginTransaction();
 	}
 
 	private function endTransaction(): void
 	{
-		$this->pdo->commit();
+		$this->connection->commit();
 	}
 
 	private function revertTransaction(): void
 	{
-		$this->pdo->rollBack();
+		$this->connection->rollBack();
 	}
 }

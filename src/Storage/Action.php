@@ -12,6 +12,7 @@ enum Action
 	case DELETE;
 	case EXECUTE;
 	case QUERY;
+	case CHANGE_CONNECTION;
 	case START_TRANSACTION;
 	case END_TRANSACTION;
 	case REVERT_TRANSACTION;

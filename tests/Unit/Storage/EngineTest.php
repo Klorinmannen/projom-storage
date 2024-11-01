@@ -12,6 +12,7 @@ use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\DriverFactory;
 use Projom\Storage\Engine\Driver\MySQL;
+use Projom\Storage\Engine\Driver\PDOConnection;
 use Projom\Storage\SQL\QueryObject;
 
 class EngineTest extends TestCase
@@ -22,7 +23,7 @@ class EngineTest extends TestCase
 	}
 
 	#[Test]
-	public function dispatch_no_driver_exception(): void
+	public function dispatchNoDriverException(): void
 	{
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Engine driver not set");
@@ -36,10 +37,10 @@ class EngineTest extends TestCase
 		$pdoStatement = $this->createMock(\PDOStatement::class);
 		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
 
-		$pdo = $this->createMock(\PDO::class);	
-		$pdo->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
+		$connection = $this->createMock(PDOConnection::class);	
+		$connection->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 
-		$mysql = MySQL::create($pdo);
+		$mysql = MySQL::create($connection);
 		Engine::setDriver($mysql, Driver::MySQL);
 
 		$actions = Action::cases();
@@ -50,6 +51,8 @@ class EngineTest extends TestCase
 				$value = ['query', ['params']];
 			elseif ($action ===  Action::QUERY)
 				$value = [ 'User' ];
+			elseif ($action === Action::CHANGE_CONNECTION)
+				$value = 'default';
 			else 
 				$value = new QueryObject(collections: ['User'], fields: ['Name']);
 
@@ -62,14 +65,14 @@ class EngineTest extends TestCase
 	{
 		$this->expectNotToPerformAssertions();
 
-		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQL::create($pdo);
+		$connection = $this->createMock(PDOConnection::class);
+		$mysql = MySQL::create($connection);
 		Engine::setDriver($mysql, Driver::MySQL);
 		Engine::useDriver(Driver::MySQL);
 	}
 
 	#[Test]
-	public function useDriver_exception(): void
+	public function useDriverException(): void
 	{
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Driver not loaded");
@@ -82,8 +85,8 @@ class EngineTest extends TestCase
 	{
 		$this->expectNotToPerformAssertions();
 
-		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQL::create($pdo);
+		$connection = $this->createMock(PDOConnection::class);
+		$mysql = MySQL::create($connection);
 
 		$driverFactory = $this->createMock(DriverFactory::class);
 		$driverFactory->method('createDriver')->willReturn($mysql);
@@ -93,7 +96,7 @@ class EngineTest extends TestCase
 	}
 
 	#[Test]
-	public function loadDriver_driver_factory_not_set_exception(): void
+	public function loadDriverDriverFactoryNotSetException(): void
 	{
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Driver factory not set");
@@ -106,8 +109,8 @@ class EngineTest extends TestCase
 	{
 		$this->expectNotToPerformAssertions();
 
-		$pdo = $this->createMock(\PDO::class);
-		$mysql = MySQL::create($pdo);
+		$connection = $this->createMock(PDOConnection::class);
+		$mysql = MySQL::create($connection);
 		Engine::setDriver($mysql, Driver::MySQL);
 	}
 
@@ -115,7 +118,7 @@ class EngineTest extends TestCase
 	public function start(): void
 	{
 		$this->expectException(\Exception::class);
-		$this->expectExceptionMessage('Config is missing host');
+		$this->expectExceptionMessage('No connections found in driver configuration');
 
 		Engine::start();
 		Engine::loadDriver(['driver' => 'mysql']);

@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
+use Projom\Storage\Engine\Driver\PDOConnection;
 use Projom\Storage\Format;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;
@@ -119,9 +120,9 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function joinOn(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
+		$connection = $this->createMock(PDOConnection::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQLDriver::create($connection);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->joinOn('User.UserID = UserRole.UserID', Join::INNER)
@@ -132,8 +133,8 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function filter(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
-		$driver = MySQLDriver::create($pdo);
+		$connection = $this->createMock(PDOConnection::class);
+		$driver = MySQLDriver::create($connection);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->filter(['Name', Operator::IN, ['John', 'Jane']], LogicalOperator::AND)
@@ -144,8 +145,8 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function filterList(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
-		$driver = MySQLDriver::create($pdo);
+		$connection = $this->createMock(PDOConnection::class);
+		$driver = MySQLDriver::create($connection);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->filterList([['Name', Operator::IN, ['John', 'Jane']]], LogicalOperator::AND)
@@ -156,9 +157,9 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function filterOnFields(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
+		$connection = $this->createMock(PDOConnection::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQLDriver::create($connection);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->filterOnFields(['Name' => ['John', 'Jane']], Operator::IN, LogicalOperator::AND)
@@ -169,9 +170,9 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function filterOn(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
+		$connection = $this->createMock(PDOConnection::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQLDriver::create($connection);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->filterOn('Name', ['John', 'Jane'], Operator::IN, LogicalOperator::AND)
@@ -182,9 +183,9 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function groupOn(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
+		$connection = $this->createMock(PDOConnection::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQLDriver::create($connection);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->groupOn('Username')->groupOn('Name', 'Age')->groupOn('Lastname, Age');
@@ -194,9 +195,9 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function sortOn(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
+		$connection = $this->createMock(PDOConnection::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQLDriver::create($connection);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->sortOn(['Name' => 'ASC'])->sortOn(['Age' => 'DESC']);
@@ -206,9 +207,9 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function limit(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
+		$connection = $this->createMock(PDOConnection::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQLDriver::create($connection);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->limit(10);
@@ -218,9 +219,9 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function offset(): void
 	{
-		$pdo = $this->createMock(\PDO::class);
+		$connection = $this->createMock(PDOConnection::class);
 
-		$driver = MySQLDriver::create($pdo);
+		$driver = MySQLDriver::create($connection);
 		$query = QueryBuilder::create($driver, ['User']);
 
 		$query = $query->offset(5);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Engine;
 
 use Projom\Storage\Action;
+use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Format;
 use Projom\Storage\RecordInterface;
 
@@ -13,6 +14,8 @@ abstract class DriverBase
 	protected bool $returnSingleRecord = false;
 
 	abstract public function dispatch(Action $action, mixed $args): mixed;
+	abstract public function setConnection(ConnectionInterface $connection, int|string $name): void;
+	abstract public function changeConnection(int|string $name): void;
 
 	public function setOptions(array $options): void
 	{
@@ -30,7 +33,7 @@ abstract class DriverBase
 
 			case Format::CUSTOM_OBJECT:
 				$className = $args;
-				
+
 				if ($className === null)
 					throw new \Exception('Class name not provided.', 400);
 				if (!class_exists($className))
