@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2024-11-01 15:30:17
+  2024-11-01 20:24:23
 
  Summary:
-  Classes: 89.74% (35/39)
-  Methods: 90.19% (193/214)
-  Lines:   79.09% (609/770)
+  Classes: 87.50% (35/40)
+  Methods: 89.45% (195/218)
+  Lines:   79.34% (626/789)
 
 Projom\Storage\DB
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
@@ -33,7 +33,9 @@ Projom\Storage\MySQL
 Projom\Storage\SQL\Component\Column
   Methods:  90.91% (10/11)   Lines:  97.22% ( 35/ 36)
 Projom\Storage\SQL\Component\Filter
-  Methods:  90.00% ( 9/10)   Lines:  97.96% ( 48/ 49)
+  Methods:  90.00% ( 9/10)   Lines:  98.08% ( 51/ 52)
+Projom\Storage\SQL\Component\Filter\Between
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 14/ 14)
 Projom\Storage\SQL\Component\Filter\In
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 15/ 15)
 Projom\Storage\SQL\Component\Filter\Nullable
@@ -73,7 +75,7 @@ Projom\Storage\SQL\Util
 Projom\Storage\SQL\Util\Aggregate
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  5/  5)
 Projom\Storage\SQL\Util\Filter
-  Methods: 100.00% (15/15)   Lines: 100.00% ( 18/ 18)
+  Methods:  88.24% (15/17)   Lines:  90.00% ( 18/ 20)
 Projom\Storage\SQL\Util\Join
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
 Projom\Storage\SQL\Util\LogicalOperator

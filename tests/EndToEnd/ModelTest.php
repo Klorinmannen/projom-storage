@@ -4,27 +4,13 @@ declare(strict_types=1);
 
 namespace Projom\tests\EndToEnd;
 
+include_once __DIR__ . '/User.php';
+
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine;
-use Projom\Storage\MySQL\Model;
-
-class User extends Model
-{
-	const PRIMARY_FIELD = 'UserID';
-	const REDACTED_FIELDS = ['Password'];
-	const FORMAT_FIELDS = [
-		'UserID' => 'int',
-		'Firstname' => 'string',
-		'Lastname' => 'string',
-		'Username ' => 'string',
-		'Password' => 'string',
-		'Active' => 'bool',
-		'Created' => 'date',
-		'Updated' => 'datetime'
-	];
-}
+use Projom\Tests\EndToEnd\User;
 
 class ModelTest extends TestCase
 {

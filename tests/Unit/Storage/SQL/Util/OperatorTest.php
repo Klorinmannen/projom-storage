@@ -26,7 +26,9 @@ class OperatorTest extends TestCase
 			Operator::IN,
 			Operator::NOT_IN,
 			Operator::IS_NULL,
-			Operator::IS_NOT_NULL
+			Operator::IS_NOT_NULL,
+			Operator::BETWEEN,
+			Operator::NOT_BETWEEN
 		];
 		$actual = Operator::cases();
 		$this->assertEquals($expected, $actual);
@@ -35,7 +37,22 @@ class OperatorTest extends TestCase
 	#[Test]
 	public function values(): void
 	{
-		$expected = ['=', '<>', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'IS NULL', 'IS NOT NULL'];
+		$expected = [
+			'=',
+			'<>',
+			'>',
+			'>=',
+			'<',
+			'<=',
+			'LIKE',
+			'NOT LIKE',
+			'IN',
+			'NOT IN',
+			'IS NULL',
+			'IS NOT NULL',
+			'BETWEEN',
+			'NOT BETWEEN'
+		];
 		$actual = Operator::values();
 		$this->assertEquals($expected, $actual);
 	}
