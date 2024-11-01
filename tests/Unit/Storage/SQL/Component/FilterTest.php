@@ -164,6 +164,19 @@ class FilterTest extends TestCase
 				],
 				['filter_username_1' => 'A__a', 'filter_username_2' => 'J%'],
 				'( `Username` LIKE :filter_username_1 AND `Username` NOT LIKE :filter_username_2 )'
+			],
+			'BETWEEN / NOT BETWEEN' => [
+				[
+					[
+						QueryFilter::combine(
+							QueryFilter::build('Age', [18, 30], Operator::BETWEEN),
+							QueryFilter::build('Age', [22, 26], Operator::NOT_BETWEEN)
+						),
+						LogicalOperator::AND
+					]
+				],
+				['filter_age_1_1' => 18, 'filter_age_1_2' => 30, 'filter_age_2_1' => 22, 'filter_age_2_2' => 26],
+				'( `Age` BETWEEN :filter_age_1_1 AND :filter_age_1_2 AND `Age` NOT BETWEEN :filter_age_2_1 AND :filter_age_2_2 )'
 			]
 		];
 	}
@@ -191,6 +204,7 @@ class FilterTest extends TestCase
 
 			$value = match ($case) {
 				Operator::IN, Operator::NOT_IN => [$value],
+				Operator::BETWEEN, Operator::NOT_BETWEEN => [$value, $value],
 				default => $value
 			};
 

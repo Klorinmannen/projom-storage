@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace Projom\tests\EndToEnd;
 
+include_once __DIR__ . '/User.php';
+
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine;
+use Projom\Storage\Format;
 use Projom\Storage\MySQL;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\SQL\Util\Sort;
+
+use Projom\Tests\EndToEnd\User;
 
 class EndToEndTest extends TestCase
 {
@@ -161,6 +166,11 @@ class EndToEndTest extends TestCase
 		$users = MySQL::query('User')->filterOnFields($filterLists, Operator::IN)->select();
 		$actualRecords = count($users);
 		$expectedRecords = 2;
+		$this->assertEquals($expectedRecords, $actualRecords);
+
+		$users = MySQL::query('User')->formatAs(Format::CUSTOM_OBJECT, User::class)->filterOn('UserID', [1, 3], Operator::BETWEEN)->select();
+		$actualRecords = count($users);
+		$expectedRecords = 3;
 		$this->assertEquals($expectedRecords, $actualRecords);
 
 		// No records found, should return null
