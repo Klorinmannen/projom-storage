@@ -21,4 +21,9 @@ class QueryObject
 		public null|int $offset = null,
 		public array $formatting = [],
 	) {}
+
+	public function __toString()
+	{
+		return json_encode($this);
+	}
 }

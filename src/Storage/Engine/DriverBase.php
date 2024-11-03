@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Engine;
 
+
 use Projom\Storage\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Format;
@@ -27,11 +28,15 @@ abstract class DriverBase
 
 	public function setOptions(array $options): void
 	{
+		$this->log(LogLevel::DEBUG, 'Setting options.', ['options' => $options]);
+
 		$this->returnSingleRecord = $options['return_single_record'] ?? false;
 	}
 
 	protected function formatRecords(array $records, Format $format, mixed $args = null): mixed
 	{
+		$this->log(LogLevel::DEBUG, 'Formatting records.', ['format' => $format, 'args' => $args]);
+
 		switch ($format) {
 			case Format::ARRAY:
 				return $records;
@@ -54,5 +59,13 @@ abstract class DriverBase
 			default:
 				throw new \Exception("Format is not implmented.", 400);
 		}
+	}
+
+	protected function log(string $level, string $message, array $context = []): void
+	{
+		if ($this->logger === null)
+			return;
+
+		$this->logger->log($level, $message, $context);
 	}
 }

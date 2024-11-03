@@ -16,6 +16,7 @@ use Projom\Storage\SQL\Statement\Delete;
 use Projom\Storage\SQL\Statement\Insert;
 use Projom\Storage\SQL\Statement\Select;
 use Projom\Storage\SQL\Statement\Update;
+use Psr\Log\LogLevel;
 
 class MySQL extends DriverBase
 {
@@ -39,23 +40,32 @@ class MySQL extends DriverBase
 
 	public function dispatch(Action $action, mixed $args): mixed
 	{
-		return match ($action) {
-			Action::CHANGE_CONNECTION => $this->changeConnection($args),
-			Action::SELECT => $this->select($args),
-			Action::UPDATE => $this->update($args),
-			Action::INSERT => $this->insert($args),
-			Action::DELETE => $this->delete($args),
-			Action::EXECUTE => $this->execute(...$args),
-			Action::QUERY => $this->query($args),
-			Action::START_TRANSACTION => $this->startTransaction(),
-			Action::END_TRANSACTION => $this->endTransaction(),
-			Action::REVERT_TRANSACTION => $this->revertTransaction(),
-			default => throw new \Exception("Action: $action is not supported", 400)
-		};
+		$this->log(LogLevel::DEBUG, 'Dispatching action.', ['action' => $action, 'args' => $args]);
+
+		try {
+			return match ($action) {
+				Action::CHANGE_CONNECTION => $this->changeConnection($args),
+				Action::SELECT => $this->select($args),
+				Action::UPDATE => $this->update($args),
+				Action::INSERT => $this->insert($args),
+				Action::DELETE => $this->delete($args),
+				Action::EXECUTE => $this->execute(...$args),
+				Action::QUERY => $this->query($args),
+				Action::START_TRANSACTION => $this->startTransaction(),
+				Action::END_TRANSACTION => $this->endTransaction(),
+				Action::REVERT_TRANSACTION => $this->revertTransaction(),
+				default => throw new \Exception("Action: $action is not supported", 400)
+			};
+		} catch (\Exception $e) {
+			$this->log(LogLevel::ERROR, 'Error dispatching action.', ['exception' => $e]);
+			throw $e;
+		}
 	}
 
 	public function changeConnection(int|string $name): void
 	{
+		$this->log(LogLevel::DEBUG, 'Changing connection.', ['name' => $name]);
+
 		if (!array_key_exists($name, $this->connections))
 			throw new \Exception("Connection: '$name' does not exist.", 400);
 		$this->connection = $this->connections[$name];
@@ -63,6 +73,8 @@ class MySQL extends DriverBase
 
 	public function setConnection(ConnectionInterface $connection, int|string $name): void
 	{
+		$this->log(LogLevel::DEBUG, 'Setting connection.', ['name' => $name]);
+
 		if (!$connection instanceof PDOConnection)
 			throw new \Exception("Provided connection is not a PDO connection", 400);
 		$this->connections[$name] = $connection;
@@ -70,8 +82,9 @@ class MySQL extends DriverBase
 
 	private function select(QueryObject $queryObject): null|array|object
 	{
-		$select = Select::create($queryObject);
+		$this->log(LogLevel::DEBUG, 'Selecting records.', ['queryObject' => $queryObject]);
 
+		$select = Select::create($queryObject);
 		$this->executeStatement($select);
 
 		$records = $this->statement->fetchAll();
@@ -85,33 +98,34 @@ class MySQL extends DriverBase
 			if (count($records) === 1)
 				$records = $records[0];
 
+		$this->log(LogLevel::DEBUG, 'Records selected.', ['records' => $records]);
 		return $records;
 	}
 
 	private function update(QueryObject $queryObject): int
 	{
+		$this->log(LogLevel::DEBUG, 'Updating records.', ['queryObject' => $queryObject]);
+
 		$update = Update::create($queryObject);
-
 		$this->executeStatement($update);
-
 		return $this->statement->rowCount();
 	}
 
 	private function insert(QueryObject $queryObject): int
 	{
+		$this->log(LogLevel::DEBUG, 'Inserting records.', ['queryObject' => $queryObject]);
+
 		$insert = Insert::create($queryObject);
-
 		$this->executeStatement($insert);
-
 		return (int) $this->connection->lastInsertId();
 	}
 
 	private function delete(QueryObject $queryObject): int
 	{
+		$this->log(LogLevel::DEBUG, 'Deleting records.', ['queryObject' => $queryObject]);
+
 		$delete = Delete::create($queryObject);
-
 		$this->executeStatement($delete);
-
 		return (int) $this->statement->rowCount();
 	}
 
@@ -124,38 +138,45 @@ class MySQL extends DriverBase
 
 	private function prepareAndExecute(string $sql, null|array $params): void
 	{
+		$this->log(LogLevel::DEBUG, 'Preparing and executing statement.', ['sql' => $sql, 'params' => $params]);
+
 		if (!$statement = $this->connection->prepare($sql))
-			throw new \Exception("Failed to prepare statement", 500);
+			throw new \Exception('Failed to prepare statement.', 500);
 
 		$this->statement = $statement;
 		if (!$this->statement->execute($params))
-			throw new \Exception("Failed to execute statement", 500);
+			throw new \Exception('Failed to execute statement.', 500);
 	}
 
 	private function execute(string $sql, null|array $params): array
 	{
-		$this->prepareAndExecute($sql, $params);
+		$this->log(LogLevel::INFO, 'Executing query.');
 
+		$this->prepareAndExecute($sql, $params);
 		return $this->statement->fetchAll();
 	}
 
 	private function query(array $collections): QueryBuilder
 	{
+		$this->log(LogLevel::DEBUG, 'Creating query builder.', ['collections' => $collections]);
 		return QueryBuilder::create($this, $collections, $this->logger);
 	}
 
 	private function startTransaction(): void
 	{
+		$this->log(LogLevel::INFO, 'Starting transaction.');
 		$this->connection->beginTransaction();
 	}
 
 	private function endTransaction(): void
 	{
+		$this->log(LogLevel::INFO, 'Ending transaction.');
 		$this->connection->commit();
 	}
 
 	private function revertTransaction(): void
 	{
+		$this->log(LogLevel::INFO, 'Reverting transaction.');
 		$this->connection->rollBack();
 	}
 }
