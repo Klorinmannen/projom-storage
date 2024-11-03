@@ -50,7 +50,12 @@ class DriverFactory
 
 		$name = array_key_first($config->connections);
 		$mysql->changeConnection($name);
-		$mysql->setOptions($config->options);
+
+		if ($config->logger !== null)
+			$mysql->setLogger($config->logger);
+
+		if ($config->options)
+			$mysql->setOptions($config->options);
 
 		return $mysql;
 	}

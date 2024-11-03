@@ -12,11 +12,14 @@ use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\SQL\Util\Filter;
+use Psr\Log\LoggerInterface;
 
 class QueryBuilder
 {
     private null|DriverBase $driver = null;
     private array $collections = [];
+    private null|LoggerInterface $logger = null;
+    private array $formatting = [];
     private array $fields = [];
     private array $filters = [];
     private array $sorts = [];
@@ -24,21 +27,21 @@ class QueryBuilder
     private array $groups = [];
     private null|int $limit = null;
     private null|int $offset = null;
-    private array $formatting = [];
 
     private const DEFAULT_SELECT = '*';
 
-    public function __construct(null|DriverBase $driver, array $collections)
+    public function __construct(null|DriverBase $driver, array $collections, null|LoggerInterface $logger)
     {
-        $this->collections = $collections;
         $this->driver = $driver;
+        $this->collections = $collections;
+        $this->logger = $logger;
         $this->fields = [static::DEFAULT_SELECT];
         $this->formatting = [Format::ARRAY, null];
     }
 
-    public static function create(null|DriverBase $driver = null, array $collections = []): QueryBuilder
+    public static function create(null|DriverBase $driver = null, array $collections = [], null|LoggerInterface $logger = null): QueryBuilder
     {
-        return new QueryBuilder($driver, $collections);
+        return new QueryBuilder($driver, $collections, $logger);
     }
 
     /**

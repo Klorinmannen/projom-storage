@@ -141,7 +141,7 @@ class MySQL extends DriverBase
 
 	private function query(array $collections): QueryBuilder
 	{
-		return QueryBuilder::create($this, $collections);
+		return QueryBuilder::create($this, $collections, $this->logger);
 	}
 
 	private function startTransaction(): void

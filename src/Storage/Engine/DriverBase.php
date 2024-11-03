@@ -8,14 +8,22 @@ use Projom\Storage\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Format;
 use Projom\Storage\RecordInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 abstract class DriverBase
 {
+	protected null|LoggerInterface $logger = null;
 	protected bool $returnSingleRecord = false;
 
 	abstract public function dispatch(Action $action, mixed $args): mixed;
 	abstract public function setConnection(ConnectionInterface $connection, int|string $name): void;
 	abstract public function changeConnection(int|string $name): void;
+
+	public function setLogger(LoggerInterface $logger): void
+	{
+		$this->logger = $logger;
+	}
 
 	public function setOptions(array $options): void
 	{
