@@ -23,23 +23,35 @@ class FileLogger implements LoggerInterface
 		LogLevel::DEBUG => 7,
 	];
 
-	private readonly string $fullFilename;
+	private readonly string $absoluteFilePath;
 	private readonly string $logLevel;
 
-	public function __construct(string $fullFilename, string $logLevel = LogLevel::DEBUG)
+	/**
+	 * Creates a new instance of FileLogger.
+	 * Checks if the directory of the file is writeable.
+	 * The file will be created if it does not exist yet.
+	 */
+	public function __construct(string $absoluteFilePath, string $logLevel)
 	{
-		if (!file_exists($this->fullFilename))
-			throw new InvalidArgumentException("File does not exist: $this->fullFilename");
+		$dir = dirname($absoluteFilePath);
+		if (!is_writable($dir))
+			throw new InvalidArgumentException("Directory $dir is not writable.");
 
-		if (!is_writable($this->fullFilename))
-			throw new InvalidArgumentException("File is not writable: $this->fullFilename");
+		if (!file_exists($absoluteFilePath))
+			if (!touch($absoluteFilePath))
+				throw new InvalidArgumentException("Could not create file $absoluteFilePath.");
 
-		$logLevel = strtoupper($logLevel);
-		if (!array_key_exists($logLevel, static::RFC5424))
-			throw new InvalidArgumentException("Invalid log level: $this->logLevel");
+		$this->validateLevel($logLevel);
 
-		$this->fullFilename = $fullFilename;
+		$this->absoluteFilePath = $absoluteFilePath;
 		$this->logLevel = $logLevel;
+	}
+
+	private function validateLevel(string $level): void
+	{
+		$level = strtolower($level);
+		if (!array_key_exists($level, static::RFC5424))
+			throw new InvalidArgumentException("Invalid log level: $level");
 	}
 
 	public function emergency(string|Stringable $message, array $context = []): void
@@ -84,11 +96,9 @@ class FileLogger implements LoggerInterface
 
 	public function log($level, string|Stringable $message, array $context = []): void
 	{
-		$level = strtoupper($level);
+		$this->validateLevel($level);
 
-		if (!array_key_exists($level, static::RFC5424))
-			throw new InvalidArgumentException("Invalid log level: $level");
-
+		$level = strtolower($level);
 		if (static::RFC5424[$level] > static::RFC5424[$this->logLevel])
 			return;
 
@@ -104,8 +114,8 @@ class FileLogger implements LoggerInterface
 
 			$val = match (true) {
 				is_array($val) => json_encode($val),
-				is_object($val) => $this->formatObject($val),
 				$this->isException($key, $val) => $this->formatException($val),
+				is_object($val) => $this->formatObject($val),
 				default => (string) $val,
 			};
 
@@ -127,7 +137,7 @@ class FileLogger implements LoggerInterface
 
 	private function formatObject(object $object): string
 	{
-		if (method_exists($object, '__toString'))
+		if ($object instanceof Stringable)
 			return (string) $object;
 
 		$class = get_class($object);
@@ -147,11 +157,11 @@ class FileLogger implements LoggerInterface
 	private function createLine(string $level, string $message): string
 	{
 		$dateTime = date('Y-m-d H:i:s');
-		return "[$dateTime] [$level] Message: $message";
+		return "[$dateTime] [$level] Message: $message" . PHP_EOL;
 	}
 
 	private function writeLineToFile(string $line): void
 	{
-		file_put_contents($this->fullFilename, $line . PHP_EOL, FILE_APPEND);
+		file_put_contents($this->absoluteFilePath, $line, FILE_APPEND | LOCK_EX);
 	}
 }
