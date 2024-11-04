@@ -26,11 +26,6 @@ class FileLogger implements LoggerInterface
 	private readonly string $absoluteFilePath;
 	private readonly string $logLevel;
 
-	/**
-	 * Creates a new instance of FileLogger.
-	 * Checks if the directory of the file is writeable.
-	 * The file will be created if it does not exist yet.
-	 */
 	public function __construct(string $absoluteFilePath, string $logLevel)
 	{
 		$dir = dirname($absoluteFilePath);
