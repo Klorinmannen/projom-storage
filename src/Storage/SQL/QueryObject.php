@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL;
 
+use Stringable;
+
 /**
  * DTO for a sql query.
  */
-class QueryObject
+class QueryObject implements Stringable
 {
 	public function __construct(
 		public array $collections,
