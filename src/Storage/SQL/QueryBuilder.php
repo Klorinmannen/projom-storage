@@ -13,6 +13,7 @@ use Projom\Storage\SQL\Util\LogicalOperator;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\SQL\Util\Filter;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 class QueryBuilder
 {
@@ -44,6 +45,13 @@ class QueryBuilder
         return new QueryBuilder($driver, $collections, $logger);
     }
 
+    private function log(string $level, string $message, array $context = []): void
+    {
+        if ($this->logger === null)
+            return;
+        $this->logger->log($level, $message, $context);
+    }
+
     /**
      * Format the query result.
      * 
@@ -52,6 +60,11 @@ class QueryBuilder
      */
     public function formatAs(Format $format, mixed $args = null): QueryBuilder
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with {format} and args {args}.',
+            ['format' => $format->name, 'args' => $args, 'method' => __METHOD__]
+        );
         $this->formatting = [$format, $args];
         return $this;
     }
@@ -64,6 +77,11 @@ class QueryBuilder
      */
     public function fetch(string $field, mixed $value, Operator $operator = Operator::EQ): null|array
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with {field} {operator} {value}.',
+            ['field' => $field, 'value' => $value, 'operator' => $operator->name, 'method' => __METHOD__]
+        );
         $this->filterOn($field, $value, $operator);
         return $this->select(static::DEFAULT_SELECT);
     }
@@ -79,6 +97,12 @@ class QueryBuilder
      */
     public function select(string ...$fields): null|array
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with {fields}.',
+            ['fields' => $fields, 'method' => __METHOD__]
+        );
+
         if ($fields)
             $this->fields = $fields;
 
@@ -112,6 +136,12 @@ class QueryBuilder
      */
     public function update(array $fieldsWithValues): int
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with fieldsWithValues: {fieldsWithValues}.',
+            ['fieldsWithValues' => $fieldsWithValues, 'method' => __METHOD__]
+        );
+
         $queryObject = new QueryObject(
             collections: $this->collections,
             fieldsWithValues: [$fieldsWithValues],
@@ -137,6 +167,11 @@ class QueryBuilder
      */
     public function insertMultiple(array $fieldsWithValues): int
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with fieldsWithValues: {fieldsWithValues}.',
+            ['fieldsWithValues' => $fieldsWithValues, 'method' => __METHOD__]
+        );
         $queryObject = new QueryObject(
             collections: $this->collections,
             fieldsWithValues: $fieldsWithValues
@@ -177,6 +212,12 @@ class QueryBuilder
      */
     public function delete(): int
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method}.',
+            ['method' => __METHOD__]
+        );
+
         $queryObject = new QueryObject(
             collections: $this->collections,
             filters: $this->filters,
@@ -205,6 +246,17 @@ class QueryBuilder
         string|null $onCollectionWithField = null
     ): QueryBuilder {
 
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with {currentCollectionWithField} {join} {onCollectionWithField}.',
+            [
+                'currentCollectionWithField' => $currentCollectionWithField,
+                'join' => $join->name,
+                'onCollectionWithField' => $onCollectionWithField,
+                'method' => __METHOD__
+            ]
+        );
+
         $this->joins[] = [
             $currentCollectionWithField,
             $join,
@@ -227,6 +279,12 @@ class QueryBuilder
         LogicalOperator $logicalOperator = LogicalOperator::AND
     ): QueryBuilder {
 
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with fieldsWithValues: {fieldsWithValues}.',
+            ['fieldsWithValues' => $fieldsWithValues, 'method' => __METHOD__]
+        );
+
         $filters = Filter::list($fieldsWithValues, $operator);
         $this->filterList($filters, $logicalOperator);
 
@@ -242,6 +300,12 @@ class QueryBuilder
      */
     public function filterList(array $filters, LogicalOperator $groupLogicalOperator = LogicalOperator::AND): QueryBuilder
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with filters: {filters}.',
+            ['filters' => $filters, 'method' => __METHOD__]
+        );
+
         $this->filters[] = [$filters, $groupLogicalOperator];
         return $this;
     }
@@ -261,6 +325,18 @@ class QueryBuilder
         LogicalOperator $logicalOperator = LogicalOperator::AND
     ): QueryBuilder {
 
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with {field} {operator} {value} and "{logicalOperator}".',
+            [
+                'field' => $field,
+                'value' => $value,
+                'operator' => $operator->name,
+                'logicalOperator' => $logicalOperator->name,
+                'method' => __METHOD__
+            ]
+        );
+
         $filter = Filter::build($field, $value, $operator);
         $this->filter($filter, $logicalOperator);
 
@@ -276,6 +352,12 @@ class QueryBuilder
      */
     public function filter(array $filter, LogicalOperator $groupLogicalOperator = LogicalOperator::AND): QueryBuilder
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with filter: {filter}.',
+            ['filter' => $filter, 'method' => __METHOD__]
+        );
+
         $this->filters[] = [[$filter], $groupLogicalOperator];
         return $this;
     }
@@ -289,6 +371,12 @@ class QueryBuilder
      */
     public function groupOn(string ...$fields): QueryBuilder
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with {fields}.',
+            ['fields' => $fields, 'method' => __METHOD__]
+        );
+
         if ($fields)
             $this->groups[] = $fields;
         return $this;
@@ -302,6 +390,12 @@ class QueryBuilder
      */
     public function orderOn(array $sortFields): QueryBuilder
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with sortFields: {sortFields}.',
+            ['sortFields' => $sortFields, 'method' => __METHOD__]
+        );
+
         foreach ($sortFields as $field => $sort)
             $this->sorts[] = [$field, $sort];
         return $this;
@@ -323,6 +417,12 @@ class QueryBuilder
      */
     public function limit(int $limit): QueryBuilder
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with limit: {limit}.',
+            ['limit' => $limit, 'method' => __METHOD__]
+        );
+
         $this->limit = $limit;
         return $this;
     }
@@ -334,6 +434,12 @@ class QueryBuilder
      */
     public function offset(int $offset): QueryBuilder
     {
+        $this->log(
+            LogLevel::DEBUG,
+            'Method: {method} with offset: {offset}.',
+            ['offset' => $offset, 'method' => __METHOD__]
+        );
+
         $this->offset = $offset;
         return $this;
     }

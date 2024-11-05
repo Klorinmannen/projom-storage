@@ -40,7 +40,11 @@ class MySQL extends DriverBase
 
 	public function dispatch(Action $action, mixed $args): mixed
 	{
-		$this->log(LogLevel::DEBUG, 'Dispatching action.', ['action' => $action, 'args' => $args]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Method: {method} with action: {action} and args: {args}.',
+			['action' => $action->name, 'args' => $args, 'method' => __METHOD__]
+		);
 
 		try {
 			return match ($action) {
@@ -57,14 +61,18 @@ class MySQL extends DriverBase
 				default => throw new \Exception("Action: $action is not supported", 400)
 			};
 		} catch (\Exception $e) {
-			$this->log(LogLevel::ERROR, 'Error dispatching action.', ['exception' => $e]);
+			$this->log(LogLevel::ERROR, 'Error dispatching action. {exception}', ['exception' => $e]);
 			throw $e;
 		}
 	}
 
 	public function changeConnection(int|string $name): void
 	{
-		$this->log(LogLevel::DEBUG, 'Changing connection.', ['name' => $name]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Method: {method} with "{name}".',
+			['name' => $name, 'method' => __METHOD__]
+		);
 
 		if (!array_key_exists($name, $this->connections))
 			throw new \Exception("Connection: '$name' does not exist.", 400);
@@ -73,7 +81,11 @@ class MySQL extends DriverBase
 
 	public function setConnection(ConnectionInterface $connection, int|string $name): void
 	{
-		$this->log(LogLevel::DEBUG, 'Setting connection.', ['name' => $name]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Method: {method} with {connection} named "{name}".',
+			['connection' => $connection::class, 'name' => $name, 'method' => __METHOD__]
+		);
 
 		if (!$connection instanceof PDOConnection)
 			throw new \Exception("Provided connection is not a PDO connection", 400);
@@ -82,7 +94,11 @@ class MySQL extends DriverBase
 
 	private function select(QueryObject $queryObject): null|array|object
 	{
-		$this->log(LogLevel::DEBUG, 'Selecting records.', ['queryObject' => $queryObject]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Method: {method} with {queryObject}.',
+			['queryObject' => $queryObject, 'method' => __METHOD__]
+		);
 
 		$select = Select::create($queryObject);
 		$this->executeStatement($select);
@@ -98,13 +114,16 @@ class MySQL extends DriverBase
 			if (count($records) === 1)
 				$records = $records[0];
 
-		$this->log(LogLevel::DEBUG, 'Records selected.', ['records' => $records]);
 		return $records;
 	}
 
 	private function update(QueryObject $queryObject): int
 	{
-		$this->log(LogLevel::DEBUG, 'Updating records.', ['queryObject' => $queryObject]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Method: {method} with {queryObject}.',
+			['queryObject' => $queryObject, 'method' => __METHOD__]
+		);
 
 		$update = Update::create($queryObject);
 		$this->executeStatement($update);
@@ -113,7 +132,11 @@ class MySQL extends DriverBase
 
 	private function insert(QueryObject $queryObject): int
 	{
-		$this->log(LogLevel::DEBUG, 'Inserting records.', ['queryObject' => $queryObject]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Method: {method} with {queryObject}.',
+			['queryObject' => $queryObject, 'method' => __METHOD__]
+		);
 
 		$insert = Insert::create($queryObject);
 		$this->executeStatement($insert);
@@ -122,7 +145,11 @@ class MySQL extends DriverBase
 
 	private function delete(QueryObject $queryObject): int
 	{
-		$this->log(LogLevel::DEBUG, 'Deleting records.', ['queryObject' => $queryObject]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Method: {method} with {queryObject}.',
+			['queryObject' => $queryObject, 'method' => __METHOD__]
+		);
 
 		$delete = Delete::create($queryObject);
 		$this->executeStatement($delete);
@@ -132,13 +159,16 @@ class MySQL extends DriverBase
 	private function executeStatement(StatementInterface $statement): void
 	{
 		[$sql, $params] = $statement->statement();
-
 		$this->prepareAndExecute($sql, $params);
 	}
 
 	private function prepareAndExecute(string $sql, null|array $params): void
 	{
-		$this->log(LogLevel::DEBUG, 'Preparing and executing statement.', ['sql' => $sql, 'params' => $params]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Method: {method} with sql: {sql} and params: {params}.',
+			['sql' => $sql, 'params' => $params, 'method' => __METHOD__]
+		);
 
 		if (!$statement = $this->connection->prepare($sql))
 			throw new \Exception('Failed to prepare statement.', 500);
@@ -150,7 +180,11 @@ class MySQL extends DriverBase
 
 	private function execute(string $sql, null|array $params): array
 	{
-		$this->log(LogLevel::INFO, 'Executing query.');
+		$this->log(
+			LogLevel::DEBUG,
+			'Method {method} with sql: {sql} and params: {params}.',
+			['sql' => $sql, 'params' => $params, 'method' => __METHOD__]
+		);
 
 		$this->prepareAndExecute($sql, $params);
 		return $this->statement->fetchAll();
@@ -158,7 +192,12 @@ class MySQL extends DriverBase
 
 	private function query(array $collections): QueryBuilder
 	{
-		$this->log(LogLevel::DEBUG, 'Creating query builder.', ['collections' => $collections]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Method: {method} with collections {collections}.',
+			['collections' => $collections, 'method' => __METHOD__]
+		);
+
 		return QueryBuilder::create($this, $collections, $this->logger);
 	}
 

@@ -9,10 +9,11 @@ use Projom\Storage\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Format;
 use Projom\Storage\RecordInterface;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
-abstract class DriverBase
+abstract class DriverBase implements LoggerAwareInterface
 {
 	protected null|LoggerInterface $logger = null;
 	protected bool $returnSingleRecord = false;
@@ -28,14 +29,22 @@ abstract class DriverBase
 
 	public function setOptions(array $options): void
 	{
-		$this->log(LogLevel::DEBUG, 'Setting options.', ['options' => $options]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Setting options: {options} in {method}.',
+			['options' => $options, 'method' => __METHOD__]
+		);
 
 		$this->returnSingleRecord = $options['return_single_record'] ?? false;
 	}
 
 	protected function formatRecords(array $records, Format $format, mixed $args = null): mixed
 	{
-		$this->log(LogLevel::DEBUG, 'Formatting records.', ['format' => $format, 'args' => $args]);
+		$this->log(
+			LogLevel::DEBUG,
+			'Formatting records with {format} and args {args} in {method}.',
+			['format' => $format->name, 'args' => $args, 'method' => __METHOD__]
+		);
 
 		switch ($format) {
 			case Format::ARRAY:
