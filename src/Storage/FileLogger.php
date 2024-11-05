@@ -12,7 +12,7 @@ use Psr\Log\LogLevel;
 
 class FileLogger implements LoggerInterface
 {
-	const RFC5424 = [
+	const RFC5424_LEVELS = [
 		LogLevel::EMERGENCY => 0,
 		LogLevel::ALERT => 1,
 		LogLevel::CRITICAL => 2,
@@ -28,13 +28,8 @@ class FileLogger implements LoggerInterface
 
 	public function __construct(string $absoluteFilePath, string $logLevel)
 	{
-		$dir = dirname($absoluteFilePath);
-		if (!is_writable($dir))
-			throw new InvalidArgumentException("Directory $dir is not writable.");
-
 		if (!file_exists($absoluteFilePath))
-			if (!touch($absoluteFilePath))
-				throw new InvalidArgumentException("Could not create file $absoluteFilePath.");
+			throw new InvalidArgumentException("File: $absoluteFilePath does not exist.");
 
 		$this->validateLevel($logLevel);
 
@@ -45,7 +40,7 @@ class FileLogger implements LoggerInterface
 	private function validateLevel(string $level): void
 	{
 		$level = strtolower($level);
-		if (!array_key_exists($level, static::RFC5424))
+		if (!array_key_exists($level, static::RFC5424_LEVELS))
 			throw new InvalidArgumentException("Invalid log level: $level");
 	}
 
@@ -94,7 +89,7 @@ class FileLogger implements LoggerInterface
 		$this->validateLevel($level);
 
 		$level = strtolower($level);
-		if (static::RFC5424[$level] > static::RFC5424[$this->logLevel])
+		if (static::RFC5424_LEVELS[$level] > static::RFC5424_LEVELS[$this->logLevel])
 			return;
 
 		$message = $this->interpolate($message, $context);
@@ -132,7 +127,7 @@ class FileLogger implements LoggerInterface
 
 	private function formatObject(object $object): string
 	{
-		if ($object instanceof Stringable)
+		if ($object instanceof Stringable || method_exists($object, '__toString'))
 			return (string) $object;
 
 		$class = get_class($object);
@@ -146,13 +141,15 @@ class FileLogger implements LoggerInterface
 		$message = $exception->getMessage();
 		$file = $exception->getFile();
 		$line = $exception->getLine();
-		return "Exception: $message with code $code in $file on line $line.\nStack trace:\n$trace";
+		return "Exception \"$message\" with code $code in \"$file\" on line $line.\nStack trace:\n$trace";
 	}
 
 	private function createLine(string $level, string $message): string
 	{
+		$message = trim($message);
+		$level = strtoupper($level);
 		$dateTime = date('Y-m-d H:i:s');
-		return "[$dateTime] [$level] Message: $message" . PHP_EOL;
+		return "[$dateTime] [$level] $message." . PHP_EOL;
 	}
 
 	private function writeLineToFile(string $line): void
