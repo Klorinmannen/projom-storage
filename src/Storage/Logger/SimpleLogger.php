@@ -10,7 +10,7 @@ use Psr\Log\AbstractLogger;
 use Psr\Log\InvalidArgumentException;
 use Psr\Log\LogLevel;
 
-class FileLogger extends AbstractLogger
+class SimpleLogger extends AbstractLogger
 {
 	const RFC5424_LEVELS = [
 		LogLevel::EMERGENCY => 0,
@@ -25,18 +25,23 @@ class FileLogger extends AbstractLogger
 
 	private readonly string $absoluteFilePath;
 	private readonly string $logLevel;
+	private readonly LoggerType $type;
 
 	public function __construct(
-		string $absoluteFilePath,
-		string $logLevel = LogLevel::DEBUG
+		string $type = LoggerType::ERROR_LOG,
+		string $logLevel = LogLevel::DEBUG,
+		string $absoluteFilePath = ''
 	) {
-		if (!file_exists($absoluteFilePath))
-			throw new InvalidArgumentException("File: $absoluteFilePath does not exist.");
+
+		if ($type === LoggerType::FILE)
+			if (!file_exists($absoluteFilePath))
+				throw new InvalidArgumentException("File: $absoluteFilePath does not exist.");
 
 		$this->validateLevel($logLevel);
 
 		$this->absoluteFilePath = $absoluteFilePath;
 		$this->logLevel = $logLevel;
+		$this->type = $type;
 	}
 
 	public function log($level, string|Stringable $message, array $context = []): void
@@ -49,7 +54,7 @@ class FileLogger extends AbstractLogger
 
 		$message = $this->interpolate($message, $context);
 		$line = $this->createLine($level, $message);
-		$this->writeLineToFile($line);
+		$this->writeLine($line);
 	}
 
 	private function validateLevel(string $level): void
@@ -111,8 +116,21 @@ class FileLogger extends AbstractLogger
 		$message = trim($message);
 		$level = strtoupper($level);
 		$dateTime = date('Y-m-d H:i:s');
-
 		return "[$dateTime] [$level] $message" . PHP_EOL;
+	}
+
+	private function writeLine(string $line): void
+	{
+		match ($this->type) {
+			LoggerType::ERROR_LOG => $this->writeToErrorLog($line),
+			LoggerType::FILE => $this->writeLineToFile($line),
+			default => throw new InvalidArgumentException("Invalid logger type: {$this->type}", 400),
+		};
+	}
+
+	private function writeToErrorLog(string $line): void
+	{
+		error_log($line, message_type: 0);
 	}
 
 	private function writeLineToFile(string $line): void
