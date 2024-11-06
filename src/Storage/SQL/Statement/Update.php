@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL\Statement;
 
+use Stringable;
+
 use Projom\Storage\SQL\Component\Filter;
 use Projom\Storage\SQL\Component\Join;
 use Projom\Storage\SQL\Component\Set;
@@ -12,7 +14,7 @@ use Projom\Storage\SQL\StatementInterface;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util;
 
-class Update implements StatementInterface
+class Update implements StatementInterface, Stringable
 {
 	private readonly Table $table;
 	private readonly Set $set;
@@ -25,6 +27,12 @@ class Update implements StatementInterface
 		$this->set = Set::create($queryUpdate->fieldsWithValues);
 		$this->join = Join::create($queryUpdate->joins);
 		$this->filter = Filter::create($queryUpdate->filters);
+	}
+
+	public function __toString(): string
+	{
+		[$statement, $params] = $this->statement();
+		return $statement;
 	}
 
 	public static function create(QueryObject $queryUpdate): Update

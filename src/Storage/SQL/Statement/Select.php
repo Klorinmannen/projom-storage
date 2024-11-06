@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL\Statement;
 
+use Stringable;
+
 use Projom\Storage\SQL\Component\Column;
 use Projom\Storage\SQL\Component\Filter;
 use Projom\Storage\SQL\Component\Group;
@@ -16,7 +18,7 @@ use Projom\Storage\SQL\StatementInterface;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util;
 
-class Select implements StatementInterface
+class Select implements StatementInterface, Stringable
 {
 	private readonly Table $table;
 	private readonly Column $column;
@@ -37,6 +39,12 @@ class Select implements StatementInterface
 		$this->order = Order::create($querySelect->sorts);
 		$this->limit = Limit::create($querySelect->limit);
 		$this->offset = Offset::create($querySelect->offset);
+	}
+
+	public function __toString(): string
+	{
+		[$statement, $params] = $this->statement();
+		return $statement;
 	}
 
 	public static function create(QueryObject $querySelect): Select
