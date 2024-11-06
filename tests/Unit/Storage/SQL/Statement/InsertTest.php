@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Tests\Unit\Storage\SQL\Statement;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\SQL\QueryObject;
@@ -12,7 +13,7 @@ use Projom\Storage\SQL\Statement\Insert;
 
 class InsertTest extends TestCase
 {
-	public static function create_test_provider(): array
+	public static function createProvider(): array
 	{
 		return [
 			[
@@ -38,10 +39,22 @@ class InsertTest extends TestCase
 		];
 	}
 
-	#[DataProvider('create_test_provider')]
-	public function test_create(QueryObject $queryObject, array $expected): void
+	#[Test]
+	#[DataProvider('createProvider')]
+	public function create(QueryObject $queryObject, array $expected): void
 	{
 		$insert = Insert::create($queryObject);
 		$this->assertEquals($expected, $insert->statement());
+	}
+
+	#[Test]
+	public function stringable(): void
+	{
+		$queryObject = new QueryObject(
+			collections: ['User'],
+			fieldsWithValues: [['Name' => 'John', 'Age' => 25]]
+		);
+		$insert = Insert::create($queryObject);
+		$this->assertEquals('INSERT INTO `User` (`Name`, `Age`) VALUES (?, ?)', (string) $insert);
 	}
 }

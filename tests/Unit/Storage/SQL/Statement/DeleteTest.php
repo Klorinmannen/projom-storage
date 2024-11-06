@@ -56,4 +56,11 @@ class DeleteTest extends TestCase
 		$delete = Delete::create($queryObject);
 		$this->assertEquals($expected, $delete->statement());
 	}
+
+	#[Test]
+	public function stringable(): void
+	{
+		$delete = Delete::create(new QueryObject(collections: ['User']));
+		$this->assertEquals('DELETE FROM `User`', (string) $delete);
+	}
 }

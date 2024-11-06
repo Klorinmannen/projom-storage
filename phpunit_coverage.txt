@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2024-11-06 11:33:26
+  2024-11-06 19:45:16
 
  Summary:
   Classes: 80.49% (33/41)
-  Methods: 84.78% (195/230)
-  Lines:   78.22% (765/978)
+  Methods: 84.32% (199/236)
+  Lines:   77.79% (774/995)
 
 Projom\Storage\DB
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
@@ -25,7 +25,7 @@ Projom\Storage\Engine\Driver\ConnectionFactory
 Projom\Storage\Engine\Driver\DSN
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 19/ 19)
 Projom\Storage\Engine\Driver\MySQL
-  Methods: 100.00% (16/16)   Lines: 100.00% (100/100)
+  Methods: 100.00% (16/16)   Lines: 100.00% (101/101)
 Projom\Storage\Engine\Driver\PDOConnection
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  8/  8)
 Projom\Storage\MySQL
@@ -63,13 +63,13 @@ Projom\Storage\SQL\QueryBuilder
 Projom\Storage\SQL\QueryObject
   Methods:  50.00% ( 1/ 2)   Lines:  50.00% (  1/  2)
 Projom\Storage\SQL\Statement\Delete
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 15/ 15)
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 17/ 17)
 Projom\Storage\SQL\Statement\Insert
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 16/ 16)
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 18/ 18)
 Projom\Storage\SQL\Statement\Select
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 28/ 28)
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 30/ 30)
 Projom\Storage\SQL\Statement\Update
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 16/ 16)
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 18/ 18)
 Projom\Storage\SQL\Util
   Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  9/  9)
 Projom\Storage\SQL\Util\Aggregate
