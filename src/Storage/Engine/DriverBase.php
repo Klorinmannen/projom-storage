@@ -17,7 +17,7 @@ abstract class DriverBase implements LoggerAwareInterface
 	protected LoggerInterface $logger;
 	protected bool $returnSingleRecord = false;
 
-	public function __construct(array $options = [], LoggerInterface $logger = new NullLogger())
+	public function __construct(LoggerInterface $logger = new NullLogger(), array $options = [])
 	{
 		$this->logger = $logger;
 		$this->setOptions($options);
