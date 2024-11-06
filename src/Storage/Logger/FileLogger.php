@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage;
+namespace Projom\Storage\Logger;
 
 use Stringable;
 
+use Psr\Log\AbstractLogger;
 use Psr\Log\InvalidArgumentException;
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
-class FileLogger implements LoggerInterface
+class FileLogger extends AbstractLogger
 {
 	const RFC5424_LEVELS = [
 		LogLevel::EMERGENCY => 0,
@@ -26,8 +26,10 @@ class FileLogger implements LoggerInterface
 	private readonly string $absoluteFilePath;
 	private readonly string $logLevel;
 
-	public function __construct(string $absoluteFilePath, string $logLevel)
-	{
+	public function __construct(
+		string $absoluteFilePath,
+		string $logLevel = LogLevel::DEBUG
+	) {
 		if (!file_exists($absoluteFilePath))
 			throw new InvalidArgumentException("File: $absoluteFilePath does not exist.");
 
@@ -35,53 +37,6 @@ class FileLogger implements LoggerInterface
 
 		$this->absoluteFilePath = $absoluteFilePath;
 		$this->logLevel = $logLevel;
-	}
-
-	private function validateLevel(string $level): void
-	{
-		$level = strtolower($level);
-		if (!array_key_exists($level, static::RFC5424_LEVELS))
-			throw new InvalidArgumentException("Invalid log level: $level");
-	}
-
-	public function emergency(string|Stringable $message, array $context = []): void
-	{
-		$this->log(LogLevel::EMERGENCY, $message, $context);
-	}
-
-	public function alert(string|Stringable $message, array $context = []): void
-	{
-		$this->log(LogLevel::ALERT, $message, $context);
-	}
-
-	public function critical(string|Stringable $message, array $context = []): void
-	{
-		$this->log(LogLevel::CRITICAL, $message, $context);
-	}
-
-	public function error(string|Stringable $message, array $context = []): void
-	{
-		$this->log(LogLevel::ERROR, $message, $context);
-	}
-
-	public function warning(string|Stringable $message, array $context = []): void
-	{
-		$this->log(LogLevel::WARNING, $message, $context);
-	}
-
-	public function notice(string|Stringable $message, array $context = []): void
-	{
-		$this->log(LogLevel::NOTICE, $message, $context);
-	}
-
-	public function info(string|Stringable $message, array $context = []): void
-	{
-		$this->log(LogLevel::INFO, $message, $context);
-	}
-
-	public function debug(string|Stringable $message, array $context = []): void
-	{
-		$this->log(LogLevel::DEBUG, $message);
 	}
 
 	public function log($level, string|Stringable $message, array $context = []): void
@@ -95,6 +50,13 @@ class FileLogger implements LoggerInterface
 		$message = $this->interpolate($message, $context);
 		$line = $this->createLine($level, $message);
 		$this->writeLineToFile($line);
+	}
+
+	private function validateLevel(string $level): void
+	{
+		$level = strtolower($level);
+		if (!array_key_exists($level, static::RFC5424_LEVELS))
+			throw new InvalidArgumentException("Invalid log level: $level");
 	}
 
 	private function interpolate(string $message, array $context): string
@@ -149,7 +111,8 @@ class FileLogger implements LoggerInterface
 		$message = trim($message);
 		$level = strtoupper($level);
 		$dateTime = date('Y-m-d H:i:s');
-		return "[$dateTime] [$level] $message." . PHP_EOL;
+
+		return "[$dateTime] [$level] $message" . PHP_EOL;
 	}
 
 	private function writeLineToFile(string $line): void
