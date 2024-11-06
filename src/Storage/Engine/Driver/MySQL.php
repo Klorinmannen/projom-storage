@@ -16,7 +16,6 @@ use Projom\Storage\SQL\Statement\Delete;
 use Projom\Storage\SQL\Statement\Insert;
 use Projom\Storage\SQL\Statement\Select;
 use Projom\Storage\SQL\Statement\Update;
-use Psr\Log\LogLevel;
 
 class MySQL extends DriverBase
 {
@@ -26,11 +25,10 @@ class MySQL extends DriverBase
 
 	public function __construct(null|PDOConnection $connection, string $name)
 	{
-		if ($connection === null)
-			return;
+		parent::__construct();
 
-		$this->setConnection($connection, $name);
-		$this->changeConnection($name);
+		$this->connection = $connection;
+		$this->connections[$name] = $connection;
 	}
 
 	public static function create(null|PDOConnection $connection = null, string $name = 'default'): MySQL
@@ -40,36 +38,29 @@ class MySQL extends DriverBase
 
 	public function dispatch(Action $action, mixed $args): mixed
 	{
-		$this->log(
-			LogLevel::DEBUG,
-			'Method: {method} with action: {action} and args: {args}.',
+		$this->logger->debug(
+			'Method: {method} with {action} and {args}.',
 			['action' => $action->name, 'args' => $args, 'method' => __METHOD__]
 		);
 
-		try {
-			return match ($action) {
-				Action::CHANGE_CONNECTION => $this->changeConnection($args),
-				Action::SELECT => $this->select($args),
-				Action::UPDATE => $this->update($args),
-				Action::INSERT => $this->insert($args),
-				Action::DELETE => $this->delete($args),
-				Action::EXECUTE => $this->execute(...$args),
-				Action::QUERY => $this->query($args),
-				Action::START_TRANSACTION => $this->startTransaction(),
-				Action::END_TRANSACTION => $this->endTransaction(),
-				Action::REVERT_TRANSACTION => $this->revertTransaction(),
-				default => throw new \Exception("Action: $action is not supported", 400)
-			};
-		} catch (\Exception $e) {
-			$this->log(LogLevel::ERROR, 'Error dispatching action. {exception}', ['exception' => $e]);
-			throw $e;
-		}
+		return match ($action) {
+			Action::CHANGE_CONNECTION => $this->changeConnection($args),
+			Action::SELECT => $this->select($args),
+			Action::UPDATE => $this->update($args),
+			Action::INSERT => $this->insert($args),
+			Action::DELETE => $this->delete($args),
+			Action::EXECUTE => $this->execute(...$args),
+			Action::QUERY => $this->query($args),
+			Action::START_TRANSACTION => $this->startTransaction(),
+			Action::END_TRANSACTION => $this->endTransaction(),
+			Action::REVERT_TRANSACTION => $this->revertTransaction(),
+			default => throw new \Exception("Action: $action is not supported", 400)
+		};
 	}
 
 	public function changeConnection(int|string $name): void
 	{
-		$this->log(
-			LogLevel::DEBUG,
+		$this->logger->debug(
 			'Method: {method} with "{name}".',
 			['name' => $name, 'method' => __METHOD__]
 		);
@@ -81,8 +72,7 @@ class MySQL extends DriverBase
 
 	public function setConnection(ConnectionInterface $connection, int|string $name): void
 	{
-		$this->log(
-			LogLevel::DEBUG,
+		$this->logger->debug(
 			'Method: {method} with {connection} named "{name}".',
 			['connection' => $connection::class, 'name' => $name, 'method' => __METHOD__]
 		);
@@ -94,8 +84,7 @@ class MySQL extends DriverBase
 
 	private function select(QueryObject $queryObject): null|array|object
 	{
-		$this->log(
-			LogLevel::DEBUG,
+		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
 			['queryObject' => $queryObject, 'method' => __METHOD__]
 		);
@@ -119,8 +108,7 @@ class MySQL extends DriverBase
 
 	private function update(QueryObject $queryObject): int
 	{
-		$this->log(
-			LogLevel::DEBUG,
+		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
 			['queryObject' => $queryObject, 'method' => __METHOD__]
 		);
@@ -132,8 +120,7 @@ class MySQL extends DriverBase
 
 	private function insert(QueryObject $queryObject): int
 	{
-		$this->log(
-			LogLevel::DEBUG,
+		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
 			['queryObject' => $queryObject, 'method' => __METHOD__]
 		);
@@ -145,8 +132,7 @@ class MySQL extends DriverBase
 
 	private function delete(QueryObject $queryObject): int
 	{
-		$this->log(
-			LogLevel::DEBUG,
+		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
 			['queryObject' => $queryObject, 'method' => __METHOD__]
 		);
@@ -158,15 +144,19 @@ class MySQL extends DriverBase
 
 	private function executeStatement(StatementInterface $statement): void
 	{
+		$this->logger->debug(
+			'Method: {method} with {statement}.',
+			['statement' => $statement, 'method' => __METHOD__]
+		);
+
 		[$sql, $params] = $statement->statement();
 		$this->prepareAndExecute($sql, $params);
 	}
 
 	private function prepareAndExecute(string $sql, null|array $params): void
 	{
-		$this->log(
-			LogLevel::DEBUG,
-			'Method: {method} with sql: {sql} and params: {params}.',
+		$this->logger->debug(
+			'Method: {method} with "{sql}" and {params}.',
 			['sql' => $sql, 'params' => $params, 'method' => __METHOD__]
 		);
 
@@ -180,9 +170,8 @@ class MySQL extends DriverBase
 
 	private function execute(string $sql, null|array $params): array
 	{
-		$this->log(
-			LogLevel::DEBUG,
-			'Method {method} with sql: {sql} and params: {params}.',
+		$this->logger->debug(
+			'Method {method} with "{sql}" and {params}.',
 			['sql' => $sql, 'params' => $params, 'method' => __METHOD__]
 		);
 
@@ -192,9 +181,8 @@ class MySQL extends DriverBase
 
 	private function query(array $collections): QueryBuilder
 	{
-		$this->log(
-			LogLevel::DEBUG,
-			'Method: {method} with collections {collections}.',
+		$this->logger->debug(
+			'Method: {method} with {collections}.',
 			['collections' => $collections, 'method' => __METHOD__]
 		);
 
@@ -203,19 +191,19 @@ class MySQL extends DriverBase
 
 	private function startTransaction(): void
 	{
-		$this->log(LogLevel::INFO, 'Starting transaction.');
+		$this->logger->debug('Starting transaction.');
 		$this->connection->beginTransaction();
 	}
 
 	private function endTransaction(): void
 	{
-		$this->log(LogLevel::INFO, 'Ending transaction.');
+		$this->logger->debug('Ending transaction.');
 		$this->connection->commit();
 	}
 
 	private function revertTransaction(): void
 	{
-		$this->log(LogLevel::INFO, 'Reverting transaction.');
+		$this->logger->debug('Reverting transaction.');
 		$this->connection->rollBack();
 	}
 }

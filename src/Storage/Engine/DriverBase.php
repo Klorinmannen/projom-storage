@@ -4,45 +4,48 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Engine;
 
-
 use Projom\Storage\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Format;
 use Projom\Storage\RecordInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 
 abstract class DriverBase implements LoggerAwareInterface
 {
-	protected null|LoggerInterface $logger = null;
+	protected LoggerInterface $logger;
 	protected bool $returnSingleRecord = false;
+
+	public function __construct(array $options = [], LoggerInterface $logger = new NullLogger())
+	{
+		$this->logger = $logger;
+		$this->setOptions($options);
+	}
 
 	abstract public function dispatch(Action $action, mixed $args): mixed;
 	abstract public function setConnection(ConnectionInterface $connection, int|string $name): void;
 	abstract public function changeConnection(int|string $name): void;
 
-	public function setLogger(LoggerInterface $logger): void
-	{
-		$this->logger = $logger;
-	}
-
 	public function setOptions(array $options): void
 	{
-		$this->log(
-			LogLevel::DEBUG,
-			'Setting options: {options} in {method}.',
+		$this->logger->debug(
+			'Method: {method} with {options}.',
 			['options' => $options, 'method' => __METHOD__]
 		);
 
 		$this->returnSingleRecord = $options['return_single_record'] ?? false;
 	}
 
+	public function setLogger(LoggerInterface $logger): void
+	{
+		$this->logger = $logger;
+	}
+
 	protected function formatRecords(array $records, Format $format, mixed $args = null): mixed
 	{
-		$this->log(
-			LogLevel::DEBUG,
-			'Formatting records with {format} and args {args} in {method}.',
+		$this->logger->debug(
+			'Method: {method} with {format} and {args}.',
 			['format' => $format->name, 'args' => $args, 'method' => __METHOD__]
 		);
 
@@ -68,13 +71,5 @@ abstract class DriverBase implements LoggerAwareInterface
 			default:
 				throw new \Exception("Format is not implmented.", 400);
 		}
-	}
-
-	protected function log(string $level, string $message, array $context = []): void
-	{
-		if ($this->logger === null)
-			return;
-
-		$this->logger->log($level, $message, $context);
 	}
 }
