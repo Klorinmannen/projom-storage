@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage;
+namespace Projom\Storage\Query;
 
 use Projom\Storage\Query\Action;
 use Projom\Storage\Engine;

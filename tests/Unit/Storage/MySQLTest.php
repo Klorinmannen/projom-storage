@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
-use Projom\Storage\MySQL;
+use Projom\Storage\Query\MySQL;
 use Projom\Storage\SQL\QueryBuilder;
 
 class MySQLTest extends TestCase

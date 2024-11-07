@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine;
 use Projom\Storage\Query\Format;
-use Projom\Storage\MySQL;
+use Projom\Storage\Query\MySQL;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\SQL\Util\Sort;

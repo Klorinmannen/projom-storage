@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\MySQL;
 
-use Projom\Storage\MySQL;
+use Projom\Storage\Query\MySQL;
 use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Util;
