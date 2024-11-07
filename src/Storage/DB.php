@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage;
 
 use Projom\Storage\Engine;
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
 
 class DB
 {

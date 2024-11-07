@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Engine\Driver\MySQL;
 use Projom\Storage\Engine\Driver\PDOConnection;
