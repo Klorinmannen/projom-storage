@@ -42,6 +42,19 @@ abstract class DriverBase implements LoggerAwareInterface
 		$this->logger = $logger;
 	}
 
+	protected function processRecords(array $records, array $formatting): mixed
+	{
+		$this->logger->debug(
+			'Method: {method} with {records}.',
+			['records' => $records, 'method' => __METHOD__]
+		);
+
+		$records = $this->formatRecords($records, ...$formatting);
+		$records = $this->processOptions($records);
+
+		return $records;
+	}
+
 	protected function formatRecords(array $records, Format $format, mixed $args = null): mixed
 	{
 		$this->logger->debug(
@@ -71,5 +84,14 @@ abstract class DriverBase implements LoggerAwareInterface
 			default:
 				throw new \Exception("Format is not implmented.", 400);
 		}
+	}
+
+	protected function processOptions(array $records): array|object
+	{
+		if ($this->returnSingleRecord)
+			if (count($records) === 1)
+				$records = $records[0];
+
+		return $records;
 	}
 }
