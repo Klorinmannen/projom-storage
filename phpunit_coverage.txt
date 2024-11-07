@@ -1,15 +1,13 @@
 
 
 Code Coverage Report:
-  2024-11-07 15:00:54
+  2024-11-07 15:01:37
 
  Summary:
   Classes: 80.49% (33/41)
   Methods: 84.32% (199/236)
   Lines:   77.79% (774/995)
 
-Projom\Storage\DB
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
 Projom\Storage\Engine
   Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 25/ 25)
 Projom\Storage\Engine\Config
@@ -28,6 +26,8 @@ Projom\Storage\Engine\Driver\MySQL
   Methods: 100.00% (16/16)   Lines: 100.00% (101/101)
 Projom\Storage\Engine\Driver\PDOConnection
   Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  8/  8)
+Projom\Storage\Query\DB
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
 Projom\Storage\Query\MySQL
   Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  6/  6)
 Projom\Storage\SQL\Component\Column
