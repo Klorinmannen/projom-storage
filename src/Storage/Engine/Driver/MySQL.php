@@ -99,12 +99,7 @@ class MySQL extends DriverBase
 		if (!$records)
 			return null;
 
-		if ($formatting = $queryObject->formatting)
-			$records = $this->formatRecords($records, ...$formatting);
-
-		if ($this->returnSingleRecord)
-			if (count($records) === 1)
-				$records = $records[0];
+		$records = $this->processRecords($records, $queryObject->formatting);
 
 		return $records;
 	}
