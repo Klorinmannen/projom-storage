@@ -7,7 +7,7 @@ namespace Projom\Tests\Unit\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
 use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\DriverFactory;

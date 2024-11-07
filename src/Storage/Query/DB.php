@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage;
+namespace Projom\Storage\Query;
 
 use Projom\Storage\Engine;
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
 
 class DB
 {

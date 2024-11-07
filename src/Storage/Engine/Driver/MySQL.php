@@ -6,7 +6,7 @@ namespace Projom\Storage\Engine\Driver;
 
 use PDOStatement;
 
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\SQL\QueryObject;

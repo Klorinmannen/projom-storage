@@ -8,11 +8,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Engine\Driver\MySQL;
 use Projom\Storage\Engine\Driver\PDOConnection;
-use Projom\Storage\Format;
+use Projom\Storage\Query\Format;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util\Filter;
 use Projom\Storage\SQL\Util\LogicalOperator;
