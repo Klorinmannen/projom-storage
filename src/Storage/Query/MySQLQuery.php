@@ -9,7 +9,7 @@ use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\SQL\QueryBuilder;
 
-class MySQL
+class MySQLQuery
 {
 	public static function query(string $collection): QueryBuilder
 	{

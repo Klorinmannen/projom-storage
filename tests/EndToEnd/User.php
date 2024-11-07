@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Projom\Tests\EndToEnd;
 
-use Projom\Storage\MySQL\Model;
+use Projom\Storage\Model\MySQLModel;
 use Projom\Storage\Query\RecordInterface;
 
-class User extends Model implements RecordInterface
+class User extends MySQLModel implements RecordInterface
 {
 	const PRIMARY_FIELD = 'UserID';
 	const REDACTED_FIELDS = ['Password'];
