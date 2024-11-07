@@ -20,20 +20,23 @@ use Projom\Storage\SQL\Statement\Update;
 class MySQL extends DriverBase
 {
 	private array $connections = [];
-	private null|PDOConnection $connection;
+	private null|PDOConnection $connection = null;
 	private null|PDOStatement $statement = null;
 
-	public function __construct(null|PDOConnection $connection, string $name)
+	public function __construct(null|PDOConnection $connection)
 	{
 		parent::__construct();
 
+		if ($connection === null)
+			return;
+
 		$this->connection = $connection;
-		$this->connections[$name] = $connection;
+		$this->connections[$connection->name()] = $connection;
 	}
 
-	public static function create(null|PDOConnection $connection = null, string $name = 'default'): MySQL
+	public static function create(null|PDOConnection $connection = null): MySQL
 	{
-		return new MySQL($connection, $name);
+		return new MySQL($connection);
 	}
 
 	public function dispatch(Action $action, mixed $args): mixed
@@ -70,16 +73,16 @@ class MySQL extends DriverBase
 		$this->connection = $this->connections[$name];
 	}
 
-	public function setConnection(ConnectionInterface $connection, int|string $name): void
+	public function addConnection(ConnectionInterface $connection): void
 	{
 		$this->logger->debug(
 			'Method: {method} with {connection} named "{name}".',
-			['connection' => $connection::class, 'name' => $name, 'method' => __METHOD__]
+			['connection' => $connection::class, 'name' => $connection->name(), 'method' => __METHOD__]
 		);
 
 		if (!$connection instanceof PDOConnection)
 			throw new \Exception("Provided connection is not a PDO connection", 400);
-		$this->connections[$name] = $connection;
+		$this->connections[$connection->name()] = $connection;
 	}
 
 	private function select(QueryObject $queryObject): null|array|object
