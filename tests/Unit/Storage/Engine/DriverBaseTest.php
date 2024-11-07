@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Engine\DriverBase;
-use Projom\Storage\Format;
+use Projom\Storage\Query\Format;
 use Projom\Storage\RecordInterface;
 
 class DriverStub extends DriverBase

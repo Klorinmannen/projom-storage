@@ -12,7 +12,7 @@ use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Engine\Driver\MySQL;
 use Projom\Storage\Engine\Driver\PDOConnection;
-use Projom\Storage\Format;
+use Projom\Storage\Query\Format;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util\Filter;
 use Projom\Storage\SQL\Util\LogicalOperator;

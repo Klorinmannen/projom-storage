@@ -6,7 +6,7 @@ namespace Projom\Storage\SQL;
 
 use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\DriverBase;
-use Projom\Storage\Format;
+use Projom\Storage\Query\Format;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;

@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
 use Projom\Storage\Engine\Driver\PDOConnection;
-use Projom\Storage\Format;
+use Projom\Storage\Query\Format;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;
 use Projom\Storage\SQL\Util\Operator;
