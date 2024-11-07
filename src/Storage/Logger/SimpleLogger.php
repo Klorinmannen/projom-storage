@@ -124,7 +124,6 @@ class SimpleLogger extends AbstractLogger
 		match ($this->type) {
 			LoggerType::ERROR_LOG => $this->writeToErrorLog($line),
 			LoggerType::FILE => $this->writeLineToFile($line),
-			LoggerType::ECHO => $this->writeToEcho($line),
 			default => throw new InvalidArgumentException("Invalid logger type: {$this->type}", 400),
 		};
 	}
@@ -137,16 +136,5 @@ class SimpleLogger extends AbstractLogger
 	private function writeLineToFile(string $line): void
 	{
 		file_put_contents($this->absoluteFilePath, $line, FILE_APPEND | LOCK_EX);
-	}
-
-	private function writeToEcho(string $line): void
-	{
-		if (php_sapi_name() === 'cli' || defined('STDIN')) {
-			$line = escapeshellcmd($line);
-		} else {
-			$encoding = ini_get('default_charset') ?: 'UTF-8';
-			$line = htmlentities($line, encoding: $encoding);			
-		}
-		echo $line;
 	}
 }
