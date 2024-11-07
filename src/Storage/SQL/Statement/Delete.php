@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL\Statement;
 
+use Stringable;
+
 use Projom\Storage\SQL\Component\Filter;
 use Projom\Storage\SQL\Component\Join;
 use Projom\Storage\SQL\Component\Table;
@@ -11,7 +13,7 @@ use Projom\Storage\SQL\StatementInterface;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util;
 
-class Delete implements StatementInterface
+class Delete implements StatementInterface, Stringable
 {
 	private readonly Table $table;
 	private readonly Join $join;
@@ -22,6 +24,12 @@ class Delete implements StatementInterface
 		$this->table = Table::create($queryDelete->collections);
 		$this->join = Join::create($queryDelete->joins);
 		$this->filter = Filter::create($queryDelete->filters);
+	}
+
+	public function __toString(): string
+	{
+		[$statement, $params] = $this->statement();
+		return $statement;
 	}
 
 	public static function create(QueryObject $queryDelete): Delete

@@ -25,11 +25,10 @@ class MySQL extends DriverBase
 
 	public function __construct(null|PDOConnection $connection, string $name)
 	{
-		if ($connection === null)
-			return;
+		parent::__construct();
 
-		$this->setConnection($connection, $name);
-		$this->changeConnection($name);
+		$this->connection = $connection;
+		$this->connections[$name] = $connection;
 	}
 
 	public static function create(null|PDOConnection $connection = null, string $name = 'default'): MySQL
@@ -39,6 +38,11 @@ class MySQL extends DriverBase
 
 	public function dispatch(Action $action, mixed $args): mixed
 	{
+		$this->logger->debug(
+			'Method: {method} with {action} and {args}.',
+			['action' => $action->name, 'args' => $args, 'method' => __METHOD__]
+		);
+
 		return match ($action) {
 			Action::CHANGE_CONNECTION => $this->changeConnection($args),
 			Action::SELECT => $this->select($args),
@@ -56,6 +60,11 @@ class MySQL extends DriverBase
 
 	public function changeConnection(int|string $name): void
 	{
+		$this->logger->debug(
+			'Method: {method} with "{name}".',
+			['name' => $name, 'method' => __METHOD__]
+		);
+
 		if (!array_key_exists($name, $this->connections))
 			throw new \Exception("Connection: '$name' does not exist.", 400);
 		$this->connection = $this->connections[$name];
@@ -63,6 +72,11 @@ class MySQL extends DriverBase
 
 	public function setConnection(ConnectionInterface $connection, int|string $name): void
 	{
+		$this->logger->debug(
+			'Method: {method} with {connection} named "{name}".',
+			['connection' => $connection::class, 'name' => $name, 'method' => __METHOD__]
+		);
+
 		if (!$connection instanceof PDOConnection)
 			throw new \Exception("Provided connection is not a PDO connection", 400);
 		$this->connections[$name] = $connection;
@@ -70,8 +84,12 @@ class MySQL extends DriverBase
 
 	private function select(QueryObject $queryObject): null|array|object
 	{
-		$select = Select::create($queryObject);
+		$this->logger->debug(
+			'Method: {method} with {queryObject}.',
+			['queryObject' => $queryObject, 'method' => __METHOD__]
+		);
 
+		$select = Select::create($queryObject);
 		$this->executeStatement($select);
 
 		$records = $this->statement->fetchAll();
@@ -90,72 +108,102 @@ class MySQL extends DriverBase
 
 	private function update(QueryObject $queryObject): int
 	{
+		$this->logger->debug(
+			'Method: {method} with {queryObject}.',
+			['queryObject' => $queryObject, 'method' => __METHOD__]
+		);
+
 		$update = Update::create($queryObject);
-
 		$this->executeStatement($update);
-
 		return $this->statement->rowCount();
 	}
 
 	private function insert(QueryObject $queryObject): int
 	{
+		$this->logger->debug(
+			'Method: {method} with {queryObject}.',
+			['queryObject' => $queryObject, 'method' => __METHOD__]
+		);
+
 		$insert = Insert::create($queryObject);
-
 		$this->executeStatement($insert);
-
 		return (int) $this->connection->lastInsertId();
 	}
 
 	private function delete(QueryObject $queryObject): int
 	{
+		$this->logger->debug(
+			'Method: {method} with {queryObject}.',
+			['queryObject' => $queryObject, 'method' => __METHOD__]
+		);
+
 		$delete = Delete::create($queryObject);
-
 		$this->executeStatement($delete);
-
 		return (int) $this->statement->rowCount();
 	}
 
 	private function executeStatement(StatementInterface $statement): void
 	{
-		[$sql, $params] = $statement->statement();
+		$this->logger->debug(
+			'Method: {method} with {statement}.',
+			['statement' => $statement, 'method' => __METHOD__]
+		);
 
+		[$sql, $params] = $statement->statement();
 		$this->prepareAndExecute($sql, $params);
 	}
 
 	private function prepareAndExecute(string $sql, null|array $params): void
 	{
+		$this->logger->debug(
+			'Method: {method} with "{sql}" and {params}.',
+			['sql' => $sql, 'params' => $params, 'method' => __METHOD__]
+		);
+
 		if (!$statement = $this->connection->prepare($sql))
-			throw new \Exception("Failed to prepare statement", 500);
+			throw new \Exception('Failed to prepare statement.', 500);
 
 		$this->statement = $statement;
 		if (!$this->statement->execute($params))
-			throw new \Exception("Failed to execute statement", 500);
+			throw new \Exception('Failed to execute statement.', 500);
 	}
 
 	private function execute(string $sql, null|array $params): array
 	{
-		$this->prepareAndExecute($sql, $params);
+		$this->logger->debug(
+			'Method {method} with "{sql}" and {params}.',
+			['sql' => $sql, 'params' => $params, 'method' => __METHOD__]
+		);
 
+		$this->prepareAndExecute($sql, $params);
 		return $this->statement->fetchAll();
 	}
 
 	private function query(array $collections): QueryBuilder
 	{
-		return QueryBuilder::create($this, $collections);
+		$this->logger->debug(
+			'Method: {method} with {collections}.',
+			['collections' => $collections, 'method' => __METHOD__]
+		);
+
+		return QueryBuilder::create($this, $collections, $this->logger);
 	}
 
 	private function startTransaction(): void
 	{
+		$this->logger->debug('Starting transaction.');
 		$this->connection->beginTransaction();
 	}
 
 	private function endTransaction(): void
 	{
+		$this->logger->debug('Ending transaction.');
 		$this->connection->commit();
 	}
 
 	private function revertTransaction(): void
 	{
+		$this->logger->debug('Reverting transaction.');
 		$this->connection->rollBack();
 	}
 }

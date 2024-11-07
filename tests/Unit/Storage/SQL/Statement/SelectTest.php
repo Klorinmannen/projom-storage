@@ -17,7 +17,7 @@ use Projom\Storage\SQL\Util\Sort;
 
 class SelectTest extends TestCase
 {
-	public static function create_test_provider(): array
+	public static function createProvider(): array
 	{
 		return [
 			[
@@ -82,10 +82,36 @@ class SelectTest extends TestCase
 	}
 
 	#[Test]
-	#[DataProvider('create_test_provider')]
+	#[DataProvider('createProvider')]
 	public function create(QueryObject $queryObject, array $expected): void
 	{
 		$select = Select::create($queryObject);
 		$this->assertEquals($expected, $select->statement());
+	}
+
+	#[Test]
+	public function stringable(): void
+	{
+		$queryObject = new QueryObject(
+			collections: ['User'],
+			fields: ['UserID', 'Name'],
+			joins: [['User.UserID', Join::INNER, 'Log.UserID']],
+			filters: [
+				[
+					Filter::list(['UserID' => 10, 'Log.RequestType' => 'GET']),
+					LogicalOperator::AND
+				]
+			],
+			sorts: [['UserID', Sort::ASC], ['Name', Sort::DESC]],
+			limit: 10,
+			groups: [['Name']]
+		);
+		$select = Select::create($queryObject);
+		$this->assertEquals(
+			'SELECT `UserID`, `Name` FROM `User` INNER JOIN `Log` ON `User`.`UserID` = `Log`.`UserID`' .
+				' WHERE ( `UserID` = :filter_userid_1 AND `Log`.`RequestType` = :filter_log_requesttype_2 )' .
+				' GROUP BY `Name` ORDER BY `UserID` ASC, `Name` DESC LIMIT 10',
+			(string) $select
+		);
 	}
 }

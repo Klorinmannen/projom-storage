@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Tests\Unit\Storage\SQL\Statement;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\SQL\QueryObject;
@@ -15,7 +16,7 @@ use Projom\Storage\SQL\Util\LogicalOperator;
 
 class UpdateTest extends TestCase
 {
-	public static function create_test_provider(): array
+	public static function createProvider(): array
 	{
 		return [
 			[
@@ -50,10 +51,31 @@ class UpdateTest extends TestCase
 		];
 	}
 
-	#[DataProvider('create_test_provider')]
-	public function test_create(QueryObject $queryObject, array $expected): void
+	#[Test]
+	#[DataProvider('createProvider')]
+	public function create(QueryObject $queryObject, array $expected): void
 	{
 		$update = Update::create($queryObject);
 		$this->assertEquals($expected, $update->statement());
+	}
+
+	#[Test]
+	public function stringable(): void
+	{
+		$queryObject = new QueryObject(
+			collections: ['User'],
+			fieldsWithValues: [['User.Name' => 'John']],
+			joins: [['User.UserID = UserRole.UserID', Join::INNER, null]],
+			filters: [
+				[
+					Filter::list(['UserRole.Role' => 'leader']),
+					LogicalOperator::AND
+				]
+			]
+		);
+		$update = Update::create($queryObject);
+		$this->assertEquals('UPDATE `User` SET `User`.`Name` = :set_user_name_1' .
+			' INNER JOIN `UserRole` ON `User`.`UserID` = `UserRole`.`UserID`' .
+			' WHERE ( `UserRole`.`Role` = :filter_userrole_role_1 )', (string) $update);
 	}
 }

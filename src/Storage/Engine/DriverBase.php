@@ -8,10 +8,20 @@ use Projom\Storage\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Format;
 use Projom\Storage\RecordInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-abstract class DriverBase
+abstract class DriverBase implements LoggerAwareInterface
 {
+	protected LoggerInterface $logger;
 	protected bool $returnSingleRecord = false;
+
+	public function __construct(LoggerInterface $logger = new NullLogger(), array $options = [])
+	{
+		$this->logger = $logger;
+		$this->setOptions($options);
+	}
 
 	abstract public function dispatch(Action $action, mixed $args): mixed;
 	abstract public function setConnection(ConnectionInterface $connection, int|string $name): void;
@@ -19,11 +29,26 @@ abstract class DriverBase
 
 	public function setOptions(array $options): void
 	{
+		$this->logger->debug(
+			'Method: {method} with {options}.',
+			['options' => $options, 'method' => __METHOD__]
+		);
+
 		$this->returnSingleRecord = $options['return_single_record'] ?? false;
+	}
+
+	public function setLogger(LoggerInterface $logger): void
+	{
+		$this->logger = $logger;
 	}
 
 	protected function formatRecords(array $records, Format $format, mixed $args = null): mixed
 	{
+		$this->logger->debug(
+			'Method: {method} with {format} and {args}.',
+			['format' => $format->name, 'args' => $args, 'method' => __METHOD__]
+		);
+
 		switch ($format) {
 			case Format::ARRAY:
 				return $records;
