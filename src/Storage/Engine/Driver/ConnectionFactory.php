@@ -18,9 +18,27 @@ class ConnectionFactory
 		return new ConnectionFactory();
 	}
 
+	public function PDOConnections(array $connectionConfigurations): array
+	{
+		$PDOConnections = [];
+		foreach ($connectionConfigurations as $index => $config) {
+
+			if (!$config->hasDSN())
+				$config->dsn = DSN::MySQL($config);
+
+			if (!$config->hasName())
+				$config->name = $index + 1;
+
+			$PDOConnections[] = $this->PDOConnection($config);
+		}
+
+		return $PDOConnections;
+	}
+
 	public function PDOConnection(Config $config): PDOConnection
 	{
 		$connection = PDOConnection::create(
+			$config->name,
 			$config->dsn,
 			$config->username,
 			$config->password,

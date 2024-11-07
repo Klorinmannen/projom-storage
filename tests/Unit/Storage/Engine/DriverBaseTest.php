@@ -16,8 +16,7 @@ use Projom\Storage\Query\RecordInterface;
 
 class DriverStub extends DriverBase
 {
-
-	public function setConnection(ConnectionInterface $connection, int|string $name): void {}
+	public function addConnection(ConnectionInterface $connection): void {}
 	public function changeConnection(int|string $name): void {}
 
 	public function dispatch(Action $action, mixed $args): mixed

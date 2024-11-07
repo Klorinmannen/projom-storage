@@ -24,7 +24,7 @@ abstract class DriverBase implements LoggerAwareInterface
 	}
 
 	abstract public function dispatch(Action $action, mixed $args): mixed;
-	abstract public function setConnection(ConnectionInterface $connection, int|string $name): void;
+	abstract public function addConnection(ConnectionInterface $connection): void;
 	abstract public function changeConnection(int|string $name): void;
 
 	public function setOptions(array $options): void

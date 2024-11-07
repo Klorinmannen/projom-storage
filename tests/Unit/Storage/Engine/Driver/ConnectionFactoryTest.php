@@ -18,6 +18,7 @@ class ConnectionFactoryTest extends TestCase
 	{
 		$connectionFactory = ConnectionFactory::create();
 		$config = new Config([
+			'name' => 'name',
 			'dsn' => 'sqlite::memory:',
 			'options' => [
 				'PDO::ATTR_ERRMODE' => 'PDO::ERRMODE_EXCEPTION',

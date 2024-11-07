@@ -39,6 +39,7 @@ class EngineTest extends TestCase
 
 		$connection = $this->createMock(PDOConnection::class);	
 		$connection->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
+		$connection->expects($this->atLeastOnce())->method('name')->willReturn('default');
 
 		$mysql = MySQL::create($connection);
 		Engine::setDriver($mysql, Driver::MySQL);

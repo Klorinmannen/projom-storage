@@ -17,7 +17,14 @@ use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util\Filter;
 use Projom\Storage\SQL\Util\LogicalOperator;
 
-class FakePDOConnection implements ConnectionInterface {}
+class FakePDOConnection implements ConnectionInterface 
+{
+
+    public function name(): int|string 
+	{ 
+		return 1;
+	}
+}
 
 class MySQLTest extends TestCase
 {
@@ -30,7 +37,7 @@ class MySQLTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('Provided connection is not a PDO connection');
 		$this->expectExceptionCode(400);
-		$mysql->setConnection($fakeConnection, 'fake');
+		$mysql->addConnection($fakeConnection);
 	}
 
 	#[Test]
