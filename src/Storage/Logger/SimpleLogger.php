@@ -141,6 +141,12 @@ class SimpleLogger extends AbstractLogger
 
 	private function writeToEcho(string $line): void
 	{
+		if (php_sapi_name() === 'cli' || defined('STDIN')) {
+			$line = escapeshellcmd($line);
+		} else {
+			$encoding = ini_get('default_charset') ?: 'UTF-8';
+			$line = htmlentities($line, encoding: $encoding);			
+		}
 		echo $line;
 	}
 }
