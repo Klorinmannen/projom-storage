@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Projom\Tests\EndToEnd;
 
 use Projom\Storage\MySQL\Model;
-use Projom\Storage\RecordInterface;
+use Projom\Storage\Query\RecordInterface;
 
 class User extends Model implements RecordInterface
 {

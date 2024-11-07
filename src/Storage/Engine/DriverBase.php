@@ -7,7 +7,7 @@ namespace Projom\Storage\Engine;
 use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Query\Format;
-use Projom\Storage\RecordInterface;
+use Projom\Storage\Query\RecordInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;

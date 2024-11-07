@@ -12,7 +12,7 @@ use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\Query\Format;
-use Projom\Storage\RecordInterface;
+use Projom\Storage\Query\RecordInterface;
 
 class DriverStub extends DriverBase
 {
