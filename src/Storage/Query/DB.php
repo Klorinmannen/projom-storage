@@ -11,7 +11,7 @@ class DB
 {
 	public static function query(string $collection, null|array $options = null): mixed
 	{
-		return Engine::dispatch(Action::QUERY, args: [$collection, $options]);
+		return Engine::dispatch(Action::QUERY, args: [[$collection], $options]);
 	}
 
 	public static function execute(array $args): mixed
