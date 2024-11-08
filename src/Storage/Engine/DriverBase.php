@@ -97,7 +97,7 @@ abstract class DriverBase implements LoggerAwareInterface
 				return array_map(fn($record) =>  $className::createFromRecord($record), $records);
 
 			default:
-				throw new \Exception("Format is not implmented.", 400);
+				throw new \Exception('Format is not recognized.', 400);
 		}
 	}
 
@@ -114,8 +114,11 @@ abstract class DriverBase implements LoggerAwareInterface
 
 	private function parseOptions(): array
 	{
+		$parseOptions = $this->options;
+		if ($this->queryOptions !== null)
+			$parseOptions = $this->queryOptions;
+
 		$options = static::DEFAULT_OPTIONS;
-		$parseOptions = $this->queryOptions !== null ?: $this->options;
 
 		if (array_key_exists('return_single_record', $parseOptions))
 			$options['return_single_record'] = (bool) $parseOptions['return_single_record'];
