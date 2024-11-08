@@ -14,7 +14,7 @@ use Psr\Log\NullLogger;
 
 abstract class DriverBase implements LoggerAwareInterface
 {
-	const DEFAULT_OPTIONS = [
+	protected const DEFAULT_OPTIONS = [
 		'return_single_record' => false,
 	];
 
