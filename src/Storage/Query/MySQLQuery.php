@@ -11,9 +11,9 @@ use Projom\Storage\SQL\QueryBuilder;
 
 class MySQLQuery
 {
-	public static function query(string $collection): QueryBuilder
+	public static function query(string $collection, null|array $options = null): QueryBuilder
 	{
-		return Engine::dispatch(Action::QUERY, Driver::MySQL, [$collection]);
+		return Engine::dispatch(Action::QUERY, Driver::MySQL, [[$collection], $options]);
 	}
 
 	public static function sql(string $sql, null|array $params = null): mixed

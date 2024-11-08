@@ -14,8 +14,13 @@ use Psr\Log\NullLogger;
 
 abstract class DriverBase implements LoggerAwareInterface
 {
+	protected const DEFAULT_OPTIONS = [
+		'return_single_record' => false,
+	];
+
 	protected LoggerInterface $logger;
-	protected bool $returnSingleRecord = false;
+	private array $options = [];
+	private null|array $queryOptions = null;
 
 	public function __construct(LoggerInterface $logger = new NullLogger(), array $options = [])
 	{
@@ -34,12 +39,22 @@ abstract class DriverBase implements LoggerAwareInterface
 			['options' => $options, 'method' => __METHOD__]
 		);
 
-		$this->returnSingleRecord = $options['return_single_record'] ?? false;
+		$this->options = $options;
 	}
 
 	public function setLogger(LoggerInterface $logger): void
 	{
 		$this->logger = $logger;
+	}
+
+	protected function setQueryOptions(null|array $queryOptions): void
+	{
+		$this->logger->debug(
+			'Method: {method} with {options}.',
+			['options' => $queryOptions, 'method' => __METHOD__]
+		);
+
+		$this->queryOptions = $queryOptions;
 	}
 
 	protected function processRecords(array $records, array $formatting): mixed
@@ -55,7 +70,7 @@ abstract class DriverBase implements LoggerAwareInterface
 		return $records;
 	}
 
-	protected function formatRecords(array $records, Format $format, mixed $args = null): mixed
+	private function formatRecords(array $records, Format $format, mixed $args = null): mixed
 	{
 		$this->logger->debug(
 			'Method: {method} with {format} and {args}.',
@@ -82,16 +97,32 @@ abstract class DriverBase implements LoggerAwareInterface
 				return array_map(fn($record) =>  $className::createFromRecord($record), $records);
 
 			default:
-				throw new \Exception("Format is not implmented.", 400);
+				throw new \Exception('Format is not recognized.', 400);
 		}
 	}
 
-	protected function processOptions(array $records): array|object
+	private function processOptions(array $records): array|object
 	{
-		if ($this->returnSingleRecord)
+		$options = $this->parseOptions();
+
+		if ($options['return_single_record'])
 			if (count($records) === 1)
 				$records = $records[0];
 
 		return $records;
+	}
+
+	private function parseOptions(): array
+	{
+		$parseOptions = $this->options;
+		if ($this->queryOptions !== null)
+			$parseOptions = $this->queryOptions;
+
+		$options = static::DEFAULT_OPTIONS;
+
+		if (array_key_exists('return_single_record', $parseOptions))
+			$options['return_single_record'] = (bool) $parseOptions['return_single_record'];
+
+		return $options;
 	}
 }

@@ -9,9 +9,9 @@ use Projom\Storage\Query\Action;
 
 class DB
 {
-	public static function query(string $collection): mixed
+	public static function query(string $collection, null|array $options = null): mixed
 	{
-		return Engine::dispatch(Action::QUERY, args: [$collection]);
+		return Engine::dispatch(Action::QUERY, args: [[$collection], $options]);
 	}
 
 	public static function execute(array $args): mixed

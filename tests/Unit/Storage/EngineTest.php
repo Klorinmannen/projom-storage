@@ -37,7 +37,7 @@ class EngineTest extends TestCase
 		$pdoStatement = $this->createMock(\PDOStatement::class);
 		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
 
-		$connection = $this->createMock(PDOConnection::class);	
+		$connection = $this->createMock(PDOConnection::class);
 		$connection->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
 		$connection->expects($this->atLeastOnce())->method('name')->willReturn('default');
 
@@ -51,10 +51,10 @@ class EngineTest extends TestCase
 			if ($action === Action::EXECUTE)
 				$value = ['query', ['params']];
 			elseif ($action ===  Action::QUERY)
-				$value = [ 'User' ];
+				$value = [['User'], null];
 			elseif ($action === Action::CHANGE_CONNECTION)
 				$value = 'default';
-			else 
+			else
 				$value = new QueryObject(collections: ['User'], fields: ['Name']);
 
 			Engine::dispatch($action, args: $value);
