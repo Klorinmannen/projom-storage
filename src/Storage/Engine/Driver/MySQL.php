@@ -53,7 +53,7 @@ class MySQL extends DriverBase
 			Action::INSERT => $this->insert($args),
 			Action::DELETE => $this->delete($args),
 			Action::EXECUTE => $this->execute(...$args),
-			Action::QUERY => $this->query($args),
+			Action::QUERY => $this->query(...$args),
 			Action::START_TRANSACTION => $this->startTransaction(),
 			Action::END_TRANSACTION => $this->endTransaction(),
 			Action::REVERT_TRANSACTION => $this->revertTransaction(),
@@ -177,12 +177,14 @@ class MySQL extends DriverBase
 		return $this->statement->fetchAll();
 	}
 
-	private function query(array $collections): QueryBuilder
+	private function query(array $collections, null|array $options = null): QueryBuilder
 	{
 		$this->logger->debug(
-			'Method: {method} with {collections}.',
-			['collections' => $collections, 'method' => __METHOD__]
+			'Method: {method} with {collections} and {options}.',
+			['collections' => $collections, 'options' => $options, 'method' => __METHOD__]
 		);
+
+		$this->setQueryOptions($options);
 
 		return QueryBuilder::create($this, $collections, $this->logger);
 	}
