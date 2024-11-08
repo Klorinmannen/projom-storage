@@ -24,9 +24,9 @@ class DriverStub extends DriverBase
 		return null;
 	}
 
-	public function testFormatRecords($records, $format, $args): null|array
+	public function testProcessRecords($records, $format): null|array
 	{
-		return $this->formatRecords($records, $format, $args);
+		return $this->processRecords($records, $format);
 	}
 }
 
@@ -61,15 +61,15 @@ class DriverBaseTest extends TestCase
 				'Age' => 25
 			]
 		];
-		$actual = $driver->testFormatRecords($records, Format::ARRAY, null);
+		$actual = $driver->testProcessRecords($records, [Format::ARRAY, null]);
 		$expected = $records;
 		$this->assertEquals($expected, $actual);
 
-		$actual = $driver->testFormatRecords($records, Format::STD_CLASS, null);
+		$actual = $driver->testProcessRecords($records, [Format::STD_CLASS, null]);
 		$expected = [(object) $records[0]];
 		$this->assertEquals($expected, $actual);
 
-		$actual = $driver->testFormatRecords($records, Format::CUSTOM_OBJECT, User::class);
+		$actual = $driver->testProcessRecords($records, [Format::CUSTOM_OBJECT, User::class]);
 		$expected = [User::createFromRecord($records[0])];
 		$this->assertEquals($expected, $actual);
 	}
@@ -114,6 +114,6 @@ class DriverBaseTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage($message);
 		$this->expectExceptionCode($code);
-		$driver->testFormatRecords($records, $format, $className);
+		$driver->testProcessRecords($records, [$format, $className]);
 	}
 }
