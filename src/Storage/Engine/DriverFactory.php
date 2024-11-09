@@ -7,7 +7,6 @@ namespace Projom\Storage\Engine;
 use Projom\Storage\Engine\Config;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\DriverBase;
-use Projom\Storage\Engine\Driver\DSN;
 use Projom\Storage\Engine\Driver\MySQL;
 use Projom\Storage\Engine\Driver\ConnectionFactory;
 
