@@ -17,15 +17,24 @@ class ConnectionFactoryTest extends TestCase
 	public function createPDO(): void
 	{
 		$connectionFactory = ConnectionFactory::create();
-		$config = new Config([
-			'name' => 'name',
-			'dsn' => 'sqlite::memory:',
-			'options' => [
-				'PDO::ATTR_ERRMODE' => 'PDO::ERRMODE_EXCEPTION',
-				'PDO::ATTR_DEFAULT_FETCH_MODE' => 'PDO::FETCH_ASSOC'
-			]
-		]);
-		$connection = $connectionFactory->PDOConnection($config);
-		$this->assertInstanceOf(PDOConnection::class, $connection);
+
+		$connectionConfigs = [
+			new Config([
+				'name' => 'name',
+				'dsn' => 'sqlite::memory:',
+				'options' => [
+					'PDO::ATTR_ERRMODE' => 'PDO::ERRMODE_EXCEPTION',
+					'PDO::ATTR_DEFAULT_FETCH_MODE' => 'PDO::FETCH_ASSOC'
+				]
+			]),
+			new Config([
+				'dsn' => 'sqlite::memory:',
+				'options' => []
+			])
+		];
+
+		$connections = $connectionFactory->PDOConnections($connectionConfigs);
+		foreach ($connections as $connection)
+			$this->assertInstanceOf(PDOConnection::class, $connection);
 	}
 }

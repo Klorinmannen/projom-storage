@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\Engine\Driver\Connection;
+namespace Projom\Tests\Unit\Storage\Engine\Driver;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

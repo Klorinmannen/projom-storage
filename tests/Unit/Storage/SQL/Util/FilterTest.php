@@ -212,4 +212,20 @@ class FilterTest extends TestCase
 		$expected = ['Name', Operator::IS_NOT_NULL, null, LogicalOperator::AND];
 		$this->assertEquals($expected, $actual);
 	}
+
+	#[Test]
+	public function between(): void
+	{
+		$actual = Filter::between('Age', 18, 25);
+		$expected = ['Age', Operator::BETWEEN, [18, 25], LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
+
+	#[Test]
+	public function notBetween(): void
+	{
+		$actual = Filter::notBetween('Age', 18, 25);
+		$expected = ['Age', Operator::NOT_BETWEEN, [18, 25], LogicalOperator::AND];
+		$this->assertEquals($expected, $actual);
+	}
 }
