@@ -34,7 +34,7 @@ class MySQLModel
 			return;
 
 		$calledClass = get_called_class();
-		$class = str_replace('\\', '/', $calledClass);
+		$class = str_replace('\\', DIRECTORY_SEPARATOR, $calledClass);
 		$class = basename($class);
 		static::$table = $class;
 
