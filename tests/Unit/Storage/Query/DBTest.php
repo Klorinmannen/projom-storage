@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage;
+namespace Projom\Tests\Unit\Storage\Query;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Action;
-use Projom\Storage\DB;
+use Projom\Storage\Query\Action;
+use Projom\Storage\Query\DB;
 use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;

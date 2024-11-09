@@ -8,12 +8,12 @@ use Projom\Storage\Engine\Driver;
 use Projom\Storage\Engine\Driver\Config as ConnectionConfig;
 use Psr\Log\LoggerInterface;
 
-readonly class Config
+class Config
 {
-	public null|Driver $driver;
-	public array $options;
-	public null|LoggerInterface $logger;
-	public array $connections;
+	public readonly null|Driver $driver;
+	public readonly array $options;
+	public readonly null|LoggerInterface $logger;
+	public array $connections = [];
 
 	public function __construct(array $config)
 	{
@@ -21,9 +21,23 @@ readonly class Config
 		$this->options = $config['options'] ?? [];
 		$this->logger = $config['logger'] ?? null;
 
-		$connections = [];
-		foreach ($config['connections'] ?? [] as $name => $connection)
-			$connections[$name] = new ConnectionConfig($connection);
-		$this->connections = $connections;
+		$connections = $config['connections'] ?? [];
+		foreach ($connections as $connection)
+			$this->connections[] = new ConnectionConfig($connection);
+	}
+
+	public function hasLogger(): bool
+	{
+		return $this->logger !== null;
+	}
+
+	public function hasOptions(): bool
+	{
+		return $this->options ? true : false;
+	}
+
+	public function hasConnections(): bool
+	{
+		return $this->connections ? true : false;
 	}
 }

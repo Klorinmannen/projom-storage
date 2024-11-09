@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL;
 
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\DriverBase;
-use Projom\Storage\Format;
+use Projom\Storage\Query\Format;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;
@@ -31,8 +31,11 @@ class QueryBuilder
 
     private const DEFAULT_SELECT = '*';
 
-    public function __construct(null|DriverBase $driver, array $collections, LoggerInterface $logger = new NullLogger())
-    {
+    public function __construct(
+        null|DriverBase $driver,
+        array $collections,
+        LoggerInterface $logger = new NullLogger()
+    ) {
         $this->driver = $driver;
         $this->logger = $logger;
         $this->collections = $collections;
@@ -40,8 +43,11 @@ class QueryBuilder
         $this->formatting = [Format::ARRAY, null];
     }
 
-    public static function create(null|DriverBase $driver = null, array $collections = [], LoggerInterface $logger = new NullLogger()): QueryBuilder
-    {
+    public static function create(
+        null|DriverBase $driver = null,
+        array $collections = [],
+        LoggerInterface $logger = new NullLogger()
+    ): QueryBuilder {
         return new QueryBuilder($driver, $collections, $logger);
     }
 
@@ -290,20 +296,20 @@ class QueryBuilder
     }
 
     /**
-     * Add a filter list to be used in the query to be executed.
+     * Add a list of filters to be used in the query to be executed.
      * 
      * @param array $filters [['Name', Operator::EQ, 'John', LogicalOperator::AND], [ ... ], [ ... ]]
      * 
      * * Example use: $database->query('CollectionName')->filterList([['Name', Operator::EQ, 'John', LogicalOperator::AND]])
      */
-    public function filterList(array $filters, LogicalOperator $groupLogicalOperator = LogicalOperator::AND): QueryBuilder
+    public function filterList(array $filters, LogicalOperator $logicalOperator = LogicalOperator::AND): QueryBuilder
     {
         $this->logger->debug(
             'Method: {method} with {filters} and "{lop}".',
-            ['filters' => $filters, 'lop' => $groupLogicalOperator->name, 'method' => __METHOD__]
+            ['filters' => $filters, 'lop' => $logicalOperator->name, 'method' => __METHOD__]
         );
 
-        $this->filters[] = [$filters, $groupLogicalOperator];
+        $this->filters[] = [$filters, $logicalOperator];
         return $this;
     }
 

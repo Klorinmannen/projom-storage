@@ -8,16 +8,15 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\Engine\DriverBase;
-use Projom\Storage\Format;
-use Projom\Storage\RecordInterface;
+use Projom\Storage\Query\Format;
+use Projom\Storage\Query\RecordInterface;
 
 class DriverStub extends DriverBase
 {
-
-	public function setConnection(ConnectionInterface $connection, int|string $name): void {}
+	public function addConnection(ConnectionInterface $connection): void {}
 	public function changeConnection(int|string $name): void {}
 
 	public function dispatch(Action $action, mixed $args): mixed
@@ -25,9 +24,9 @@ class DriverStub extends DriverBase
 		return null;
 	}
 
-	public function testFormatRecords($records, $format, $args): null|array
+	public function testProcessRecords($records, $format): null|array
 	{
-		return $this->formatRecords($records, $format, $args);
+		return $this->processRecords($records, $format);
 	}
 }
 
@@ -62,15 +61,15 @@ class DriverBaseTest extends TestCase
 				'Age' => 25
 			]
 		];
-		$actual = $driver->testFormatRecords($records, Format::ARRAY, null);
+		$actual = $driver->testProcessRecords($records, [Format::ARRAY, null]);
 		$expected = $records;
 		$this->assertEquals($expected, $actual);
 
-		$actual = $driver->testFormatRecords($records, Format::STD_CLASS, null);
+		$actual = $driver->testProcessRecords($records, [Format::STD_CLASS, null]);
 		$expected = [(object) $records[0]];
 		$this->assertEquals($expected, $actual);
 
-		$actual = $driver->testFormatRecords($records, Format::CUSTOM_OBJECT, User::class);
+		$actual = $driver->testProcessRecords($records, [Format::CUSTOM_OBJECT, User::class]);
 		$expected = [User::createFromRecord($records[0])];
 		$this->assertEquals($expected, $actual);
 	}
@@ -115,6 +114,6 @@ class DriverBaseTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage($message);
 		$this->expectExceptionCode($code);
-		$driver->testFormatRecords($records, $format, $className);
+		$driver->testProcessRecords($records, [$format, $className]);
 	}
 }

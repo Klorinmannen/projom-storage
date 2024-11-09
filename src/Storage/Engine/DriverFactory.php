@@ -27,7 +27,7 @@ class DriverFactory
 
 	public function createDriver(Config $config): DriverBase
 	{
-		if (!$config->connections)
+		if (!$config->hasConnections())
 			throw new \Exception('No connections found in driver configuration', 400);
 
 		$driver = match ($config->driver) {
@@ -41,20 +41,18 @@ class DriverFactory
 	public function MySQL(Config $config): MySQL
 	{
 		$mysql = MySQL::create();
-		foreach ($config->connections as $name => $connectionConfig) {
-			if ($connectionConfig->dsn === null)
-				$connectionConfig->dsn = DSN::MySQL($connectionConfig);
-			$connection = $this->connectionFactory->PDOConnection($connectionConfig);
-			$mysql->setConnection($connection, $name);
-		}
 
-		$name = array_key_first($config->connections);
-		$mysql->changeConnection($name);
+		$connections = $this->connectionFactory->PDOConnections($config->connections);
+		foreach ($connections as $connection)
+			$mysql->addConnection($connection);
 
-		if ($config->logger !== null)
+		$conection = array_shift($connections);
+		$mysql->changeConnection($conection->name());
+
+		if ($config->hasLogger())
 			$mysql->setLogger($config->logger);
 
-		if ($config->options)
+		if ($config->hasOptions())
 			$mysql->setOptions($config->options);
 
 		return $mysql;

@@ -70,6 +70,7 @@ class SimpleLogger extends AbstractLogger
 		foreach ($context as $key => $val) {
 
 			$val = match (true) {
+				is_null($val) => 'null',
 				is_array($val) => json_encode($val),
 				$this->isException($key, $val) => $this->formatException($val),
 				is_object($val) => $this->formatObject($val),

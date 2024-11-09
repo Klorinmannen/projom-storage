@@ -6,7 +6,7 @@ namespace Projom\Storage\Engine\Driver;
 
 use PDOStatement;
 
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\DriverBase;
 use Projom\Storage\Engine\Driver\ConnectionInterface;
 use Projom\Storage\SQL\QueryObject;
@@ -20,20 +20,23 @@ use Projom\Storage\SQL\Statement\Update;
 class MySQL extends DriverBase
 {
 	private array $connections = [];
-	private null|PDOConnection $connection;
+	private null|PDOConnection $connection = null;
 	private null|PDOStatement $statement = null;
 
-	public function __construct(null|PDOConnection $connection, string $name)
+	public function __construct(null|PDOConnection $connection)
 	{
 		parent::__construct();
 
+		if ($connection === null)
+			return;
+
 		$this->connection = $connection;
-		$this->connections[$name] = $connection;
+		$this->connections[$connection->name()] = $connection;
 	}
 
-	public static function create(null|PDOConnection $connection = null, string $name = 'default'): MySQL
+	public static function create(null|PDOConnection $connection = null): MySQL
 	{
-		return new MySQL($connection, $name);
+		return new MySQL($connection);
 	}
 
 	public function dispatch(Action $action, mixed $args): mixed
@@ -50,7 +53,7 @@ class MySQL extends DriverBase
 			Action::INSERT => $this->insert($args),
 			Action::DELETE => $this->delete($args),
 			Action::EXECUTE => $this->execute(...$args),
-			Action::QUERY => $this->query($args),
+			Action::QUERY => $this->query(...$args),
 			Action::START_TRANSACTION => $this->startTransaction(),
 			Action::END_TRANSACTION => $this->endTransaction(),
 			Action::REVERT_TRANSACTION => $this->revertTransaction(),
@@ -70,16 +73,16 @@ class MySQL extends DriverBase
 		$this->connection = $this->connections[$name];
 	}
 
-	public function setConnection(ConnectionInterface $connection, int|string $name): void
+	public function addConnection(ConnectionInterface $connection): void
 	{
 		$this->logger->debug(
 			'Method: {method} with {connection} named "{name}".',
-			['connection' => $connection::class, 'name' => $name, 'method' => __METHOD__]
+			['connection' => $connection::class, 'name' => $connection->name(), 'method' => __METHOD__]
 		);
 
 		if (!$connection instanceof PDOConnection)
 			throw new \Exception("Provided connection is not a PDO connection", 400);
-		$this->connections[$name] = $connection;
+		$this->connections[$connection->name()] = $connection;
 	}
 
 	private function select(QueryObject $queryObject): null|array|object
@@ -96,12 +99,7 @@ class MySQL extends DriverBase
 		if (!$records)
 			return null;
 
-		if ($formatting = $queryObject->formatting)
-			$records = $this->formatRecords($records, ...$formatting);
-
-		if ($this->returnSingleRecord)
-			if (count($records) === 1)
-				$records = $records[0];
+		$records = $this->processRecords($records, $queryObject->formatting);
 
 		return $records;
 	}
@@ -179,12 +177,14 @@ class MySQL extends DriverBase
 		return $this->statement->fetchAll();
 	}
 
-	private function query(array $collections): QueryBuilder
+	private function query(array $collections, null|array $options = null): QueryBuilder
 	{
 		$this->logger->debug(
-			'Method: {method} with {collections}.',
-			['collections' => $collections, 'method' => __METHOD__]
+			'Method: {method} with {collections} and {options}.',
+			['collections' => $collections, 'options' => $options, 'method' => __METHOD__]
 		);
+
+		$this->setQueryOptions($options);
 
 		return QueryBuilder::create($this, $collections, $this->logger);
 	}

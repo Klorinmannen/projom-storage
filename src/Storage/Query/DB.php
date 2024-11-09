@@ -2,16 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage;
+namespace Projom\Storage\Query;
 
 use Projom\Storage\Engine;
-use Projom\Storage\Action;
+use Projom\Storage\Query\Action;
+use Projom\Storage\Query\Util;
 
 class DB
 {
-	public static function query(string $collection): mixed
+	public static function query(string|array $collections, null|array $options = null): mixed
 	{
-		return Engine::dispatch(Action::QUERY, args: [$collection]);
+		$collections = Util::stringToArray($collections);
+		return Engine::dispatch(Action::QUERY, args: [$collections, $options]);
 	}
 
 	public static function execute(array $args): mixed
