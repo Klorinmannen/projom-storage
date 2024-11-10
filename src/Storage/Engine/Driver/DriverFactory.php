@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Engine;
+namespace Projom\Storage\Engine\Driver;
 
-use Projom\Storage\Engine\Config;
-use Projom\Storage\Engine\Driver;
-use Projom\Storage\Engine\DriverBase;
+use Projom\Storage\Engine\Driver\Config;
+use Projom\Storage\Engine\Driver\Driver;
+use Projom\Storage\Engine\Driver\DriverBase;
 use Projom\Storage\Engine\Driver\MySQL;
-use Projom\Storage\Engine\Driver\ConnectionFactory;
+use Projom\Storage\Engine\Driver\Connection\ConnectionFactory;
 
 class DriverFactory
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Query;
 
 use Projom\Storage\Engine;
-use Projom\Storage\Engine\Driver;
+use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Query\Action;
 use Projom\Storage\Query\Util;
 use Projom\Storage\SQL\QueryBuilder;

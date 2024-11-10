@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine;
-use Projom\Storage\Engine\Driver;
+use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
 use Projom\Storage\Query\MySQLQuery;
 use Projom\Storage\SQL\QueryBuilder;

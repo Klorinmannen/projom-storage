@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL\Component;
 
-use Projom\Storage\SQL\ComponentInterface;
+use Projom\Storage\SQL\Component\ComponentInterface;
 use Projom\Storage\SQL\Util;
 
 class Table implements ComponentInterface

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Engine\Driver;
+namespace Projom\Storage\Engine\Driver\Connection;
 
 use PDO;
 
-use Projom\Storage\Engine\Driver\ConnectionInterface;
+use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
 
 class PDOConnection extends PDO implements ConnectionInterface
 {

@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Query\Action;
 use Projom\Storage\Query\DB;
 use Projom\Storage\Engine;
-use Projom\Storage\Engine\Driver;
+use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
 use Projom\Storage\SQL\QueryBuilder;
 

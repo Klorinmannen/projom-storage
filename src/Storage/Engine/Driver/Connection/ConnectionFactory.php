@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Engine\Driver;
+namespace Projom\Storage\Engine\Driver\Connection;
 
-use Projom\Storage\Engine\Driver\Config;
+use Projom\Storage\Engine\Driver\Connection\Config;
 
 class ConnectionFactory
 {

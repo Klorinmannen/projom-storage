@@ -7,11 +7,12 @@ namespace Projom\Storage\Engine\Driver;
 use PDOStatement;
 
 use Projom\Storage\Query\Action;
-use Projom\Storage\Engine\DriverBase;
-use Projom\Storage\Engine\Driver\ConnectionInterface;
+use Projom\Storage\Engine\Driver\DriverBase;
+use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
+use Projom\Storage\Engine\Driver\Connection\PDOConnection;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\QueryBuilder;
-use Projom\Storage\SQL\StatementInterface;
+use Projom\Storage\SQL\Statement\StatementInterface;
 use Projom\Storage\SQL\Statement\Delete;
 use Projom\Storage\SQL\Statement\Insert;
 use Projom\Storage\SQL\Statement\Select;
