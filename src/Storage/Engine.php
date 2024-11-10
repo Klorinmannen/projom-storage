@@ -34,7 +34,8 @@ class Engine
 	public static function dispatch(Action $action, null|Driver $driver = null, mixed $args = null): mixed
 	{
 		if ($driver !== null)
-			static::useDriver($driver);
+			if (static::$currentDriver !== $driver)
+				static::useDriver($driver);
 
 		$driver = static::driver();
 		return $driver->dispatch($action, $args);
