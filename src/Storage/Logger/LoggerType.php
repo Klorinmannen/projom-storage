@@ -8,4 +8,5 @@ enum LoggerType
 {
 	case FILE;
 	case ERROR_LOG;
+	case LOG_STORE;
 }
