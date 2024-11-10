@@ -26,9 +26,11 @@ class SimpleLogger extends AbstractLogger
 	private readonly string $absoluteFilePath;
 	private readonly string $logLevel;
 	private readonly LoggerType $type;
+	private array $logStore = [];
+	private string $logFormat = '[{datetime}] [{level}] {message}';
 
 	public function __construct(
-		string $type = LoggerType::ERROR_LOG,
+		LoggerType $type = LoggerType::ERROR_LOG,
 		string $logLevel = LogLevel::DEBUG,
 		string $absoluteFilePath = ''
 	) {
@@ -71,6 +73,7 @@ class SimpleLogger extends AbstractLogger
 
 			$val = match (true) {
 				is_null($val) => 'null',
+				is_bool($val) => $val ? 'true' : 'false',
 				is_array($val) => json_encode($val),
 				$this->isException($key, $val) => $this->formatException($val),
 				is_object($val) => $this->formatObject($val),
@@ -114,10 +117,15 @@ class SimpleLogger extends AbstractLogger
 
 	private function createLine(string $level, string $message): string
 	{
-		$message = trim($message);
-		$level = strtoupper($level);
-		$dateTime = date('Y-m-d H:i:s');
-		return "[$dateTime] [$level] $message" . PHP_EOL;
+		$vars = [
+			'{datetime}' => date('Y-m-d H:i:s'),
+			'{level}' => strtoupper($level),
+			'{message}' => $message
+		];
+
+		$line = strtr($this->logFormat, $vars);
+
+		return $line . PHP_EOL;
 	}
 
 	private function writeLine(string $line): void
@@ -125,7 +133,7 @@ class SimpleLogger extends AbstractLogger
 		match ($this->type) {
 			LoggerType::ERROR_LOG => $this->writeToErrorLog($line),
 			LoggerType::FILE => $this->writeLineToFile($line),
-			default => throw new InvalidArgumentException("Invalid logger type: {$this->type}", 400),
+			LoggerType::LOG_STORE => $this->logStore[] = $line
 		};
 	}
 
@@ -137,5 +145,17 @@ class SimpleLogger extends AbstractLogger
 	private function writeLineToFile(string $line): void
 	{
 		file_put_contents($this->absoluteFilePath, $line, FILE_APPEND | LOCK_EX);
+	}
+
+	public function logStore(bool $asString = true): string|array
+	{
+		if ($asString)
+			return implode(', ', $this->logStore);
+		return $this->logStore;
+	}
+
+	public function setLogFormat(string $logFormat): void
+	{
+		$this->logFormat = $logFormat;
 	}
 }
