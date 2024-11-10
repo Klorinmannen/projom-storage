@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Engine;
+namespace Projom\Storage\Engine\Driver;
 
 use Projom\Storage\Query\Action;
-use Projom\Storage\Engine\Driver\ConnectionInterface;
+use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
 use Projom\Storage\Query\Format;
 use Projom\Storage\Query\RecordInterface;
 use Psr\Log\LoggerAwareInterface;

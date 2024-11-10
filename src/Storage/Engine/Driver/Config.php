@@ -4,42 +4,43 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Engine\Driver;
 
+use Projom\Storage\Engine\Driver\Driver;
+use Projom\Storage\Engine\Driver\Connection\Config as ConnectionConfig;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Driver configuration.
+ */
 class Config
 {
-	public null|int|string $name;
+	public readonly null|Driver $driver;
 	public readonly array $options;
-
-	public null|string $dsn;
-	public readonly null|string $username;
-	public readonly null|string $password;
-	public readonly null|string $host;
-	public readonly null|string|int $port;
-	public readonly null|string $database;
-	public readonly null|string $charset;
-	public readonly null|string $collation;
+	public readonly null|LoggerInterface $logger;
+	public array $connections = [];
 
 	public function __construct(array $config)
 	{
-		$this->name = $config['name'] ?? null;
+		$this->driver = Driver::tryFrom($config['driver'] ?? '');
 		$this->options = $config['options'] ?? [];
+		$this->logger = $config['logger'] ?? null;
 
-		$this->dsn = $config['dsn'] ?? null;
-		$this->username = $config['username'] ?? null;
-		$this->password = $config['password'] ?? null;
-		$this->host = $config['host'] ?? null;
-		$this->port = $config['port'] ?? null;
-		$this->database = $config['database'] ?? null;
-		$this->charset = $config['charset'] ?? null;
-		$this->collation = $config['collation'] ?? null;
+		$connections = $config['connections'] ?? [];
+		foreach ($connections as $connection)
+			$this->connections[] = new ConnectionConfig($connection);
 	}
 
-	public function hasDSN(): bool
+	public function hasLogger(): bool
 	{
-		return $this->dsn !== null;
+		return $this->logger !== null;
 	}
 
-	public function hasName(): bool
+	public function hasOptions(): bool
 	{
-		return $this->name !== null;
+		return $this->options ? true : false;
+	}
+
+	public function hasConnections(): bool
+	{
+		return $this->connections ? true : false;
 	}
 }

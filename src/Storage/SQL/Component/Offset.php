@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL\Component;
 
-use Projom\Storage\SQL\ComponentInterface;
+use Projom\Storage\SQL\Component\ComponentInterface;
 
 class Offset implements ComponentInterface
 {

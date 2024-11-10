@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Projom\Storage;
 
 use Projom\Storage\Query\Action;
-use Projom\Storage\Engine\DriverBase;
-use Projom\Storage\Engine\Config;
-use Projom\Storage\Engine\Driver;
-use Projom\Storage\Engine\DriverFactory;
-use Projom\Storage\Engine\Driver\ConnectionFactory;
+use Projom\Storage\Engine\Driver\DriverBase;
+use Projom\Storage\Engine\Driver\Config;
+use Projom\Storage\Engine\Driver\Driver;
+use Projom\Storage\Engine\Driver\DriverFactory;
+use Projom\Storage\Engine\Driver\Connection\ConnectionFactory;
 
 class Engine
 {
@@ -34,7 +34,8 @@ class Engine
 	public static function dispatch(Action $action, null|Driver $driver = null, mixed $args = null): mixed
 	{
 		if ($driver !== null)
-			static::useDriver($driver);
+			if (static::$currentDriver !== $driver)
+				static::useDriver($driver);
 
 		$driver = static::driver();
 		return $driver->dispatch($action, $args);

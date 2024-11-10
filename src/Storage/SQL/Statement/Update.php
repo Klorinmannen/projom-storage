@@ -10,7 +10,7 @@ use Projom\Storage\SQL\Component\Filter;
 use Projom\Storage\SQL\Component\Join;
 use Projom\Storage\SQL\Component\Set;
 use Projom\Storage\SQL\Component\Table;
-use Projom\Storage\SQL\StatementInterface;
+use Projom\Storage\SQL\Statement\StatementInterface;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Util;
 

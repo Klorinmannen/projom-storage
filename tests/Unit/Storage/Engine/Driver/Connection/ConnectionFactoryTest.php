@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\Engine\Driver;
+namespace Projom\Tests\Unit\Storage\Engine\Driver\Connection;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Engine\Driver\Config;
-use Projom\Storage\Engine\Driver\ConnectionFactory;
-use Projom\Storage\Engine\Driver\PDOConnection;
+use Projom\Storage\Engine\Driver\Connection\Config;
+use Projom\Storage\Engine\Driver\Connection\ConnectionFactory;
+use Projom\Storage\Engine\Driver\Connection\PDOConnection;
 
 class ConnectionFactoryTest extends TestCase
 {

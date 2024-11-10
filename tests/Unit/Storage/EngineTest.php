@@ -9,10 +9,10 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Query\Action;
 use Projom\Storage\Engine;
-use Projom\Storage\Engine\Driver;
-use Projom\Storage\Engine\DriverFactory;
+use Projom\Storage\Engine\Driver\Driver;
+use Projom\Storage\Engine\Driver\DriverFactory;
 use Projom\Storage\Engine\Driver\MySQL;
-use Projom\Storage\Engine\Driver\PDOConnection;
+use Projom\Storage\Engine\Driver\Connection\PDOConnection;
 use Projom\Storage\SQL\QueryObject;
 
 class EngineTest extends TestCase
