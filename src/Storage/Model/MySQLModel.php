@@ -25,7 +25,7 @@ use Projom\Storage\Util;
  * 
  * The value of all redacted fields will be replaced with the string "\_\_REDACTED\_\_".
  */
-abstract class MySQLModel
+trait MySQLModel
 {
 	private $table = null;
 	private $primaryField = null;
@@ -47,7 +47,7 @@ abstract class MySQLModel
 	private function invoke()
 	{
 		$calledClass = get_class($this);
-		$class = basename($calledClass);
+		$class = basename(str_replace('\\', DIRECTORY_SEPARATOR, $calledClass));
 		$this->table = $class;
 		$this->primaryField = $this->primaryField();
 		$this->formatFields = $this->formatFields();

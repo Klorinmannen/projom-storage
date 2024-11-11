@@ -7,8 +7,10 @@ namespace Projom\Tests\EndToEnd;
 use Projom\Storage\Model\MySQLModel;
 use Projom\Storage\Query\RecordInterface;
 
-class User extends MySQLModel implements RecordInterface
+class User implements RecordInterface
 {
+	use MySQLModel;
+	
 	private array $data = [];
 
 	public function __construct(array $record = [])
