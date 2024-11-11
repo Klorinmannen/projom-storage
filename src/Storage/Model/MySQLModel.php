@@ -10,65 +10,75 @@ use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Util;
 
 /**
- * This class provides a set of methods to interact with a database table.
- * Extend this class to create a query-able "model" for that table.
- * The extended class name should be the same as the table name.
- *
- * Required constants: 
- * * PRIMARY_FIELD = 'FieldID'
+ * MySQLModel provides a set of methods to interact with a database table.
  * 
- * Additional processing can be done on fields by defining the following optional constants:
- * * FORMAT_FIELDS = [ 'Field' => 'Type' ]
- * * REDACTED_FIELDS = [ 'Field', 'AnotherField' ]
+ * How to use:
+ * * Extend this class to create a query-able "model/repository" for that table.
+ * * The extended class name should be the same as the table name.
+ *
+ * Mandatory abstract methods to implement: 
+ * * primaryField(): string 'FieldID'
+ *
+ * Optional methods to implement for additional processing:
+ *  * formatFields(): array [ 'Field' => 'string', 'AnotherField' => 'int', ... ]
+ *  * redactFields(): array [ 'Field', 'AnotherField' ]
+ * 
+ * The value of all redacted fields will be replaced with the string "\_\_REDACTED\_\_".
  */
-class MySQLModel
+abstract class MySQLModel
 {
-	private static $table = null;
-	private static $primaryField = null;
-	private static $formatFields = [];
-	private static $redactedFields = [];
+	private $table = null;
+	private $primaryField = null;
+	private $formatFields = [];
+	private $redactedFields = [];
 
-	private static function invoke()
+	abstract public function primaryField(): string;
+
+	public function formatFields(): array
 	{
-		if (static::$table !== null)
-			return;
-
-		$calledClass = get_called_class();
-		$class = str_replace('\\', DIRECTORY_SEPARATOR, $calledClass);
-		$class = basename($class);
-		static::$table = $class;
-
-		if (!defined("{$calledClass}::PRIMARY_FIELD"))
-			throw new \Exception('PRIMARY_FIELD constant not defined', 400);
-		static::$primaryField = $calledClass::PRIMARY_FIELD;
-
-		if (defined("{$calledClass}::FORMAT_FIELDS"))
-			static::$formatFields = $calledClass::FORMAT_FIELDS;
-
-		if (defined("{$calledClass}::REDACTED_FIELDS"))
-			static::$redactedFields = $calledClass::REDACTED_FIELDS;
+		return [];
 	}
 
-	private static function processRecords(array $records): array
+	public function redactFields(): array
 	{
-		$records = Util::rekey($records, static::$primaryField);
+		return [];
+	}
+
+	private function invoke()
+	{
+		$calledClass = get_class($this);
+		$class = basename($calledClass);
+		$this->table = $class;
+		$this->primaryField = $this->primaryField();
+		$this->formatFields = $this->formatFields();
+		$this->redactedFields = $this->redactFields();
+
+		if (!$this->table)
+			throw new \Exception('Table name not set', 400);
+		if (!$this->primaryField)
+			throw new \Exception('Primary field not set', 400);
+	}
+
+	private function processRecords(array $records): array
+	{
+		$records = Util::rekey($records, $this->primaryField);
 
 		$processedRecords = [];
 		foreach ($records as $key => $record) {
-			$record = static::formatRecord($record);
-			$record = static::redactRecord($record);
+			$record = $this->formatRecord($record);
+			$record = $this->redactRecord($record);
 			$processedRecords[$key] = $record;
 		}
 
 		return $processedRecords;
 	}
 
-	private static function formatRecord(array $record): array
+	private function formatRecord(array $record): array
 	{
-		if (!static::$formatFields)
+		if (!$this->formatFields)
 			return $record;
 
-		foreach (static::$formatFields as $field => $type) {
+		foreach ($this->formatFields as $field => $type) {
 			if (!array_key_exists($field, $record))
 				continue;
 			$value = $record[$field];
@@ -78,12 +88,12 @@ class MySQLModel
 		return $record;
 	}
 
-	private static function redactRecord(array $record): array
+	private function redactRecord(array $record): array
 	{
-		if (!static::$redactedFields)
+		if (!$this->redactedFields)
 			return $record;
 
-		foreach (static::$redactedFields as $field) {
+		foreach ($this->redactedFields as $field) {
 			if (!array_key_exists($field, $record))
 				throw new \Exception("Field: {$field}, could not be redacted. Not found in record", 400);
 			$record[$field] = '__REDACTED__';
@@ -95,29 +105,29 @@ class MySQLModel
 	/**
 	 * Create a record.
 	 * 
-	 * * Example use: User::create(['Name' => 'John'])
+	 * * Example use: $user->create(['Name' => 'John'])
 	 */
-	public static function create(array $record): int|string
+	public function create(array $record): int|string
 	{
-		static::invoke();
-		$primaryID = MySQLQuery::query(static::$table)->insert($record);
+		$this->invoke();
+		$primaryID = MySQLQuery::query($this->table)->insert($record);
 		return $primaryID;
 	}
 
 	/**
 	 * Find a record by its primary id.
 	 * 
-	 * * Example use: User::find($userID = 3)
+	 * * Example use: $user->find($userID = 3)
 	 */
-	public static function find(string|int $primaryID): null|array|object
+	public function find(string|int $primaryID): null|array|object
 	{
-		static::invoke();
+		$this->invoke();
 
-		$records = MySQLQuery::query(static::$table)->fetch(static::$primaryField, $primaryID);
+		$records = MySQLQuery::query($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
 			return null;
 
-		$records = static::processRecords($records);
+		$records = $this->processRecords($records);
 
 		return array_pop($records);
 	}
@@ -125,23 +135,23 @@ class MySQLModel
 	/**
 	 * Update a record by its primary id.
 	 * 
-	 * * Example use: User::update($userID = 3, ['Name' => 'A new name'])
+	 * * Example use: $user->update($userID = 3, ['Name' => 'A new name'])
 	 */
-	public static function update(string|int $primaryID, array $data): void
+	public function update(string|int $primaryID, array $data): void
 	{
-		static::invoke();
-		MySQLQuery::query(static::$table)->filterOn(static::$primaryField, $primaryID)->update($data);
+		$this->invoke();
+		MySQLQuery::query($this->table)->filterOn($this->primaryField, $primaryID)->update($data);
 	}
 
 	/**
 	 * Delete a record by its primary id.
 	 * 
-	 * * Example use: User::delete($userID = 3)
+	 * * Example use: $user->delete($userID = 3)
 	 */
-	public static function delete(string|int $primaryID): void
+	public function delete(string|int $primaryID): void
 	{
-		static::invoke();
-		MySQLQuery::query(static::$table)->filterOn(static::$primaryField, $primaryID)->delete();
+		$this->invoke();
+		MySQLQuery::query($this->table)->filterOn($this->primaryField, $primaryID)->delete();
 	}
 
 	/**
@@ -149,40 +159,40 @@ class MySQLModel
 	 * 
 	 * @param array $newRecord used to write new values to fields from the cloned record.
 	 * 
-	 * * Example use: User::clone($userID = 3)
-	 * * Example use: User::clone($userID = 3, ['Name' => 'New Name'])
+	 * * Example use: $user->clone($userID = 3)
+	 * * Example use: $user->clone($userID = 3, ['Name' => 'New Name'])
 	 */
-	public static function clone(string|int $primaryID, array $newRecord = []): array|object
+	public function clone(string|int $primaryID, array $newRecord = []): array|object
 	{
-		static::invoke();
+		$this->invoke();
 
-		$records = MySQLQuery::query(static::$table)->fetch(static::$primaryField, $primaryID);
+		$records = MySQLQuery::query($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
 			return throw new \Exception('Record to clone not found', 400);
 
 		$record = array_pop($records);
-		unset($record[static::$primaryField]);
+		unset($record[$this->primaryField]);
 
 		// Merge new record with existing record. 
 		$record = $newRecord + $record;
-		$clonePrimaryID = MySQLQuery::query(static::$table)->insert($record);
-		
-		$clonedRecords = MySQLQuery::query(static::$table)->fetch(static::$primaryField, $clonePrimaryID);
-		$clonedRecords = static::processRecords($clonedRecords);
+		$clonePrimaryID = MySQLQuery::query($this->table)->insert($record);
+
+		$clonedRecords = MySQLQuery::query($this->table)->fetch($this->primaryField, $clonePrimaryID);
+		$clonedRecords = $this->processRecords($clonedRecords);
 		return array_pop($clonedRecords);
 	}
 
 	/**
 	 * Get all records.
 	 * 
-	 * * Example use: User::all()
-	 * * Example use: User::all($filters = ['Active' => 0])
+	 * * Example use: $user->all()
+	 * * Example use: $user->all($filters = ['Active' => 0])
 	 */
-	public static function all(array $filters = []): null|array
+	public function all(array $filters = []): null|array
 	{
-		static::invoke();
+		$this->invoke();
 
-		$query = MySQLQuery::query(static::$table);
+		$query = MySQLQuery::query($this->table);
 		if ($filters)
 			$query->filterOnFields($filters);
 
@@ -190,7 +200,7 @@ class MySQLModel
 		if (!$records)
 			return null;
 
-		$records = static::processRecords($records);
+		$records = $this->processRecords($records);
 
 		return $records;
 	}
@@ -198,17 +208,17 @@ class MySQLModel
 	/**
 	 * Search for records filtering on field like %value%.
 	 * 
-	 * * Example use: User::search('Name', 'John')
+	 * * Example use: $user->search('Name', 'John')
 	 */
-	public static function search(string $field, string $value): null|array
+	public function search(string $field, string $value): null|array
 	{
-		static::invoke();
+		$this->invoke();
 
-		$records = MySQLQuery::query(static::$table)->filterOn($field, "%$value%", Operator::LIKE)->select();
+		$records = MySQLQuery::query($this->table)->filterOn($field, "%$value%", Operator::LIKE)->select();
 		if (!$records)
 			return null;
 
-		$records = static::processRecords($records);
+		$records = $this->processRecords($records);
 
 		return $records;
 	}
@@ -216,17 +226,17 @@ class MySQLModel
 	/**
 	 * Get a record by filtering on field with value.
 	 * 
-	 * * Example use: User::get('Email', 'John.doe@example.com')
+	 * * Example use: $user->get('Email', 'John.doe@example.com')
 	 */
-	public static function get(string $field, mixed $value): null|array|object
+	public function get(string $field, mixed $value): null|array|object
 	{
-		static::invoke();
+		$this->invoke();
 
-		$records = MySQLQuery::query(static::$table)->fetch($field, $value);
+		$records = MySQLQuery::query($this->table)->fetch($field, $value);
 		if (!$records)
 			return null;
 
-		$records = static::processRecords($records);
+		$records = $this->processRecords($records);
 
 		if (count($records) === 1)
 			return array_pop($records);
@@ -237,15 +247,15 @@ class MySQLModel
 	/**
 	 * Count records.
 	 * 
-	 * * Example use: User::count()
-	 * * Example use: User::count(filters: ['Active' => 0])
-	 * * Example use: User::count('UserID', groupFields: ['Active'])
+	 * * Example use: $user->count()
+	 * * Example use: $user->count(filters: ['Active' => 0])
+	 * * Example use: $user->count('UserID', groupFields: ['Active'])
 	 */
-	public static function count(string $countField = '*',  array $filters = [], array $groupByFields = []): null|array
+	public function count(string $countField = '*',  array $filters = [], array $groupByFields = []): null|array
 	{
-		static::invoke();
+		$this->invoke();
 
-		$query = MySQLQuery::query(static::$table);
+		$query = MySQLQuery::query($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -272,11 +282,11 @@ class MySQLModel
 	 * * Example use: Invoice::sum('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
 	 * * Example use: Invoice::sum('Amount', groupFields: ['Paid'])
 	 */
-	public static function sum(string $sumField, array $filters = [], array $groupByFields = []): null|array
+	public function sum(string $sumField, array $filters = [], array $groupByFields = []): null|array
 	{
-		static::invoke();
+		$this->invoke();
 
-		$query = MySQLQuery::query(static::$table);
+		$query = MySQLQuery::query($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -303,11 +313,11 @@ class MySQLModel
 	 * * Example use: Invoice::avg('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
 	 * * Example use: Invoice::avg('Amount', groupFields: ['Paid'])
 	 */
-	public static function avg(string $averageField, array $filters = [], array $groupByFields = []): null|array
+	public function avg(string $averageField, array $filters = [], array $groupByFields = []): null|array
 	{
-		static::invoke();
+		$this->invoke();
 
-		$query = MySQLQuery::query(static::$table);
+		$query = MySQLQuery::query($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -334,11 +344,11 @@ class MySQLModel
 	 * * Example use: Invoice::min('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
 	 * * Example use: Invoice::min('Amount', groupFields: ['Paid'])
 	 */
-	public static function min(string $minField, array $filters = [], array $groupByFields = []): null|array
+	public function min(string $minField, array $filters = [], array $groupByFields = []): null|array
 	{
-		static::invoke();
+		$this->invoke();
 
-		$query = MySQLQuery::query(static::$table);
+		$query = MySQLQuery::query($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -365,11 +375,11 @@ class MySQLModel
 	 * * Example use: Invoice::max('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
 	 * * Example use: Invoice::max('Amount', groupFields: ['Paid'])
 	 */
-	public static function max(string $maxField, array $filters = [], array $groupByFields = []): null|array
+	public function max(string $maxField, array $filters = [], array $groupByFields = []): null|array
 	{
-		static::invoke();
+		$this->invoke();
 
-		$query = MySQLQuery::query(static::$table);
+		$query = MySQLQuery::query($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -392,14 +402,14 @@ class MySQLModel
 	/**
 	 * Paginate records.
 	 * 
-	 * * Example use: User::paginate(1, 10)
-	 * * Example use: User::paginate(1, 10, ['Name' => 'John'])
+	 * * Example use: $user->paginate(1, 10)
+	 * * Example use: $user->paginate(1, 10, ['Name' => 'John'])
 	 */
-	public static function paginate(int $page, int $pageSize, array $filters = []): null|array
+	public function paginate(int $page, int $pageSize, array $filters = []): null|array
 	{
-		static::invoke();
+		$this->invoke();
 
-		$query = MySQLQuery::query(static::$table);
+		$query = MySQLQuery::query($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -411,7 +421,7 @@ class MySQLModel
 		if (!$records)
 			return null;
 
-		$records = static::processRecords($records);
+		$records = $this->processRecords($records);
 
 		return $records;
 	}
