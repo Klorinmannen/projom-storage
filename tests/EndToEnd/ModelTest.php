@@ -88,8 +88,8 @@ class ModelTest extends TestCase
 		$this->assertNotNull($userRecords);
 
 		$sum = 0;
-		foreach ($allUserRecords as $user)
-			$sum += $user['UserID'];
+		foreach ($allUserRecords as $userRecord)
+			$sum += $userRecord['UserID'];
 
 		$userRecords = $user->sum('UserID');
 		$this->assertNotNull($userRecords);
