@@ -13,7 +13,7 @@ use Projom\Storage\Engine;
 use Projom\Tests\EndToEnd\User;
 
 class ModelTest extends TestCase
-{
+{	
 	public function setUp(): void
 	{
 		$config = [
@@ -35,26 +35,28 @@ class ModelTest extends TestCase
 	}
 
 	#[Test]
-	public function test()
+	public function crud()
 	{
+		$user = new User();
+
 		$newUser = [
 			'Username' => 'anya.doe@example.com',
 			'Firstname' => 'Anya',
 			'Lastname' => 'Doe',
 			'Password' => 'password'
 		];
-		$userID = User::create($newUser);
+		$userID = $user->create($newUser);
 
-		$user = User::find($userID);
-		$this->assertNotNull($user);
-		$this->assertEquals($newUser['Username'], $user['Username']);
+		$userRecord = $user->find($userID);
+		$this->assertNotNull($userRecord);
+		$this->assertEquals($newUser['Username'], $userRecord['Username']);
 
-		User::update($userID, ['Lastname' => 'Smith']);
-		$user = User::find($userID);
-		$this->assertEquals('Smith', $user['Lastname']);
+		$user->update($userID, ['Lastname' => 'Smith']);
+		$userRecord = $user->find($userID);
+		$this->assertEquals('Smith', $userRecord['Lastname']);
 
-		$user = User::get('Lastname', 'Smith');
-		$this->assertNotNull($user);
+		$userRecord = $user->get('Lastname', 'Smith');
+		$this->assertNotNull($userRecord);
 
 		$newUser = [
 			'Username' => 'jasmine.doe@example.com',
@@ -63,81 +65,127 @@ class ModelTest extends TestCase
 			'Password' => 'password',
 			'Active' => 0
 		];
-		$cloneUser = User::clone($userID, $newUser);
-		$this->assertNotEquals($userID, $cloneUser['UserID']);
-		$this->assertEquals($newUser['Username'], $cloneUser['Username']);
+		$userRecord = $user->clone($userID, $newUser);
+		$this->assertNotEquals($userID, $userRecord['UserID']);
+		$this->assertEquals($newUser['Username'], $userRecord['Username']);
 
-		User::delete($cloneUser['UserID']);
-		$record = User::find($cloneUser['UserID']);
-		$this->assertNull($record);
+		$user->delete($userRecord['UserID']);
+		$userRecord = $user->find($userRecord['UserID']);
+		$this->assertNull($userRecord);
 
-		$results = User::count('Lastname', ['Lastname' => 'Doe']);
+		$userRecords = $user->search('Lastname', 'D');
+		$this->assertNotNull($userRecords);
+
+		$user->delete($userID);
+	}
+
+	#[Test]
+	public function sum(): void
+	{
+		$user = new User();
+
+		$sum = 0;
+		$allUserRecords = $user->all();
+		foreach ($allUserRecords as $userRecord)
+			$sum += $userRecord['UserID'];
+
+		$userRecords = $user->sum('UserID');
+		$this->assertNotNull($userRecords);
+		$this->assertCount(1, $userRecords);
+		$userRecord = array_pop($userRecords);
+		$this->assertEquals($sum, $userRecord['sum']);
+
+		$userRecords = $user->sum('UserID', ['Lastname' => 'Doe']);
+		$this->assertNotNull($userRecords);
+
+		$userRecords = $user->sum('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$this->assertNotNull($userRecords);
+	}
+
+	#[Test]
+	public function counts(): void
+	{
+		$user = new User();
+		$userRecords = $user->count();
+		$this->assertNotNull($userRecords);
+		$this->assertCount(1, $userRecords);
+		$userRecord = array_pop($userRecords);
+		$this->assertEquals(5, (int) $userRecord['count']);
+
+		$userRecords = $user->count('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$this->assertNotNull($userRecords);
+		$this->assertCount(1, $userRecords);
+		$userRecord = array_pop($userRecords);
+		$this->assertEquals(4, (int) $userRecord['count']);
+
+		$allUserRecords = $user->all();
+		$userRecords = $user->count();
+		$userRecord = array_pop($userRecords);
+		$allUserCount = (int) $userRecord['count'];
+		$this->assertEquals(count($allUserRecords), $allUserCount);
+
+		$results = $user->count('Lastname', ['Lastname' => 'Doe']);
 		$result = array_pop($results);
 		$count = (int) $result['count'];
 
-		$user = User::all(['Lastname' => 'Doe']);
-		$this->assertNotNull($user);
-		$this->assertCount($count, $user);
+		$userRecords = $user->all(['Lastname' => 'Doe']);
+		$this->assertNotNull($userRecords);
+		$this->assertCount($count, $userRecords);
+	}
 
-		$records = User::search('Lastname', 'D');
-		$this->assertNotNull($records);
-
-		$allUsers = User::all();
-		$this->assertNotNull($allUsers);
+	#[Test]
+	public function avg(): void
+	{
+		$user = new User();
 
 		$sum = 0;
-		foreach ($allUsers as $user)
-			$sum += $user['UserID'];
+		$allUserRecords = $user->all();
+		foreach ($allUserRecords as $userRecord)
+			$sum += $userRecord['UserID'];
 
-		$records = User::sum('UserID');
-		$this->assertNotNull($records);
-		$this->assertCount(1, $records);
-		$record = array_pop($records);
-		$this->assertEquals($sum, $record['sum']);
+		$userRecords = $user->count();
+		$userRecord = array_pop($userRecords);
+		$allUserCount = (int) $userRecord['count'];
 
-		$records = User::sum('UserID', ['Lastname' => 'Doe']);
-		$this->assertNotNull($records);
+		$userRecords = $user->avg('UserID');
+		$this->assertNotNull($userRecords);
+		$this->assertCount(1, $userRecords);
+		$userRecord = array_pop($userRecords);
+		$this->assertEquals(round($sum / $allUserCount), round((float) $userRecord['avg']));
 
-		$records = User::sum('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this->assertNotNull($records);
+		$userRecords = $user->avg('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$this->assertNotNull($userRecords);
+		$this->assertCount(1, $userRecords);
+	}
 
-		$records = User::count('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this->assertNotNull($records);
-		$this->assertCount(1, $records);
-		$record = array_pop($records);
-		$this->assertEquals(4, (int) $record['count']);
+	#[Test]
+	public function min(): void
+	{
+		$user = new User();
+		$userRecords = $user->min('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$this->assertNotNull($userRecords);
+		$this->assertCount(1, $userRecords);
+		$userRecord = array_pop($userRecords);
+		$this->assertEquals(2, $userRecord['min']);
+	}
 
-		$records = User::count();
-		$record = array_pop($records);
-		$allCount = (int) $record['count'];
-		$this->assertEquals(count($allUsers), $allCount);
+	#[Test]
+	public function max(): void
+	{
+		$user = new User();
+		$userRecords = $user->max('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$this->assertNotNull($userRecords);
+		$this->assertCount(1, $userRecords);
+		$userRecord = array_pop($userRecords);
+		$this->assertEquals(5, $userRecord['max']);
+	}
 
-		$records = User::avg('UserID');
-		$this->assertNotNull($records);
-		$this->assertCount(1, $records);
-		$record = array_pop($records);
-		$this->assertEquals(round($sum / $allCount), round((float) $record['avg']));
-
-		$records = User::avg('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this->assertNotNull($records);
-		$this->assertCount(1, $records);
-
-		$records = User::min('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this->assertNotNull($records);
-		$this->assertCount(1, $records);
-		$record = array_pop($records);
-		$this->assertEquals(2, $record['min']);
-
-		$records = User::max('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this->assertNotNull($records);
-		$this->assertCount(1, $records);
-		$record = array_pop($records);
-		$this->assertEquals(5, $record['max']);
-
-		$records = User::paginate(2, 2, ['Lastname' => 'Doe']);
-		$this->assertNotNull($records);
-		$this->assertCount(2, $records);
-
-		User::delete($userID);
+	#[Test]
+	public function paginate(): void
+	{
+		$user = new User();
+		$userRecords = $user->paginate(2, 2, ['Lastname' => 'Doe']);
+		$this->assertNotNull($userRecords);
+		$this->assertCount(2, $userRecords);
 	}
 }
