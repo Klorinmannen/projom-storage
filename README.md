@@ -20,3 +20,30 @@ composer require klorinmannen/projom-storage
 
 ### Docs
 Visit the project [documentation](https://projom.se/docs/projom-storage-phpdoc/) pages or the repository [wiki](https://github.com/Klorinmannen/projom-storage/wiki) pages.
+
+
+### Usage
+````
+use Projom\Storage\Engine;
+use Projom\Storage\Query\MySQLQuery;
+
+$config = [ 
+   'driver' => 'mysql',
+   'connections' => [
+      [
+         'name' => 'connection-name',
+         'username' => 'username',
+         'password' => 'password',
+         'host' => 'localhost',
+         'port' => '3306',
+         'database' => 'database-name'
+      ]
+   ]
+];
+
+Engine::start();
+Engine::loadDriver($config);
+
+// Select users
+$users = MySQLQuery::query('User')->select();
+````
