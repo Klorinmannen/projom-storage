@@ -18,9 +18,9 @@
 composer require klorinmannen/projom-storage
 ````
 
-### Docs
-Visit the project [documentation](https://projom.se/docs/projom-storage-phpdoc/) pages or the repository [wiki](https://github.com/Klorinmannen/projom-storage/wiki) pages.
-
+### Docs & coverage
+Visit the repository [wiki](https://github.com/Klorinmannen/projom-storage/wiki) pages or the api [documentation](https://projom.se/docs/projom-storage-phpdoc/).
+<br>Unit test [coverage](https://projom.se/docs/projom-storage-phpunit/).
 
 ### Usage
 ````
