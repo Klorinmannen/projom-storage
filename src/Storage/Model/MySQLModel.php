@@ -10,18 +10,18 @@ use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Util;
 
 /**
- * MySQLModel provides a set of methods to interact with a database table.
+ * MySQLModel is a trait that provides a set of methods to interact with a database table.
  * 
  * How to use:
- * * Extend this class to create a query-able "model/repository" for that table.
- * * The extended class name should be the same as the table name.
+ * * Use this trait to create a query-able "model/repository" of the class using the trait.
+ * * The name of the class using the trait should be the same as the database table name.
  *
  * Mandatory abstract methods to implement: 
  * * primaryField(): string 'FieldID'
  *
  * Optional methods to implement for additional processing:
- *  * formatFields(): array [ 'Field' => 'string', 'AnotherField' => 'int', ... ]
- *  * redactFields(): array [ 'Field', 'AnotherField' ]
+ * * formatFields(): array [ 'Field' => 'string', 'AnotherField' => 'int', ... ]
+ * * redactFields(): array [ 'Field', 'AnotherField' ]
  * 
  * The value of all redacted fields will be replaced with the string "\_\_REDACTED\_\_".
  */
