@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL\Util;
 
-enum Aggregate: string
+use Stringable;
+
+enum Aggregate: string implements Stringable
 {
 	case COUNT = 'COUNT';
 	case MIN = 'MIN';
@@ -25,5 +27,10 @@ enum Aggregate: string
 			return "$function AS $alias";
 
 		return $function;
+	}
+
+	public function __toString(): string
+	{
+		return $this->name;
 	}
 }

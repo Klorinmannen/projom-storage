@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL\Util;
 
-enum Sort: string
+use Stringable;
+
+enum Sort: string implements Stringable
 {
 	case ASC = 'ASC';
 	case DESC = 'DESC';
@@ -12,5 +14,10 @@ enum Sort: string
 	public static function values(): array
 	{
 		return array_map(fn($case) => $case->value, static::cases());
+	}
+
+	public function __toString(): string
+	{
+		return $this->name;
 	}
 }

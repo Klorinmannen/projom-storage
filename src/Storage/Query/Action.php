@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Query;
 
-enum Action
+use Stringable;
+
+enum Action implements Stringable
 {
 	case CHANGE_CONNECTION;
 	case SELECT;
@@ -16,4 +18,9 @@ enum Action
 	case START_TRANSACTION;
 	case END_TRANSACTION;
 	case REVERT_TRANSACTION;
+
+	public function __toString(): string
+	{
+		return $this->name;
+	}
 }
