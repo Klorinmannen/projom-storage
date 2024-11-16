@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Query;
 
-use Stringable;
-
-enum Format implements Stringable
+enum Format: string
 {
-	case ARRAY;
-	case STD_CLASS;
-	case CUSTOM_OBJECT;
+	case ARRAY = 'array';
+	case STD_CLASS = 'std_class';
+	case CUSTOM_OBJECT = 'custom_object';
 
-	public function __toString(): string
+	public static function values(): array
 	{
-		return $this->name;
+		return array_map(fn($case) => $case->value, static::cases());
 	}
 }

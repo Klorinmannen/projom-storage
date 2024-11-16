@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Logger;
 
-use Stringable;
-
-enum LoggerType implements Stringable
+enum LoggerType: string
 {
-	case FILE;
-	case ERROR_LOG;
-	case LOG_STORE;
+	case FILE = 'file';
+	case ERROR_LOG = 'error_log';
+	case LOG_STORE = 'log_store';
 
-	public function __toString(): string
+	public static function values(): array
 	{
-		return $this->name;
+		return array_map(fn($case) => $case->value, static::cases());
 	}
 }

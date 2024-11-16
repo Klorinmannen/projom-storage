@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL\Util;
 
-use Stringable;
-
-enum Join: string implements Stringable
+enum Join: string
 {
 	case INNER = 'INNER JOIN';
 	case LEFT = 'LEFT JOIN';
@@ -20,10 +18,5 @@ enum Join: string implements Stringable
 	public static function values(): array
 	{
 		return array_map(fn($case) => $case->value, static::cases());
-	}
-
-	public function __toString(): string
-	{
-		return $this->name;
 	}
 }
