@@ -6,16 +6,16 @@ namespace Projom\Storage\Query;
 
 enum Action: string
 {
-	case CHANGE_CONNECTION = 'change_connection';
-	case SELECT = 'select';
-	case INSERT = 'insert';
-	case UPDATE = 'update';
-	case DELETE = 'delete';
-	case EXECUTE = 'execute';
-	case QUERY = 'query';
-	case START_TRANSACTION = 'start_transaction';
-	case END_TRANSACTION = 'end_transaction';
-	case REVERT_TRANSACTION = 'revert_transaction';
+	case CHANGE_CONNECTION = 'CHANGE_CONNECTION';
+	case SELECT = 'SELECT';
+	case INSERT = 'INSERT';
+	case UPDATE = 'UPDATE';
+	case DELETE = 'DELETE';
+	case EXECUTE = 'EXECUTE';
+	case QUERY = 'QUERY';
+	case START_TRANSACTION = 'START_TRANSACTION';
+	case END_TRANSACTION = 'END_TRANSACTION';
+	case REVERT_TRANSACTION = 'REVERT_TRANSACTION';
 
 	public static function values(): array
 	{
