@@ -6,9 +6,9 @@ namespace Projom\Storage\Logger;
 
 enum LoggerType: string
 {
-	case FILE = 'file';
-	case ERROR_LOG = 'error_log';
-	case LOG_STORE = 'log_store';
+	case FILE = 'FILE';
+	case ERROR_LOG = 'ERROR_LOG';
+	case LOG_STORE = 'LOG_STORE';
 
 	public static function values(): array
 	{

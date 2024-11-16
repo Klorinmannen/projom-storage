@@ -6,9 +6,9 @@ namespace Projom\Storage\Query;
 
 enum Format: string
 {
-	case ARRAY = 'array';
-	case STD_CLASS = 'std_class';
-	case CUSTOM_OBJECT = 'custom_object';
+	case ARRAY = 'ARRAY';
+	case STD_CLASS = 'STD_CLASS';
+	case CUSTOM_OBJECT = 'CUSTOM_OBJECT';
 
 	public static function values(): array
 	{
