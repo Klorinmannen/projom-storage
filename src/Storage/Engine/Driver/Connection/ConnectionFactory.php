@@ -8,11 +8,6 @@ use Projom\Storage\Engine\Driver\Connection\Config;
 
 class ConnectionFactory
 {
-	const DEFAULT_PDO_ATTRIBUTES = [
-		\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-		\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
-	];
-
 	public static function create(): ConnectionFactory
 	{
 		return new ConnectionFactory();
@@ -20,14 +15,15 @@ class ConnectionFactory
 
 	public function PDOConnections(array $connectionConfigurations): array
 	{
+		$index = 1;
 		$PDOConnections = [];
-		foreach ($connectionConfigurations as $index => $config) {
+		foreach ($connectionConfigurations as $config) {
 
 			if (!$config->hasDSN())
 				$config->dsn = DSN::MySQL($config);
 
 			if (!$config->hasName())
-				$config->name = $index + 1;
+				$config->name = $index++;
 
 			$PDOConnections[] = $this->PDOConnection($config);
 		}
