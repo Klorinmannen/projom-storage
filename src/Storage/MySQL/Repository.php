@@ -32,13 +32,26 @@ trait Repository
 	private $formatFields = [];
 	private $redactedFields = [];
 
+	/**
+	 * Returns the primary key field of the table.
+	 */
 	abstract public function primaryField(): string;
 
+	/**
+	 * Returns which fields to format.
+	 * 
+	 * * Example: ['Name' => 'string', 'Price' => 'int']
+	 */
 	public function formatFields(): array
 	{
 		return [];
 	}
 
+	/**
+	 * Returns which fields to redact.
+	 * 
+	 * * Example: ['Name', 'Email']
+	 */
 	public function redactFields(): array
 	{
 		return [];
