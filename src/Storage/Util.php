@@ -88,4 +88,11 @@ class Util
 			default => $value,
 		};
 	}
+
+	public static function classFromCalledClass(string $calledClass): string
+	{
+		$calledClass = str_replace('\\', DIRECTORY_SEPARATOR, $calledClass);
+		$class = basename($calledClass);
+		return $class;
+	}
 }

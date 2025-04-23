@@ -59,9 +59,11 @@ trait Repository
 
 	private function invoke()
 	{
+		if ($this->table)
+			return;
+
 		$calledClass = get_class($this);
-		$class = basename(str_replace('\\', DIRECTORY_SEPARATOR, $calledClass));
-		$this->table = $class;
+		$this->table = Util::classFromCalledClass($calledClass);
 		$this->primaryField = $this->primaryField();
 		$this->formatFields = $this->formatFields();
 		$this->redactedFields = $this->redactFields();
