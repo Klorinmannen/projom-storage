@@ -70,12 +70,6 @@ class Util
 		return [];
 	}
 
-	public static function isInt(int|float|string $subject): bool
-	{
-		$subject = (string) $subject;
-		return is_numeric($subject) && strpos($subject, '.') === false;
-	}
-
 	public static function rekey(array $records, string $field): array
 	{
 		return array_column($records, null, $field);
