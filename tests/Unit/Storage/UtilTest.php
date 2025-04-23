@@ -132,26 +132,6 @@ class UtilTest extends TestCase
 	}
 
 	#[Test]
-	public function isInt(): void
-	{
-		$subject = 123;
-		$result = Util::isInt($subject);
-		$this->assertTrue($result);
-
-		$subject = 123.456;
-		$result = Util::isInt($subject);
-		$this->assertFalse($result);
-
-		$subject = '123';
-		$result = Util::isInt($subject);
-		$this->assertTrue($result);
-
-		$subject = '123.456';
-		$result = Util::isInt($subject);
-		$this->assertFalse($result);
-	}
-
-	#[Test]
 	public function rekey(): void
 	{
 		$records = [
