@@ -7,6 +7,7 @@ namespace Projom\Storage\Engine\Driver\Connection;
 use PDO;
 
 use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
+use SensitiveParameter;
 
 class PDOConnection extends PDO implements ConnectionInterface
 {
@@ -20,15 +21,15 @@ class PDOConnection extends PDO implements ConnectionInterface
 	public function __construct(
 		int|string $name,
 		string $dsn,
-		null|string $username = null,
-		null|string $password = null,
+		#[SensitiveParameter] null|string $username = null,
+		#[SensitiveParameter] null|string $password = null,
 		null|array $options = null
 	) {
 
 		$this->name = $name;
 
 		$options = $this->parseAttributes($options);
-		$options = $options + self::DEFAULT_ATTRIBUTES;
+		$options = $options + static::DEFAULT_ATTRIBUTES;
 		parent::__construct($dsn, $username, $password, $options);
 	}
 
