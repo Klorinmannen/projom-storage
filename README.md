@@ -25,7 +25,7 @@ Visit the repository [wiki](https://github.com/Klorinmannen/projom-storage/wiki)
 ### Usage
 ````
 use Projom\Storage\Engine;
-use Projom\Storage\Query\MySQLQuery;
+use Projom\Storage\Static\MySQL\Query;
 
 $config = [ 
    'driver' => 'mysql',
@@ -44,6 +44,6 @@ $config = [
 Engine::start();
 Engine::loadDriver($config);
 
-// Select users
-$users = MySQLQuery::query('User')->select();
+// Select all users
+$users = Query::build('User')->select();
 ````
