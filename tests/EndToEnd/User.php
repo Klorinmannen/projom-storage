@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Projom\Tests\EndToEnd;
 
-use Projom\Storage\Model\MySQLModel;
+use Projom\Storage\MySQL\Repository;
 use Projom\Storage\Query\RecordInterface;
 
 class User implements RecordInterface
 {
-	use MySQLModel;
+	use Repository;
 	
 	private array $data = [];
 
