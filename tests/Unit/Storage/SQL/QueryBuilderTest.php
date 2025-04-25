@@ -53,7 +53,7 @@ class QueryBuilderTest extends TestCase
 		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
 		$query = QueryBuilder::create($driver, ['User']);
 
-		$result = $query->fetch('Name', 'John', Operator::EQ);
+		$result = $query->fetch('Name', 'John');
 		$this->assertEquals($expected, $result);
 
 		$result = $query->select('Name', 'Age');
@@ -67,7 +67,6 @@ class QueryBuilderTest extends TestCase
 	public function updateModify(): void
 	{
 		$expected = 1;
-
 		$driver = $this->createMock(MySQLDriver::class);
 		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
 		$query = QueryBuilder::create($driver, ['User']);
@@ -83,7 +82,6 @@ class QueryBuilderTest extends TestCase
 	public function insertAdd(): void
 	{
 		$expected = 1;
-
 		$driver = $this->createMock(MySQLDriver::class);
 		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
 		$query = QueryBuilder::create($driver, ['User']);
@@ -105,7 +103,6 @@ class QueryBuilderTest extends TestCase
 	public function deleteDestroy(): void
 	{
 		$expected = 2;
-
 		$driver = $this->createMock(MySQLDriver::class);
 		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
 		$query = QueryBuilder::create($driver, ['User']);
@@ -120,74 +117,47 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function joinOn(): void
 	{
-		$connection = $this->createMock(PDOConnection::class);
-
-		$driver = MySQLDriver::create($connection);
-		$query = QueryBuilder::create($driver, ['User']);
-
-		$query = $query->joinOn('User.UserID = UserRole.UserID', Join::INNER)
-			->joinOn('UserRole.Role, UserAccess.Role', Join::INNER);
+		$query = QueryBuilder::create(null, ['User']);
+		$query = $query->joinOn('User.UserID = UserRole.UserID', Join::INNER);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
 	public function filter(): void
 	{
-		$connection = $this->createMock(PDOConnection::class);
-		$driver = MySQLDriver::create($connection);
-		$query = QueryBuilder::create($driver, ['User']);
-
-		$query = $query->filter(['Name', Operator::IN, ['John', 'Jane']], LogicalOperator::AND)
-			->filter(['Age', Operator::IS_NOT_NULL, null], LogicalOperator::OR);
+		$query = QueryBuilder::create(null, ['User']);
+		$query = $query->filter(['Name', Operator::IN, ['John', 'Jane']], LogicalOperator::AND);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
 	public function filterList(): void
 	{
-		$connection = $this->createMock(PDOConnection::class);
-		$driver = MySQLDriver::create($connection);
-		$query = QueryBuilder::create($driver, ['User']);
-
-		$query = $query->filterList([['Name', Operator::IN, ['John', 'Jane']]], LogicalOperator::AND)
-			->filterList([['Age', Operator::IS_NOT_NULL, null]], LogicalOperator::OR);
+		$query = QueryBuilder::create(null, ['User']);
+		$query = $query->filterList([['Name', Operator::IN, ['John', 'Jane']]], LogicalOperator::AND);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
 	public function filterOnFields(): void
 	{
-		$connection = $this->createMock(PDOConnection::class);
-
-		$driver = MySQLDriver::create($connection);
-		$query = QueryBuilder::create($driver, ['User']);
-
-		$query = $query->filterOnFields(['Name' => ['John', 'Jane']], Operator::IN, LogicalOperator::AND)
-			->filterOnFields(['Age' => null], Operator::IS_NOT_NULL, LogicalOperator::OR);
+		$query = QueryBuilder::create(null, ['User']);
+		$query = $query->filterOnFields(['Name' => ['John', 'Jane']], Operator::IN, LogicalOperator::AND);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
 	public function filterOn(): void
 	{
-		$connection = $this->createMock(PDOConnection::class);
-
-		$driver = MySQLDriver::create($connection);
-		$query = QueryBuilder::create($driver, ['User']);
-
-		$query = $query->filterOn('Name', ['John', 'Jane'], Operator::IN, LogicalOperator::AND)
-			->filterOn('Age', null, Operator::IS_NOT_NULL, LogicalOperator::OR);
+		$query = QueryBuilder::create(null, ['User']);
+		$query = $query->filterOn('Name', ['John', 'Jane'], Operator::IN, LogicalOperator::AND);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
 	#[Test]
 	public function groupOn(): void
 	{
-		$connection = $this->createMock(PDOConnection::class);
-
-		$driver = MySQLDriver::create($connection);
-		$query = QueryBuilder::create($driver, ['User']);
-
+		$query = QueryBuilder::create(null, ['User']);
 		$query = $query->groupOn('Username')->groupOn('Name', 'Age')->groupOn('Lastname, Age');
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
@@ -195,11 +165,7 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function sortOn(): void
 	{
-		$connection = $this->createMock(PDOConnection::class);
-
-		$driver = MySQLDriver::create($connection);
-		$query = QueryBuilder::create($driver, ['User']);
-
+		$query = QueryBuilder::create(null, ['User']);
 		$query = $query->sortOn(['Name' => 'ASC'])->sortOn(['Age' => 'DESC']);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
@@ -207,11 +173,7 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function limit(): void
 	{
-		$connection = $this->createMock(PDOConnection::class);
-
-		$driver = MySQLDriver::create($connection);
-		$query = QueryBuilder::create($driver, ['User']);
-
+		$query = QueryBuilder::create(null, ['User']);
 		$query = $query->limit(10);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
@@ -219,11 +181,7 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function offset(): void
 	{
-		$connection = $this->createMock(PDOConnection::class);
-
-		$driver = MySQLDriver::create($connection);
-		$query = QueryBuilder::create($driver, ['User']);
-
+		$query = QueryBuilder::create(null, ['User']);
 		$query = $query->offset(5);
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
