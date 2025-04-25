@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Query;
+namespace Projom\Storage\Static\MySQL;
 
 use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver\Driver;
@@ -10,9 +10,9 @@ use Projom\Storage\Query\Action;
 use Projom\Storage\Query\Util;
 use Projom\Storage\SQL\QueryBuilder;
 
-class MySQLQuery
+class Query
 {
-	public static function query(string|array $collections, null|array $options = null): QueryBuilder
+	public static function build(string|array $collections, null|array $options = null): QueryBuilder
 	{
 		$collections = Util::stringToArray($collections);
 		return Engine::dispatch(Action::QUERY, Driver::MySQL, [$collections, $options]);
