@@ -12,8 +12,8 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Engine;
 use Projom\Tests\EndToEnd\User;
 
-class ModelTest extends TestCase
-{	
+class RepositoryTest extends TestCase
+{
 	public function setUp(): void
 	{
 		$config = [
