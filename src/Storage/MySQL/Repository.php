@@ -293,9 +293,9 @@ trait Repository
 	/**
 	 * Summarize records.
 	 * 
-	 * * Example use: Invoice::sum('Amount')
-	 * * Example use: Invoice::sum('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
-	 * * Example use: Invoice::sum('Amount', groupFields: ['Paid'])
+	 * * Example use: Invoice->sum('Amount')
+	 * * Example use: Invoice->sum('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
+	 * * Example use: Invoice->sum('Amount', groupFields: ['Paid'])
 	 */
 	public function sum(string $sumField, array $filters = [], array $groupByFields = []): null|array
 	{
@@ -324,9 +324,9 @@ trait Repository
 	/**
 	 * Average records.
 	 * 
-	 * * Example use: Invoice::avg('Amount')
-	 * * Example use: Invoice::avg('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
-	 * * Example use: Invoice::avg('Amount', groupFields: ['Paid'])
+	 * * Example use: Invoice->avg('Amount')
+	 * * Example use: Invoice->avg('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
+	 * * Example use: Invoice->avg('Amount', groupFields: ['Paid'])
 	 */
 	public function avg(string $averageField, array $filters = [], array $groupByFields = []): null|array
 	{
@@ -355,9 +355,9 @@ trait Repository
 	/**
 	 * Minimum of records.
 	 * 
-	 * * Example use: Invoice::min('Amount')
-	 * * Example use: Invoice::min('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
-	 * * Example use: Invoice::min('Amount', groupFields: ['Paid'])
+	 * * Example use: Invoice->min('Amount')
+	 * * Example use: Invoice->min('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
+	 * * Example use: Invoice->min('Amount', groupFields: ['Paid'])
 	 */
 	public function min(string $minField, array $filters = [], array $groupByFields = []): null|array
 	{
@@ -386,9 +386,9 @@ trait Repository
 	/**
 	 * Maximum of records.
 	 * 
-	 * * Example use: Invoice::max('Amount')
-	 * * Example use: Invoice::max('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
-	 * * Example use: Invoice::max('Amount', groupFields: ['Paid'])
+	 * * Example use: Invoice->max('Amount')
+	 * * Example use: Invoice->max('Amount', ['Paid' => 0, 'Due' => '2024-07-25'])
+	 * * Example use: Invoice->max('Amount', groupFields: ['Paid'])
 	 */
 	public function max(string $maxField, array $filters = [], array $groupByFields = []): null|array
 	{
