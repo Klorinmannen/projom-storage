@@ -13,67 +13,71 @@ use Projom\Storage\Engine\Driver\Connection\ConnectionFactory;
 
 class Engine
 {
-	protected static array $drivers = [];
-	protected static null|Driver $currentDriver = null;
-	protected static null|DriverFactory $driverFactory = null;
+	protected array $drivers = [];
+	protected null|Driver $currentDriver = null;
+	protected DriverFactory $driverFactory = null;
 
-	public static function start(): void
+	public function __construct(DriverFactory $driverFactory)
+	{
+		$this->driverFactory = $driverFactory;
+	}
+
+	public static function create(): Engine
 	{
 		$connectionFactory = ConnectionFactory::create();
 		$driverFactory = DriverFactory::create($connectionFactory);
-		static::setDriverFactory($driverFactory);
+		return new Engine($driverFactory);
 	}
 
-	public static function clear(): void
+	public function clear(): void
 	{
-		static::$drivers = [];
-		static::$currentDriver = null;
-		static::$driverFactory = null;
+		$this->drivers = [];
+		$this->currentDriver = null;
 	}
 
-	public static function dispatch(Action $action, null|Driver $driver = null, mixed $args = null): mixed
+	public function dispatch(Action $action, null|Driver $driver = null, mixed $args = null): mixed
 	{
 		if ($driver !== null)
-			if (static::$currentDriver !== $driver)
-				static::useDriver($driver);
+			if ($this->currentDriver !== $driver)
+				$this->useDriver($driver);
 
-		$driver = static::driver();
+		$driver = $this->driver();
 		return $driver->dispatch($action, $args);
 	}
 
-	public static function useDriver(Driver $driver): void
+	public function useDriver(Driver $driver): void
 	{
-		if (!array_key_exists($driver->value, static::$drivers))
-			throw new \Exception("Driver not loaded", 400);
-		static::$currentDriver = $driver;
+		if (!array_key_exists($driver->value,  $this->drivers))
+			throw new \Exception('Driver not loaded', 400);
+		$this->currentDriver = $driver;
 	}
 
-	public static function loadDriver(array $config): void
+	public function loadDriver(array $config): void
 	{
-		if (static::$driverFactory === null)
-			throw new \Exception("Driver factory not set", 400);
+		if ($this->driverFactory === null)
+			throw new \Exception('Driver factory not set', 400);
 
 		$config = new Config($config);
-		$engineDriver = static::$driverFactory->createDriver($config);
-		static::setDriver($engineDriver, $config->driver);
+		$engineDriver =  $this->driverFactory->createDriver($config);
+		$this->setDriver($engineDriver, $config->driver);
 	}
 
-	public static function setDriver(DriverBase $engineDriver, Driver $driver): void
+	public function setDriver(DriverBase $engineDriver, Driver $driver): void
 	{
-		static::$drivers[$driver->value] = $engineDriver;
-		static::$currentDriver = $driver;
+		$this->drivers[$driver->value] = $engineDriver;
+		$this->currentDriver = $driver;
 	}
 
-	public static function setDriverFactory(DriverFactory $driverFactory): void
+	public function setDriverFactory(DriverFactory $driverFactory): void
 	{
-		static::$driverFactory = $driverFactory;
+		$this->driverFactory = $driverFactory;
 	}
 
-	private static function driver(): DriverBase
+	private function driver(): DriverBase
 	{
-		$driver = static::$drivers[static::$currentDriver?->value] ?? null;
+		$driver =  $this->drivers[$this->currentDriver?->value] ?? null;
 		if ($driver === null)
-			throw new \Exception("Engine driver not set", 400);
+			throw new \Exception('Engine driver not set', 400);
 		return $driver;
 	}
 }
