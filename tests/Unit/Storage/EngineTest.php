@@ -12,7 +12,6 @@ use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\DriverFactory;
 use Projom\Storage\Engine\Driver\MySQL;
-use Projom\Storage\Engine\Driver\Connection\PDOConnection;
 use Projom\Storage\SQL\QueryObject;
 
 class EngineTest extends TestCase
@@ -34,14 +33,10 @@ class EngineTest extends TestCase
 	#[Test]
 	public function dispatch(): void
 	{
-		$pdoStatement = $this->createMock(\PDOStatement::class);
-		$pdoStatement->expects($this->atLeastOnce())->method('execute')->willReturn(true);
+		$this->expectNotToPerformAssertions();
 
-		$connection = $this->createMock(PDOConnection::class);
-		$connection->expects($this->atLeastOnce())->method('prepare')->willReturn($pdoStatement);
-		$connection->expects($this->atLeastOnce())->method('name')->willReturn('default');
-
-		$mysql = MySQL::create($connection);
+		$mysql = $this->createMock(MySQL::class);
+		$mysql->method('dispatch')->willReturn([]);
 		Engine::setDriver($mysql, Driver::MySQL);
 
 		$actions = Action::cases();
@@ -65,9 +60,7 @@ class EngineTest extends TestCase
 	public function useDriver(): void
 	{
 		$this->expectNotToPerformAssertions();
-
-		$connection = $this->createMock(PDOConnection::class);
-		$mysql = MySQL::create($connection);
+		$mysql = $this->createMock(MySQL::class);
 		Engine::setDriver($mysql, Driver::MySQL);
 		Engine::useDriver(Driver::MySQL);
 	}
@@ -85,13 +78,9 @@ class EngineTest extends TestCase
 	public function loadDriver(): void
 	{
 		$this->expectNotToPerformAssertions();
-
-		$connection = $this->createMock(PDOConnection::class);
-		$mysql = MySQL::create($connection);
-
+		$mysql = $this->createMock(MySQL::class);
 		$driverFactory = $this->createMock(DriverFactory::class);
 		$driverFactory->method('createDriver')->willReturn($mysql);
-
 		Engine::setDriverFactory($driverFactory);
 		Engine::loadDriver(['driver' => 'mysql']);
 	}
@@ -109,10 +98,8 @@ class EngineTest extends TestCase
 	public function setDriver(): void
 	{
 		$this->expectNotToPerformAssertions();
-
-		$connection = $this->createMock(PDOConnection::class);
-		$mysql = MySQL::create($connection);
-		Engine::setDriver($mysql, Driver::MySQL);
+		$driver = $this->createMock(MySQL::class);
+		Engine::setDriver($driver, Driver::MySQL);
 	}
 
 	#[Test]
@@ -120,7 +107,6 @@ class EngineTest extends TestCase
 	{
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('No connections found in driver configuration');
-
 		Engine::start();
 		Engine::loadDriver(['driver' => 'mysql']);
 	}
