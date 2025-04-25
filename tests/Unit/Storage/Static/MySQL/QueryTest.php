@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\Query;
+namespace Projom\Tests\Unit\Storage\Static\MySQL;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -10,10 +10,10 @@ use PHPUnit\Framework\TestCase;
 use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
-use Projom\Storage\Query\MySQLQuery;
+use Projom\Storage\Static\MySQL\Query;
 use Projom\Storage\SQL\QueryBuilder;
 
-class MySQLTest extends TestCase
+class QueryTest extends TestCase
 {
 	public function setUp(): void
 	{
@@ -27,7 +27,7 @@ class MySQLTest extends TestCase
 		$mysql->expects($this->once())->method('dispatch')->willReturn(QueryBuilder::create());
 		Engine::setDriver($mysql, Driver::MySQL);
 
-		$query = MySQLQuery::query('User');
+		$query = Query::build('User');
 		$this->assertInstanceOf(QueryBuilder::class, $query);
 	}
 
@@ -36,7 +36,7 @@ class MySQLTest extends TestCase
 	{
 		$this->expectExceptionCode(400);
 		$this->expectExceptionMessage('Driver not loaded');
-		MySQLQuery::query('User');
+		Query::build('User');
 	}
 
 	#[Test]
@@ -48,7 +48,7 @@ class MySQLTest extends TestCase
 		$mysql->expects($this->once())->method('dispatch')->willReturn($expected);
 		Engine::setDriver($mysql, Driver::MySQL);
 
-		$actual = MySQLQuery::sql('SELECT * FROM User');
+		$actual = Query::sql('SELECT * FROM User');
 		$this->assertEquals($expected, $actual);
 	}
 
@@ -58,7 +58,7 @@ class MySQLTest extends TestCase
 		$mysql = $this->createMock(MySQLDriver::class);
 		$mysql->expects($this->once())->method('dispatch')->willReturn(true);
 		Engine::setDriver($mysql, Driver::MySQL);
-		MySQLQuery::useConnection('default');
+		Query::useConnection('default');
 	}
 
 	#[Test]
@@ -67,7 +67,7 @@ class MySQLTest extends TestCase
 		$mysql = $this->createMock(MySQLDriver::class);
 		$mysql->expects($this->once())->method('dispatch')->willReturn(true);
 		Engine::setDriver($mysql, Driver::MySQL);
-		MySQLQuery::startTransaction();
+		Query::startTransaction();
 	}
 
 	#[Test]
@@ -76,7 +76,7 @@ class MySQLTest extends TestCase
 		$mysql = $this->createMock(MySQLDriver::class);
 		$mysql->expects($this->once())->method('dispatch')->willReturn(true);
 		Engine::setDriver($mysql, Driver::MySQL);
-		MySQLQuery::endTransaction();
+		Query::endTransaction();
 	}
 
 	#[Test]
@@ -85,6 +85,6 @@ class MySQLTest extends TestCase
 		$mysql = $this->createMock(MySQLDriver::class);
 		$mysql->expects($this->once())->method('dispatch')->willReturn(true);
 		Engine::setDriver($mysql, Driver::MySQL);
-		MySQLQuery::revertTransaction();
+		Query::revertTransaction();
 	}
 }
