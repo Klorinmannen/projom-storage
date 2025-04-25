@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\MySQL;
 
-use Projom\Storage\Query\MySQLQuery;
+use Projom\Storage\Static\MySQL\Query;
 use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Util;
@@ -125,7 +125,7 @@ trait Repository
 	public function create(array $record): int|string
 	{
 		$this->invoke();
-		$primaryID = MySQLQuery::query($this->table)->insert($record);
+		$primaryID = Query::build($this->table)->insert($record);
 		return $primaryID;
 	}
 
@@ -138,7 +138,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$records = MySQLQuery::query($this->table)->fetch($this->primaryField, $primaryID);
+		$records = Query::build($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
 			return null;
 
@@ -155,7 +155,7 @@ trait Repository
 	public function update(string|int $primaryID, array $data): void
 	{
 		$this->invoke();
-		MySQLQuery::query($this->table)->filterOn($this->primaryField, $primaryID)->update($data);
+		Query::build($this->table)->filterOn($this->primaryField, $primaryID)->update($data);
 	}
 
 	/**
@@ -166,7 +166,7 @@ trait Repository
 	public function delete(string|int $primaryID): void
 	{
 		$this->invoke();
-		MySQLQuery::query($this->table)->filterOn($this->primaryField, $primaryID)->delete();
+		Query::build($this->table)->filterOn($this->primaryField, $primaryID)->delete();
 	}
 
 	/**
@@ -181,7 +181,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$records = MySQLQuery::query($this->table)->fetch($this->primaryField, $primaryID);
+		$records = Query::build($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
 			return throw new \Exception('Record to clone not found', 400);
 
@@ -190,9 +190,9 @@ trait Repository
 
 		// Merge new record with existing record. 
 		$record = $newRecord + $record;
-		$clonePrimaryID = MySQLQuery::query($this->table)->insert($record);
+		$clonePrimaryID = Query::build($this->table)->insert($record);
 
-		$clonedRecords = MySQLQuery::query($this->table)->fetch($this->primaryField, $clonePrimaryID);
+		$clonedRecords = Query::build($this->table)->fetch($this->primaryField, $clonePrimaryID);
 		$clonedRecords = $this->processRecords($clonedRecords);
 		return array_pop($clonedRecords);
 	}
@@ -207,7 +207,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = MySQLQuery::query($this->table);
+		$query = Query::build($this->table);
 		if ($filters)
 			$query->filterOnFields($filters);
 
@@ -229,7 +229,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$records = MySQLQuery::query($this->table)->filterOn($field, "%$value%", Operator::LIKE)->select();
+		$records = Query::build($this->table)->filterOn($field, "%$value%", Operator::LIKE)->select();
 		if (!$records)
 			return null;
 
@@ -247,7 +247,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$records = MySQLQuery::query($this->table)->fetch($field, $value);
+		$records = Query::build($this->table)->fetch($field, $value);
 		if (!$records)
 			return null;
 
@@ -270,7 +270,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = MySQLQuery::query($this->table);
+		$query = Query::build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -301,7 +301,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = MySQLQuery::query($this->table);
+		$query = Query::build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -332,7 +332,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = MySQLQuery::query($this->table);
+		$query = Query::build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -363,7 +363,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = MySQLQuery::query($this->table);
+		$query = Query::build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -394,7 +394,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = MySQLQuery::query($this->table);
+		$query = Query::build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -424,7 +424,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = MySQLQuery::query($this->table);
+		$query = Query::build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
