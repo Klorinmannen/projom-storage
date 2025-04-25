@@ -9,6 +9,7 @@ use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\DriverBase;
 use Projom\Storage\Engine\Driver\MySQL;
 use Projom\Storage\Engine\Driver\Connection\ConnectionFactory;
+use Projom\Storage\SQL\Statement;
 
 class DriverFactory
 {
@@ -39,14 +40,15 @@ class DriverFactory
 
 	public function MySQL(Config $config): MySQL
 	{
-		$mysql = MySQL::create();
-
 		$connections = $this->connectionFactory->PDOConnections($config->connections);
+
+		// The first connection is the default connection.
+		$defaultConnection = array_shift($connections);
+		$mysql = MySQL::create($defaultConnection, Statement::create());
+
+		// Add all the other connections.
 		foreach ($connections as $connection)
 			$mysql->addConnection($connection);
-
-		$conection = array_shift($connections);
-		$mysql->changeConnection($conection->name());
 
 		if ($config->hasLogger())
 			$mysql->setLogger($config->logger);

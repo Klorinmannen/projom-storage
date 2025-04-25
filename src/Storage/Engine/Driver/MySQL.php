@@ -12,32 +12,27 @@ use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
 use Projom\Storage\Engine\Driver\Connection\PDOConnection;
 use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\QueryBuilder;
+use Projom\Storage\SQL\Statement;
 use Projom\Storage\SQL\Statement\StatementInterface;
-use Projom\Storage\SQL\Statement\Delete;
-use Projom\Storage\SQL\Statement\Insert;
-use Projom\Storage\SQL\Statement\Select;
-use Projom\Storage\SQL\Statement\Update;
 
 class MySQL extends DriverBase
 {
+	private PDOConnection $connection;
+	private Statement $SQLStatement;
 	private array $connections = [];
-	private null|PDOConnection $connection = null;
-	private null|PDOStatement $statement = null;
+	private null|PDOStatement $PDOSstatement = null;
 
-	public function __construct(null|PDOConnection $connection)
+	public function __construct(PDOConnection $connection, Statement $statement)
 	{
 		parent::__construct();
-
-		if ($connection === null)
-			return;
-
 		$this->connection = $connection;
 		$this->connections[$connection->name()] = $connection;
+		$this->SQLStatement = $statement;
 	}
 
-	public static function create(null|PDOConnection $connection = null): MySQL
+	public static function create(PDOConnection $PDOConnection, Statement $statement): MySQL
 	{
-		return new MySQL($connection);
+		return new MySQL($PDOConnection, $statement);
 	}
 
 	public function dispatch(Action $action, mixed $args): mixed
@@ -93,10 +88,10 @@ class MySQL extends DriverBase
 			['queryObject' => $queryObject, 'method' => __METHOD__]
 		);
 
-		$select = Select::create($queryObject);
-		$this->executeStatement($select);
+		$selectStatement = $this->SQLStatement->select($queryObject);
+		$this->executeStatement($selectStatement);
 
-		$records = $this->statement->fetchAll();
+		$records = $this->PDOSstatement->fetchAll();
 		if (!$records)
 			return null;
 
@@ -112,9 +107,9 @@ class MySQL extends DriverBase
 			['queryObject' => $queryObject, 'method' => __METHOD__]
 		);
 
-		$update = Update::create($queryObject);
-		$this->executeStatement($update);
-		return $this->statement->rowCount();
+		$updateStatement = $this->SQLStatement->update($queryObject);
+		$this->executeStatement($updateStatement);
+		return $this->PDOSstatement->rowCount();
 	}
 
 	private function insert(QueryObject $queryObject): int
@@ -124,8 +119,8 @@ class MySQL extends DriverBase
 			['queryObject' => $queryObject, 'method' => __METHOD__]
 		);
 
-		$insert = Insert::create($queryObject);
-		$this->executeStatement($insert);
+		$insertStatement = $this->SQLStatement->insert($queryObject);
+		$this->executeStatement($insertStatement);
 		return (int) $this->connection->lastInsertId();
 	}
 
@@ -136,9 +131,9 @@ class MySQL extends DriverBase
 			['queryObject' => $queryObject, 'method' => __METHOD__]
 		);
 
-		$delete = Delete::create($queryObject);
-		$this->executeStatement($delete);
-		return (int) $this->statement->rowCount();
+		$deleteStatement = $this->SQLStatement->delete($queryObject);
+		$this->executeStatement($deleteStatement);
+		return (int) $this->PDOSstatement->rowCount();
 	}
 
 	private function executeStatement(StatementInterface $statement): void
@@ -162,8 +157,8 @@ class MySQL extends DriverBase
 		if (!$statement = $this->connection->prepare($sql))
 			throw new \Exception('Failed to prepare statement.', 500);
 
-		$this->statement = $statement;
-		if (!$this->statement->execute($params))
+		$this->PDOSstatement = $statement;
+		if (!$this->PDOSstatement->execute($params))
 			throw new \Exception('Failed to execute statement.', 500);
 	}
 
@@ -175,7 +170,7 @@ class MySQL extends DriverBase
 		);
 
 		$this->prepareAndExecute($sql, $params);
-		return $this->statement->fetchAll();
+		return $this->PDOSstatement->fetchAll();
 	}
 
 	private function query(array $collections, null|array $options = null): QueryBuilder
