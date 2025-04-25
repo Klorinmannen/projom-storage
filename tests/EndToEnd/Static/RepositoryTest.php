@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\EndToEnd;
+namespace Projom\tests\EndToEnd\Static;
 
 include_once __DIR__ . '/User.php';
 
@@ -10,10 +10,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine;
-use Projom\Tests\EndToEnd\User;
+use Projom\Tests\EndToEnd\Static\User;
 
-class ModelTest extends TestCase
-{	
+class RepositoryTest extends TestCase
+{
 	public function setUp(): void
 	{
 		$config = [
@@ -37,25 +37,23 @@ class ModelTest extends TestCase
 	#[Test]
 	public function crud()
 	{
-		$user = new User();
-
 		$newUser = [
 			'Username' => 'anya.doe@example.com',
 			'Firstname' => 'Anya',
 			'Lastname' => 'Doe',
 			'Password' => 'password'
 		];
-		$userID = $user->create($newUser);
+		$userID = User::create($newUser);
 
-		$userRecord = $user->find($userID);
+		$userRecord = User::find($userID);
 		$this->assertNotNull($userRecord);
 		$this->assertEquals($newUser['Username'], $userRecord['Username']);
 
-		$user->update($userID, ['Lastname' => 'Smith']);
-		$userRecord = $user->find($userID);
+		User::update($userID, ['Lastname' => 'Smith']);
+		$userRecord = User::find($userID);
 		$this->assertEquals('Smith', $userRecord['Lastname']);
 
-		$userRecord = $user->get('Lastname', 'Smith');
+		$userRecord = User::get('Lastname', 'Smith');
 		$this->assertNotNull($userRecord);
 
 		$newUser = [
@@ -65,70 +63,67 @@ class ModelTest extends TestCase
 			'Password' => 'password',
 			'Active' => 0
 		];
-		$userRecord = $user->clone($userID, $newUser);
+		$userRecord = User::clone($userID, $newUser);
 		$this->assertNotEquals($userID, $userRecord['UserID']);
 		$this->assertEquals($newUser['Username'], $userRecord['Username']);
 
-		$user->delete($userRecord['UserID']);
-		$userRecord = $user->find($userRecord['UserID']);
+		User::delete($userRecord['UserID']);
+		$userRecord = User::find($userRecord['UserID']);
 		$this->assertNull($userRecord);
 
-		$userRecords = $user->search('Lastname', 'D');
+		$userRecords = User::search('Lastname', 'D');
 		$this->assertNotNull($userRecords);
 
-		$user->delete($userID);
+		User::delete($userID);
 	}
 
 	#[Test]
 	public function sum(): void
 	{
-		$user = new User();
-
 		$sum = 0;
-		$allUserRecords = $user->all();
+		$allUserRecords = User::all();
 		foreach ($allUserRecords as $userRecord)
 			$sum += $userRecord['UserID'];
 
-		$userRecords = $user->sum('UserID');
+		$userRecords = User::sum('UserID');
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
 		$userRecord = array_pop($userRecords);
 		$this->assertEquals($sum, $userRecord['sum']);
 
-		$userRecords = $user->sum('UserID', ['Lastname' => 'Doe']);
+		$userRecords = User::sum('UserID', ['Lastname' => 'Doe']);
 		$this->assertNotNull($userRecords);
 
-		$userRecords = $user->sum('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$userRecords = User::sum('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($userRecords);
 	}
 
 	#[Test]
 	public function counts(): void
 	{
-		$user = new User();
-		$userRecords = $user->count();
+		$userRecords = User::count();
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
 		$userRecord = array_pop($userRecords);
 		$this->assertEquals(5, (int) $userRecord['count']);
 
-		$userRecords = $user->count('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$userRecords = User::count('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
 		$userRecord = array_pop($userRecords);
 		$this->assertEquals(4, (int) $userRecord['count']);
 
-		$allUserRecords = $user->all();
-		$userRecords = $user->count();
+		$allUserRecords = User::all();
+		$userRecords = User::count();
 		$userRecord = array_pop($userRecords);
 		$allUserCount = (int) $userRecord['count'];
 		$this->assertEquals(count($allUserRecords), $allUserCount);
 
-		$results = $user->count('Lastname', ['Lastname' => 'Doe']);
+		$results = User::count('Lastname', ['Lastname' => 'Doe']);
 		$result = array_pop($results);
 		$count = (int) $result['count'];
 
-		$userRecords = $user->all(['Lastname' => 'Doe']);
+		$userRecords = User::all(['Lastname' => 'Doe']);
 		$this->assertNotNull($userRecords);
 		$this->assertCount($count, $userRecords);
 	}
@@ -136,24 +131,22 @@ class ModelTest extends TestCase
 	#[Test]
 	public function avg(): void
 	{
-		$user = new User();
-
 		$sum = 0;
-		$allUserRecords = $user->all();
+		$allUserRecords = User::all();
 		foreach ($allUserRecords as $userRecord)
 			$sum += $userRecord['UserID'];
 
-		$userRecords = $user->count();
+		$userRecords = User::count();
 		$userRecord = array_pop($userRecords);
 		$allUserCount = (int) $userRecord['count'];
 
-		$userRecords = $user->avg('UserID');
+		$userRecords = User::avg('UserID');
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
 		$userRecord = array_pop($userRecords);
 		$this->assertEquals(round($sum / $allUserCount), round((float) $userRecord['avg']));
 
-		$userRecords = $user->avg('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$userRecords = User::avg('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
 	}
@@ -161,8 +154,7 @@ class ModelTest extends TestCase
 	#[Test]
 	public function min(): void
 	{
-		$user = new User();
-		$userRecords = $user->min('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$userRecords = User::min('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
 		$userRecord = array_pop($userRecords);
@@ -172,8 +164,7 @@ class ModelTest extends TestCase
 	#[Test]
 	public function max(): void
 	{
-		$user = new User();
-		$userRecords = $user->max('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+		$userRecords = User::max('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
 		$userRecord = array_pop($userRecords);
@@ -183,8 +174,7 @@ class ModelTest extends TestCase
 	#[Test]
 	public function paginate(): void
 	{
-		$user = new User();
-		$userRecords = $user->paginate(2, 2, ['Lastname' => 'Doe']);
+		$userRecords = User::paginate(2, 2, ['Lastname' => 'Doe']);
 		$this->assertNotNull($userRecords);
 		$this->assertCount(2, $userRecords);
 	}
