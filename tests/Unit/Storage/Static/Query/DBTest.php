@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\Query;
+namespace Projom\Tests\Unit\Storage\Static\Query;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Query\Action;
-use Projom\Storage\Query\DB;
-use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
 use Projom\Storage\SQL\QueryBuilder;
+use Projom\Storage\Static\Engine;
+use Projom\Storage\Static\Query\DB;
 
 class DBTest extends TestCase
 {
@@ -20,7 +20,7 @@ class DBTest extends TestCase
 	{
 		Engine::clear();
 	}
-	
+
 	#[Test]
 	public function query()
 	{
@@ -42,7 +42,7 @@ class DBTest extends TestCase
 	#[Test]
 	public function execute()
 	{
-		$expected = [0 => [ 'id' => 1, 'name' => 'John' ]];
+		$expected = [0 => ['id' => 1, 'name' => 'John']];
 
 		$mysql = $this->createMock(MySQLDriver::class);
 		$mysql->expects($this->once())->method('dispatch')->willReturn($expected);
@@ -55,7 +55,7 @@ class DBTest extends TestCase
 	#[Test]
 	public function runMethod()
 	{
-		$expected = [0 => [ 'id' => 1, 'name' => 'John' ]];
+		$expected = [0 => ['id' => 1, 'name' => 'John']];
 
 		$mysql = $this->createMock(MySQLDriver::class);
 		$mysql->expects($this->once())->method('dispatch')->willReturn($expected);
