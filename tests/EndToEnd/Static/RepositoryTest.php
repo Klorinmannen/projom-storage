@@ -9,7 +9,7 @@ include_once __DIR__ . '/User.php';
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Engine;
+use Projom\Storage\Static\Engine;
 use Projom\Tests\EndToEnd\Static\User;
 
 class RepositoryTest extends TestCase

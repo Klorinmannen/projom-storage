@@ -7,11 +7,11 @@ namespace Projom\Tests\Unit\Storage\Static\MySQL;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
 use Projom\Storage\Static\MySQL\Query;
 use Projom\Storage\SQL\QueryBuilder;
+use Projom\Storage\Static\Engine;
 
 class QueryTest extends TestCase
 {
@@ -19,7 +19,7 @@ class QueryTest extends TestCase
 	{
 		Engine::clear();
 	}
-	
+
 	#[Test]
 	public function query()
 	{
@@ -42,7 +42,7 @@ class QueryTest extends TestCase
 	#[Test]
 	public function sql()
 	{
-		$expected = [0 => [ 'id' => 1, 'name' => 'John' ]];
+		$expected = [0 => ['id' => 1, 'name' => 'John']];
 
 		$mysql = $this->createMock(MySQLDriver::class);
 		$mysql->expects($this->once())->method('dispatch')->willReturn($expected);

@@ -6,9 +6,10 @@ namespace Projom\Tests\EndToEnd;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Projom\Storage\Engine;
+
 use Projom\Storage\Logger\LoggerType;
 use Projom\Storage\Logger\SimpleLogger;
+use Projom\Storage\Static\Engine;
 
 class SimpleLoggerTest extends TestCase
 {
