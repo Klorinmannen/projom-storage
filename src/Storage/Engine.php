@@ -15,7 +15,7 @@ class Engine
 {
 	protected array $drivers = [];
 	protected null|Driver $currentDriver = null;
-	protected DriverFactory $driverFactory = null;
+	protected readonly DriverFactory $driverFactory;
 
 	public function __construct(DriverFactory $driverFactory)
 	{
