@@ -36,7 +36,10 @@ trait Repository
 	/**
 	 * The mysql query object to use for database operations.
 	 */
-	abstract public function setQuery(Query $query): void;
+	public function setQuery(Query $query): void
+	{
+		$this->query = $query;
+	}
 
 	/**
 	 * Returns the primary key field of the table.
