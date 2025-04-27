@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\MySQL;
 
-use Projom\Storage\Static\MySQL\Query;
+use Projom\Storage\MySQL\Query;
 use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Util;
@@ -27,10 +27,16 @@ use Projom\Storage\Util;
  */
 trait Repository
 {
-	private $table = null;
-	private $primaryField = null;
-	private $formatFields = [];
-	private $redactedFields = [];
+	private const REDACTED = '__REDACTED__';
+
+	private readonly Query $query;
+	private readonly string $table;
+	private readonly string $primaryField;
+
+	/**
+	 * The mysql query object to use for database operations.
+	 */
+	abstract public function setQuery(Query $query): void;
 
 	/**
 	 * Returns the primary key field of the table.
@@ -62,14 +68,11 @@ trait Repository
 		if ($this->table)
 			return;
 
-		$calledClass = get_class($this);
-		$this->table = Util::classFromCalledClass($calledClass);
-		$this->primaryField = $this->primaryField();
-		$this->formatFields = $this->formatFields();
-		$this->redactedFields = $this->redactFields();
-
+		$this->table = Util::classFromCalledClass(static::class);
 		if (!$this->table)
 			throw new \Exception('Table name not set', 400);
+
+		$this->primaryField = $this->primaryField();
 		if (!$this->primaryField)
 			throw new \Exception('Primary field not set', 400);
 	}
@@ -90,10 +93,10 @@ trait Repository
 
 	private function formatRecord(array $record): array
 	{
-		if (!$this->formatFields)
+		if (!$formatFields = $this->formatFields())
 			return $record;
 
-		foreach ($this->formatFields as $field => $type) {
+		foreach ($formatFields as $field => $type) {
 			if (!array_key_exists($field, $record))
 				continue;
 			$value = $record[$field];
@@ -105,13 +108,13 @@ trait Repository
 
 	private function redactRecord(array $record): array
 	{
-		if (!$this->redactedFields)
+		if (!$redactedFields = $this->redactFields())
 			return $record;
 
-		foreach ($this->redactedFields as $field) {
+		foreach ($redactedFields as $field) {
 			if (!array_key_exists($field, $record))
 				throw new \Exception("Field: {$field}, could not be redacted. Not found in record", 400);
-			$record[$field] = '__REDACTED__';
+			$record[$field] = static::REDACTED;
 		}
 
 		return $record;
@@ -125,7 +128,7 @@ trait Repository
 	public function create(array $record): int|string
 	{
 		$this->invoke();
-		$primaryID = Query::build($this->table)->insert($record);
+		$primaryID = $this->query->build($this->table)->insert($record);
 		return $primaryID;
 	}
 
@@ -138,7 +141,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$records = Query::build($this->table)->fetch($this->primaryField, $primaryID);
+		$records = $this->query->build($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
 			return null;
 
@@ -155,7 +158,7 @@ trait Repository
 	public function update(string|int $primaryID, array $data): void
 	{
 		$this->invoke();
-		Query::build($this->table)->filterOn($this->primaryField, $primaryID)->update($data);
+		$this->query->build($this->table)->filterOn($this->primaryField, $primaryID)->update($data);
 	}
 
 	/**
@@ -166,7 +169,7 @@ trait Repository
 	public function delete(string|int $primaryID): void
 	{
 		$this->invoke();
-		Query::build($this->table)->filterOn($this->primaryField, $primaryID)->delete();
+		$this->query->build($this->table)->filterOn($this->primaryField, $primaryID)->delete();
 	}
 
 	/**
@@ -181,7 +184,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$records = Query::build($this->table)->fetch($this->primaryField, $primaryID);
+		$records = $this->query->build($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
 			return throw new \Exception('Record to clone not found', 400);
 
@@ -190,9 +193,9 @@ trait Repository
 
 		// Merge new record with existing record. 
 		$record = $newRecord + $record;
-		$clonePrimaryID = Query::build($this->table)->insert($record);
+		$clonePrimaryID = $this->query->build($this->table)->insert($record);
 
-		$clonedRecords = Query::build($this->table)->fetch($this->primaryField, $clonePrimaryID);
+		$clonedRecords = $this->query->build($this->table)->fetch($this->primaryField, $clonePrimaryID);
 		$clonedRecords = $this->processRecords($clonedRecords);
 		return array_pop($clonedRecords);
 	}
@@ -207,7 +210,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = Query::build($this->table);
+		$query = $this->query->build($this->table);
 		if ($filters)
 			$query->filterOnFields($filters);
 
@@ -229,7 +232,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$records = Query::build($this->table)->filterOn($field, "%$value%", Operator::LIKE)->select();
+		$records = $this->query->build($this->table)->filterOn($field, "%$value%", Operator::LIKE)->select();
 		if (!$records)
 			return null;
 
@@ -247,7 +250,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$records = Query::build($this->table)->fetch($field, $value);
+		$records = $this->query->build($this->table)->fetch($field, $value);
 		if (!$records)
 			return null;
 
@@ -270,7 +273,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = Query::build($this->table);
+		$query = $this->query->build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -301,7 +304,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = Query::build($this->table);
+		$query = $this->query->build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -332,7 +335,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = Query::build($this->table);
+		$query = $this->query->build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -363,7 +366,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = Query::build($this->table);
+		$query = $this->query->build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -394,7 +397,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = Query::build($this->table);
+		$query = $this->query->build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -424,7 +427,7 @@ trait Repository
 	{
 		$this->invoke();
 
-		$query = Query::build($this->table);
+		$query = $this->query->build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
