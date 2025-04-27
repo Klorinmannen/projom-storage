@@ -19,6 +19,11 @@ class Query
 		$this->engine = $engine;
 	}
 
+	public static function create(Engine $engine): Query
+	{
+		return new Query($engine);
+	}
+
 	public function build(string|array $collections, null|array $options = null): QueryBuilder
 	{
 		$collections = Util::stringToArray($collections);
