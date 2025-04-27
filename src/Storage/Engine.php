@@ -52,7 +52,7 @@ class Engine
 		$this->currentDriver = $driver;
 	}
 
-	public function loadDriver(array $config): void
+	public function loadDriver(array $config): Engine
 	{
 		if ($this->driverFactory === null)
 			throw new \Exception('Driver factory not set', 400);
@@ -60,6 +60,8 @@ class Engine
 		$config = new Config($config);
 		$engineDriver =  $this->driverFactory->createDriver($config);
 		$this->setDriver($engineDriver, $config->driver);
+
+		return $this;
 	}
 
 	public function setDriver(DriverBase $engineDriver, Driver $driver): void
