@@ -33,12 +33,17 @@ trait Repository
 	private readonly string $table;
 	private readonly string $primaryField;
 
-	/**
-	 * The mysql query object to use for database operations.
-	 */
-	public function setQuery(Query $query): void
+	public function invoke(Query $query)
 	{
 		$this->query = $query;
+
+		$this->table = Util::classFromCalledClass(static::class);
+		if (!$this->table)
+			throw new \Exception('Table name not set', 400);
+
+		$this->primaryField = $this->primaryField();
+		if (!$this->primaryField)
+			throw new \Exception('Primary field not set', 400);
 	}
 
 	/**
@@ -64,20 +69,6 @@ trait Repository
 	public function redactFields(): array
 	{
 		return [];
-	}
-
-	private function invoke()
-	{
-		if ($this->table)
-			return;
-
-		$this->table = Util::classFromCalledClass(static::class);
-		if (!$this->table)
-			throw new \Exception('Table name not set', 400);
-
-		$this->primaryField = $this->primaryField();
-		if (!$this->primaryField)
-			throw new \Exception('Primary field not set', 400);
 	}
 
 	private function processRecords(array $records): array
@@ -130,7 +121,6 @@ trait Repository
 	 */
 	public function create(array $record): int|string
 	{
-		$this->invoke();
 		$primaryID = $this->query->build($this->table)->insert($record);
 		return $primaryID;
 	}
@@ -142,8 +132,6 @@ trait Repository
 	 */
 	public function find(string|int $primaryID): null|array|object
 	{
-		$this->invoke();
-
 		$records = $this->query->build($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
 			return null;
@@ -160,8 +148,9 @@ trait Repository
 	 */
 	public function update(string|int $primaryID, array $data): void
 	{
-		$this->invoke();
-		$this->query->build($this->table)->filterOn($this->primaryField, $primaryID)->update($data);
+		$this->query->build($this->table)
+			->filterOn($this->primaryField, $primaryID)
+			->update($data);
 	}
 
 	/**
@@ -171,8 +160,9 @@ trait Repository
 	 */
 	public function delete(string|int $primaryID): void
 	{
-		$this->invoke();
-		$this->query->build($this->table)->filterOn($this->primaryField, $primaryID)->delete();
+		$this->query->build($this->table)
+			->filterOn($this->primaryField, $primaryID)
+			->delete();
 	}
 
 	/**
@@ -185,8 +175,6 @@ trait Repository
 	 */
 	public function clone(string|int $primaryID, array $newRecord = []): array|object
 	{
-		$this->invoke();
-
 		$records = $this->query->build($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
 			return throw new \Exception('Record to clone not found', 400);
@@ -211,8 +199,6 @@ trait Repository
 	 */
 	public function all(array $filters = []): null|array
 	{
-		$this->invoke();
-
 		$query = $this->query->build($this->table);
 		if ($filters)
 			$query->filterOnFields($filters);
@@ -233,8 +219,6 @@ trait Repository
 	 */
 	public function search(string $field, string $value): null|array
 	{
-		$this->invoke();
-
 		$records = $this->query->build($this->table)->filterOn($field, "%$value%", Operator::LIKE)->select();
 		if (!$records)
 			return null;
@@ -251,8 +235,6 @@ trait Repository
 	 */
 	public function get(string $field, mixed $value): null|array|object
 	{
-		$this->invoke();
-
 		$records = $this->query->build($this->table)->fetch($field, $value);
 		if (!$records)
 			return null;
@@ -274,8 +256,6 @@ trait Repository
 	 */
 	public function count(string $countField = '*',  array $filters = [], array $groupByFields = []): null|array
 	{
-		$this->invoke();
-
 		$query = $this->query->build($this->table);
 
 		if ($filters)
@@ -305,8 +285,6 @@ trait Repository
 	 */
 	public function sum(string $sumField, array $filters = [], array $groupByFields = []): null|array
 	{
-		$this->invoke();
-
 		$query = $this->query->build($this->table);
 
 		if ($filters)
@@ -336,8 +314,6 @@ trait Repository
 	 */
 	public function avg(string $averageField, array $filters = [], array $groupByFields = []): null|array
 	{
-		$this->invoke();
-
 		$query = $this->query->build($this->table);
 
 		if ($filters)
@@ -367,8 +343,6 @@ trait Repository
 	 */
 	public function min(string $minField, array $filters = [], array $groupByFields = []): null|array
 	{
-		$this->invoke();
-
 		$query = $this->query->build($this->table);
 
 		if ($filters)
@@ -398,8 +372,6 @@ trait Repository
 	 */
 	public function max(string $maxField, array $filters = [], array $groupByFields = []): null|array
 	{
-		$this->invoke();
-
 		$query = $this->query->build($this->table);
 
 		if ($filters)
@@ -428,8 +400,6 @@ trait Repository
 	 */
 	public function paginate(int $page, int $pageSize, array $filters = []): null|array
 	{
-		$this->invoke();
-
 		$query = $this->query->build($this->table);
 
 		if ($filters)
