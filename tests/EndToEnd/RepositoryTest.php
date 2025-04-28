@@ -9,11 +9,14 @@ include_once __DIR__ . '/User.php';
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Static\Engine;
+use Projom\Storage\Engine;
+use Projom\Storage\MySQL\Query;
 use Projom\Tests\EndToEnd\User;
 
 class RepositoryTest extends TestCase
 {
+	private Query $query;
+
 	public function setUp(): void
 	{
 		$config = [
@@ -30,14 +33,15 @@ class RepositoryTest extends TestCase
 			]
 		];
 
-		Engine::start();
-		Engine::loadDriver($config);
+		$engine = Engine::create($config);
+		$this->query = Query::create($engine);
 	}
 
 	#[Test]
 	public function crud()
 	{
 		$user = new User();
+		$user->invoke($this->query);
 
 		$newUser = [
 			'Username' => 'anya.doe@example.com',
@@ -83,6 +87,7 @@ class RepositoryTest extends TestCase
 	public function sum(): void
 	{
 		$user = new User();
+		$user->invoke($this->query);
 
 		$sum = 0;
 		$allUserRecords = $user->all();
@@ -106,6 +111,8 @@ class RepositoryTest extends TestCase
 	public function counts(): void
 	{
 		$user = new User();
+		$user->invoke($this->query);
+
 		$userRecords = $user->count();
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
@@ -137,6 +144,7 @@ class RepositoryTest extends TestCase
 	public function avg(): void
 	{
 		$user = new User();
+		$user->invoke($this->query);
 
 		$sum = 0;
 		$allUserRecords = $user->all();
@@ -162,6 +170,8 @@ class RepositoryTest extends TestCase
 	public function min(): void
 	{
 		$user = new User();
+		$user->invoke($this->query);
+
 		$userRecords = $user->min('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
@@ -173,6 +183,8 @@ class RepositoryTest extends TestCase
 	public function max(): void
 	{
 		$user = new User();
+		$user->invoke($this->query);
+
 		$userRecords = $user->max('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertNotNull($userRecords);
 		$this->assertCount(1, $userRecords);
@@ -184,6 +196,8 @@ class RepositoryTest extends TestCase
 	public function paginate(): void
 	{
 		$user = new User();
+		$user->invoke($this->query);
+
 		$userRecords = $user->paginate(2, 2, ['Lastname' => 'Doe']);
 		$this->assertNotNull($userRecords);
 		$this->assertCount(2, $userRecords);
