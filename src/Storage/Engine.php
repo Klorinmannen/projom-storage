@@ -22,11 +22,16 @@ class Engine
 		$this->driverFactory = $driverFactory;
 	}
 
-	public static function create(): Engine
+	public static function create(array $config = []): Engine
 	{
 		$connectionFactory = ConnectionFactory::create();
 		$driverFactory = DriverFactory::create($connectionFactory);
-		return new Engine($driverFactory);
+		$engine = new Engine($driverFactory);
+
+		if ($config)
+			$engine->loadDriver($config);		
+
+		return $engine;
 	}
 
 	public function clear(): void
