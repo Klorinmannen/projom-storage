@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2025-04-26 20:59:47
+  2025-04-28 14:03:52
 
  Summary:
-  Classes: 68.00% (34/50)
-  Methods: 74.00% (222/300)
-  Lines:   69.19% (869/1256)
+  Classes: 66.00% (33/50)
+  Methods: 73.42% (221/301)
+  Lines:   69.66% (870/1249)
 
 Projom\Storage\Engine\Driver\Config
   Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  9/  9)
@@ -85,7 +85,7 @@ Projom\Storage\SQL\Util\Operator
 Projom\Storage\SQL\Util\Sort
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
 Projom\Storage\Static\Engine
-  Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 26/ 26)
+  Methods:  87.50% ( 7/ 8)   Lines:  96.43% ( 27/ 28)
 Projom\Storage\Static\MySQL\Query
   Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  7/  7)
 Projom\Storage\Static\Query\DB
