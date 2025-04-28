@@ -17,11 +17,14 @@ class Engine
 	protected static null|Driver $currentDriver = null;
 	protected static null|DriverFactory $driverFactory = null;
 
-	public static function start(): void
+	public static function start(array $config = []): void
 	{
 		$connectionFactory = ConnectionFactory::create();
 		$driverFactory = DriverFactory::create($connectionFactory);
 		static::setDriverFactory($driverFactory);
+
+		if ($config)
+			static::loadDriver($config);
 	}
 
 	public static function clear(): void
