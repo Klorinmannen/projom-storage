@@ -10,7 +10,7 @@ use Projom\Storage\Static\MySQL\Query;
 use Projom\Storage\Util;
 
 /**
- * Repository is a trait that provides a set of methods to interact with a database table.
+ * Static repository - a trait that provides a set of methods to interact with a database table.
  * 
  * How to use:
  * * Use this trait to create a query-able "repository" of the class using the trait.
@@ -28,11 +28,6 @@ use Projom\Storage\Util;
 trait Repository
 {
 	private const REDACTED = '__REDACTED__';
-
-	private $table = null;
-	private $primaryField = null;
-	private $formatFields = [];
-	private $redactedFields = [];
 
 	/**
 	 * Returns the primary key field of the table.

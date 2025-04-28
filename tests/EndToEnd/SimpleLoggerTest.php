@@ -6,9 +6,12 @@ namespace Projom\Tests\EndToEnd;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 use Projom\Storage\Engine;
 use Projom\Storage\Logger\LoggerType;
 use Projom\Storage\Logger\SimpleLogger;
+use Projom\Storage\MySQL\Query;
+use Projom\Tests\EndToEnd\User;
 
 class SimpleLoggerTest extends TestCase
 {
@@ -31,10 +34,13 @@ class SimpleLoggerTest extends TestCase
 				]
 			]
 		];
-		Engine::start();
-		Engine::loadDriver($config);
+
+		$engine = Engine::create($config);
+		$query = Query::create($engine);
 
 		$user = new User();
+		$user->invoke($query);
+
 		$user->all();
 		$user->find(1);
 		$clonedUser = $user->clone(1);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Tests\EndToEnd;
 
+use Projom\Storage\MySQL\Query;
 use Projom\Storage\MySQL\Repository;
 use Projom\Storage\Query\RecordInterface;
 
