@@ -45,7 +45,7 @@ $engine = Engine::create($config);
 $query = Query::create($engine);
 
 // Select all users
-$users = Query->build('User')->select();
+$users = $query->build('User')->select();
 ````
 
 ### Static usage
