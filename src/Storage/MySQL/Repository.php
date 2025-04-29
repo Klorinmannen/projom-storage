@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Projom\Storage\MySQL;
 
 use Projom\Storage\MySQL\Query;
+use Projom\Storage\MySQL\Util;
 use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
-use Projom\Storage\Util;
 
 /**
  * Repository is a trait that provides a set of methods to interact with a database table.
@@ -37,9 +37,11 @@ trait Repository
 	{
 		$this->query = $query;
 
-		$this->table = Util::classFromCalledClass(static::class);
-		if (!$this->table)
+		$class = Util::classFromCalledClass(static::class);
+		if (!$class)
 			throw new \Exception('Table name not set', 400);
+
+		$this->table = Util::replaceClass($class, ['Repository', 'Repo']);
 
 		$this->primaryField = $this->primaryField();
 		if (!$this->primaryField)

@@ -7,7 +7,7 @@ namespace Projom\Storage\Static\MySQL;
 use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Static\MySQL\Query;
-use Projom\Storage\Util;
+use Projom\Storage\MySQL\Util;
 
 /**
  * Static repository - a trait that provides a set of methods to interact with a database table.
@@ -66,9 +66,11 @@ trait Repository
 
 	private static function invoke(): string
 	{
-		$table = Util::classFromCalledClass(static::class);
-		if (!$table)
+		$class = Util::classFromCalledClass(static::class);
+		if (!$class)
 			throw new \Exception('Table name not set', 400);
+
+		$table = Util::replaceClass($class, ['Repository', 'Repo']);
 
 		$primaryField = static::primaryField();
 		if (!$primaryField)
