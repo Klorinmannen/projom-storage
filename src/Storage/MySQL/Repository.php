@@ -64,9 +64,19 @@ trait Repository
 	/**
 	 * Returns which fields to redact.
 	 * 
-	 * * Example: ['Name', 'Email']
+	 * * Example: ['Email', 'Password']
 	 */
 	public function redactFields(): array
+	{
+		return [];
+	}
+
+	/**
+	 * Returns which fields to select.
+	 * 
+	 * * Example: ['Name', 'Email']
+	 */
+	public function selectFields(): array
 	{
 		return [];
 	}
@@ -77,6 +87,7 @@ trait Repository
 
 		$processedRecords = [];
 		foreach ($records as $key => $record) {
+			$record = $this->selectRecordFields($record);
 			$record = $this->formatRecord($record);
 			$record = $this->redactRecord($record);
 			$processedRecords[$key] = $record;
@@ -105,13 +116,24 @@ trait Repository
 		if (!$redactedFields = $this->redactFields())
 			return $record;
 
-		foreach ($redactedFields as $field) {
-			if (!array_key_exists($field, $record))
-				throw new \Exception("Field: {$field}, could not be redacted. Not found in record", 400);
-			$record[$field] = static::REDACTED;
-		}
+		foreach ($redactedFields as $field)
+			if (array_key_exists($field, $record))
+				$record[$field] = static::REDACTED;
 
 		return $record;
+	}
+
+	private function selectRecordFields(array $record): array
+	{
+		if (!$selectFields = $this->selectFields())
+			return $record;
+
+		$modifiedRecord = [];
+		foreach ($selectFields as $field)
+			if (array_key_exists($field, $record))
+				$modifiedRecord[$field] = $record[$field];
+
+		return $modifiedRecord;
 	}
 
 	/**
