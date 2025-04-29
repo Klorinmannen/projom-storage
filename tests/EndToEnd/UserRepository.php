@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Projom\Tests\EndToEnd;
 
-use Projom\Storage\MySQL\Query;
 use Projom\Storage\MySQL\Repository;
-use Projom\Storage\Query\RecordInterface;
 
-class User implements RecordInterface
+class UserRepository
 {
 	use Repository;
 	
@@ -43,10 +41,5 @@ class User implements RecordInterface
 			'Created' => 'date',
 			'Updated' => 'datetime'
 		];
-	}
-
-	public static function createFromRecord(array $record): object
-	{
-		return new User($record);
 	}
 }

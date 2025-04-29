@@ -2,21 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\EndToEnd;
-
-include_once __DIR__ . '/User.php';
+namespace Projom\tests\EndToEnd\Static\MySQL;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Query\Format;
-use Projom\Storage\Static\MySQL\Query;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\SQL\Util\Sort;
 use Projom\Storage\Static\Engine;
-
-use Projom\Tests\EndToEnd\User;
+use Projom\Storage\Static\MySQL\Query;
+use Projom\Tests\EndToEnd\UserRecord;
 
 class EndToEndTest extends TestCase
 {
@@ -168,7 +165,7 @@ class EndToEndTest extends TestCase
 		$expectedRecords = 2;
 		$this->assertEquals($expectedRecords, $actualRecords);
 
-		$users = Query::build('User')->formatAs(Format::CUSTOM_OBJECT, User::class)->filterOn('UserID', [1, 3], Operator::BETWEEN)->select();
+		$users = Query::build('User')->formatAs(Format::CUSTOM_OBJECT, UserRecord::class)->filterOn('UserID', [1, 3], Operator::BETWEEN)->select();
 		$actualRecords = count($users);
 		$expectedRecords = 3;
 		$this->assertEquals($expectedRecords, $actualRecords);

@@ -11,7 +11,7 @@ use Projom\Storage\Engine;
 use Projom\Storage\Logger\LoggerType;
 use Projom\Storage\Logger\SimpleLogger;
 use Projom\Storage\MySQL\Query;
-use Projom\Tests\EndToEnd\User;
+use Projom\Tests\EndToEnd\UserRepository;
 
 class SimpleLoggerTest extends TestCase
 {
@@ -38,15 +38,17 @@ class SimpleLoggerTest extends TestCase
 		$engine = Engine::create($config);
 		$query = Query::create($engine);
 
-		$user = new User();
-		$user->invoke($query);
+		$userRepo = new UserRepository();
+		$userRepo->invoke($query);
 
-		$user->all();
-		$user->find(1);
-		$clonedUser = $user->clone(1);
-		$user->update($clonedUser['UserID'], ['Username' => 'Sofie']);
-		$user->delete($clonedUser['UserID']);
+		// Do some database operations, which will hopefully be logged
+		$userRepo->all();
+		$userRepo->find(1);
+		$clonedUser = $userRepo->clone(1);
+		$userRepo->update($clonedUser['UserID'], ['Username' => 'Sofie']);
+		$userRepo->delete($clonedUser['UserID']);
 
+		// Check if theres anything in the log
 		$log = $logger->logStore();
 		$this->assertNotEmpty($log);
 	}
