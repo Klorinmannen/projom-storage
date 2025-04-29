@@ -9,7 +9,7 @@ use Projom\Storage\MySQL\Repository;
 class UserRepository
 {
 	use Repository;
-	
+
 	private array $data = [];
 
 	public function __construct(array $record = [])
@@ -40,6 +40,18 @@ class UserRepository
 			'Active' => 'bool',
 			'Created' => 'date',
 			'Updated' => 'datetime'
+		];
+	}
+
+	public static function selectFields(): array
+	{
+		return [
+			'UserID',
+			'Username',
+			'Lastname',
+			'Password',
+			'Active',
+			'Updated'
 		];
 	}
 }

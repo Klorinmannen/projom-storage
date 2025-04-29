@@ -44,7 +44,6 @@ class UserRepository
 			'Lastname',
 			'Password',
 			'Active',
-			'Created',
 			'Updated'
 		];
 	}

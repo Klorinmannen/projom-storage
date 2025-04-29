@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\tests\EndToEnd\Static\MySQL;
 
+include_once __DIR__ . '/../UserRepository.php';
+
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -226,7 +228,6 @@ class RepositoryTest extends TestCase
 		$this->assertIsString($userRecord['Username']);
 		$this->assertIsString($userRecord['Password']);
 		$this->assertIsBool($userRecord['Active']);
-		$this->assertIsString($userRecord['Created']);
 	}
 
 	#[Test]
@@ -239,9 +240,9 @@ class RepositoryTest extends TestCase
 		$this->assertArrayHasKey('Lastname', $userRecord);
 		$this->assertArrayHasKey('Password', $userRecord);
 		$this->assertArrayHasKey('Active', $userRecord);
+		$this->assertArrayHasKey('Updated', $userRecord);
 
 		$this->assertArrayNotHasKey('Firstname', $userRecord);
-		$this->assertArrayNotHasKey('Updated', $userRecord);
 		$this->assertArrayNotHasKey('Created', $userRecord);
 	}
 }

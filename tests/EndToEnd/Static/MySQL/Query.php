@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\tests\EndToEnd\Static\MySQL;
 
+include_once __DIR__ . '/../../UserRecord.php';
+
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
