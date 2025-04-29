@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Projom\Storage\MySQL;
 
 use Projom\Storage\MySQL\Query;
+use Projom\Storage\MySQL\Util;
 use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
-use Projom\Storage\Util;
 
 /**
  * Repository is a trait that provides a set of methods to interact with a database table.
@@ -37,9 +37,11 @@ trait Repository
 	{
 		$this->query = $query;
 
-		$this->table = Util::classFromCalledClass(static::class);
-		if (!$this->table)
+		$class = Util::classFromCalledClass(static::class);
+		if (!$class)
 			throw new \Exception('Table name not set', 400);
+
+		$this->table = Util::replaceClass($class, ['Repository', 'Repo']);
 
 		$this->primaryField = $this->primaryField();
 		if (!$this->primaryField)
@@ -64,9 +66,19 @@ trait Repository
 	/**
 	 * Returns which fields to redact.
 	 * 
-	 * * Example: ['Name', 'Email']
+	 * * Example: ['Email', 'Password']
 	 */
 	public function redactFields(): array
+	{
+		return [];
+	}
+
+	/**
+	 * Returns which fields to select.
+	 * 
+	 * * Example: ['Name', 'Email']
+	 */
+	public function selectFields(): array
 	{
 		return [];
 	}
@@ -77,6 +89,7 @@ trait Repository
 
 		$processedRecords = [];
 		foreach ($records as $key => $record) {
+			$record = $this->selectRecordFields($record);
 			$record = $this->formatRecord($record);
 			$record = $this->redactRecord($record);
 			$processedRecords[$key] = $record;
@@ -105,13 +118,24 @@ trait Repository
 		if (!$redactedFields = $this->redactFields())
 			return $record;
 
-		foreach ($redactedFields as $field) {
-			if (!array_key_exists($field, $record))
-				throw new \Exception("Field: {$field}, could not be redacted. Not found in record", 400);
-			$record[$field] = static::REDACTED;
-		}
+		foreach ($redactedFields as $field)
+			if (array_key_exists($field, $record))
+				$record[$field] = static::REDACTED;
 
 		return $record;
+	}
+
+	private function selectRecordFields(array $record): array
+	{
+		if (!$selectFields = $this->selectFields())
+			return $record;
+
+		$modifiedRecord = [];
+		foreach ($selectFields as $field)
+			if (array_key_exists($field, $record))
+				$modifiedRecord[$field] = $record[$field];
+
+		return $modifiedRecord;
 	}
 
 	/**

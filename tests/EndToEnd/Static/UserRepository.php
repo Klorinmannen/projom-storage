@@ -6,7 +6,7 @@ namespace Projom\Tests\EndToEnd\Static;
 
 use Projom\Storage\Static\MySQL\Repository;
 
-class User
+class UserRepository
 {
 	use Repository;
 
@@ -33,6 +33,18 @@ class User
 			'Active' => 'bool',
 			'Created' => 'date',
 			'Updated' => 'datetime'
+		];
+	}
+
+	public static function selectFields(): array
+	{
+		return [
+			'UserID',
+			'Username',
+			'Lastname',
+			'Password',
+			'Active',
+			'Updated'
 		];
 	}
 }

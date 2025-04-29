@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Projom\Tests\EndToEnd;
 
-use Projom\Storage\MySQL\Query;
 use Projom\Storage\MySQL\Repository;
-use Projom\Storage\Query\RecordInterface;
 
-class User implements RecordInterface
+class UserRepository
 {
 	use Repository;
-	
+
 	private array $data = [];
 
 	public function __construct(array $record = [])
@@ -45,8 +43,15 @@ class User implements RecordInterface
 		];
 	}
 
-	public static function createFromRecord(array $record): object
+	public static function selectFields(): array
 	{
-		return new User($record);
+		return [
+			'UserID',
+			'Username',
+			'Lastname',
+			'Password',
+			'Active',
+			'Updated'
+		];
 	}
 }
