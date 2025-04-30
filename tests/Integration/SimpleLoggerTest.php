@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\EndToEnd;
+namespace Projom\Tests\Integration;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -11,7 +11,7 @@ use Projom\Storage\Engine;
 use Projom\Storage\Logger\LoggerType;
 use Projom\Storage\Logger\SimpleLogger;
 use Projom\Storage\MySQL\Query;
-use Projom\Tests\EndToEnd\UserRepository;
+use Projom\Tests\Integration\UserRepository;
 
 class SimpleLoggerTest extends TestCase
 {
@@ -30,7 +30,7 @@ class SimpleLoggerTest extends TestCase
 					'password' => 'projom',
 					'host' => 'localhost',
 					'port' => 3306,
-					'database' => 'EndToEnd'
+					'database' => 'Integration'
 				]
 			]
 		];

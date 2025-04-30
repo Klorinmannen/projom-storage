@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\EndToEnd\Static\MySQL;
+namespace Projom\tests\Integration\Static\MySQL;
 
 include_once __DIR__ . '/../UserRepository.php';
 
@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Static\Engine;
-use Projom\Tests\EndToEnd\Static\UserRepository;
+use Projom\Tests\Integration\Static\UserRepository;
 
 class RepositoryTest extends TestCase
 {
@@ -25,7 +25,7 @@ class RepositoryTest extends TestCase
 					'password' => 'projom',
 					'host' => 'localhost',
 					'port' => 3306,
-					'database' => 'EndToEnd'
+					'database' => 'Integration'
 				]
 			]
 		];

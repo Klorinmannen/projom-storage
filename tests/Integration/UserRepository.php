@@ -2,27 +2,34 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\EndToEnd\Static;
+namespace Projom\Tests\Integration;
 
-use Projom\Storage\Static\MySQL\Repository;
+use Projom\Storage\MySQL\Repository;
 
 class UserRepository
 {
 	use Repository;
 
-	public static function primaryField(): string
+	private array $data = [];
+
+	public function __construct(array $record = [])
+	{
+		$this->data = $record;
+	}
+
+	public function primaryField(): string
 	{
 		return 'UserID';
 	}
 
-	public static function redactFields(): array
+	public function redactFields(): array
 	{
 		return [
 			'Password'
 		];
 	}
 
-	public static function formatFields(): array
+	public function formatFields(): array
 	{
 		return [
 			'UserID' => 'int',

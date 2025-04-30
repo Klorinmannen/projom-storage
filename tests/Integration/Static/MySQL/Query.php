@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\EndToEnd\Static\MySQL;
+namespace Projom\tests\Integration\Static\MySQL;
 
 include_once __DIR__ . '/../../UserRecord.php';
 
@@ -15,7 +15,7 @@ use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\SQL\Util\Sort;
 use Projom\Storage\Static\Engine;
 use Projom\Storage\Static\MySQL\Query;
-use Projom\Tests\EndToEnd\UserRecord;
+use Projom\Tests\Integration\UserRecord;
 
 class EndToEndTest extends TestCase
 {
@@ -30,7 +30,7 @@ class EndToEndTest extends TestCase
 					'password' => 'projom',
 					'host' => 'localhost',
 					'port' => 3306,
-					'database' => 'EndToEnd'
+					'database' => 'Integration'
 				]
 			]
 		];

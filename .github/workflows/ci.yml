@@ -10,7 +10,7 @@ permissions:
   contents: read # For actions/checkout@v4
 
 jobs:
-  unit-tests:
+  Unit:
     name: PHPUnit tests on ubuntu-latest
     runs-on: [ubuntu-latest]
     steps:
@@ -27,10 +27,10 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress
 
-      - name: Run coverage report
-        run: ./vendor/bin/phpunit --testsuite="unit" --coverage-text="coverage_text.txt" --coverage-html="coverage_html"
+      - name: Run unit test coverage report
+        run: ./vendor/bin/phpunit --testsuite="Unit" --coverage-text="coverage_text.txt" --coverage-html="coverage_html"
 
-      - name: Send coverage text to step summary
+      - name: Send coverage report to step summary
         run: cat coverage_text.txt >> $GITHUB_STEP_SUMMARY
 
       - name: Create archive for coverage html
@@ -43,8 +43,8 @@ jobs:
           overwrite: true
           path: ./coverage_html.tar.gz
 
-  EndToEnd:
-    name: EndToEnd tests on ubuntu-latest
+  Integration:
+    name: Integration tests on ubuntu-latest
     runs-on: [ubuntu-latest]
 
     steps:
@@ -63,20 +63,23 @@ jobs:
 
       - name: Change permissions
         run: |
-          chmod +x ./tests/EndToEnd/mariadb_install.sh
-          chmod +x ./tests/EndToEnd/mariadb_create_database_with_user.sh
-          chmod +x ./tests/EndToEnd/EndToEnd.sql
+          chmod +x ./tests/Integration/setup.sh
+          chmod +x ./tests/Integration/create_database_with_user.sh
+          chmod +x ./tests/Integration/data.sql
 
-      - name: Install MariaDB and create database with user
-        run: ./tests/EndToEnd/mariadb_install.sh projom EndToEnd
+      - name: Installing packages
+        run: ./tests/Integration/setup.sh
+
+      - name: Create database with user
+        run: ./tests/Integration/create_database_with_user.sh projom projom Integration
 
       - name: Creating database tables with mock data
-        run: mysql --user=projom --password=projom < ./tests/EndToEnd/EndToEnd.sql
+        run: mysql --user=projom --password=projom < ./tests/Integration/data.sql
 
-      - name: Run test suite
-        run: ./vendor/bin/phpunit --testsuite="EndToEnd"
+      - name: Run integration test suite
+        run: ./vendor/bin/phpunit --testsuite="Integration"
 
-  psalm-security-scan:
+  Psalm:
     name: Psalm static security analysis on ubuntu-latest
     runs-on: ubuntu-latest
     permissions:
