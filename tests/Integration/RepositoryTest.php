@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\EndToEnd;
+namespace Projom\tests\Integration;
 
 include_once __DIR__ . '/UserRepository.php';
 
@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine;
 use Projom\Storage\MySQL\Query;
-use Projom\Tests\EndToEnd\UserRepository;
+use Projom\Tests\Integration\UserRepository;
 
 class RepositoryTest extends TestCase
 {

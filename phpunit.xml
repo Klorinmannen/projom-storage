@@ -14,11 +14,11 @@
          displayDetailsOnTestsThatTriggerNotices="true" 
          displayDetailsOnTestsThatTriggerWarnings="true">
   <testsuites>
-    <testsuite name="unit">
+    <testsuite name="Unit">
       <directory>tests/Unit</directory>
     </testsuite>
-    <testsuite name="EndToEnd">
-      <directory>tests/EndToEnd</directory>
+    <testsuite name="Integration">
+      <directory>tests/Integration</directory>
     </testsuite>
   </testsuites>
   <source restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">

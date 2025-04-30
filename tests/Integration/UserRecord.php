@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\EndToEnd;
+namespace Projom\Tests\Integration;
 
 use Projom\Storage\Query\RecordInterface;
 
@@ -12,6 +12,6 @@ class UserRecord implements RecordInterface
 
 	public static function createFromRecord(array $record): object
 	{
-		return new UserRepository($record);
+		return new UserRecord($record);
 	}
 }
