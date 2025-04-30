@@ -8,7 +8,7 @@ use Projom\Storage\Engine;
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Query\Action;
 use Projom\Storage\Query\Util;
-use Projom\Storage\SQL\QueryBuilder;
+use Projom\Storage\SQL\Statement\Builder;
 
 class Query
 {
@@ -24,7 +24,7 @@ class Query
 		return new Query($engine);
 	}
 
-	public function build(string|array $collections, null|array $options = null): QueryBuilder
+	public function build(string|array $collections, null|array $options = null): Builder
 	{
 		$collections = Util::stringToArray($collections);
 		return $this->engine->dispatch(Action::QUERY, Driver::MySQL, [$collections, $options]);

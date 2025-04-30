@@ -9,7 +9,7 @@ use Stringable;
 use Projom\Storage\SQL\Component\Set;
 use Projom\Storage\SQL\Component\Table;
 use Projom\Storage\SQL\Statement\StatementInterface;
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Util;
 
 class Insert implements StatementInterface, Stringable
@@ -17,7 +17,7 @@ class Insert implements StatementInterface, Stringable
 	private readonly Table $table;
 	private readonly Set $set;
 
-	public function __construct(QueryObject $queryInsert)
+	public function __construct(DTO $queryInsert)
 	{
 		$this->table = Table::create($queryInsert->collections);
 		$this->set = Set::create($queryInsert->fieldsWithValues);
@@ -29,7 +29,7 @@ class Insert implements StatementInterface, Stringable
 		return $statement;
 	}
 
-	public static function create(QueryObject $queryInsert): Insert
+	public static function create(DTO $queryInsert): Insert
 	{
 		return new Insert($queryInsert);
 	}

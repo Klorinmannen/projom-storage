@@ -13,8 +13,8 @@ use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
 use Projom\Storage\Engine\Driver\MySQL;
 use Projom\Storage\Engine\Driver\Connection\PDOConnection;
 use Projom\Storage\Query\Format;
-use Projom\Storage\SQL\QueryObject;
 use Projom\Storage\SQL\Statement;
+use Projom\Storage\SQL\Statement\DTO;
 
 class FakePDOConnection implements ConnectionInterface
 {
@@ -62,7 +62,7 @@ class MySQLTest extends TestCase
 		$pdoConnection->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
 		$mysql = MySQL::create($pdoConnection, Statement::create());
-		$mysql->dispatch(Action::SELECT, new QueryObject(collections: ['User'], fields: ['Name'], formatting: [Format::ARRAY]));
+		$mysql->dispatch(Action::SELECT, new DTO(collections: ['User'], fields: ['Name'], formatting: [Format::ARRAY]));
 	}
 
 	#[Test]
@@ -76,7 +76,7 @@ class MySQLTest extends TestCase
 		$pdoConnection->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
 		$mysql = MySQL::create($pdoConnection, Statement::create());
-		$mysql->dispatch(Action::UPDATE, new QueryObject(collections: ['User'], fields: ['Name']));
+		$mysql->dispatch(Action::UPDATE, new DTO(collections: ['User'], fields: ['Name']));
 	}
 
 	#[Test]
@@ -90,7 +90,7 @@ class MySQLTest extends TestCase
 		$pdoConnection->expects($this->once())->method('lastInsertId')->willReturn('1');
 
 		$mysql = MySQL::create($pdoConnection, Statement::create());
-		$mysql->dispatch(Action::INSERT, new QueryObject(collections: ['User'], fields: ['Name']));
+		$mysql->dispatch(Action::INSERT, new DTO(collections: ['User'], fields: ['Name']));
 	}
 
 	#[Test]
@@ -104,7 +104,7 @@ class MySQLTest extends TestCase
 		$pdoConnection->expects($this->once())->method('prepare')->willReturn($pdoStatement);
 
 		$mysql = MySQL::create($pdoConnection, Statement::create());
-		$mysql->dispatch(Action::DELETE, new QueryObject(collections: ['User'], fields: ['Name']));
+		$mysql->dispatch(Action::DELETE, new DTO(collections: ['User'], fields: ['Name']));
 	}
 
 	#[Test]

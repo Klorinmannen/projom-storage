@@ -12,7 +12,7 @@ use Projom\Storage\Static\Engine;
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\DriverFactory;
 use Projom\Storage\Engine\Driver\MySQL;
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 
 class EngineTest extends TestCase
 {
@@ -50,7 +50,7 @@ class EngineTest extends TestCase
 			elseif ($action === Action::CHANGE_CONNECTION)
 				$value = 'default';
 			else
-				$value = new QueryObject(collections: ['User'], fields: ['Name']);
+				$value = new DTO(collections: ['User'], fields: ['Name']);
 
 			Engine::dispatch($action, args: $value);
 		}

@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Statement\Select;
 use Projom\Storage\SQL\Util\Filter;
 use Projom\Storage\SQL\Util\Join;
@@ -21,7 +21,7 @@ class SelectTest extends TestCase
 	{
 		return [
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User'],
 					fields: ['UserID', 'Name'],
 					joins: [['User.UserID', Join::INNER, 'Log.UserID']],
@@ -46,7 +46,7 @@ class SelectTest extends TestCase
 				]
 			],
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User'],
 					fields: ['*'],
 					sorts: [['UserID', Sort::ASC], ['Name', Sort::DESC]]
@@ -57,7 +57,7 @@ class SelectTest extends TestCase
 				]
 			],
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User'],
 					fields: ['*'],
 					limit: 10,
@@ -69,7 +69,7 @@ class SelectTest extends TestCase
 				]
 			],
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User'],
 					fields: ['*']
 				),
@@ -83,7 +83,7 @@ class SelectTest extends TestCase
 
 	#[Test]
 	#[DataProvider('createProvider')]
-	public function create(QueryObject $queryObject, array $expected): void
+	public function create(DTO $queryObject, array $expected): void
 	{
 		$select = Select::create($queryObject);
 		$this->assertEquals($expected, $select->statement());
@@ -92,7 +92,7 @@ class SelectTest extends TestCase
 	#[Test]
 	public function stringable(): void
 	{
-		$queryObject = new QueryObject(
+		$queryObject = new DTO(
 			collections: ['User'],
 			fields: ['UserID', 'Name'],
 			joins: [['User.UserID', Join::INNER, 'Log.UserID']],

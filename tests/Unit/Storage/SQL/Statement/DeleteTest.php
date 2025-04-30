@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Statement\Delete;
 use Projom\Storage\SQL\Util\Filter;
 use Projom\Storage\SQL\Util\Join;
@@ -20,7 +20,7 @@ class DeleteTest extends TestCase
 	{
 		return [
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User'],
 					joins: [['User.UserID = UserRole.UserID', Join::INNER, null]],
 					filters: [
@@ -38,7 +38,7 @@ class DeleteTest extends TestCase
 				]
 			],
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User']
 				),
 				[
@@ -51,7 +51,7 @@ class DeleteTest extends TestCase
 
 	#[Test]
 	#[DataProvider('create_provider')]
-	public function create(QueryObject $queryObject, array $expected): void
+	public function create(DTO $queryObject, array $expected): void
 	{
 		$delete = Delete::create($queryObject);
 		$this->assertEquals($expected, $delete->statement());
@@ -60,7 +60,7 @@ class DeleteTest extends TestCase
 	#[Test]
 	public function stringable(): void
 	{
-		$delete = Delete::create(new QueryObject(collections: ['User']));
+		$delete = Delete::create(new DTO(collections: ['User']));
 		$this->assertEquals('DELETE FROM `User`', (string) $delete);
 	}
 }

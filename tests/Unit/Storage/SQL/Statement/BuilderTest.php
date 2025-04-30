@@ -2,30 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\SQL;
+namespace Projom\Tests\Unit\Storage\SQL\Statement;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
-use Projom\Storage\Engine\Driver\Connection\PDOConnection;
 use Projom\Storage\Query\Format;
+use Projom\Storage\SQL\Statement\Builder;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;
 use Projom\Storage\SQL\Util\Operator;
-use Projom\Storage\SQL\QueryBuilder;
 
-class QueryBuilderTest extends TestCase
+class BuilderTest extends TestCase
 {
 	#[Test]
 	public function formatAs(): void
 	{
 		$driver = $this->createMock(MySQLDriver::class);
-		$query = QueryBuilder::create($driver, ['User']);
+		$query = Builder::create($driver, ['User']);
 
 		$query = $query->formatAs(Format::STD_CLASS);
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	public static function fetchSelectGetProvider(): array
@@ -51,7 +50,7 @@ class QueryBuilderTest extends TestCase
 	{
 		$driver = $this->createMock(MySQLDriver::class);
 		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
-		$query = QueryBuilder::create($driver, ['User']);
+		$query = Builder::create($driver, ['User']);
 
 		$result = $query->fetch('Name', 'John');
 		$this->assertEquals($expected, $result);
@@ -69,7 +68,7 @@ class QueryBuilderTest extends TestCase
 		$expected = 1;
 		$driver = $this->createMock(MySQLDriver::class);
 		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
-		$query = QueryBuilder::create($driver, ['User']);
+		$query = Builder::create($driver, ['User']);
 
 		$result = $query->update(['Name' => 'Jane', 'Age' => 21]);
 		$this->assertEquals($expected, $result);
@@ -84,7 +83,7 @@ class QueryBuilderTest extends TestCase
 		$expected = 1;
 		$driver = $this->createMock(MySQLDriver::class);
 		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
-		$query = QueryBuilder::create($driver, ['User']);
+		$query = Builder::create($driver, ['User']);
 
 		$result = $query->insert(['Name' => 'Jane', 'Age' => 21]);
 		$this->assertEquals((int) $expected, $result);
@@ -105,7 +104,7 @@ class QueryBuilderTest extends TestCase
 		$expected = 2;
 		$driver = $this->createMock(MySQLDriver::class);
 		$driver->expects($this->atLeastOnce())->method('dispatch')->willReturn($expected);
-		$query = QueryBuilder::create($driver, ['User']);
+		$query = Builder::create($driver, ['User']);
 
 		$result = $query->delete();
 		$this->assertEquals($expected, $result);
@@ -117,72 +116,72 @@ class QueryBuilderTest extends TestCase
 	#[Test]
 	public function joinOn(): void
 	{
-		$query = QueryBuilder::create(null, ['User']);
+		$query = Builder::create(null, ['User']);
 		$query = $query->joinOn('User.UserID = UserRole.UserID', Join::INNER);
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	#[Test]
 	public function filter(): void
 	{
-		$query = QueryBuilder::create(null, ['User']);
+		$query = Builder::create(null, ['User']);
 		$query = $query->filter(['Name', Operator::IN, ['John', 'Jane']], LogicalOperator::AND);
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	#[Test]
 	public function filterList(): void
 	{
-		$query = QueryBuilder::create(null, ['User']);
+		$query = Builder::create(null, ['User']);
 		$query = $query->filterList([['Name', Operator::IN, ['John', 'Jane']]], LogicalOperator::AND);
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	#[Test]
 	public function filterOnFields(): void
 	{
-		$query = QueryBuilder::create(null, ['User']);
+		$query = Builder::create(null, ['User']);
 		$query = $query->filterOnFields(['Name' => ['John', 'Jane']], Operator::IN, LogicalOperator::AND);
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	#[Test]
 	public function filterOn(): void
 	{
-		$query = QueryBuilder::create(null, ['User']);
+		$query = Builder::create(null, ['User']);
 		$query = $query->filterOn('Name', ['John', 'Jane'], Operator::IN, LogicalOperator::AND);
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	#[Test]
 	public function groupOn(): void
 	{
-		$query = QueryBuilder::create(null, ['User']);
+		$query = Builder::create(null, ['User']);
 		$query = $query->groupOn('Username')->groupOn('Name', 'Age')->groupOn('Lastname, Age');
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	#[Test]
 	public function sortOn(): void
 	{
-		$query = QueryBuilder::create(null, ['User']);
+		$query = Builder::create(null, ['User']);
 		$query = $query->sortOn(['Name' => 'ASC'])->sortOn(['Age' => 'DESC']);
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	#[Test]
 	public function limit(): void
 	{
-		$query = QueryBuilder::create(null, ['User']);
+		$query = Builder::create(null, ['User']);
 		$query = $query->limit(10);
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	#[Test]
 	public function offset(): void
 	{
-		$query = QueryBuilder::create(null, ['User']);
+		$query = Builder::create(null, ['User']);
 		$query = $query->offset(5);
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 }
