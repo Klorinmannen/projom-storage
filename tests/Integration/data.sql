@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS `EndToEnd`.`UserRole`;
-DROP TABLE IF EXISTS `EndToEnd`.`Role`;
-DROP TABLE IF EXISTS `EndToEnd`.`User`;
+DROP TABLE IF EXISTS `Integration`.`UserRole`;
+DROP TABLE IF EXISTS `Integration`.`Role`;
+DROP TABLE IF EXISTS `Integration`.`User`;
 
 CREATE TABLE
-	`EndToEnd`.`User` (
+	`Integration`.`User` (
 		`UserID` INT PRIMARY KEY AUTO_INCREMENT,
 		`Username` VARCHAR(255) NOT NULL,
 		`Password` VARCHAR(255) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE
 	);
 
 INSERT INTO
-	`EndToEnd`.`User` (
+	`Integration`.`User` (
 		`Username`,
 		`Password`,
 		`Firstname`,
@@ -57,7 +57,7 @@ VALUES
 	);
 
 CREATE TABLE
-	`EndToEnd`.`Role` (
+	`Integration`.`Role` (
 		`RoleID` INT PRIMARY KEY AUTO_INCREMENT,
 		`Role` VARCHAR(255) NOT NULL,
 		`Description` VARCHAR(255),
@@ -69,7 +69,7 @@ CREATE TABLE
 	);
 
 INSERT INTO
-	`EndToEnd`.`Role` (`Role`, `Description`)
+	`Integration`.`Role` (`Role`, `Description`)
 VALUES
 	('System', 'System/God user'),
 	('Admin', 'Administrator'),
@@ -77,7 +77,7 @@ VALUES
 	('Guest', 'Guest User');
 
 CREATE TABLE
-	`EndToEnd`.`UserRole` (
+	`Integration`.`UserRole` (
 		`UserRoleID` INT PRIMARY KEY AUTO_INCREMENT,
 		`UserID` INT NOT NULL,
 		`RoleID` INT NOT NULL,
@@ -90,7 +90,7 @@ CREATE TABLE
 	);
 
 INSERT INTO
-	`EndToEnd`.`UserRole` (`UserID`, `RoleID`)
+	`Integration`.`UserRole` (`UserID`, `RoleID`)
 VALUES
 	(1, 1),
 	(2, 2),

@@ -63,12 +63,15 @@ jobs:
 
       - name: Change permissions
         run: |
-          chmod +x ./tests/Integration/mariadb_install.sh
-          chmod +x ./tests/Integration/mariadb_create_database_with_user.sh
+          chmod +x ./tests/Integration/setup.sh
+          chmod +x ./tests/Integration/create_database_with_user.sh
           chmod +x ./tests/Integration/data.sql
 
-      - name: Install MariaDB and create database with user
-        run: ./tests/Integration/mariadb_install.sh projom integration
+      - name: Installing packages
+        run: ./tests/Integration/setup.sh
+
+      - name: Create database with user
+        run: ./tests/Integration/create_database_with_user.sh projom projom Integration
 
       - name: Creating database tables with mock data
         run: mysql --user=projom --password=projom < ./tests/Integration/data.sql

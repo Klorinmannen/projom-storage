@@ -30,7 +30,7 @@ class EndToEndTest extends TestCase
 					'password' => 'projom',
 					'host' => 'localhost',
 					'port' => 3306,
-					'database' => 'EndToEnd'
+					'database' => 'Integration'
 				]
 			]
 		];
