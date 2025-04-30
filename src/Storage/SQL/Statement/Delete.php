@@ -10,7 +10,7 @@ use Projom\Storage\SQL\Component\Filter;
 use Projom\Storage\SQL\Component\Join;
 use Projom\Storage\SQL\Component\Table;
 use Projom\Storage\SQL\Statement\StatementInterface;
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Util;
 
 class Delete implements StatementInterface, Stringable
@@ -19,7 +19,7 @@ class Delete implements StatementInterface, Stringable
 	private readonly Join $join;
 	private readonly Filter $filter;
 
-	public function __construct(QueryObject $queryDelete)
+	public function __construct(DTO $queryDelete)
 	{
 		$this->table = Table::create($queryDelete->collections);
 		$this->join = Join::create($queryDelete->joins);
@@ -32,7 +32,7 @@ class Delete implements StatementInterface, Stringable
 		return $statement;
 	}
 
-	public static function create(QueryObject $queryDelete): Delete
+	public static function create(DTO $queryDelete): Delete
 	{
 		return new Delete($queryDelete);
 	}

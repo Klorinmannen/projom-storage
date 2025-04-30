@@ -9,8 +9,8 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
+use Projom\Storage\SQL\Statement\Builder;
 use Projom\Storage\Static\MySQL\Query;
-use Projom\Storage\SQL\QueryBuilder;
 use Projom\Storage\Static\Engine;
 
 class QueryTest extends TestCase
@@ -24,11 +24,11 @@ class QueryTest extends TestCase
 	public function query()
 	{
 		$mysql = $this->createMock(MySQLDriver::class);
-		$mysql->expects($this->once())->method('dispatch')->willReturn(QueryBuilder::create());
+		$mysql->expects($this->once())->method('dispatch')->willReturn(Builder::create());
 		Engine::setDriver($mysql, Driver::MySQL);
 
 		$query = Query::build('User');
-		$this->assertInstanceOf(QueryBuilder::class, $query);
+		$this->assertInstanceOf(Builder::class, $query);
 	}
 
 	#[Test]

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Projom\Storage\SQL;
 
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Statement\Delete;
 use Projom\Storage\SQL\Statement\Insert;
 use Projom\Storage\SQL\Statement\Select;
@@ -19,22 +19,22 @@ class Statement
 		return new Statement();
 	}
 
-	public function select(QueryObject $queryObject): Select
+	public function select(DTO $queryObject): Select
 	{
 		return Select::create($queryObject);
 	}
 
-	public function insert(QueryObject $queryObject): Insert
+	public function insert(DTO $queryObject): Insert
 	{
 		return Insert::create($queryObject);
 	}
 
-	public function update(QueryObject $queryObject): Update
+	public function update(DTO $queryObject): Update
 	{
 		return Update::create($queryObject);
 	}
 
-	public function delete(QueryObject $queryObject): Delete
+	public function delete(DTO $queryObject): Delete
 	{
 		return Delete::create($queryObject);
 	}

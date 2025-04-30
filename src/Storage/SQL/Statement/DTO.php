@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\SQL;
+namespace Projom\Storage\SQL\Statement;
 
 use Stringable;
 
 /**
  * DTO for a sql query.
  */
-class QueryObject implements Stringable
+class DTO implements Stringable
 {
 	public function __construct(
 		public array $collections,

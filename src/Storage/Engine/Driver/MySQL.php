@@ -10,9 +10,9 @@ use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\Driver\DriverBase;
 use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
 use Projom\Storage\Engine\Driver\Connection\PDOConnection;
-use Projom\Storage\SQL\QueryObject;
-use Projom\Storage\SQL\QueryBuilder;
 use Projom\Storage\SQL\Statement;
+use Projom\Storage\SQL\Statement\Builder;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Statement\StatementInterface;
 
 class MySQL extends DriverBase
@@ -81,7 +81,7 @@ class MySQL extends DriverBase
 		$this->connections[$connection->name()] = $connection;
 	}
 
-	private function select(QueryObject $queryObject): null|array|object
+	private function select(DTO $queryObject): null|array|object
 	{
 		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
@@ -100,7 +100,7 @@ class MySQL extends DriverBase
 		return $records;
 	}
 
-	private function update(QueryObject $queryObject): int
+	private function update(DTO $queryObject): int
 	{
 		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
@@ -112,7 +112,7 @@ class MySQL extends DriverBase
 		return $this->PDOSstatement->rowCount();
 	}
 
-	private function insert(QueryObject $queryObject): int
+	private function insert(DTO $queryObject): int
 	{
 		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
@@ -124,7 +124,7 @@ class MySQL extends DriverBase
 		return (int) $this->connection->lastInsertId();
 	}
 
-	private function delete(QueryObject $queryObject): int
+	private function delete(DTO $queryObject): int
 	{
 		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
@@ -173,7 +173,7 @@ class MySQL extends DriverBase
 		return $this->PDOSstatement->fetchAll();
 	}
 
-	private function query(array $collections, null|array $options = null): QueryBuilder
+	private function query(array $collections, null|array $options = null): Builder
 	{
 		$this->logger->debug(
 			'Method: {method} with {collections} and {options}.',
@@ -182,7 +182,7 @@ class MySQL extends DriverBase
 
 		$this->setQueryOptions($options);
 
-		return QueryBuilder::create($this, $collections, $this->logger);
+		return Builder::create($this, $collections, $this->logger);
 	}
 
 	private function startTransaction(): void

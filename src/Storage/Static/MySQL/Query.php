@@ -8,11 +8,11 @@ use Projom\Storage\Static\Engine;
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Query\Action;
 use Projom\Storage\Query\Util;
-use Projom\Storage\SQL\QueryBuilder;
+use Projom\Storage\SQL\Statement\Builder;
 
 class Query
 {
-	public static function build(string|array $collections, null|array $options = null): QueryBuilder
+	public static function build(string|array $collections, null|array $options = null): Builder
 	{
 		$collections = Util::stringToArray($collections);
 		return Engine::dispatch(Action::QUERY, Driver::MySQL, [$collections, $options]);

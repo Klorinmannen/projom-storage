@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\SQL;
+namespace Projom\Storage\SQL\Statement;
+
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 use Projom\Storage\Query\Action;
 use Projom\Storage\Engine\Driver\DriverBase;
 use Projom\Storage\Query\Format;
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\LogicalOperator;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\SQL\Util\Filter;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
-class QueryBuilder
+class Builder
 {
     private null|DriverBase $driver = null;
     private LoggerInterface $logger;
@@ -47,8 +48,8 @@ class QueryBuilder
         null|DriverBase $driver = null,
         array $collections = [],
         LoggerInterface $logger = new NullLogger()
-    ): QueryBuilder {
-        return new QueryBuilder($driver, $collections, $logger);
+    ): Builder {
+        return new Builder($driver, $collections, $logger);
     }
 
     /**
@@ -57,7 +58,7 @@ class QueryBuilder
      * * Example use: $database->query('CollectionName')->formatAs(Format::STD_CLASS)
      * * Example use: $database->query('CollectionName')->formatAs(Format::CUSTOM_OBJECT, ClassName::class)
      */
-    public function formatAs(Format $format, mixed $args = null): QueryBuilder
+    public function formatAs(Format $format, mixed $args = null): Builder
     {
         $this->logger->debug(
             'Method: {method} with {format} and {args}.',
@@ -109,7 +110,7 @@ class QueryBuilder
         if ($fields)
             $this->fields = $fields;
 
-        $queryObject = new QueryObject(
+        $queryObject = new DTO(
             collections: $this->collections,
             fields: $this->fields,
             filters: $this->filters,
@@ -144,7 +145,7 @@ class QueryBuilder
             ['fieldsWithValues' => $fieldsWithValues, 'method' => __METHOD__]
         );
 
-        $queryObject = new QueryObject(
+        $queryObject = new DTO(
             collections: $this->collections,
             fieldsWithValues: [$fieldsWithValues],
             filters: $this->filters,
@@ -174,7 +175,7 @@ class QueryBuilder
             ['fieldsWithValues' => $fieldsWithValues, 'method' => __METHOD__]
         );
 
-        $queryObject = new QueryObject(
+        $queryObject = new DTO(
             collections: $this->collections,
             fieldsWithValues: $fieldsWithValues
         );
@@ -219,7 +220,7 @@ class QueryBuilder
             ['method' => __METHOD__]
         );
 
-        $queryObject = new QueryObject(
+        $queryObject = new DTO(
             collections: $this->collections,
             filters: $this->filters,
             joins: $this->joins
@@ -245,7 +246,7 @@ class QueryBuilder
         string $currentCollectionWithField,
         Join $join,
         string|null $onCollectionWithField = null
-    ): QueryBuilder {
+    ): Builder {
 
         $this->logger->debug(
             'Method: {method} with {currentCollectionWithField} {join} {onCollectionWithField}.',
@@ -277,7 +278,7 @@ class QueryBuilder
         array $fieldsWithValues,
         Operator $operator = Operator::EQ,
         LogicalOperator $logicalOperator = LogicalOperator::AND
-    ): QueryBuilder {
+    ): Builder {
 
         $this->logger->debug(
             'Method: {method} with {fieldsWithValues} {operator} and "{lop}".',
@@ -302,7 +303,7 @@ class QueryBuilder
      * 
      * * Example use: $database->query('CollectionName')->filterList([['Name', Operator::EQ, 'John', LogicalOperator::AND]])
      */
-    public function filterList(array $filters, LogicalOperator $logicalOperator = LogicalOperator::AND): QueryBuilder
+    public function filterList(array $filters, LogicalOperator $logicalOperator = LogicalOperator::AND): Builder
     {
         $this->logger->debug(
             'Method: {method} with {filters} and "{lop}".',
@@ -326,7 +327,7 @@ class QueryBuilder
         mixed $value,
         Operator $operator = Operator::EQ,
         LogicalOperator $logicalOperator = LogicalOperator::AND
-    ): QueryBuilder {
+    ): Builder {
 
         $this->logger->debug(
             'Method: {method} with {field} {operator} {value} and "{lop}".',
@@ -352,7 +353,7 @@ class QueryBuilder
      * 
      * * Example use: $database->query('CollectionName')->filter(['Name', Operator::EQ, 'John', LogicalOperator::AND])
      */
-    public function filter(array $filter, LogicalOperator $logicalOperator = LogicalOperator::AND): QueryBuilder
+    public function filter(array $filter, LogicalOperator $logicalOperator = LogicalOperator::AND): Builder
     {
         $this->logger->debug(
             'Method: {method} with {filter} and "{lop}".',
@@ -370,7 +371,7 @@ class QueryBuilder
      * * Example use: $database->query('CollectionName')->groupOn('Name', 'Age')
      * * Example use: $database->query('CollectionName')->groupOn('Name, Age')
      */
-    public function groupOn(string ...$fields): QueryBuilder
+    public function groupOn(string ...$fields): Builder
     {
         $this->logger->debug(
             'Method: {method} with {fields}.',
@@ -388,7 +389,7 @@ class QueryBuilder
      * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::DESC])
      * * Example use: $database->query('CollectionName')->sortOn(['Name' => Sorts::ASC, 'Age' => Sorts::DESC])
      */
-    public function orderOn(array $sortFields): QueryBuilder
+    public function orderOn(array $sortFields): Builder
     {
         $this->logger->debug(
             'Method: {method} with {sortFields}.',
@@ -403,7 +404,7 @@ class QueryBuilder
     /**
      * Alias for order method.
      */
-    public function sortOn(array $sortFields): QueryBuilder
+    public function sortOn(array $sortFields): Builder
     {
         return $this->orderOn($sortFields);
     }
@@ -414,7 +415,7 @@ class QueryBuilder
      * * Example use: $database->query('CollectionName')->limit(10)
      * * Example use: $database->query('CollectionName')->limit('10')
      */
-    public function limit(int $limit): QueryBuilder
+    public function limit(int $limit): Builder
     {
         $this->logger->debug(
             'Method: {method} with {limit}.',
@@ -430,7 +431,7 @@ class QueryBuilder
      * 
      * * Example use: $database->query('CollectionName')->offset(10)
      */
-    public function offset(int $offset): QueryBuilder
+    public function offset(int $offset): Builder
     {
         $this->logger->debug(
             'Method: {method} with {offset}.',

@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Statement\Insert;
 
 class InsertTest extends TestCase
@@ -17,7 +17,7 @@ class InsertTest extends TestCase
 	{
 		return [
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User'],
 					fieldsWithValues: [['Name' => 'John', 'Age' => 25]]
 				),
@@ -27,7 +27,7 @@ class InsertTest extends TestCase
 				]
 			],
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User'],
 					fieldsWithValues: [['Name' => 'John', 'Age' => 25], ['Name' => 'Jane', 'Age' => 30]]
 				),
@@ -41,7 +41,7 @@ class InsertTest extends TestCase
 
 	#[Test]
 	#[DataProvider('createProvider')]
-	public function create(QueryObject $queryObject, array $expected): void
+	public function create(DTO $queryObject, array $expected): void
 	{
 		$insert = Insert::create($queryObject);
 		$this->assertEquals($expected, $insert->statement());
@@ -50,7 +50,7 @@ class InsertTest extends TestCase
 	#[Test]
 	public function stringable(): void
 	{
-		$queryObject = new QueryObject(
+		$queryObject = new DTO(
 			collections: ['User'],
 			fieldsWithValues: [['Name' => 'John', 'Age' => 25]]
 		);

@@ -11,7 +11,7 @@ use Projom\Storage\SQL\Component\Join;
 use Projom\Storage\SQL\Component\Set;
 use Projom\Storage\SQL\Component\Table;
 use Projom\Storage\SQL\Statement\StatementInterface;
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Util;
 
 class Update implements StatementInterface, Stringable
@@ -21,7 +21,7 @@ class Update implements StatementInterface, Stringable
 	private readonly Join $join;
 	private readonly Filter $filter;
 
-	public function __construct(QueryObject $queryUpdate)
+	public function __construct(DTO $queryUpdate)
 	{
 		$this->table = Table::create($queryUpdate->collections);
 		$this->set = Set::create($queryUpdate->fieldsWithValues);
@@ -35,7 +35,7 @@ class Update implements StatementInterface, Stringable
 		return $statement;
 	}
 
-	public static function create(QueryObject $queryUpdate): Update
+	public static function create(DTO $queryUpdate): Update
 	{
 		return new Update($queryUpdate);
 	}

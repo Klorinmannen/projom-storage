@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Statement\Update;
 use Projom\Storage\SQL\Util\Filter;
 use Projom\Storage\SQL\Util\Join;
@@ -20,7 +20,7 @@ class UpdateTest extends TestCase
 	{
 		return [
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User'],
 					fieldsWithValues: [['Name' => 'John']],
 					joins: [['User.UserID = UserRole.UserID', Join::INNER, null]],
@@ -39,7 +39,7 @@ class UpdateTest extends TestCase
 				]
 			],
 			[
-				new QueryObject(
+				new DTO(
 					collections: ['User'],
 					fieldsWithValues: [['Name' => 'John']]
 				),
@@ -53,7 +53,7 @@ class UpdateTest extends TestCase
 
 	#[Test]
 	#[DataProvider('createProvider')]
-	public function create(QueryObject $queryObject, array $expected): void
+	public function create(DTO $queryObject, array $expected): void
 	{
 		$update = Update::create($queryObject);
 		$this->assertEquals($expected, $update->statement());
@@ -62,7 +62,7 @@ class UpdateTest extends TestCase
 	#[Test]
 	public function stringable(): void
 	{
-		$queryObject = new QueryObject(
+		$queryObject = new DTO(
 			collections: ['User'],
 			fieldsWithValues: [['User.Name' => 'John']],
 			joins: [['User.UserID = UserRole.UserID', Join::INNER, null]],

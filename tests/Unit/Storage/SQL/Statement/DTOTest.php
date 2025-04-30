@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\SQL;
+namespace Projom\Tests\Unit\Storage\SQL\Statement;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Projom\Storage\SQL\QueryObject;
 
-class QueryObjectTest extends TestCase
+use Projom\Storage\SQL\Statement\DTO;
+
+class DTOTest extends TestCase
 {
 	public static function constructProvider(): array
 	{
@@ -61,7 +62,7 @@ class QueryObjectTest extends TestCase
 	#[DataProvider('constructProvider')]
 	public function construct(array $config, string $expected): void 
 	{
-		$queryObject = new QueryObject(
+		$queryObject = new DTO(
 			$config['collections'],
 			$config['fields'],
 			$config['fieldsWithValues'],

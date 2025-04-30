@@ -15,7 +15,7 @@ use Projom\Storage\SQL\Component\Offset;
 use Projom\Storage\SQL\Component\Order;
 use Projom\Storage\SQL\Component\Table;
 use Projom\Storage\SQL\Statement\StatementInterface;
-use Projom\Storage\SQL\QueryObject;
+use Projom\Storage\SQL\Statement\DTO;
 use Projom\Storage\SQL\Util;
 
 class Select implements StatementInterface, Stringable
@@ -29,7 +29,7 @@ class Select implements StatementInterface, Stringable
 	private readonly Limit $limit;
 	private readonly Offset $offset;
 
-	public function __construct(QueryObject $querySelect)
+	public function __construct(DTO $querySelect)
 	{
 		$this->table = Table::create($querySelect->collections);
 		$this->column = Column::create($querySelect->fields);
@@ -47,7 +47,7 @@ class Select implements StatementInterface, Stringable
 		return $statement;
 	}
 
-	public static function create(QueryObject $querySelect): Select
+	public static function create(DTO $querySelect): Select
 	{
 		return new Select($querySelect);
 	}
