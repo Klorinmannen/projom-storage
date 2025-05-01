@@ -95,7 +95,7 @@ class MySQL extends DriverBase
 		if (!$records)
 			return null;
 
-		$records = $this->processRecords($records, $queryObject->formatting);
+		$records = $this->processRecords($records, $queryObject->formatting, $queryObject->options);
 
 		return $records;
 	}
@@ -173,16 +173,14 @@ class MySQL extends DriverBase
 		return $this->PDOSstatement->fetchAll();
 	}
 
-	private function query(array $collections, null|array $options = null): Builder
+	private function query(array $collections, array $options = []): Builder
 	{
 		$this->logger->debug(
 			'Method: {method} with {collections} and {options}.',
 			['collections' => $collections, 'options' => $options, 'method' => __METHOD__]
 		);
 
-		$this->setQueryOptions($options);
-
-		return Builder::create($this, $collections, $this->logger);
+		return Builder::create($this, $collections, $options, $this->logger);
 	}
 
 	private function startTransaction(): void

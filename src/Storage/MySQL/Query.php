@@ -24,7 +24,7 @@ class Query
 		return new Query($engine);
 	}
 
-	public function build(string|array $collections, null|array $options = null): Builder
+	public function build(string|array $collections, array $options = []): Builder
 	{
 		$collections = Util::stringToArray($collections);
 		return $this->engine->dispatch(Action::QUERY, Driver::MySQL, [$collections, $options]);

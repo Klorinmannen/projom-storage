@@ -57,7 +57,7 @@ abstract class DriverBase implements LoggerAwareInterface
 		$this->queryOptions = $queryOptions;
 	}
 
-	protected function processRecords(array $records, array $formatting): mixed
+	protected function processRecords(array $records, array $formatting, array $queryOptions = []): mixed
 	{
 		$this->logger->debug(
 			'Method: {method} with {records}.',
@@ -65,7 +65,7 @@ abstract class DriverBase implements LoggerAwareInterface
 		);
 
 		$records = $this->formatRecords($records, ...$formatting);
-		$records = $this->processOptions($records);
+		$records = $this->processOptions($records, $queryOptions);
 
 		return $records;
 	}
@@ -101,9 +101,9 @@ abstract class DriverBase implements LoggerAwareInterface
 		}
 	}
 
-	private function processOptions(array $records): array|object
+	private function processOptions(array $records, array $queryOptions): array|object
 	{
-		$options = $this->parseOptions();
+		$options = $this->parseOptions($queryOptions);
 
 		if ($options['return_single_record'])
 			if (count($records) === 1)
@@ -112,11 +112,11 @@ abstract class DriverBase implements LoggerAwareInterface
 		return $records;
 	}
 
-	private function parseOptions(): array
+	private function parseOptions(array $queryOptions): array
 	{
 		$parseOptions = $this->options;
-		if ($this->queryOptions !== null)
-			$parseOptions = $this->queryOptions;
+		if ($queryOptions)
+			$parseOptions = $queryOptions;
 
 		$options = static::DEFAULT_OPTIONS;
 
