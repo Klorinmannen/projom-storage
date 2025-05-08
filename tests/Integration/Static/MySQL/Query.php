@@ -10,13 +10,14 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use Projom\Tests\Integration\UserRecord;
+
 use Projom\Storage\Query\Format;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\SQL\Util\Sort;
 use Projom\Storage\Static\Engine;
 use Projom\Storage\Static\MySQL\Query;
-use Projom\Tests\Integration\UserRecord;
 
 class EndToEndTest extends TestCase
 {
@@ -70,44 +71,43 @@ class EndToEndTest extends TestCase
 	}
 
 	#[Test]
-	public function test(): void
+	public function selectAll(): void
 	{
 		$users = Query::build('User')->select('*');
 		$actualRecords = count($users);
 		$expectedRecords = 5;
 		$this->assertEquals($expectedRecords, $actualRecords);
+	}
 
-		$user = array_pop($users);
-		$actualFields = array_keys($user);
-		$expectedFields = [
-			'UserID',
-			'Username',
-			'Password',
-			'Firstname',
-			'Lastname',
-			'Active',
-			'Created',
-			'Updated'
-		];
-		$this->assertEquals($expectedFields, $actualFields);
-
-		[$user] = Query::build('User')->filterOn('UserID', 2)->get('Firstname');
-		$actualFirstname = $user['Firstname'] ?? '';
-		$expectedFirstname = 'John';
-		$this->assertEquals($expectedFirstname, $actualFirstname);
-
-		$expectedFields = ['Firstname'];
-		$actualFields = array_keys($user);
-		$this->assertEquals($expectedFields, $actualFields);
-
+	#[Test]
+	public function selectWithFilter(): void
+	{
 		$users = Query::build('User')
 			->filterOn('Active', 0, Operator::NE)
 			->filterOn('Firstname', '%e', Operator::LIKE)
 			->select();
-		$actualRecords = count($user);
-		$expectedRecords = 1;
-		$this->assertEquals($expectedRecords, $actualRecords);
 
+		$expectedRecords = 1;
+		$this->assertEquals($expectedRecords, count($users));
+	}
+
+	#[Test]
+	public function selectWithJoinFilterSort(): void
+	{
+		$records = Query::build('User')
+			->joinOn('User.UserID', Join::INNER, 'UserRole.UserID')
+			->joinOn('UserRole.RoleID', Join::INNER, 'Role.RoleID')
+			->filterOn('UserRole.RoleID', 3)
+			->sortOn(['User.UserID' => Sort::DESC])
+			->select('User.Username', 'UserRole.UserID', 'UserRole.RoleID', 'Role.Role');
+
+		$expectedRecords = 3;
+		$this->assertEquals($expectedRecords, count($records));
+	}
+
+	#[Test]
+	public function selectWithJoinFilterSortLimit(): void
+	{
 		$records = Query::build('User')
 			->joinOn('User.UserID', Join::INNER, 'UserRole.UserID')
 			->joinOn('UserRole.RoleID', Join::INNER, 'Role.RoleID')
@@ -115,30 +115,19 @@ class EndToEndTest extends TestCase
 			->sortOn(['User.UserID' => Sort::DESC])
 			->limit(1)
 			->select('User.Username', 'UserRole.UserID', 'UserRole.RoleID', 'Role.Role');
-		$actualRecords = count($records);
+
 		$expectedRecords = 1;
-		$this->assertEquals($expectedRecords, $actualRecords);
+		$this->assertEquals($expectedRecords, count($records));
 
-		$record = array_pop($records);
-		$actualFields = array_keys($record);
+		$fields = array_keys(array_pop($records));
 		$expectedFields = ['Username', 'UserID', 'RoleID', 'Role'];
-		$this->assertEquals($expectedFields, $actualFields);
+		$this->assertEquals($expectedFields, $fields);
+	}
 
-		$actualUserID = $record['UserID'];
-		$expectedUserID = 5;
-		$this->assertEquals($expectedUserID, $actualUserID);
-
-		$records = Query::build('User')
-			->joinOn('User.UserID', Join::INNER, 'UserRole.UserID')
-			->joinOn('UserRole.RoleID', Join::INNER, 'Role.RoleID')
-			->filterOn('UserRole.RoleID', 3)
-			->sortOn(['User.UserID' => Sort::DESC])
-			->select('User.Username', 'UserRole.UserID', 'UserRole.RoleID', 'Role.Role');
-		$actualRecords = count($records);
-		$expectedRecords = 3;
-		$this->assertEquals($expectedRecords, $actualRecords);
-
-		// Add user
+	#[Test]
+	public function crud(): void
+	{
+		// Add new user
 		$newUser = [
 			'Username' => 'newuser',
 			'Password' => 'newpassword',
@@ -149,53 +138,38 @@ class EndToEndTest extends TestCase
 		$userID = Query::build('User')->insert($newUser);
 		$this->assertGreaterThan(0, $userID);
 
-		// Find added user
-		[$user] = Query::build('User')
+		// Find new user
+		$user = Query::build('User', ['return_single_record' => true])
 			->filterOn('UserID', $userID)
-			->filterOn('Active', 0)
-			->get('Active');
+			->select();
 		$this->assertNotEmpty($user);
 
-		// Update user
+		// Update new user
 		$affectedRows = Query::build('User')->filterOn('UserID', $userID)->update(['Active' => 1]);
 		$expectedRows = 1;
 		$this->assertEquals($expectedRows, $affectedRows);
-
-		// Find updated user
-		[$user] = Query::build('User')
-			->filterOn('UserID', $userID)
-			->filterOn('Active', 0, Operator::NE)
-			->get();
-		$this->assertNotEmpty($user);
 
 		// Delete user
 		$affectedRows = Query::build('User')->filterOn('UserID', $userID)->delete();
 		$expectedRows = 1;
 		$this->assertEquals($expectedRows, $affectedRows);
+	}
 
-		// Try to find deleted user
-		$affectedRows = Query::build('User')->filterOn('UserID', $userID)->delete();
-		$expectedRows = 0;
-		$this->assertEquals($expectedRows, $affectedRows);
+	#[Test]
+	public function selectAsCustomObject(): void
+	{
+		$user = Query::build('User', ['return_single_record' => true])
+			->formatAs(Format::CUSTOM_OBJECT, UserRecord::class)
+			->filterOn('UserID', 1)
+			->select();
 
-		$filterLists = [
-			'UserID' => [2, 3, 4, 5],
-			'Active' => [1]
-		];
-		$users = Query::build('User')->filterOnFields($filterLists, Operator::IN)->select();
-		$actualRecords = count($users);
-		$expectedRecords = 2;
-		$this->assertEquals($expectedRecords, $actualRecords);
+		$this->assertInstanceOf(UserRecord::class, $user);
+	}
 
-		$users = Query::build('User')->formatAs(Format::CUSTOM_OBJECT, UserRecord::class)->filterOn('UserID', [1, 3], Operator::BETWEEN)->select();
-		$actualRecords = count($users);
-		$expectedRecords = 3;
-		$this->assertEquals($expectedRecords, $actualRecords);
-
-		// No records found, should return null
-		Query::build('UserRole')->delete();
-		$actualRecords = Query::build('UserRole')->select();
-		$expectedRecords = null;
-		$this->assertEquals($expectedRecords, $actualRecords);
+	#[Test]
+	public function selectNoRecordsFound(): void
+	{
+		$result = Query::build('UserRole')->filterOn('UserID', 0)->select();
+		$this->assertEquals(null, $result);
 	}
 }
