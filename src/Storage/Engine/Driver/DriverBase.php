@@ -20,7 +20,6 @@ abstract class DriverBase implements LoggerAwareInterface
 
 	protected LoggerInterface $logger;
 	private array $options = [];
-	private null|array $queryOptions = null;
 
 	public function __construct(LoggerInterface $logger = new NullLogger(), array $options = [])
 	{
@@ -45,16 +44,6 @@ abstract class DriverBase implements LoggerAwareInterface
 	public function setLogger(LoggerInterface $logger): void
 	{
 		$this->logger = $logger;
-	}
-
-	protected function setQueryOptions(null|array $queryOptions): void
-	{
-		$this->logger->debug(
-			'Method: {method} with {options}.',
-			['options' => $queryOptions, 'method' => __METHOD__]
-		);
-
-		$this->queryOptions = $queryOptions;
 	}
 
 	protected function processRecords(array $records, array $formatting, array $queryOptions = []): mixed
