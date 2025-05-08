@@ -41,8 +41,9 @@ class Builder
         LoggerInterface $logger = new NullLogger()
     ) {
         $this->driver = $driver;
-        $this->logger = $logger;
         $this->collections = $collections;
+        $this->options = $options;
+        $this->logger = $logger;
         $this->fields = [static::DEFAULT_SELECT];
         $this->formatting = [Format::ARRAY, null];
     }
