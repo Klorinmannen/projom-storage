@@ -51,7 +51,7 @@ class EndToEndTest extends TestCase
 
 	#[Test]
 	#[DataProvider('queryOptionsProvider')]
-	public function querOptions(array $options): void
+	public function queryOptions(array $options): void
 	{
 		$user = Query::build('User', $options)
 			->filterOn('UserID', 1)
