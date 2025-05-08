@@ -6,6 +6,7 @@ namespace Projom\tests\Integration\Static\MySQL;
 
 include_once __DIR__ . '/../../UserRecord.php';
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -37,6 +38,25 @@ class EndToEndTest extends TestCase
 
 		Engine::start();
 		Engine::loadDriver($config);
+	}
+
+	public static function queryOptionsProvider(): array
+	{
+		return [
+			[
+				['return_single_record' => true]
+			]
+		];
+	}
+
+	#[Test]
+	#[DataProvider('queryOptionsProvider')]
+	public function querOptions(array $options): void
+	{
+		$user = Query::build('User', $options)
+			->filterOn('UserID', 1)
+			->select('Username');
+		$this->assertArrayHasKey('Username', $user);
 	}
 
 	#[Test]
