@@ -41,7 +41,7 @@ trait Repository
 		if (!$class)
 			throw new \Exception('Table name not set', 400);
 
-		$this->table = Util::replaceClass($class, ['Repository', 'Repo']);
+		$this->table = Util::replace($class, ['Repository', 'Repo']);
 
 		$this->primaryField = $this->primaryField();
 		if (!$this->primaryField)

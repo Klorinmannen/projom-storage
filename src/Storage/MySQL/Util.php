@@ -15,8 +15,8 @@ class Util extends StorageUtil
 		return $class;
 	}
 
-	public static function replaceClass(string $class, array $replace): string
+	public static function replace(string $string, array $replace, string $replaceWith = ''): string
 	{
-		return str_ireplace($replace, '', $class);
+		return str_ireplace($replace, $replaceWith, $string);
 	}
 }

@@ -70,7 +70,7 @@ trait Repository
 		if (!$class)
 			throw new \Exception('Table name not set', 400);
 
-		$table = Util::replaceClass($class, ['Repository', 'Repo']);
+		$table = Util::replace($class, ['Repository', 'Repo']);
 
 		$primaryField = static::primaryField();
 		if (!$primaryField)
