@@ -21,7 +21,7 @@ class QueryTest extends TestCase
 	}
 
 	#[Test]
-	public function query()
+	public function build()
 	{
 		$mysql = $this->createMock(MySQLDriver::class);
 		$mysql->expects($this->once())->method('dispatch')->willReturn(Builder::create());

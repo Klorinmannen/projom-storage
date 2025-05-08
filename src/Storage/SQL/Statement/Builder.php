@@ -20,6 +20,8 @@ class Builder
 {
     private null|DriverBase $driver = null;
     private LoggerInterface $logger;
+    private array $options = [];
+
     private array $collections = [];
     private array $formatting = [];
     private array $fields = [];
@@ -35,11 +37,13 @@ class Builder
     public function __construct(
         null|DriverBase $driver,
         array $collections,
+        array $options = [],
         LoggerInterface $logger = new NullLogger()
     ) {
         $this->driver = $driver;
-        $this->logger = $logger;
         $this->collections = $collections;
+        $this->options = $options;
+        $this->logger = $logger;
         $this->fields = [static::DEFAULT_SELECT];
         $this->formatting = [Format::ARRAY, null];
     }
@@ -47,9 +51,10 @@ class Builder
     public static function create(
         null|DriverBase $driver = null,
         array $collections = [],
+        array $options = [],
         LoggerInterface $logger = new NullLogger()
     ): Builder {
-        return new Builder($driver, $collections, $logger);
+        return new Builder($driver, $collections, $options, $logger);
     }
 
     /**
@@ -119,7 +124,8 @@ class Builder
             limit: $this->limit,
             offset: $this->offset,
             joins: $this->joins,
-            formatting: $this->formatting
+            formatting: $this->formatting,
+            options: $this->options
         );
         return $this->driver->dispatch(Action::SELECT, $queryObject);
     }

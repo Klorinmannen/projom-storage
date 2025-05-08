@@ -12,7 +12,7 @@ use Projom\Storage\SQL\Statement\Builder;
 
 class Query
 {
-	public static function build(string|array $collections, null|array $options = null): Builder
+	public static function build(string|array $collections, array $options = []): Builder
 	{
 		$collections = Util::stringToArray($collections);
 		return Engine::dispatch(Action::QUERY, Driver::MySQL, [$collections, $options]);

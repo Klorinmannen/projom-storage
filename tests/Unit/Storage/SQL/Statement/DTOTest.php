@@ -27,10 +27,19 @@ class DTOTest extends TestCase
 					'limit' => null,
 					'offset' => null,
 					'formatting' => [],
+					'options' => []
 				],
-				'expected' => '{"collections":[],"fields":[],"fieldsWithValues":[],'
-					. '"joins":[],"filters":[],"sorts":[],"groups":[],'
-					. '"limit":null,"offset":null,"formatting":[]}',
+				'expected' => '{"collections":[],'
+					. '"fields":[],'
+					.'"fieldsWithValues":[],'
+					. '"joins":[],'
+					. '"filters":[],'
+					. '"sorts":[],'
+					. '"groups":[],'
+					. '"limit":null,'
+					. '"offset":null,'
+					. '"formatting":[],'
+					. '"options":[]}'
 			],
 			'filled' => [
 				[
@@ -43,24 +52,26 @@ class DTOTest extends TestCase
 					'groups' => ['FieldA', 'FieldB'],
 					'limit' => 10,
 					'offset' => 5,
-					'formatting' => ['ARRAY', null]
+					'formatting' => ['ARRAY', null],
+					'options' => ['option' => 'value']
 				],
 				'expected' => '{"collections":["table"],'
-					. '"fields":["field"],' 
-					. '"fieldsWithValues":{"field":"value"},' 
-					. '"joins":[["TableA.Field","INNER JOIN","TableB.Field"]],' 
+					. '"fields":["field"],'
+					. '"fieldsWithValues":{"field":"value"},'
+					. '"joins":[["TableA.Field","INNER JOIN","TableB.Field"]],'
 					. '"filters":[["Field","Operator","Value","AND"]],'
 					. '"sorts":[["sort","ASC"]],'
 					. '"groups":["FieldA","FieldB"],'
 					. '"limit":10,"offset":5,'
-					. '"formatting":["ARRAY",null]}',
+					. '"formatting":["ARRAY",null],'
+					. '"options":{"option":"value"}}'
 			]
 		];
 	}
 
 	#[Test]
 	#[DataProvider('constructProvider')]
-	public function construct(array $config, string $expected): void 
+	public function construct(array $config, string $expected): void
 	{
 		$queryObject = new DTO(
 			$config['collections'],
@@ -72,7 +83,8 @@ class DTOTest extends TestCase
 			$config['groups'],
 			$config['limit'],
 			$config['offset'],
-			$config['formatting']
+			$config['formatting'],
+			$config['options']
 		);
 
 		$this->assertEquals($expected, (string) $queryObject);

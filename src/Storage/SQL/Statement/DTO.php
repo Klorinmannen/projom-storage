@@ -22,6 +22,7 @@ class DTO implements Stringable
 		public null|int $limit = null,
 		public null|int $offset = null,
 		public array $formatting = [],
+		public array $options = [],
 	) {}
 
 	public function __toString()

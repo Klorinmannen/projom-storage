@@ -81,57 +81,57 @@ class MySQL extends DriverBase
 		$this->connections[$connection->name()] = $connection;
 	}
 
-	private function select(DTO $queryObject): null|array|object
+	private function select(DTO $dto): null|array|object
 	{
 		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
-			['queryObject' => $queryObject, 'method' => __METHOD__]
+			['queryObject' => $dto, 'method' => __METHOD__]
 		);
 
-		$selectStatement = $this->SQLStatement->select($queryObject);
+		$selectStatement = $this->SQLStatement->select($dto);
 		$this->executeStatement($selectStatement);
 
 		$records = $this->PDOSstatement->fetchAll();
 		if (!$records)
 			return null;
 
-		$records = $this->processRecords($records, $queryObject->formatting);
+		$records = $this->processRecords($records, $dto->formatting, $dto->options);
 
 		return $records;
 	}
 
-	private function update(DTO $queryObject): int
+	private function update(DTO $dto): int
 	{
 		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
-			['queryObject' => $queryObject, 'method' => __METHOD__]
+			['queryObject' => $dto, 'method' => __METHOD__]
 		);
 
-		$updateStatement = $this->SQLStatement->update($queryObject);
+		$updateStatement = $this->SQLStatement->update($dto);
 		$this->executeStatement($updateStatement);
 		return $this->PDOSstatement->rowCount();
 	}
 
-	private function insert(DTO $queryObject): int
+	private function insert(DTO $dto): int
 	{
 		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
-			['queryObject' => $queryObject, 'method' => __METHOD__]
+			['queryObject' => $dto, 'method' => __METHOD__]
 		);
 
-		$insertStatement = $this->SQLStatement->insert($queryObject);
+		$insertStatement = $this->SQLStatement->insert($dto);
 		$this->executeStatement($insertStatement);
 		return (int) $this->connection->lastInsertId();
 	}
 
-	private function delete(DTO $queryObject): int
+	private function delete(DTO $dto): int
 	{
 		$this->logger->debug(
 			'Method: {method} with {queryObject}.',
-			['queryObject' => $queryObject, 'method' => __METHOD__]
+			['queryObject' => $dto, 'method' => __METHOD__]
 		);
 
-		$deleteStatement = $this->SQLStatement->delete($queryObject);
+		$deleteStatement = $this->SQLStatement->delete($dto);
 		$this->executeStatement($deleteStatement);
 		return (int) $this->PDOSstatement->rowCount();
 	}
@@ -173,16 +173,14 @@ class MySQL extends DriverBase
 		return $this->PDOSstatement->fetchAll();
 	}
 
-	private function query(array $collections, null|array $options = null): Builder
+	private function query(array $collections, array $options = []): Builder
 	{
 		$this->logger->debug(
 			'Method: {method} with {collections} and {options}.',
 			['collections' => $collections, 'options' => $options, 'method' => __METHOD__]
 		);
 
-		$this->setQueryOptions($options);
-
-		return Builder::create($this, $collections, $this->logger);
+		return Builder::create($this, $collections, $options, $this->logger);
 	}
 
 	private function startTransaction(): void
