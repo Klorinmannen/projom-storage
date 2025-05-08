@@ -8,6 +8,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use Psr\Log\NullLogger;
+
 use Projom\Storage\Engine\Driver\MySQL as MySQLDriver;
 use Projom\Storage\Query\Format;
 use Projom\Storage\SQL\Statement\Builder;
@@ -17,6 +19,14 @@ use Projom\Storage\SQL\Util\Operator;
 
 class BuilderTest extends TestCase
 {
+	#[Test]
+	public function create(): void
+	{
+		$driver = $this->createMock(MySQLDriver::class);
+		$query = Builder::create(driver: $driver, collections: ['User'], options: [], logger: new NullLogger());
+		$this->assertInstanceOf(Builder::class, $query);
+	}
+
 	#[Test]
 	public function formatAs(): void
 	{
