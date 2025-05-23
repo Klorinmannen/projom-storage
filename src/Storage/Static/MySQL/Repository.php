@@ -34,6 +34,11 @@ trait Repository
 	 */
 	abstract public static function primaryField(): string;
 
+	public static function useNamespaceAsTableName(): bool
+	{
+		return false;
+	}
+
 	/**
 	 * Returns which fields to format.
 	 * 
@@ -66,11 +71,9 @@ trait Repository
 
 	private static function invoke(): string
 	{
-		$class = Util::classFromCalledClass(static::class);
-		if (!$class)
+		$table = Util::dynamicTableName(static::class, static::useNamespaceAsTableName());
+		if (!$table)
 			throw new \Exception('Table name not set', 400);
-
-		$table = Util::replace($class, ['Repository', 'Repo']);
 
 		$primaryField = static::primaryField();
 		if (!$primaryField)
@@ -142,7 +145,7 @@ trait Repository
 	 */
 	public static function create(array $record): int|string
 	{
-		$table = $table = static::invoke();
+		$table = static::invoke();
 		$primaryID = Query::build($table)->insert($record);
 		return $primaryID;
 	}
