@@ -12,10 +12,10 @@ use Projom\Storage\MySQL\Util;
 class UtilTest extends TestCase
 {
 	#[Test]
-	public function classFromCalledClass(): void
+	public function tableFromCalledClass(): void
 	{
 		$calledClass = 'Projom\Storage\MySQL\Util';
-		$class = Util::classFromCalledClass($calledClass);
+		$class = Util::tableFromCalledClass($calledClass);
 		$this->assertEquals('Util', $class);
 	}
 
