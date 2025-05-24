@@ -12,6 +12,25 @@ use Projom\Storage\MySQL\Util;
 
 class UtilTest extends TestCase
 {
+	public static function dynamicPrimaryFieldProvider(): array
+	{
+		return [
+			'correct use namespace name' => [true, 'App\Recipe\Ingredient\Repository', 'RecipeIngredientID'],
+			'malformed use namespace name' => [true, 'App\Recipe\IngredientRepository', 'RecipeID'],
+			'correct class name 1' => [false, 'App\Recipe\IngredientRepository', 'IngredientID'],
+			'correct class name 2' => [false, 'App\Recipe\Ingredient', 'IngredientID'],
+			'malformed class name' => [false, 'App\Recipe\Ingredient\Repository', 'ID'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dynamicPrimaryFieldProvider')]
+	public function dynamicPrimaryField(bool $useNamespaceAsTableName, string $calledClass, string $expected): void
+	{
+		$result = Util::dynamicPrimaryField($calledClass, $useNamespaceAsTableName);
+		$this->assertEquals($expected, $result);
+	}
+
 	public static function dynamicTableNameWithNamespaceProvider(): array
 	{
 		return [
