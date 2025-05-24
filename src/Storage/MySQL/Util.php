@@ -8,6 +8,12 @@ use Projom\Storage\Util as StorageUtil;
 
 class Util extends StorageUtil
 {
+	public static function dynamicPrimaryField(string $calledClass, bool $useNamespaceAsTableName): string
+	{
+		$table = static::dynamicTableName($calledClass, $useNamespaceAsTableName);
+		return $table . 'ID';
+	}
+
 	public static function dynamicTableName(string $calledClass, bool $useNamespaceAsTableName): string
 	{
 		if ($useNamespaceAsTableName)
