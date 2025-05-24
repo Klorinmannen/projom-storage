@@ -255,14 +255,17 @@ trait Repository
 	 * Get all records.
 	 * 
 	 * * Example use: User::all()
-	 * * Example use: User::all($filters = ['Active' => 0])
+	 * * Example use: User::all(filters: ['Active' => 0], sortOn: ['Name' => Sort::ASC])
 	 */
-	public static function all(array $filters = []): null|array
+	public static function all(array $filters = [], array $sortOn = []): null|array
 	{
 		$table = static::invoke();
 		$query = Query::build($table);
 		if ($filters)
 			$query->filterOnFields($filters);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
 
 		$records = $query->select();
 		if (!$records)
@@ -276,12 +279,18 @@ trait Repository
 	/**
 	 * Search for records filtering on field like %value%.
 	 * 
-	 * * Example use: User::search('Name', 'John')
+	 * * Example use: User::search('Name', 'John', ['Name' => Sort::ASC])
 	 */
-	public static function search(string $field, string $value): null|array
+	public static function search(string $field, string $value, array $sortOn = []): null|array
 	{
 		$table = static::invoke();
-		$records = Query::build($table)->filterOn($field, "%$value%", Operator::LIKE)->select();
+		$query = Query::build($table)
+			->filterOn($field, "%$value%", Operator::LIKE);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
+
+		$records = $query->select();
 		if (!$records)
 			return null;
 
@@ -293,12 +302,17 @@ trait Repository
 	/**
 	 * Get a record by filtering on field with value.
 	 * 
-	 * * Example use: User::get('Email', 'John.doe@example.com')
+	 * * Example use: User::get('Email', 'John.doe@example.com', ['Email' => Sort::ASC])
 	 */
-	public static function get(string $field, mixed $value): null|array|object
+	public static function get(string $field, mixed $value, array $sortOn = []): null|array|object
 	{
 		$table = static::invoke();
-		$records = Query::build($table)->fetch($field, $value);
+		$query = Query::build($table);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
+
+		$records = $query->fetch($field, $value);
 		if (!$records)
 			return null;
 
@@ -464,15 +478,22 @@ trait Repository
 	 * Paginate records.
 	 * 
 	 * * Example use: User::paginate(1, 10)
-	 * * Example use: User::paginate(1, 10, ['Name' => 'John'])
+	 * * Example use: User::paginate(1, 10, ['Name' => 'John'], ['Name' => Sort::ASC])
 	 */
-	public static function paginate(int $page, int $pageSize, array $filters = []): null|array
-	{
+	public static function paginate(
+		int $page,
+		int $pageSize,
+		array $filters = [],
+		array $sortOn = []
+	): null|array {
 		$table = static::invoke();
 		$query = Query::build($table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
 
 		$offset = ($page - 1) * $pageSize;
 		$query->offset($offset)->limit($pageSize);

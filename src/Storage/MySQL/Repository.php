@@ -212,13 +212,16 @@ trait Repository
 	 * Get all records.
 	 * 
 	 * * Example use: $user->all()
-	 * * Example use: $user->all($filters = ['Active' => 0])
+	 * * Example use: $user->all(filters: ['Active' => 0], sortOn: ['Name' => Sort::ASC])
 	 */
-	public function all(array $filters = []): null|array
+	public function all(array $filters = [], array $sortOn = []): null|array
 	{
 		$query = $this->query->build($this->table);
 		if ($filters)
 			$query->filterOnFields($filters);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
 
 		$records = $query->select();
 		if (!$records)
@@ -232,11 +235,17 @@ trait Repository
 	/**
 	 * Search for records filtering on field like %value%.
 	 * 
-	 * * Example use: $user->search('Name', 'John')
+	 * * Example use: $user->search('Name', 'John', ['Name' => Sort::ASC])
 	 */
-	public function search(string $field, string $value): null|array
+	public function search(string $field, string $value, array $sortOn = []): null|array
 	{
-		$records = $this->query->build($this->table)->filterOn($field, "%$value%", Operator::LIKE)->select();
+		$query = $this->query->build($this->table)
+			->filterOn($field, "%$value%", Operator::LIKE);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
+
+		$records = $query->select();
 		if (!$records)
 			return null;
 
@@ -248,11 +257,16 @@ trait Repository
 	/**
 	 * Get a record by filtering on field with value.
 	 * 
-	 * * Example use: $user->get('Email', 'John.doe@example.com')
+	 * * Example use: $user->get('Email', 'John.doe@example.com', ['Name' => Sort::ASC])
 	 */
-	public function get(string $field, mixed $value): null|array|object
+	public function get(string $field, mixed $value, array $sortOn = []): null|array|object
 	{
-		$records = $this->query->build($this->table)->fetch($field, $value);
+		$query = $this->query->build($this->table);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
+
+		$records = $query->fetch($field, $value);
 		if (!$records)
 			return null;
 
@@ -413,14 +427,21 @@ trait Repository
 	 * Paginate records.
 	 * 
 	 * * Example use: $user->paginate(1, 10)
-	 * * Example use: $user->paginate(1, 10, ['Name' => 'John'])
+	 * * Example use: $user->paginate(1, 10, ['Name' => 'John'], ['Name' => Sort::ASC])
 	 */
-	public function paginate(int $page, int $pageSize, array $filters = []): null|array
-	{
+	public function paginate(
+		int $page,
+		int $pageSize,
+		array $filters = [],
+		array $sortOn = []
+	): null|array {
 		$query = $this->query->build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
 
 		$offset = ($page - 1) * $pageSize;
 		$query->offset($offset)->limit($pageSize);
