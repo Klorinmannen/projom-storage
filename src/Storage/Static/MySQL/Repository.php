@@ -220,7 +220,40 @@ trait Repository
 	{
 		$table = static::invoke();
 		$primaryField = static::primaryField();
-		Query::build($table)->filterOn($primaryField, $primaryID)->delete();
+		Query::build($table)
+			->filterOn($primaryField, $primaryID)
+			->delete();
+	}
+
+	/**
+	 * Delete records filtered on the given field and value.
+	 * 
+	 * * Example use: User::deleteWith('Email', 'john-doe@example.com')
+	 */
+	public static function deleteWith(string $field, mixed $value): void
+	{
+		$table = static::invoke();
+		Query::build($table)
+			->filterOn($field, $value)
+			->delete();
+	}
+
+	/**
+	 * Delete all records.
+	 * 
+	 * if no filters are provided, all records will be deleted.
+	 * 
+	 * * Example use: Log::deleteAll(filters: ['Type' => 'error'])
+	 */
+	public static function deleteAll(array $filters = []): void
+	{
+		$table = static::invoke();
+		$query = Query::build($table);
+
+		if ($filters)
+			$query->filterOnFields($filters);
+
+		$query->delete();
 	}
 
 	/**

@@ -183,6 +183,35 @@ trait Repository
 	}
 
 	/**
+	 * Delete records filtered on the given field and value.
+	 * 
+	 * * Example use: $user->deleteWith()
+	 */
+	public function deleteWith(string $field, mixed $value): void
+	{
+		$this->query->build($this->table)
+			->filterOn($field, $value)
+			->delete();
+	}
+
+	/**
+	 * Delete all records.
+	 * 
+	 * if no filters are given, all records will be deleted.
+	 * 
+	 * * Example use: $log->deleteAll(filters: ['Type' => 'error'])
+	 */
+	public function deleteAll(array $filters = []): void
+	{
+		$query = $this->query->build($this->table);
+
+		if ($filters)
+			$query->filterOnFields($filters);
+
+		$query->delete();
+	}
+
+	/**
 	 * Clone a record.
 	 * 
 	 * @param array $newRecord used to write new values to fields from the cloned record.
