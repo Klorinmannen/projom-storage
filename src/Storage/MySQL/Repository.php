@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\Storage\MySQL;
 
+use Exception;
+
 use Projom\Storage\MySQL\Query;
 use Projom\Storage\MySQL\Util;
 use Projom\Storage\SQL\Util\Aggregate;
@@ -15,9 +17,6 @@ use Projom\Storage\SQL\Util\Operator;
  * How to use:
  * * Use this trait to create a query-able "repository" of the class using the trait.
  * * The name of the class using the trait should be the same as the database table name.
- *
- * Mandatory abstract methods to implement: 
- * * primaryField(): string 'FieldID'
  *
  * Optional methods to implement for additional processing:
  * * formatFields(): array [ 'Field' => 'string', 'AnotherField' => 'int', ... ]
@@ -33,24 +32,19 @@ trait Repository
 	private readonly string $table;
 	private readonly string $primaryField;
 
+	/**
+	 * Invoke / construct the repository.
+	 */
 	public function invoke(
 		Query $query,
-		string $tableName = '',
+		string $primaryField,
+		string $table = '',
 		bool $useNamespaceAsTableName = false
 	): void {
-		
 		$this->query = $query;
-		$this->table = $tableName ?: Util::dynamicTableName(static::class, $useNamespaceAsTableName);
-		
-		$this->primaryField = $this->primaryField();
-		if (!$this->primaryField)
-			throw new \Exception('Primary field not set', 400);
+		$this->primaryField = $primaryField ?: Util::dynamicPrimaryField(static::class, $useNamespaceAsTableName);
+		$this->table = $table ?: Util::dynamicTableName(static::class, $useNamespaceAsTableName);
 	}
-
-	/**
-	 * Returns the primary key field of the table.
-	 */
-	abstract public function primaryField(): string;
 
 	/**
 	 * Returns which fields to format.

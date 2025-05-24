@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Static\MySQL;
 
+use Exception;
+
 use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Static\MySQL\Query;
@@ -16,9 +18,6 @@ use Projom\Storage\MySQL\Util;
  * * Use this trait to create a query-able "repository" of the class using the trait.
  * * The name of the class using the trait should be the same as the database table name.
  *
- * Mandatory abstract methods to implement: 
- * * primaryField(): string 'FieldID'
- *
  * Optional methods to implement for additional processing:
  * * formatFields(): array [ 'Field' => 'string', 'AnotherField' => 'int', ... ]
  * * redactFields(): array [ 'Field', 'AnotherField' ]
@@ -30,10 +29,40 @@ trait Repository
 	private const REDACTED = '__REDACTED__';
 
 	/**
-	 * Returns the primary key field of the table.
+	 * Returns the primary field.
+	 * 
+	 * Override this method to set a custom primary field.
+	 * 
+	 * Default: Primary field will be derived from the class name or namespace.
 	 */
-	abstract public static function primaryField(): string;
+	public static function primaryField(): string
+	{
+		return Util::dynamicPrimaryField(static::class, static::useNamespaceAsTableName());
+	}
 
+	/**
+	 * Returns the table name.
+	 * 
+	 * Override this method to set a custom table name.
+	 * 
+	 * Default: The table name will be derived from the class name or namespace.
+	 */
+	public static function table(): string
+	{
+		return Util::dynamicTableName(static::class, static::useNamespaceAsTableName());
+	}
+
+	/**
+	 * Returns whether to use the namespace as the table name.
+	 * 
+	 * If true, the table name will be derived from the namespace of the class.
+	 * Example: `App\Recipe\Ingredient\Repository` will become `RecipeIngredient`.
+	 *
+	 * If false, the table name will be derived from the class name.
+	 * Example: `App\Recipe\IngredientRepository` will become `Ingredient`.
+	 *  
+	 * Default is false.
+	 */
 	public static function useNamespaceAsTableName(): bool
 	{
 		return false;
@@ -69,15 +98,17 @@ trait Repository
 		return [];
 	}
 
+	/**
+	 * Invoke / construct the repository.
+	 */
 	private static function invoke(): string
 	{
-		$table = Util::dynamicTableName(static::class, static::useNamespaceAsTableName());
-		if (!$table)
-			throw new \Exception('Table name not set', 400);
-
-		$primaryField = static::primaryField();
-		if (!$primaryField)
+		if (! static::primaryField())
 			throw new \Exception('Primary field not set', 400);
+
+		$table = static::table();
+		if (! $table)
+			throw new \Exception('Table not set', 400);
 
 		return $table;
 	}
