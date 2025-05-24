@@ -39,7 +39,7 @@ class SimpleLoggerTest extends TestCase
 		$query = Query::create($engine);
 
 		$userRepo = new UserRepository();
-		$userRepo->invoke($query);
+		$userRepo->invoke($query, 'UserID', 'User');
 
 		// Do some database operations, which will hopefully be logged
 		$userRepo->all();
