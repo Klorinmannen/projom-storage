@@ -17,11 +17,6 @@ class UserRepository
 		$this->data = $record;
 	}
 
-	public function primaryField(): string
-	{
-		return 'UserID';
-	}
-
 	public function redactFields(): array
 	{
 		return [
