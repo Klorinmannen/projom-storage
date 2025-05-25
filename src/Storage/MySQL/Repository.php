@@ -35,15 +35,51 @@ trait Repository
 	/**
 	 * Invoke / construct the repository.
 	 */
-	public function invoke(
-		Query $query,
-		string $primaryField,
-		string $table = '',
-		bool $useNamespaceAsTableName = false
-	): void {
+	public function invoke(Query $query): void
+	{
 		$this->query = $query;
-		$this->primaryField = $primaryField ?: Util::dynamicPrimaryField(static::class, $useNamespaceAsTableName);
-		$this->table = $table ?: Util::dynamicTableName(static::class, $useNamespaceAsTableName);
+		$this->primaryField = $this->primaryField();
+		$this->table = $this->table();
+	}
+
+	/**
+	 * Returns the primary field.
+	 * 
+	 * Override this method to set a custom primary field.
+	 * 
+	 * Default: Primary field will be derived from the class name or namespace.
+	 */
+	public function primaryField(): string
+	{
+		return Util::dynamicPrimaryField(static::class, $this->useNamespaceAsTableName());
+	}
+
+	/**
+	 * Returns the table name.
+	 * 
+	 * Override this method to set a custom table name.
+	 * 
+	 * Default: The table name will be derived from the class name or namespace.
+	 */
+	public function table(): string
+	{
+		return Util::dynamicTableName(static::class, $this->useNamespaceAsTableName());
+	}
+
+	/**
+	 * Returns whether to use the namespace as the table name.
+	 * 
+	 * If true, the table name will be derived from the namespace of the class.
+	 * Example: `App\Recipe\Ingredient\Repository` will become `RecipeIngredient`.
+	 *
+	 * If false, the table name will be derived from the class name.
+	 * Example: `App\Recipe\IngredientRepository` will become `Ingredient`.
+	 *  
+	 * Default is false.
+	 */
+	public function useNamespaceAsTableName(): bool
+	{
+		return false;
 	}
 
 	/**
