@@ -29,6 +29,21 @@ trait Repository
 	private const REDACTED = '__REDACTED__';
 
 	/**
+	 * Invoke / construct the repository.
+	 */
+	private static function invoke(): string
+	{
+		$table = static::table();
+		if (! $table)
+			throw new \Exception('Table not set', 400);
+
+		if (! static::primaryField())
+			throw new \Exception('Primary field not set', 400);
+
+		return $table;
+	}
+
+	/**
 	 * Returns the primary field.
 	 * 
 	 * Override this method to set a custom primary field.
@@ -96,21 +111,6 @@ trait Repository
 	public static function selectFields(): array
 	{
 		return [];
-	}
-
-	/**
-	 * Invoke / construct the repository.
-	 */
-	private static function invoke(): string
-	{
-		if (! static::primaryField())
-			throw new \Exception('Primary field not set', 400);
-
-		$table = static::table();
-		if (! $table)
-			throw new \Exception('Table not set', 400);
-
-		return $table;
 	}
 
 	private static function processRecords(array $records): array
