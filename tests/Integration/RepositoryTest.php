@@ -41,7 +41,7 @@ class RepositoryTest extends TestCase
 	public function crud()
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		// Create a new user
 		$newUser = [
@@ -76,7 +76,7 @@ class RepositoryTest extends TestCase
 	public function find(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$userRecord = $userRepo->find(1);
 		$this->assertEquals(1, $userRecord['UserID']);
@@ -89,7 +89,7 @@ class RepositoryTest extends TestCase
 	public function all(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$userRecords = $userRepo->all();
 		$this->assertCount(5, $userRecords);
@@ -102,7 +102,7 @@ class RepositoryTest extends TestCase
 	public function search(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$userRecords = $userRepo->search('Lastname', 'D');
 		$this->assertCount(4, $userRecords);
@@ -112,7 +112,7 @@ class RepositoryTest extends TestCase
 	public function clone(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$newUser = [
 			'Username' => 'jasmine.doe@example.com',
@@ -134,7 +134,7 @@ class RepositoryTest extends TestCase
 	public function sum(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$sum = 0;
 		$allUserRecords = $userRepo->all();
@@ -158,7 +158,7 @@ class RepositoryTest extends TestCase
 	public function counts(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$userRecords = $userRepo->count();
 		$this->assertCount(1, $userRecords);
@@ -190,7 +190,7 @@ class RepositoryTest extends TestCase
 	public function avg(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$sum = 0;
 		$allUserRecords = $userRepo->all();
@@ -215,7 +215,7 @@ class RepositoryTest extends TestCase
 	public function min(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$userRecords = $userRepo->min('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertCount(1, $userRecords);
@@ -228,7 +228,7 @@ class RepositoryTest extends TestCase
 	public function max(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$userRecords = $userRepo->max('UserID', ['Lastname' => 'Doe'], ['Lastname']);
 		$this->assertCount(1, $userRecords);
@@ -241,7 +241,7 @@ class RepositoryTest extends TestCase
 	public function paginate(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 
 		$userRecords = $userRepo->paginate(2, 2, ['Lastname' => 'Doe']);
 		$this->assertCount(2, $userRecords);
@@ -251,7 +251,7 @@ class RepositoryTest extends TestCase
 	public function redactFields(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 		$userRecord = $userRepo->find(1);
 		$this->assertEquals('__REDACTED__', $userRecord['Password']);
 	}
@@ -260,7 +260,7 @@ class RepositoryTest extends TestCase
 	public function formatFields(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 		$userRecord = $userRepo->find(1);
 
 		$this->assertIsInt($userRecord['UserID']);
@@ -274,7 +274,7 @@ class RepositoryTest extends TestCase
 	public function selectFields(): void
 	{
 		$userRepo = new UserRepository();
-		$userRepo->invoke($this->query, primaryField: 'UserID', table: 'User');
+		$userRepo->invoke($this->query);
 		$userRecord = $userRepo->find(1);
 
 		$this->assertArrayHasKey('UserID', $userRecord);
