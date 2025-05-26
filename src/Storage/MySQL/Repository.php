@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\Storage\MySQL;
 
+use Exception;
+
 use Projom\Storage\MySQL\Query;
 use Projom\Storage\MySQL\Util;
 use Projom\Storage\SQL\Util\Aggregate;
@@ -15,9 +17,6 @@ use Projom\Storage\SQL\Util\Operator;
  * How to use:
  * * Use this trait to create a query-able "repository" of the class using the trait.
  * * The name of the class using the trait should be the same as the database table name.
- *
- * Mandatory abstract methods to implement: 
- * * primaryField(): string 'FieldID'
  *
  * Optional methods to implement for additional processing:
  * * formatFields(): array [ 'Field' => 'string', 'AnotherField' => 'int', ... ]
@@ -33,25 +32,55 @@ trait Repository
 	private readonly string $table;
 	private readonly string $primaryField;
 
-	public function invoke(Query $query)
+	/**
+	 * Invoke / construct the repository.
+	 */
+	public function invoke(Query $query): void
 	{
 		$this->query = $query;
-
-		$class = Util::classFromCalledClass(static::class);
-		if (!$class)
-			throw new \Exception('Table name not set', 400);
-
-		$this->table = Util::replace($class, ['Repository', 'Repo']);
-
 		$this->primaryField = $this->primaryField();
-		if (!$this->primaryField)
-			throw new \Exception('Primary field not set', 400);
+		$this->table = $this->table();
 	}
 
 	/**
-	 * Returns the primary key field of the table.
+	 * Returns the primary field.
+	 * 
+	 * Override this method to set a custom primary field.
+	 * 
+	 * Default: Primary field will be derived from the class name or namespace.
 	 */
-	abstract public function primaryField(): string;
+	public function primaryField(): string
+	{
+		return Util::dynamicPrimaryField(static::class, $this->useNamespaceAsTableName());
+	}
+
+	/**
+	 * Returns the table name.
+	 * 
+	 * Override this method to set a custom table name.
+	 * 
+	 * Default: The table name will be derived from the class name or namespace.
+	 */
+	public function table(): string
+	{
+		return Util::dynamicTableName(static::class, $this->useNamespaceAsTableName());
+	}
+
+	/**
+	 * Returns whether to use the namespace as the table name.
+	 * 
+	 * If true, the table name will be derived from the namespace of the class.
+	 * Example: `App\Recipe\Ingredient\Repository` will become `RecipeIngredient`.
+	 *
+	 * If false, the table name will be derived from the class name.
+	 * Example: `App\Recipe\IngredientRepository` will become `Ingredient`.
+	 *  
+	 * Default is false.
+	 */
+	public function useNamespaceAsTableName(): bool
+	{
+		return false;
+	}
 
 	/**
 	 * Returns which fields to format.
@@ -190,6 +219,35 @@ trait Repository
 	}
 
 	/**
+	 * Delete records filtered on the given field and value.
+	 * 
+	 * * Example use: $user->deleteWith('Email', 'john@example.com')
+	 */
+	public function deleteWith(string $field, mixed $value): void
+	{
+		$this->query->build($this->table)
+			->filterOn($field, $value)
+			->delete();
+	}
+
+	/**
+	 * Delete all records.
+	 * 
+	 * if no filters are given, all records will be deleted.
+	 * 
+	 * * Example use: $log->deleteAll(filters: ['Type' => 'error'])
+	 */
+	public function deleteAll(array $filters = []): void
+	{
+		$query = $this->query->build($this->table);
+
+		if ($filters)
+			$query->filterOnFields($filters);
+
+		$query->delete();
+	}
+
+	/**
 	 * Clone a record.
 	 * 
 	 * @param array $newRecord used to write new values to fields from the cloned record.
@@ -201,7 +259,7 @@ trait Repository
 	{
 		$records = $this->query->build($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
-			return throw new \Exception('Record to clone not found', 400);
+			return throw new Exception('Record to clone not found', 400);
 
 		$record = array_pop($records);
 		unset($record[$this->primaryField]);
@@ -219,13 +277,16 @@ trait Repository
 	 * Get all records.
 	 * 
 	 * * Example use: $user->all()
-	 * * Example use: $user->all($filters = ['Active' => 0])
+	 * * Example use: $user->all(filters: ['Active' => 0], sortOn: ['Name' => Sort::ASC])
 	 */
-	public function all(array $filters = []): null|array
+	public function all(array $filters = [], array $sortOn = []): null|array
 	{
 		$query = $this->query->build($this->table);
 		if ($filters)
 			$query->filterOnFields($filters);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
 
 		$records = $query->select();
 		if (!$records)
@@ -239,11 +300,17 @@ trait Repository
 	/**
 	 * Search for records filtering on field like %value%.
 	 * 
-	 * * Example use: $user->search('Name', 'John')
+	 * * Example use: $user->search('Name', 'John', ['Name' => Sort::ASC])
 	 */
-	public function search(string $field, string $value): null|array
+	public function search(string $field, string $value, array $sortOn = []): null|array
 	{
-		$records = $this->query->build($this->table)->filterOn($field, "%$value%", Operator::LIKE)->select();
+		$query = $this->query->build($this->table)
+			->filterOn($field, "%$value%", Operator::LIKE);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
+
+		$records = $query->select();
 		if (!$records)
 			return null;
 
@@ -255,11 +322,16 @@ trait Repository
 	/**
 	 * Get a record by filtering on field with value.
 	 * 
-	 * * Example use: $user->get('Email', 'John.doe@example.com')
+	 * * Example use: $user->get('Email', 'John.doe@example.com', ['Name' => Sort::ASC])
 	 */
-	public function get(string $field, mixed $value): null|array|object
+	public function get(string $field, mixed $value, array $sortOn = []): null|array|object
 	{
-		$records = $this->query->build($this->table)->fetch($field, $value);
+		$query = $this->query->build($this->table);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
+
+		$records = $query->fetch($field, $value);
 		if (!$records)
 			return null;
 
@@ -420,14 +492,21 @@ trait Repository
 	 * Paginate records.
 	 * 
 	 * * Example use: $user->paginate(1, 10)
-	 * * Example use: $user->paginate(1, 10, ['Name' => 'John'])
+	 * * Example use: $user->paginate(1, 10, ['Name' => 'John'], ['Name' => Sort::ASC])
 	 */
-	public function paginate(int $page, int $pageSize, array $filters = []): null|array
-	{
+	public function paginate(
+		int $page,
+		int $pageSize,
+		array $filters = [],
+		array $sortOn = []
+	): null|array {
 		$query = $this->query->build($this->table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
 
 		$offset = ($page - 1) * $pageSize;
 		$query->offset($offset)->limit($pageSize);

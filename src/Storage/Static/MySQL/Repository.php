@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Static\MySQL;
 
+use Exception;
+
 use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\Static\MySQL\Query;
@@ -16,9 +18,6 @@ use Projom\Storage\MySQL\Util;
  * * Use this trait to create a query-able "repository" of the class using the trait.
  * * The name of the class using the trait should be the same as the database table name.
  *
- * Mandatory abstract methods to implement: 
- * * primaryField(): string 'FieldID'
- *
  * Optional methods to implement for additional processing:
  * * formatFields(): array [ 'Field' => 'string', 'AnotherField' => 'int', ... ]
  * * redactFields(): array [ 'Field', 'AnotherField' ]
@@ -30,9 +29,59 @@ trait Repository
 	private const REDACTED = '__REDACTED__';
 
 	/**
-	 * Returns the primary key field of the table.
+	 * Invoke / construct the repository.
 	 */
-	abstract public static function primaryField(): string;
+	private static function invoke(): string
+	{
+		$table = static::table();
+		if (! $table)
+			throw new Exception('Table not set', 400);
+
+		if (! static::primaryField())
+			throw new Exception('Primary field not set', 400);
+
+		return $table;
+	}
+
+	/**
+	 * Returns the primary field.
+	 * 
+	 * Override this method to set a custom primary field.
+	 * 
+	 * Default: Primary field will be derived from the class name or namespace.
+	 */
+	public static function primaryField(): string
+	{
+		return Util::dynamicPrimaryField(static::class, static::useNamespaceAsTableName());
+	}
+
+	/**
+	 * Returns the table name.
+	 * 
+	 * Override this method to set a custom table name.
+	 * 
+	 * Default: The table name will be derived from the class name or namespace.
+	 */
+	public static function table(): string
+	{
+		return Util::dynamicTableName(static::class, static::useNamespaceAsTableName());
+	}
+
+	/**
+	 * Returns whether to use the namespace as the table name.
+	 * 
+	 * If true, the table name will be derived from the namespace of the class.
+	 * Example: `App\Recipe\Ingredient\Repository` will become `RecipeIngredient`.
+	 *
+	 * If false, the table name will be derived from the class name.
+	 * Example: `App\Recipe\IngredientRepository` will become `Ingredient`.
+	 *  
+	 * Default is false.
+	 */
+	public static function useNamespaceAsTableName(): bool
+	{
+		return false;
+	}
 
 	/**
 	 * Returns which fields to format.
@@ -62,21 +111,6 @@ trait Repository
 	public static function selectFields(): array
 	{
 		return [];
-	}
-
-	private static function invoke(): string
-	{
-		$class = Util::classFromCalledClass(static::class);
-		if (!$class)
-			throw new \Exception('Table name not set', 400);
-
-		$table = Util::replace($class, ['Repository', 'Repo']);
-
-		$primaryField = static::primaryField();
-		if (!$primaryField)
-			throw new \Exception('Primary field not set', 400);
-
-		return $table;
 	}
 
 	private static function processRecords(array $records): array
@@ -142,7 +176,7 @@ trait Repository
 	 */
 	public static function create(array $record): int|string
 	{
-		$table = $table = static::invoke();
+		$table = static::invoke();
 		$primaryID = Query::build($table)->insert($record);
 		return $primaryID;
 	}
@@ -186,7 +220,40 @@ trait Repository
 	{
 		$table = static::invoke();
 		$primaryField = static::primaryField();
-		Query::build($table)->filterOn($primaryField, $primaryID)->delete();
+		Query::build($table)
+			->filterOn($primaryField, $primaryID)
+			->delete();
+	}
+
+	/**
+	 * Delete records filtered on the given field and value.
+	 * 
+	 * * Example use: User::deleteWith('Email', 'john-doe@example.com')
+	 */
+	public static function deleteWith(string $field, mixed $value): void
+	{
+		$table = static::invoke();
+		Query::build($table)
+			->filterOn($field, $value)
+			->delete();
+	}
+
+	/**
+	 * Delete all records.
+	 * 
+	 * if no filters are provided, all records will be deleted.
+	 * 
+	 * * Example use: Log::deleteAll(filters: ['Type' => 'error'])
+	 */
+	public static function deleteAll(array $filters = []): void
+	{
+		$table = static::invoke();
+		$query = Query::build($table);
+
+		if ($filters)
+			$query->filterOnFields($filters);
+
+		$query->delete();
 	}
 
 	/**
@@ -203,7 +270,7 @@ trait Repository
 		$primaryField = static::primaryField();
 		$records = Query::build($table)->fetch($primaryField, $primaryID);
 		if (!$records)
-			return throw new \Exception('Record to clone not found', 400);
+			return throw new Exception('Record to clone not found', 400);
 
 		$record = array_pop($records);
 		unset($record[$primaryField]);
@@ -221,14 +288,17 @@ trait Repository
 	 * Get all records.
 	 * 
 	 * * Example use: User::all()
-	 * * Example use: User::all($filters = ['Active' => 0])
+	 * * Example use: User::all(filters: ['Active' => 0], sortOn: ['Name' => Sort::ASC])
 	 */
-	public static function all(array $filters = []): null|array
+	public static function all(array $filters = [], array $sortOn = []): null|array
 	{
 		$table = static::invoke();
 		$query = Query::build($table);
 		if ($filters)
 			$query->filterOnFields($filters);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
 
 		$records = $query->select();
 		if (!$records)
@@ -242,12 +312,18 @@ trait Repository
 	/**
 	 * Search for records filtering on field like %value%.
 	 * 
-	 * * Example use: User::search('Name', 'John')
+	 * * Example use: User::search('Name', 'John', ['Name' => Sort::ASC])
 	 */
-	public static function search(string $field, string $value): null|array
+	public static function search(string $field, string $value, array $sortOn = []): null|array
 	{
 		$table = static::invoke();
-		$records = Query::build($table)->filterOn($field, "%$value%", Operator::LIKE)->select();
+		$query = Query::build($table)
+			->filterOn($field, "%$value%", Operator::LIKE);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
+
+		$records = $query->select();
 		if (!$records)
 			return null;
 
@@ -259,12 +335,17 @@ trait Repository
 	/**
 	 * Get a record by filtering on field with value.
 	 * 
-	 * * Example use: User::get('Email', 'John.doe@example.com')
+	 * * Example use: User::get('Email', 'John.doe@example.com', ['Email' => Sort::ASC])
 	 */
-	public static function get(string $field, mixed $value): null|array|object
+	public static function get(string $field, mixed $value, array $sortOn = []): null|array|object
 	{
 		$table = static::invoke();
-		$records = Query::build($table)->fetch($field, $value);
+		$query = Query::build($table);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
+
+		$records = $query->fetch($field, $value);
 		if (!$records)
 			return null;
 
@@ -430,15 +511,22 @@ trait Repository
 	 * Paginate records.
 	 * 
 	 * * Example use: User::paginate(1, 10)
-	 * * Example use: User::paginate(1, 10, ['Name' => 'John'])
+	 * * Example use: User::paginate(1, 10, ['Name' => 'John'], ['Name' => Sort::ASC])
 	 */
-	public static function paginate(int $page, int $pageSize, array $filters = []): null|array
-	{
+	public static function paginate(
+		int $page,
+		int $pageSize,
+		array $filters = [],
+		array $sortOn = []
+	): null|array {
 		$table = static::invoke();
 		$query = Query::build($table);
 
 		if ($filters)
 			$query->filterOnFields($filters);
+
+		if ($sortOn)
+			$query->sortOn($sortOn);
 
 		$offset = ($page - 1) * $pageSize;
 		$query->offset($offset)->limit($pageSize);
