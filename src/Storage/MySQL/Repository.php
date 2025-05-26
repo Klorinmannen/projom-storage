@@ -221,7 +221,7 @@ trait Repository
 	/**
 	 * Delete records filtered on the given field and value.
 	 * 
-	 * * Example use: $user->deleteWith()
+	 * * Example use: $user->deleteWith('Email', 'john@example.com')
 	 */
 	public function deleteWith(string $field, mixed $value): void
 	{
