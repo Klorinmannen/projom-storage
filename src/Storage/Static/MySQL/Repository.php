@@ -35,10 +35,10 @@ trait Repository
 	{
 		$table = static::table();
 		if (! $table)
-			throw new \Exception('Table not set', 400);
+			throw new Exception('Table not set', 400);
 
 		if (! static::primaryField())
-			throw new \Exception('Primary field not set', 400);
+			throw new Exception('Primary field not set', 400);
 
 		return $table;
 	}
@@ -270,7 +270,7 @@ trait Repository
 		$primaryField = static::primaryField();
 		$records = Query::build($table)->fetch($primaryField, $primaryID);
 		if (!$records)
-			return throw new \Exception('Record to clone not found', 400);
+			return throw new Exception('Record to clone not found', 400);
 
 		$record = array_pop($records);
 		unset($record[$primaryField]);

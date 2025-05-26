@@ -259,7 +259,7 @@ trait Repository
 	{
 		$records = $this->query->build($this->table)->fetch($this->primaryField, $primaryID);
 		if (!$records)
-			return throw new \Exception('Record to clone not found', 400);
+			return throw new Exception('Record to clone not found', 400);
 
 		$record = array_pop($records);
 		unset($record[$this->primaryField]);
