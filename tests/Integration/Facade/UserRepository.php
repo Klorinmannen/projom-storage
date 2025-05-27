@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Integration\Static;
+namespace Projom\Tests\Integration\Facade;
 
-use Projom\Storage\Static\MySQL\Repository;
+use Projom\Storage\Facade\MySQL\Repository;
 
 class UserRepository
 {

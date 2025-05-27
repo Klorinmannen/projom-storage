@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Static\MySQL;
+namespace Projom\Storage\Facade\MySQL;
 
-use Projom\Storage\Static\Engine;
 use Projom\Storage\Engine\Driver\Driver;
+use Projom\Storage\Facade\Engine;
 use Projom\Storage\Query\Action;
 use Projom\Storage\Query\Util;
 use Projom\Storage\SQL\Statement\Builder;

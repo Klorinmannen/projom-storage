@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Static\Query;
+namespace Projom\Storage\Facade\Query;
 
-use Projom\Storage\Static\Engine;
+use Projom\Storage\Facade\Engine;
 use Projom\Storage\Query\Action;
 use Projom\Storage\Query\Util;
 

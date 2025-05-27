@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\Integration\Static\MySQL;
+namespace Projom\tests\Integration\Facade\MySQL;
 
 include_once __DIR__ . '/../UserRepository.php';
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use Projom\Storage\Static\Engine;
-use Projom\Tests\Integration\Static\UserRepository;
+use Projom\Storage\Engine as EngineObject;
+use Projom\Storage\Facade\Engine;
+use Projom\Tests\Integration\Facade\UserRepository;
 
 class RepositoryTest extends TestCase
 {
@@ -30,8 +31,7 @@ class RepositoryTest extends TestCase
 			]
 		];
 
-		Engine::start();
-		Engine::loadDriver($config);
+		Engine::setInstance(EngineObject::create($config));
 	}
 
 	#[Test]

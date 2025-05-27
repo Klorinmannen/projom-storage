@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Projom\Storage\Static\MySQL;
+namespace Projom\Storage\Facade\MySQL;
 
 use Exception;
 
+use Projom\Storage\Facade\MySQL\Query;
 use Projom\Storage\SQL\Util\Aggregate;
 use Projom\Storage\SQL\Util\Operator;
-use Projom\Storage\Static\MySQL\Query;
 use Projom\Storage\MySQL\Util;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\Integration\Static\MySQL;
+namespace Projom\tests\Integration\Facade\MySQL;
 
 include_once __DIR__ . '/../../UserRecord.php';
 
@@ -12,14 +12,15 @@ use PHPUnit\Framework\TestCase;
 
 use Projom\Tests\Integration\UserRecord;
 
+use Projom\Storage\Engine as EngineObject;
+use Projom\Storage\Facade\Engine;
+use Projom\Storage\Facade\MySQL\Query;
 use Projom\Storage\Query\Format;
 use Projom\Storage\SQL\Util\Join;
 use Projom\Storage\SQL\Util\Operator;
 use Projom\Storage\SQL\Util\Sort;
-use Projom\Storage\Static\Engine;
-use Projom\Storage\Static\MySQL\Query;
 
-class EndToEndTest extends TestCase
+class QueryTest extends TestCase
 {
 	public function setUp(): void
 	{
@@ -37,8 +38,7 @@ class EndToEndTest extends TestCase
 			]
 		];
 
-		Engine::start();
-		Engine::loadDriver($config);
+		Engine::setInstance(EngineObject::create($config));
 	}
 
 	public static function queryOptionsProvider(): array
