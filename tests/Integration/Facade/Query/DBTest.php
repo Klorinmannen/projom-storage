@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\Facade\Query;
+namespace Projom\Tests\Integration\Facade\Query;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

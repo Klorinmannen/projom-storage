@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\Tests\Unit\Storage\Static;
+namespace Projom\Tests\Unit\Storage\Facade;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

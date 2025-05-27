@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Projom\tests\Integration\Facade\MySQL;
+namespace Projom\Tests\Integration\Facade\MySQL;
 
 include_once __DIR__ . '/../UserRepository.php';
 
