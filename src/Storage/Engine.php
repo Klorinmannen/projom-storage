@@ -29,7 +29,7 @@ class Engine
 		$engine = new Engine($driverFactory);
 
 		if ($config)
-			$engine->loadDriver($config);		
+			$engine->loadDriver($config);
 
 		return $engine;
 	}
@@ -43,17 +43,22 @@ class Engine
 	public function dispatch(Action $action, null|Driver $driver = null, mixed $args = null): mixed
 	{
 		if ($driver !== null)
-			if ($this->currentDriver !== $driver)
-				$this->useDriver($driver);
+			$this->useDriver($driver);
 
 		$driver = $this->driver();
-		return $driver->dispatch($action, $args);
+		$result = $driver->dispatch($action, $args);
+
+		return $result;
 	}
 
 	public function useDriver(Driver $driver): void
 	{
+		if ($this->currentDriver === $driver)
+			return;
+
 		if (!array_key_exists($driver->value,  $this->drivers))
 			throw new \Exception('Driver not loaded', 400);
+
 		$this->currentDriver = $driver;
 	}
 
