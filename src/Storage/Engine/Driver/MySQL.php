@@ -162,7 +162,7 @@ class MySQL extends DriverBase
 			throw new \Exception('Failed to execute statement.', 500);
 	}
 
-	private function execute(string $sql, null|array $params): array
+	private function execute(string $sql, null|array $params = null): array
 	{
 		$this->logger->debug(
 			'Method {method} with "{sql}" and {params}.',
