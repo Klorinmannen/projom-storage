@@ -40,7 +40,6 @@ $config = [
       ]
    ]
 ];
-
 $engine = Engine::create($config);
 $query = Query::create($engine);
 
@@ -48,11 +47,15 @@ $query = Query::create($engine);
 $users = $query->build('User')->select();
 ````
 
-### Static usage
-````
-use Projom\Storage\Static\Engine;
-use Projom\Storage\Static\MySQL\Query;
+### Facades
 
+#### Engine
+````
+use Projom\Storage\Engine as StorageEngine;
+use Projom\Storage\Facade\Engine as FacadeEngine;
+use Projom\Storage\Facade\MySQL\Query;
+
+// Boostrap: Create the engine object and set the engine facade
 $config = [ 
    'driver' => 'mysql',
    'connections' => [
@@ -66,9 +69,23 @@ $config = [
       ]
    ]
 ];
+$storageEngine = StorageEngine::create($config);
+FacadeEngine::setInstance($storageEngine);
+````
+#### Query
+````
+use Projom\Storage\Facade\MySQL\Query;
 
-Engine::start($config);
-
-// Select all users
 $users = Query::build('User')->select();
+````
+#### Repository 
+````
+use Projom\Storage\Facade\MySQL\Repository;
+
+class UserRepository 
+{
+   use Repository;
+}
+
+$user = UserRepository::find($userID = 3);
 ````
