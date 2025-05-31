@@ -57,18 +57,6 @@ class MySQL extends DriverBase
 		};
 	}
 
-	public function changeConnection(int|string $name): void
-	{
-		$this->logger->debug(
-			'Method: {method} with "{name}".',
-			['name' => $name, 'method' => __METHOD__]
-		);
-
-		if (!array_key_exists($name, $this->connections))
-			throw new \Exception("Connection: '$name' does not exist.", 400);
-		$this->connection = $this->connections[$name];
-	}
-
 	public function addConnection(ConnectionInterface $connection): void
 	{
 		$this->logger->debug(
@@ -79,6 +67,18 @@ class MySQL extends DriverBase
 		if (!$connection instanceof PDOConnection)
 			throw new \Exception("Provided connection is not a PDO connection", 400);
 		$this->connections[$connection->name()] = $connection;
+	}
+
+	public function changeConnection(int|string $name): void
+	{
+		$this->logger->debug(
+			'Method: {method} with "{name}".',
+			['name' => $name, 'method' => __METHOD__]
+		);
+
+		if (!array_key_exists($name, $this->connections))
+			throw new \Exception("Connection: '$name' does not exist.", 400);
+		$this->connection = $this->connections[$name];
 	}
 
 	private function select(DTO $dto): null|array|object
