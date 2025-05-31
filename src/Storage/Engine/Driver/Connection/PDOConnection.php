@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Projom\Storage\Engine\Driver\Connection;
 
 use PDO;
+use SensitiveParameter;
 
 use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
-use SensitiveParameter;
 
 class PDOConnection extends PDO implements ConnectionInterface
 {
