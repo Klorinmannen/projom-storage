@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Engine\Driver;
 
-use Projom\Storage\Query\Action;
-use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
-use Projom\Storage\Query\Format;
-use Projom\Storage\Query\RecordInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+
+use Projom\Storage\Engine\Driver\Connection\ConnectionInterface;
+use Projom\Storage\Query\Action;
+use Projom\Storage\Query\Format;
+use Projom\Storage\Query\RecordInterface;
 
 abstract class DriverBase implements LoggerAwareInterface
 {
@@ -74,16 +75,17 @@ abstract class DriverBase implements LoggerAwareInterface
 				return array_map(fn($record) => (object) $record, $records);
 
 			case Format::CUSTOM_OBJECT:
-				$className = $args;
 
-				if ($className === null)
-					throw new \Exception('Class name not provided.', 400);
-				if (!class_exists($className))
+				$className = $args;
+				if (! class_exists($className ?? ''))
 					throw new \Exception("Class: $className does not exist.", 400);
-				if (!is_subclass_of($className, RecordInterface::class))
+				if (! is_subclass_of($className, RecordInterface::class))
 					throw new \Exception("Class: $className must implement RecordInterface.", 400);
 
-				return array_map(fn($record) =>  $className::createFromRecord($record), $records);
+				$objects = [];
+				foreach ($records as $record)
+					$objects[] = $className::fromRecord($record);
+				return $objects;
 
 			default:
 				throw new \Exception('Format is not recognized.', 400);

@@ -9,5 +9,5 @@ interface RecordInterface
 	/**
 	 * Creates a new object from a [field => value] associative array.
 	 */
-	public static function createFromRecord(array $record): object;
+	public static function fromRecord(array $record): static;
 }

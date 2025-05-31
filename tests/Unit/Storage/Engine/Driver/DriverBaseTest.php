@@ -41,7 +41,7 @@ class User implements RecordInterface
 		$this->age = $age;
 	}
 
-	public static function createFromRecord(array $record): User
+	public static function fromRecord(array $record): static
 	{
 		$user = new User($record['Name'], $record['Age']);
 		return $user;
@@ -70,7 +70,7 @@ class DriverBaseTest extends TestCase
 		$this->assertEquals($expected, $actual);
 
 		$actual = $driver->testProcessRecords($records, [Format::CUSTOM_OBJECT, User::class]);
-		$expected = [User::createFromRecord($records[0])];
+		$expected = [User::fromRecord($records[0])];
 		$this->assertEquals($expected, $actual);
 	}
 
@@ -80,7 +80,7 @@ class DriverBaseTest extends TestCase
 			[
 				Format::CUSTOM_OBJECT,
 				null,
-				'Class name not provided.',
+				'Class:  does not exist.',
 				400
 			],
 			[

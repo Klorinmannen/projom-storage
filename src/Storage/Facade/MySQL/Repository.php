@@ -113,6 +113,16 @@ trait Repository
 		return [];
 	}
 
+	/**
+	 * Returns which fields to translate.
+	 * 
+	 * * Example: ['Name' => 'translated_name', 'Description' => 'translated_description']
+	 */
+	public static function translateFields(): array
+	{
+		return [];
+	}
+
 	private static function processRecords(array $records): array
 	{
 		$primaryField = static::primaryField();
@@ -123,6 +133,7 @@ trait Repository
 			$record = static::selectRecordFields($record);
 			$record = static::formatRecord($record);
 			$record = static::redactRecord($record);
+			$record = static::translateRecordFields($record);
 			$processedRecords[$key] = $record;
 		}
 
@@ -167,6 +178,19 @@ trait Repository
 				$modifiedRecord[$field] = $record[$field];
 
 		return $modifiedRecord;
+	}
+
+	private static function translateRecordFields(array $record): array
+	{
+		if (!$translateFields = static::translateFields())
+			return $record;
+
+		$translatedRecord = [];
+		foreach ($translateFields as $field => $translatedField)
+			if (array_key_exists($field, $record))
+				$translatedRecord[$translatedField] = $record[$field];
+
+		return $translatedRecord;
 	}
 
 	/**
