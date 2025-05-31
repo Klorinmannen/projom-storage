@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Projom\Storage\Engine\Driver;
 
+use Psr\Log\LoggerInterface;
+
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\Connection\Config as ConnectionConfig;
-use Psr\Log\LoggerInterface;
 
 /**
  * Driver configuration.
