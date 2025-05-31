@@ -112,6 +112,16 @@ trait Repository
 		return [];
 	}
 
+	/**
+	 * Returns which fields to translate.
+	 * 
+	 * * Example: ['Name' => 'translated_name', 'Description' => 'translated_description']
+	 */
+	public function translateFields(): array
+	{
+		return [];
+	}
+
 	private function processRecords(array $records): array
 	{
 		$records = Util::rekey($records, $this->primaryField);
@@ -121,6 +131,7 @@ trait Repository
 			$record = $this->selectRecordFields($record);
 			$record = $this->formatRecord($record);
 			$record = $this->redactRecord($record);
+			$record = $this->translateRecordFields($record);
 			$processedRecords[$key] = $record;
 		}
 
@@ -165,6 +176,19 @@ trait Repository
 				$modifiedRecord[$field] = $record[$field];
 
 		return $modifiedRecord;
+	}
+
+	private function translateRecordFields(array $record): array
+	{
+		if (!$translateFields = $this->translateFields())
+			return $record;
+
+		$translatedRecord = [];
+		foreach ($translateFields as $field => $translatedField)
+			if (array_key_exists($field, $record))
+				$translatedRecord[$translatedField] = $record[$field];
+
+		return $translatedRecord;
 	}
 
 	/**
