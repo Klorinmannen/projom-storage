@@ -7,6 +7,7 @@ namespace Projom\Storage\Engine\Driver;
 enum Driver: string
 {
 	case MySQL = 'mysql';
+	case CSV = 'csv';
 
 	public static function values(): array
 	{

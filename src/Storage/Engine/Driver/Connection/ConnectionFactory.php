@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Engine\Driver\Connection;
 
 use Projom\Storage\Engine\Driver\Connection\Config;
+use Projom\Storage\Engine\Driver\Connection\CSVConnection;
 
 class ConnectionFactory
 {
@@ -41,5 +42,28 @@ class ConnectionFactory
 			$config->options
 		);
 		return $connection;
+	}
+
+	public function CSVConnections(array $connectionConfigurations): array
+	{
+		$index = 1;
+		$CSVConnections = [];
+		foreach ($connectionConfigurations as $config) {
+	
+			if (!$config->hasName())
+				$config->name = $index++;
+
+			if (!$config->hasFilePath())
+				throw new \Exception('CSV file path is required', 400);
+
+			$CSVConnections[] = $this->CSVConnection($config);
+		}
+
+		return $CSVConnections;
+	}
+
+	public function CSVConnection(Config $config): CSVConnection
+	{
+		return new CSVConnection($config->name, $config->filePath, $config->options);
 	}
 }

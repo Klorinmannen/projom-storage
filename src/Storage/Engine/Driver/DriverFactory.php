@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Projom\Storage\Engine\Driver;
 
 use Projom\Storage\Engine\Driver\Config;
+use Projom\Storage\Engine\Driver\CSV;
 use Projom\Storage\Engine\Driver\Driver;
 use Projom\Storage\Engine\Driver\DriverBase;
 use Projom\Storage\Engine\Driver\MySQL;
@@ -32,6 +33,7 @@ class DriverFactory
 
 		$driver = match ($config->driver) {
 			Driver::MySQL => $this->MySQL($config),
+			Driver::CSV => $this->CSV($config),
 			default => throw new \Exception('Driver is not supported', 400)
 		};
 
@@ -57,5 +59,26 @@ class DriverFactory
 			$mysql->setOptions($config->options);
 
 		return $mysql;
+	}
+
+	public function CSV(Config $config): CSV
+	{
+		$connections = $this->connectionFactory->CSVConnections($config->connections);
+
+		// The first connection is the default connection.
+		$defaultConnection = array_shift($connections);
+		$csv = CSV::create($defaultConnection);
+
+		// Add all the other connections.
+		foreach ($connections as $connection)
+			$csv->addConnection($connection);
+
+		if ($config->hasLogger())
+			$csv->setLogger($config->logger);
+
+		if ($config->hasOptions())
+			$csv->setOptions($config->options);
+
+		return $csv;
 	}
 }

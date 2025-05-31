@@ -21,6 +21,8 @@ class Config
 	public readonly null|string $charset;
 	public readonly null|string $collation;
 
+	public readonly null|string $filePath;
+
 	public function __construct(array $config)
 	{
 		$this->name = $config['name'] ?? null;
@@ -34,6 +36,8 @@ class Config
 		$this->database = $config['database'] ?? null;
 		$this->charset = $config['charset'] ?? null;
 		$this->collation = $config['collation'] ?? null;
+
+		$this->filePath = $config['file_path'] ?? null;
 	}
 
 	public function hasDSN(): bool
@@ -44,5 +48,10 @@ class Config
 	public function hasName(): bool
 	{
 		return $this->name !== null;
+	}
+
+	public function hasFilePath(): bool
+	{
+		return $this->filePath !== null;
 	}
 }
