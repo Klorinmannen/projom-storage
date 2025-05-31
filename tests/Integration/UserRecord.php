@@ -10,7 +10,7 @@ class UserRecord implements RecordInterface
 {
 	public function __construct(private array $record = []) {}
 
-	public static function createFromRecord(array $record): object
+	public static function fromRecord(array $record): static
 	{
 		return new UserRecord($record);
 	}
