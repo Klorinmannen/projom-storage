@@ -55,7 +55,7 @@ use Projom\Storage\Engine as StorageEngine;
 use Projom\Storage\Facade\Engine as FacadeEngine;
 use Projom\Storage\Facade\MySQL\Query;
 
-// Boostrap: Create the engine object and set the engine facade
+// Bootstrap: Create the engine object and set the engine facade
 $config = [ 
    'driver' => 'mysql',
    'connections' => [
