@@ -28,6 +28,10 @@ class CSV extends DriverBase
 	public function dispatch(Action $action, mixed $args): mixed
 	{
 		return match ($action) {
+			Action::SELECT => $this->select($args),
+			Action::UPDATE => $this->update($args),
+			Action::INSERT => $this->insert($args),
+			Action::DELETE => $this->delete($args),
 			default => throw new \Exception("Action: $action is not supported", 400)
 		};
 	}
@@ -44,5 +48,25 @@ class CSV extends DriverBase
 		if (! array_key_exists($name, $this->connections))
 			throw new \Exception("Connection with name $name does not exist", 400);
 		$this->connection = $this->connections[$name];
+	}
+
+	public function select(mixed $args): mixed
+	{
+		return null;
+	}
+
+	public function update(mixed $args): bool
+	{
+		return false;
+	}
+
+	public function insert(mixed $args): bool
+	{
+		return false;
+	}
+
+	public function delete(mixed $args): bool
+	{
+		return false;
 	}
 }
