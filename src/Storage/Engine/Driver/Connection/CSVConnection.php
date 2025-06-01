@@ -30,11 +30,10 @@ class CSVConnection implements ConnectionInterface
 
 		$this->filePath = $filePath;
 		$this->parseOptions($options);
-		$this->readFileData();
-		$this->hash();
+		$this->read();
 	}
 
-	public function name(): int|string 
+	public function name(): int|string
 	{
 		return $this->name;
 	}
@@ -46,18 +45,15 @@ class CSVConnection implements ConnectionInterface
 		$this->options[] = $options['escape'] ?? static::DEFAULT_OPTIONS['escape'];
 	}
 
-	private function readFileData(): void
+	public function read(): void
 	{
 		[$delimiter, $enclosure, $escape] = $this->options;
-		$file = fopen($this->filePath, 'r');
-		while ($data = fgetcsv($file, null, $delimiter, $enclosure, $escape))
-			$this->fileData[] = $data;
-		fclose($file);
+		$this->fileData = Util::readCSV($this->filePath, $delimiter, $enclosure, $escape);
 	}
 
-	private function hash(): void
+	public function write(): void
 	{
-		$string = implode('', $this->fileData);
-		$this->fileDataHash = md5_file($string);
+		[$delimiter, $enclosure, $escape] = $this->options;
+		Util::writeCSV($this->filePath, $this->fileData, $delimiter, $enclosure, $escape);
 	}
 }
