@@ -49,7 +49,7 @@ class MySQL extends DriverBase
 			Action::INSERT => $this->insert($args),
 			Action::DELETE => $this->delete($args),
 			Action::EXECUTE => $this->execute(...$args),
-			Action::QUERY => $this->query(...$args),
+			Action::QUERY_BUILDER => $this->query(...$args),
 			Action::START_TRANSACTION => $this->startTransaction(),
 			Action::END_TRANSACTION => $this->endTransaction(),
 			Action::REVERT_TRANSACTION => $this->revertTransaction(),

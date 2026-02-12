@@ -127,7 +127,7 @@ class MySQLTest extends TestCase
 		$this->expectNotToPerformAssertions();
 		$pdoConnection = $this->createMock(PDOConnection::class);
 		$mysql = MySQL::create($pdoConnection, Statement::create());
-		$mysql->dispatch(Action::QUERY, [['User']]);
+		$mysql->dispatch(Action::QUERY_BUILDER, [['User']]);
 	}
 
 	#[Test]

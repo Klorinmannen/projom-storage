@@ -21,7 +21,7 @@ class EngineTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Engine instance not set");
 		$this->expectExceptionCode(400);
-		Engine::dispatch(Action::QUERY, args: ['User']);
+		Engine::dispatch(Action::QUERY_BUILDER, args: ['User']);
 	}
 
 	// Needs a rework.
@@ -40,7 +40,7 @@ class EngineTest extends TestCase
 			$value = null;
 			if ($action === Action::EXECUTE)
 				$value = ['query', ['params']];
-			elseif ($action ===  Action::QUERY)
+			elseif ($action ===  Action::QUERY_BUILDER)
 				$value = [['User'], null];
 			elseif ($action === Action::CHANGE_CONNECTION)
 				$value = 'default';

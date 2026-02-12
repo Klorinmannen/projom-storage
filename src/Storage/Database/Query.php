@@ -15,7 +15,7 @@ class Query
 	{
 		$collections = Util::stringToArray($collections);
 		$manager = Registry::get();
-		return $manager->dispatch(Action::QUERY, args: [$collections, $options]);
+		return $manager->dispatch(Action::QUERY_BUILDER, args: [$collections, $options]);
 	}
 
 	public static function sql(string $sql, null|array $params = null): mixed
