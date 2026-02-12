@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 use JRF\Storage\Manager as EngineObject;
 use JRF\Storage\Facade\Engine;
-use JRF\Storage\SQL\Util\Sort;
+use JRF\Storage\Database\Util\Sort;
 use JRF\Tests\Integration\Facade\UserRepository;
 
 class RepositoryTest extends TestCase

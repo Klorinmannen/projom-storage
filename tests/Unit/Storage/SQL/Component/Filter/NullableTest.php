@@ -8,9 +8,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Component\Column;
-use JRF\Storage\SQL\Component\Filter\Nullable;
-use JRF\Storage\SQL\Util\Operator;
+use JRF\Storage\Internal\Database\SQL\Component\Column;
+use JRF\Storage\Internal\Database\SQL\Component\Filter\Nullable;
+use JRF\Storage\Database\Util\Operator;
 
 class NullableTest extends TestCase
 {

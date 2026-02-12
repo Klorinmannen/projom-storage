@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JRF\Storage\Database\Util;
+
+interface RecordInterface
+{
+	/**
+	 * Creates a new object from a [field => value] associative array.
+	 */
+	public static function fromRecord(array $record): static;
+}

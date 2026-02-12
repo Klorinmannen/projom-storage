@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 use JRF\Storage\Query\Action;
 use JRF\Storage\Engine\Driver\Connection\ConnectionInterface;
-use JRF\Storage\Engine\Driver\DriverBase;
+use JRF\Storage\Internal\Engine\Driver\DriverBase;
 use JRF\Storage\Query\Format;
 use JRF\Storage\Query\RecordInterface;
 

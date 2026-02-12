@@ -7,10 +7,10 @@ namespace JRF\Storage\Database;
 use Exception;
 
 use JRF\Storage\Database\Query;
-use JRF\Storage\Database\Util;
-use JRF\Storage\SQL\Statement\Builder;
-use JRF\Storage\SQL\Util\Aggregate;
-use JRF\Storage\SQL\Util\Operator;
+use JRF\Storage\Database\Util\Aggregate;
+use JRF\Storage\Database\Util\Operator;
+use JRF\Storage\Internal\Database\Util;
+use JRF\Storage\Internal\Database\SQL\Statement\Builder;
 
 /**
  * Static repository - a trait that provides a set of methods to interact with a database table.

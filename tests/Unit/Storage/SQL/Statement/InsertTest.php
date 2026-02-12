@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Statement\DTO;
-use JRF\Storage\SQL\Statement\Insert;
+use JRF\Storage\Internal\Database\SQL\Statement\DTO;
+use JRF\Storage\Internal\Database\SQL\Statement\Insert;
 
 class InsertTest extends TestCase
 {

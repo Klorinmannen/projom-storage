@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Util\Aggregate;
+use JRF\Storage\Database\Util\Aggregate;
 
 class AggregateTest extends TestCase
 {

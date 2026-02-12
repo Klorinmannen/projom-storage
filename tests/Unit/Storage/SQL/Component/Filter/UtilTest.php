@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Component\Filter\Util;
+use JRF\Storage\Internal\Database\SQL\Component\Filter\Util;
 
 class UtilTest extends TestCase
 {

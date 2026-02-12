@@ -10,8 +10,8 @@ use PHPUnit\Framework\TestCase;
 use JRF\Storage\Manager as EngineObject;
 use JRF\Storage\Facade\Engine;
 use JRF\Storage\Query\Action;
-use JRF\Storage\Engine\Driver\Driver;
-use JRF\Storage\SQL\Statement\DTO;
+use JRF\Storage\Internal\Engine\Driver\Driver;
+use JRF\Storage\Internal\Database\SQL\Statement\DTO;
 
 class EngineTest extends TestCase
 {

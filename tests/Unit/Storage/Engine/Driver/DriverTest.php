@@ -7,7 +7,7 @@ namespace JRF\Tests\Unit\Storage\Engine\Driver;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine\Driver\Driver;
+use JRF\Storage\Internal\Engine\Driver\Driver;
 
 class DriverTest extends TestCase
 {

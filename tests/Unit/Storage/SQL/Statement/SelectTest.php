@@ -8,12 +8,12 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Statement\DTO;
-use JRF\Storage\SQL\Statement\Select;
-use JRF\Storage\SQL\Util\Filter;
-use JRF\Storage\SQL\Util\Join;
-use JRF\Storage\SQL\Util\LogicalOperator;
-use JRF\Storage\SQL\Util\Sort;
+use JRF\Storage\Internal\Database\SQL\Statement\DTO;
+use JRF\Storage\Internal\Database\SQL\Statement\Select;
+use JRF\Storage\Database\Util\Filter;
+use JRF\Storage\Database\Util\Join;
+use JRF\Storage\Database\Util\LogicalOperator;
+use JRF\Storage\Database\Util\Sort;
 
 class SelectTest extends TestCase
 {

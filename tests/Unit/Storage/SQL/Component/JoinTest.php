@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Component\Join;
-use JRF\Storage\SQL\Util\Join as UtilJoin;
+use JRF\Storage\Internal\Database\SQL\Component\Join;
+use JRF\Storage\Database\Util\Join as UtilJoin;
 
 class JoinTest extends TestCase
 {

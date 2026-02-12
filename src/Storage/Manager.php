@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace JRF\Storage;
 
-use JRF\Storage\Database\Action;
-use JRF\Storage\Engine\Driver\DriverBase;
-use JRF\Storage\Engine\Driver\Config;
-use JRF\Storage\Engine\Driver\Driver;
-use JRF\Storage\Engine\Driver\DriverFactory;
-use JRF\Storage\Engine\Driver\Connection\ConnectionFactory;
+use JRF\Storage\Internal\Database\Action;
+use JRF\Storage\Internal\Engine\Driver\DriverBase;
+use JRF\Storage\Internal\Engine\Driver\Config;
+use JRF\Storage\Internal\Engine\Driver\Driver;
+use JRF\Storage\Internal\Engine\Driver\DriverFactory;
+use JRF\Storage\Internal\Engine\Driver\Connection\ConnectionFactory;
 use JRF\Storage\Internal\Registry;
 
 class Manager

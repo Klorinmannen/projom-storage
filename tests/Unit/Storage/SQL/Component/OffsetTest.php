@@ -6,7 +6,7 @@ namespace JRF\Tests\Unit\Storage\SQL\Component;
 
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Component\Offset;
+use JRF\Storage\Internal\Database\SQL\Component\Offset;
 
 class OffsetTest extends TestCase
 {

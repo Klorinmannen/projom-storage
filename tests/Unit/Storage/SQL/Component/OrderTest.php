@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Component\Order;
-use JRF\Storage\SQL\Util\Sort;
+use JRF\Storage\Internal\Database\SQL\Component\Order;
+use JRF\Storage\Database\Util\Sort;
 
 class OrderTest extends TestCase
 {

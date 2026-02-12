@@ -7,11 +7,11 @@ namespace JRF\Tests\Unit\Storage\Engine\Driver;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine\Driver\Config;
-use JRF\Storage\Engine\Driver\DriverFactory;
-use JRF\Storage\Engine\Driver\DriverBase;
-use JRF\Storage\Engine\Driver\MySQL;
-use JRF\Storage\Engine\Driver\Connection\ConnectionFactory;
+use JRF\Storage\Internal\Engine\Driver\Config;
+use JRF\Storage\Internal\Engine\Driver\DriverFactory;
+use JRF\Storage\Internal\Engine\Driver\DriverBase;
+use JRF\Storage\Internal\Engine\Driver\MySQL;
+use JRF\Storage\Internal\Engine\Driver\Connection\ConnectionFactory;
 use JRF\Storage\Engine\Driver\Connection\PDOConnection;
 
 class DriverFactoryTest extends TestCase
