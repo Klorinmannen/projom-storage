@@ -10,34 +10,31 @@ use JRF\Storage\Engine\Driver\Config;
 use JRF\Storage\Engine\Driver\Driver;
 use JRF\Storage\Engine\Driver\DriverFactory;
 use JRF\Storage\Engine\Driver\Connection\ConnectionFactory;
+use JRF\Storage\Internal\Registry;
 
 class Manager
 {
 	protected array $drivers = [];
 	protected null|Driver $currentDriver = null;
-	protected readonly DriverFactory $driverFactory;
 
-	public function __construct(DriverFactory $driverFactory)
-	{
-		$this->driverFactory = $driverFactory;
-	}
-
-	public static function initialize(array $config = []): Manager
+	public static function initialize(array $config): void
 	{
 		$connectionFactory = ConnectionFactory::create();
 		$driverFactory = DriverFactory::create($connectionFactory);
-		$manager = new Manager($driverFactory);
 
-		if ($config)
-			$manager->loadDriver($config);
+		$config = new Config($config);
+		$engineDriver = $driverFactory->createDriver($config);
 
-		return $manager;
+		$manager = new Manager();
+		$manager->setDriver($engineDriver, $config->driver);
+
+		Registry::set($manager);
 	}
 
-	public function clear(): void
+	private function setDriver(DriverBase $engineDriver, Driver $driver): void
 	{
-		$this->drivers = [];
-		$this->currentDriver = null;
+		$this->drivers[$driver->value] = $engineDriver;
+		$this->currentDriver = $driver;
 	}
 
 	public function dispatch(Action $action, null|Driver $driver = null, mixed $args = null): mixed
@@ -59,24 +56,6 @@ class Manager
 		if (!array_key_exists($driver->value,  $this->drivers))
 			throw new \Exception('Driver not loaded', 400);
 
-		$this->currentDriver = $driver;
-	}
-
-	public function loadDriver(array $config): Manager
-	{
-		if ($this->driverFactory === null)
-			throw new \Exception('Driver factory not set', 400);
-
-		$config = new Config($config);
-		$engineDriver =  $this->driverFactory->createDriver($config);
-		$this->setDriver($engineDriver, $config->driver);
-
-		return $this;
-	}
-
-	public function setDriver(DriverBase $engineDriver, Driver $driver): void
-	{
-		$this->drivers[$driver->value] = $engineDriver;
 		$this->currentDriver = $driver;
 	}
 
