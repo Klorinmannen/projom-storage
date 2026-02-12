@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace JRF\Storage\Facade;
 
-use JRF\Storage\Engine as EngineObject;
+use JRF\Storage\Manager;
 use JRF\Storage\Query\Action;
 use JRF\Storage\Engine\Driver\Driver;
 
 class Engine
 {
-	private static null|EngineObject $instance = null;
+	private static null|Manager $instance = null;
 
-	public static function setInstance(EngineObject $instance): void
+	public static function setInstance(Manager $instance): void
 	{
 		static::$instance = $instance;
 	}

@@ -11,7 +11,7 @@ use JRF\Storage\Engine\Driver\Driver;
 use JRF\Storage\Engine\Driver\DriverFactory;
 use JRF\Storage\Engine\Driver\Connection\ConnectionFactory;
 
-class Engine
+class Manager
 {
 	protected array $drivers = [];
 	protected null|Driver $currentDriver = null;
@@ -22,16 +22,16 @@ class Engine
 		$this->driverFactory = $driverFactory;
 	}
 
-	public static function create(array $config = []): Engine
+	public static function create(array $config = []): Manager
 	{
 		$connectionFactory = ConnectionFactory::create();
 		$driverFactory = DriverFactory::create($connectionFactory);
-		$engine = new Engine($driverFactory);
+		$manager = new Manager($driverFactory);
 
 		if ($config)
-			$engine->loadDriver($config);
+			$manager->loadDriver($config);
 
-		return $engine;
+		return $manager;
 	}
 
 	public function clear(): void
@@ -62,7 +62,7 @@ class Engine
 		$this->currentDriver = $driver;
 	}
 
-	public function loadDriver(array $config): Engine
+	public function loadDriver(array $config): Manager
 	{
 		if ($this->driverFactory === null)
 			throw new \Exception('Driver factory not set', 400);
@@ -78,11 +78,6 @@ class Engine
 	{
 		$this->drivers[$driver->value] = $engineDriver;
 		$this->currentDriver = $driver;
-	}
-
-	public function setDriverFactory(DriverFactory $driverFactory): void
-	{
-		$this->driverFactory = $driverFactory;
 	}
 
 	private function driver(): DriverBase

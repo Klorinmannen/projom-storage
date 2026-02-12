@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 use JRF\Tests\Integration\UserRecord;
 
-use JRF\Storage\Engine as EngineObject;
+use JRF\Storage\Manager as EngineObject;
 use JRF\Storage\Facade\Engine;
 use JRF\Storage\Facade\MySQL\Query;
 use JRF\Storage\Query\Format;

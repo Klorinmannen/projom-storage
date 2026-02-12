@@ -7,7 +7,7 @@ namespace JRF\Tests\Unit\Storage\Facade;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine as EngineObject;
+use JRF\Storage\Manager as EngineObject;
 use JRF\Storage\Facade\Engine;
 use JRF\Storage\Query\Action;
 use JRF\Storage\Engine\Driver\Driver;
