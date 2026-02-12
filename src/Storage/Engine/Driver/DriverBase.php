@@ -9,9 +9,9 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use JRF\Storage\Engine\Driver\Connection\ConnectionInterface;
-use JRF\Storage\Query\Action;
-use JRF\Storage\Query\Format;
-use JRF\Storage\Query\RecordInterface;
+use JRF\Storage\Database\Action;
+use JRF\Storage\Util\Format;
+use JRF\Storage\Util\RecordInterface;
 
 abstract class DriverBase implements LoggerAwareInterface
 {

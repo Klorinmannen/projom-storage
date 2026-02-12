@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage;
+namespace JRF\Storage\Internal;
 
 class Util
 {
@@ -18,6 +18,14 @@ class Util
 			$list = explode($delimeter, $subject);
 
 		return $list;
+	}
+
+	public static function stringToArray(string|array $subject): array
+	{
+		if (is_string($subject))
+			$subject = [$subject];
+
+		return $subject;
 	}
 
 	public static function cleanString(string $subject): string

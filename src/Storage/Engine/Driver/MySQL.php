@@ -6,7 +6,7 @@ namespace JRF\Storage\Engine\Driver;
 
 use PDOStatement;
 
-use JRF\Storage\Query\Action;
+use JRF\Storage\Database\Action;
 use JRF\Storage\Engine\Driver\DriverBase;
 use JRF\Storage\Engine\Driver\Connection\ConnectionInterface;
 use JRF\Storage\Engine\Driver\Connection\PDOConnection;

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace JRF\Storage\Database;
 
-use JRF\Storage\Query\Action;
-use JRF\Storage\Query\Util;
-use JRF\Storage\SQL\Statement\Builder;
+use JRF\Storage\Database\Action;
+use JRF\Storage\Database\Util;
 use JRF\Storage\Internal\Registry;
+use JRF\Storage\SQL\Statement\Builder;
 
 class Query
 {

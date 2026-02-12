@@ -7,14 +7,14 @@ namespace JRF\Storage\SQL\Statement;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-use JRF\Storage\Query\Action;
+use JRF\Storage\Database\Action;
 use JRF\Storage\Engine\Driver\DriverBase;
-use JRF\Storage\Query\Format;
 use JRF\Storage\SQL\Statement\DTO;
 use JRF\Storage\SQL\Util\Join;
 use JRF\Storage\SQL\Util\LogicalOperator;
 use JRF\Storage\SQL\Util\Operator;
 use JRF\Storage\SQL\Util\Filter;
+use JRF\Storage\Util\Format;
 
 class Builder
 {

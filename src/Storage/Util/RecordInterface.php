@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Query;
+namespace JRF\Storage\Util;
 
 interface RecordInterface
 {

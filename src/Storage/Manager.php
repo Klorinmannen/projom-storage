@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JRF\Storage;
 
-use JRF\Storage\Query\Action;
+use JRF\Storage\Database\Action;
 use JRF\Storage\Engine\Driver\DriverBase;
 use JRF\Storage\Engine\Driver\Config;
 use JRF\Storage\Engine\Driver\Driver;

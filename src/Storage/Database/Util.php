@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace JRF\Storage\Database;
 
-use JRF\Storage\Util as StorageUtil;
+use JRF\Storage\Internal\Util as InternalUtil;
 
-class Util extends StorageUtil
+class Util extends InternalUtil
 {
 	private const REDACTED = '__REDACTED__';
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace JRF\Storage\SQL;
 
-use JRF\Storage\Util as StorageUtil;
+use JRF\Storage\Internal\Util as InternalUtil;
 
-class Util extends StorageUtil
+class Util extends InternalUtil
 {
     public static function quoteList(array $list): array
     {
