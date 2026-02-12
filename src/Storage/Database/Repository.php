@@ -7,7 +7,7 @@ namespace JRF\Storage\Database;
 use Exception;
 
 use JRF\Storage\Database\Query;
-use JRF\Storage\MySQL\Util;
+use JRF\Storage\Database\Util;
 use JRF\Storage\SQL\Statement\Builder;
 use JRF\Storage\SQL\Util\Aggregate;
 use JRF\Storage\SQL\Util\Operator;
