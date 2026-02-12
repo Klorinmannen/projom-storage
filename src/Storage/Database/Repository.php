@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Facade\MySQL;
+namespace JRF\Storage\Database;
 
 use Exception;
 
-use JRF\Storage\Facade\MySQL\Query;
+use JRF\Storage\Database\Query;
 use JRF\Storage\MySQL\Util;
 use JRF\Storage\SQL\Statement\Builder;
 use JRF\Storage\SQL\Util\Aggregate;

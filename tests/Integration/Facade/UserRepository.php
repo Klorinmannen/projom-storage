@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JRF\Tests\Integration\Facade;
 
-use JRF\Storage\Facade\MySQL\Repository;
+use JRF\Storage\Database\Repository;
 
 class UserRepository
 {
