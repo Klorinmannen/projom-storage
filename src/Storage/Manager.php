@@ -17,18 +17,21 @@ class Manager
 	protected array $drivers = [];
 	protected null|Driver $currentDriver = null;
 
-	public static function initialize(array $config): void
+	public static function initialize(array $config): Manager
 	{
+		$manager = new Manager();
 		$connectionFactory = ConnectionFactory::create();
 		$driverFactory = DriverFactory::create($connectionFactory);
 
-		$config = new Config($config);
-		$engineDriver = $driverFactory->createDriver($config);
-
-		$manager = new Manager();
-		$manager->setDriver($engineDriver, $config->driver);
+		foreach ($config as $driverConfig) {
+			$config = new Config($driverConfig);
+			$engineDriver = $driverFactory->createDriver($config);
+			$manager->setDriver($engineDriver, $config->driver);
+		}
 
 		Registry::set($manager);
+
+		return $manager;
 	}
 
 	private function setDriver(DriverBase $engineDriver, Driver $driver): void
@@ -48,22 +51,20 @@ class Manager
 		return $result;
 	}
 
+	private function driver(): DriverBase
+	{
+		$driver =  $this->drivers[$this->currentDriver->value];
+		return $driver;
+	}
+
 	public function useDriver(Driver $driver): void
 	{
 		if ($this->currentDriver === $driver)
 			return;
 
 		if (!array_key_exists($driver->value,  $this->drivers))
-			throw new \Exception('Driver not loaded', 400);
+			throw new \Exception('Driver is not initialized.', 400);
 
 		$this->currentDriver = $driver;
-	}
-
-	private function driver(): DriverBase
-	{
-		$driver =  $this->drivers[$this->currentDriver?->value] ?? null;
-		if ($driver === null)
-			throw new \Exception('Engine driver not set', 400);
-		return $driver;
 	}
 }
