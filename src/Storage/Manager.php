@@ -22,7 +22,7 @@ class Manager
 		$this->driverFactory = $driverFactory;
 	}
 
-	public static function create(array $config = []): Manager
+	public static function initialize(array $config = []): Manager
 	{
 		$connectionFactory = ConnectionFactory::create();
 		$driverFactory = DriverFactory::create($connectionFactory);

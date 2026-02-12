@@ -34,7 +34,7 @@ class RepositoryTest extends TestCase
 			]
 		];
 
-		$engine = Manager::create($config);
+		$engine = Manager::initialize($config);
 		$this->query = Query::create($engine);
 	}
 

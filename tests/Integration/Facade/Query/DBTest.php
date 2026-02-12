@@ -30,7 +30,7 @@ class DBTest extends TestCase
 			]
 		];
 
-		Engine::setInstance(EngineObject::create($config));
+		Engine::setInstance(EngineObject::initialize($config));
 	}
 
 	#[Test]
