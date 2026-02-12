@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\MySQL;
+namespace JRF\Storage\Database;
 
 use JRF\Storage\Util as StorageUtil;
 
