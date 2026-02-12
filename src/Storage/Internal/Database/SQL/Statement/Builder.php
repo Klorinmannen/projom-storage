@@ -8,8 +8,8 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use JRF\Storage\Internal\Database\Action;
-use JRF\Storage\Internal\Engine\Driver\DriverBase;
 use JRF\Storage\Internal\Database\SQL\Statement\DTO;
+use JRF\Storage\Internal\Engine\EngineBase;
 use JRF\Storage\Database\Util\Join;
 use JRF\Storage\Database\Util\LogicalOperator;
 use JRF\Storage\Database\Util\Operator;
@@ -18,7 +18,7 @@ use JRF\Storage\Database\Util\Format;
 
 class Builder
 {
-    private null|DriverBase $driver = null;
+    private null|EngineBase $engine = null;
     private LoggerInterface $logger;
     private array $options = [];
 
@@ -35,12 +35,12 @@ class Builder
     private const DEFAULT_SELECT = '*';
 
     public function __construct(
-        null|DriverBase $driver,
+        null|EngineBase $engine,
         array $collections,
         array $options = [],
         LoggerInterface $logger = new NullLogger()
     ) {
-        $this->driver = $driver;
+        $this->engine = $engine;
         $this->collections = $collections;
         $this->options = $options;
         $this->logger = $logger;
@@ -49,12 +49,12 @@ class Builder
     }
 
     public static function create(
-        null|DriverBase $driver = null,
+        null|EngineBase $engine = null,
         array $collections = [],
         array $options = [],
         LoggerInterface $logger = new NullLogger()
     ): Builder {
-        return new Builder($driver, $collections, $options, $logger);
+        return new Builder($engine, $collections, $options, $logger);
     }
 
     /**
@@ -127,7 +127,7 @@ class Builder
             formatting: $this->formatting,
             options: $this->options
         );
-        return $this->driver->dispatch(Action::SELECT, $queryObject);
+        return $this->engine->dispatch(Action::SELECT, $queryObject);
     }
 
     /**
@@ -157,7 +157,7 @@ class Builder
             filters: $this->filters,
             joins: $this->joins
         );
-        return $this->driver->dispatch(Action::UPDATE, $queryObject);
+        return $this->engine->dispatch(Action::UPDATE, $queryObject);
     }
 
     /**
@@ -185,7 +185,7 @@ class Builder
             collections: $this->collections,
             fieldsWithValues: $fieldsWithValues
         );
-        return $this->driver->dispatch(Action::INSERT, $queryObject);
+        return $this->engine->dispatch(Action::INSERT, $queryObject);
     }
 
     /**
@@ -231,7 +231,7 @@ class Builder
             filters: $this->filters,
             joins: $this->joins
         );
-        return $this->driver->dispatch(Action::DELETE, $queryObject);
+        return $this->engine->dispatch(Action::DELETE, $queryObject);
     }
 
     /**

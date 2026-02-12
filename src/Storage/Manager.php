@@ -5,28 +5,28 @@ declare(strict_types=1);
 namespace JRF\Storage;
 
 use JRF\Storage\Internal\Database\Action;
-use JRF\Storage\Internal\Engine\Driver\DriverBase;
-use JRF\Storage\Internal\Engine\Driver\Config;
-use JRF\Storage\Internal\Engine\Driver\Driver;
-use JRF\Storage\Internal\Engine\Driver\DriverFactory;
-use JRF\Storage\Internal\Engine\Driver\Connection\ConnectionFactory;
+use JRF\Storage\Internal\Engine\EngineBase;
+use JRF\Storage\Internal\Engine\EngineConfig;
+use JRF\Storage\Internal\Engine\EngineType;
+use JRF\Storage\Internal\Engine\EngineFactory;
+use JRF\Storage\Internal\Engine\Connection\ConnectionFactory;
 use JRF\Storage\Internal\Registry;
 
 class Manager
 {
-	protected array $drivers = [];
-	protected null|Driver $currentDriver = null;
+	protected array $engines = [];
+	protected null|EngineType $currentEngine = null;
 
 	public static function initialize(array $config): Manager
 	{
 		$manager = new Manager();
 		$connectionFactory = ConnectionFactory::create();
-		$driverFactory = DriverFactory::create($connectionFactory);
+		$engineFactory = EngineFactory::create($connectionFactory);
 
-		foreach ($config as $driverConfig) {
-			$config = new Config($driverConfig);
-			$engineDriver = $driverFactory->createDriver($config);
-			$manager->setDriver($engineDriver, $config->driver);
+		foreach ($config as $engineConfiguration) {
+			$engineConfig = new EngineConfig($engineConfiguration);
+			$engine = $engineFactory->createEngine($engineConfig);
+			$manager->setEngine($engine, $engineConfig->engine);
 		}
 
 		Registry::set($manager);
@@ -34,37 +34,37 @@ class Manager
 		return $manager;
 	}
 
-	private function setDriver(DriverBase $engineDriver, Driver $driver): void
+	private function setEngine(EngineBase $engine, EngineType $engineType): void
 	{
-		$this->drivers[$driver->value] = $engineDriver;
-		$this->currentDriver = $driver;
+		$this->engines[$engineType->value] = $engine;
+		$this->currentEngine = $engineType;
 	}
 
-	public function dispatch(Action $action, null|Driver $driver = null, mixed $args = null): mixed
+	public function dispatch(Action $action, null|EngineType $engine = null, mixed $args = null): mixed
 	{
-		if ($driver !== null)
-			$this->useDriver($driver);
+		if ($engine !== null)
+			$this->useEngine($engine);
 
-		$driver = $this->driver();
-		$result = $driver->dispatch($action, $args);
+		$engine = $this->currentEngine();
+		$result = $engine->dispatch($action, $args);
 
 		return $result;
 	}
 
-	private function driver(): DriverBase
+	private function currentEngine(): EngineBase
 	{
-		$driver =  $this->drivers[$this->currentDriver->value];
-		return $driver;
+		$engine = $this->engines[$this->currentEngine->value];
+		return $engine;
 	}
 
-	public function useDriver(Driver $driver): void
+	public function useEngine(EngineType $engine): void
 	{
-		if ($this->currentDriver === $driver)
+		if ($this->currentEngine === $engine)
 			return;
 
-		if (!array_key_exists($driver->value,  $this->drivers))
-			throw new \Exception('Driver is not initialized.', 400);
+		if (!array_key_exists($engine->value,  $this->engines))
+			throw new \Exception('Engine is not initialized.', 400);
 
-		$this->currentDriver = $driver;
+		$this->currentEngine = $engine;
 	}
 }

@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use JRF\Storage\Manager as EngineObject;
 use JRF\Storage\Facade\Engine;
 use JRF\Storage\Query\Action;
-use JRF\Storage\Internal\Engine\Driver\Driver;
+use JRF\Storage\Internal\Engine\Driver\Engine;
 use JRF\Storage\Internal\Database\SQL\Statement\DTO;
 
 class EngineTest extends TestCase
@@ -58,7 +58,7 @@ class EngineTest extends TestCase
 		Engine::setInstance($engine);
 
 		$this->expectNotToPerformAssertions();
-		Engine::useDriver(Driver::MySQL);
+		Engine::useDriver(Engine::MySQL);
 	}
 
 	#[Test]
@@ -69,6 +69,6 @@ class EngineTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Engine instance not set");
 		$this->expectExceptionCode(400);
-		Engine::useDriver(Driver::MySQL);
+		Engine::useDriver(Engine::MySQL);
 	}
 }

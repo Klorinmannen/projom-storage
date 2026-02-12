@@ -7,9 +7,9 @@ namespace JRF\Tests\Unit\Storage\Engine\Driver;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Internal\Engine\Driver\Config;
-use JRF\Storage\Internal\Engine\Driver\DriverFactory;
-use JRF\Storage\Internal\Engine\Driver\DriverBase;
+use JRF\Storage\Internal\Engine\Driver\EngineConfig;
+use JRF\Storage\Internal\Engine\Driver\EngineFactory;
+use JRF\Storage\Internal\Engine\Driver\EngineBase;
 use JRF\Storage\Internal\Engine\Driver\MySQL;
 use JRF\Storage\Internal\Engine\Driver\Connection\ConnectionFactory;
 use JRF\Storage\Engine\Driver\Connection\PDOConnection;
@@ -25,9 +25,9 @@ class DriverFactoryTest extends TestCase
 		$connectionFactory = $this->createStub(ConnectionFactory::class);
 		$connectionFactory->method('PDOConnections')->willReturn([$connection]);
 
-		$driverFactory = DriverFactory::create($connectionFactory);
+		$driverFactory = EngineFactory::create($connectionFactory);
 
-		$config = new Config([
+		$config = new EngineConfig([
 			'driver' => 'mysql',
 			'options' => [],
 			'connections' => [
@@ -42,8 +42,8 @@ class DriverFactoryTest extends TestCase
 			]
 		]);
 
-		$driver = $driverFactory->createDriver($config);
-		$this->assertInstanceOf(DriverBase::class, $driver);
+		$driver = $driverFactory->createEngine($config);
+		$this->assertInstanceOf(EngineBase::class, $driver);
 		$this->assertInstanceOf(MySQL::class, $driver);
 	}
 
@@ -51,9 +51,9 @@ class DriverFactoryTest extends TestCase
 	public function createDriverExceptionNoConnections(): void
 	{
 		$connectionFactory = ConnectionFactory::create();
-		$driverFactory = DriverFactory::create($connectionFactory);
+		$driverFactory = EngineFactory::create($connectionFactory);
 
-		$config = new Config([
+		$config = new EngineConfig([
 			'driver' => 'mysql',
 			'options' => [],
 			'connections' => []
@@ -62,16 +62,16 @@ class DriverFactoryTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('No connections found in driver configuration');
 		$this->expectExceptionCode(400);
-		$driverFactory->createDriver($config);
+		$driverFactory->createEngine($config);
 	}
 
 	#[Test]
 	public function createDriverExceptionBadDriverName(): void
 	{
 		$connectionFactory = ConnectionFactory::create();
-		$driverFactory = DriverFactory::create($connectionFactory);
+		$driverFactory = EngineFactory::create($connectionFactory);
 
-		$config = new Config([
+		$config = new EngineConfig([
 			'driver' => 'bad-driver-name',
 			'options' => [],
 			'connections' => [
@@ -84,6 +84,6 @@ class DriverFactoryTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('Driver is not supported');
 		$this->expectExceptionCode(400);
-		$driverFactory->createDriver($config);
+		$driverFactory->createEngine($config);
 	}
 }

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Internal\Engine\Driver\Connection;
+namespace JRF\Storage\Internal\Engine\Connection;
 
-use JRF\Storage\Internal\Engine\Driver\Driver;
-use JRF\Storage\Internal\Engine\Driver\Connection\Config;
+use JRF\Storage\Internal\Engine\EngineType;
+use JRF\Storage\Internal\Engine\Connection\Config;
 
 class DSN
 {
@@ -33,7 +33,7 @@ class DSN
 		if ($collation = $config->collation)
 			$parts[] = "collation=$collation";
 
-		$driver = Driver::MySQL->value;
+		$driver = EngineType::MySQL->value;
 
 		return "$driver:" . implode(';', $parts);
 	}

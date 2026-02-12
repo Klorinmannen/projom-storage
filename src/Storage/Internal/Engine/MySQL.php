@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Internal\Engine\Driver;
+namespace JRF\Storage\Internal\Engine;
 
 use PDOStatement;
 
@@ -11,11 +11,11 @@ use JRF\Storage\Internal\Database\SQL\Statement;
 use JRF\Storage\Internal\Database\SQL\Statement\Builder;
 use JRF\Storage\Internal\Database\SQL\Statement\DTO;
 use JRF\Storage\Internal\Database\SQL\Statement\StatementInterface;
-use JRF\Storage\Internal\Engine\Driver\DriverBase;
-use JRF\Storage\Internal\Engine\Driver\Connection\ConnectionInterface;
-use JRF\Storage\Internal\Engine\Driver\Connection\PDOConnection;
+use JRF\Storage\Internal\Engine\EngineBase;
+use JRF\Storage\Internal\Engine\Connection\ConnectionInterface;
+use JRF\Storage\Internal\Engine\Connection\PDOConnection;
 
-class MySQL extends DriverBase
+class MySQL extends EngineBase
 {
 	private PDOConnection $connection;
 	private Statement $SQLStatement;

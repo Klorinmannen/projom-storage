@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Internal\Engine\Driver\Connection;
+namespace JRF\Storage\Internal\Engine\Connection;
 
 /**
  * Connection configuration.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Internal\Engine\Driver\Connection;
+namespace JRF\Storage\Internal\Engine\Connection;
 
-use JRF\Storage\Internal\Engine\Driver\Connection\Config;
-use JRF\Storage\Internal\Engine\Driver\Connection\DSN;
-use JRF\Storage\Internal\Engine\Driver\Connection\PDOConnection;
+use JRF\Storage\Internal\Engine\Connection\Config;
+use JRF\Storage\Internal\Engine\Connection\DSN;
+use JRF\Storage\Internal\Engine\Connection\PDOConnection;
 
 class ConnectionFactory
 {

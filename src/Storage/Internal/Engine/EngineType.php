@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Internal\Engine\Driver;
+namespace JRF\Storage\Internal\Engine;
 
-enum Driver: string
+enum EngineType: string
 {
 	case MySQL = 'mysql';
 

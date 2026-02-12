@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Internal\Engine\Driver\Connection;
+namespace JRF\Storage\Internal\Engine\Connection;
 
 use PDO;
 use SensitiveParameter;
 
-use JRF\Storage\Internal\Engine\Driver\Connection\ConnectionInterface;
+use JRF\Storage\Internal\Engine\Connection\ConnectionInterface;
 
 class PDOConnection extends PDO implements ConnectionInterface
 {

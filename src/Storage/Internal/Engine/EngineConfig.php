@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Internal\Engine\Driver;
+namespace JRF\Storage\Internal\Engine;
 
 use Psr\Log\LoggerInterface;
 
-use JRF\Storage\Internal\Engine\Driver\Driver;
-use JRF\Storage\Internal\Engine\Driver\Connection\Config as ConnectionConfig;
+use JRF\Storage\Internal\Engine\EngineType;
+use JRF\Storage\Internal\Engine\Connection\Config as ConnectionConfig;
 
 /**
  * Driver configuration.
  */
-class Config
+class EngineConfig
 {
-	public readonly null|Driver $driver;
+	public readonly null|EngineType $engine;
 	public readonly array $options;
 	public readonly null|LoggerInterface $logger;
 	public array $connections = [];
 
 	public function __construct(array $config)
 	{
-		$this->driver = Driver::tryFrom($config['driver'] ?? '');
+		$this->engine = EngineType::tryFrom($config['engine'] ?? '');
 		$this->options = $config['options'] ?? [];
 		$this->logger = $config['logger'] ?? null;
 

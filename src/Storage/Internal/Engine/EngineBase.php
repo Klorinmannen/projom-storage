@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JRF\Storage\Internal\Engine\Driver;
+namespace JRF\Storage\Internal\Engine;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -10,10 +10,10 @@ use Psr\Log\NullLogger;
 
 use JRF\Storage\Database\Util\Format;
 use JRF\Storage\Database\Util\RecordInterface;
-use JRF\Storage\Internal\Engine\Driver\Connection\ConnectionInterface;
+use JRF\Storage\Internal\Engine\Connection\ConnectionInterface;
 use JRF\Storage\Internal\Database\Action;
 
-abstract class DriverBase implements LoggerAwareInterface
+abstract class EngineBase implements LoggerAwareInterface
 {
 	protected const DEFAULT_OPTIONS = [
 		'return_single_record' => false,
