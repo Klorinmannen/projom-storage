@@ -40,10 +40,10 @@ class Manager
 		$this->currentEngine = $engineType;
 	}
 
-	public function dispatch(Action $action, null|EngineType $engine = null, mixed $args = null): mixed
+	public function dispatch(Action $action, null|EngineType $engineType = null, mixed $args = null): mixed
 	{
-		if ($engine !== null)
-			$this->useEngine($engine);
+		if ($engineType !== null)
+			$this->useEngine($engineType);
 
 		$engine = $this->currentEngine();
 		$result = $engine->dispatch($action, $args);
@@ -57,14 +57,14 @@ class Manager
 		return $engine;
 	}
 
-	public function useEngine(EngineType $engine): void
+	public function useEngine(EngineType $engineType): void
 	{
-		if ($this->currentEngine === $engine)
+		if ($this->currentEngine === $engineType)
 			return;
 
-		if (!array_key_exists($engine->value,  $this->engines))
+		if (!array_key_exists($engineType->value,  $this->engines))
 			throw new \Exception('Engine is not initialized.', 400);
 
-		$this->currentEngine = $engine;
+		$this->currentEngine = $engineType;
 	}
 }
