@@ -7,7 +7,7 @@ namespace JRF\Tests\Unit\Storage\SQL\Component;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Component\Table;
+use JRF\Storage\Internal\Database\SQL\Component\Table;
 
 class TableTest extends TestCase
 {

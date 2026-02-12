@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine\Driver\Connection\Config;
+use JRF\Storage\Internal\Engine\Driver\Connection\Config;
 use JRF\Storage\Engine\Driver\Connection\DSN;
 
 class DSNTest extends TestCase

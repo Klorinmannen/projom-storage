@@ -7,7 +7,7 @@ namespace JRF\Tests\Integration\Facade\Query;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine as EngineObject;
+use JRF\Storage\Manager as EngineObject;
 use JRF\Storage\Facade\Engine;
 use JRF\Storage\Facade\Query\DB;
 use JRF\Storage\Query\Action;
@@ -30,7 +30,7 @@ class DBTest extends TestCase
 			]
 		];
 
-		Engine::setInstance(EngineObject::create($config));
+		Engine::setInstance(EngineObject::initialize($config));
 	}
 
 	#[Test]

@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\MySQL\Util;
+use JRF\Storage\Internal\Database\Util;
 
 class UtilTest extends TestCase
 {

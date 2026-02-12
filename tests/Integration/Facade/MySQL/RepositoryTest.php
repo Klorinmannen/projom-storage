@@ -9,9 +9,9 @@ include_once __DIR__ . '/../UserRepository.php';
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine as EngineObject;
+use JRF\Storage\Manager as EngineObject;
 use JRF\Storage\Facade\Engine;
-use JRF\Storage\SQL\Util\Sort;
+use JRF\Storage\Database\Util\Sort;
 use JRF\Tests\Integration\Facade\UserRepository;
 
 class RepositoryTest extends TestCase
@@ -32,7 +32,7 @@ class RepositoryTest extends TestCase
 			]
 		];
 
-		Engine::setInstance(EngineObject::create($config));
+		Engine::setInstance(EngineObject::initialize($config));
 	}
 
 	#[Test]

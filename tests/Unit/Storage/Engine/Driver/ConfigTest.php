@@ -7,15 +7,15 @@ namespace JRF\Tests\Unit\Storage\Engine\Driver;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine\Driver\Config;
-use JRF\Storage\Engine\Driver\Driver;
+use JRF\Storage\Internal\Engine\Driver\EngineConfig;
+use JRF\Storage\Internal\Engine\Driver\Engine;
 
 class ConfigTest extends TestCase
 {
 	#[Test]
 	public function construct(): void
 	{
-		$config = new Config([
+		$config = new EngineConfig([
 			'driver' => 'mysql',
 			'options' => ['return_single_record' => true],
 			'connections' => [
@@ -29,7 +29,7 @@ class ConfigTest extends TestCase
 			]
 		]);
 
-		$this->assertEquals(Driver::MySQL, $config->driver);
+		$this->assertEquals(Engine::MySQL, $config->engine);
 		$this->assertEquals(['return_single_record' => true], $config->options);
 		$this->assertEquals(1, count($config->connections));
 	}

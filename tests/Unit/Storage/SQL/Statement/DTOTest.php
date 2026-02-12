@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Statement\DTO;
+use JRF\Storage\Internal\Database\SQL\Statement\DTO;
 
 class DTOTest extends TestCase
 {

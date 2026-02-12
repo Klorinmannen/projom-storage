@@ -10,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 
 use Psr\Log\NullLogger;
 
-use JRF\Storage\Engine\Driver\MySQL as MySQLDriver;
+use JRF\Storage\Internal\Engine\Driver\MySQL as MySQLDriver;
 use JRF\Storage\Query\Format;
-use JRF\Storage\SQL\Statement\Builder;
-use JRF\Storage\SQL\Util\Join;
-use JRF\Storage\SQL\Util\LogicalOperator;
-use JRF\Storage\SQL\Util\Operator;
+use JRF\Storage\Internal\SQL\Statement\Builder;
+use JRF\Storage\Database\Util\Join;
+use JRF\Storage\Database\Util\LogicalOperator;
+use JRF\Storage\Database\Util\Operator;
 
 class BuilderTest extends TestCase
 {

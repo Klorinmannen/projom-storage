@@ -9,9 +9,9 @@ include_once __DIR__ . '/UserRepository.php';
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine;
+use JRF\Storage\Manager;
 use JRF\Storage\MySQL\Query;
-use JRF\Storage\SQL\Util\Sort;
+use JRF\Storage\Database\Util\Sort;
 use JRF\Tests\Integration\UserRepository;
 
 class RepositoryTest extends TestCase
@@ -34,7 +34,7 @@ class RepositoryTest extends TestCase
 			]
 		];
 
-		$engine = Engine::create($config);
+		$engine = Manager::initialize($config);
 		$this->query = Query::create($engine);
 	}
 

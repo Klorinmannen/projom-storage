@@ -7,11 +7,11 @@ namespace JRF\Tests\Unit\Storage\Facade;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine as EngineObject;
+use JRF\Storage\Manager as EngineObject;
 use JRF\Storage\Facade\Engine;
 use JRF\Storage\Query\Action;
-use JRF\Storage\Engine\Driver\Driver;
-use JRF\Storage\SQL\Statement\DTO;
+use JRF\Storage\Internal\Engine\Driver\Engine;
+use JRF\Storage\Internal\Database\SQL\Statement\DTO;
 
 class EngineTest extends TestCase
 {
@@ -21,7 +21,7 @@ class EngineTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Engine instance not set");
 		$this->expectExceptionCode(400);
-		Engine::dispatch(Action::QUERY, args: ['User']);
+		Engine::dispatch(Action::QUERY_BUILDER, args: ['User']);
 	}
 
 	// Needs a rework.
@@ -40,7 +40,7 @@ class EngineTest extends TestCase
 			$value = null;
 			if ($action === Action::EXECUTE)
 				$value = ['query', ['params']];
-			elseif ($action ===  Action::QUERY)
+			elseif ($action ===  Action::QUERY_BUILDER)
 				$value = [['User'], null];
 			elseif ($action === Action::CHANGE_CONNECTION)
 				$value = 'default';
@@ -58,7 +58,7 @@ class EngineTest extends TestCase
 		Engine::setInstance($engine);
 
 		$this->expectNotToPerformAssertions();
-		Engine::useDriver(Driver::MySQL);
+		Engine::useDriver(Engine::MySQL);
 	}
 
 	#[Test]
@@ -69,6 +69,6 @@ class EngineTest extends TestCase
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage("Engine instance not set");
 		$this->expectExceptionCode(400);
-		Engine::useDriver(Driver::MySQL);
+		Engine::useDriver(Engine::MySQL);
 	}
 }

@@ -7,7 +7,7 @@ namespace JRF\Tests\Unit\Storage\SQL\Util;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Util\Operator;
+use JRF\Storage\Database\Util\Operator;
 
 class OperatorTest extends TestCase
 {

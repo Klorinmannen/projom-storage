@@ -7,7 +7,7 @@ namespace JRF\Tests\Unit\Storage\SQL\Util;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Util\LogicalOperator;
+use JRF\Storage\Database\Util\LogicalOperator;
 
 class LogicalOperatorTest extends TestCase
 {

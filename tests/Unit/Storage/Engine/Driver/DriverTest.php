@@ -7,13 +7,13 @@ namespace JRF\Tests\Unit\Storage\Engine\Driver;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine\Driver\Driver;
+use JRF\Storage\Internal\Engine\Driver\Engine;
 
 class DriverTest extends TestCase
 {
 	#[Test]
 	public function mysql(): void
 	{
-		$this->assertEquals('mysql', Driver::MySQL->value);
+		$this->assertEquals('mysql', Engine::MySQL->value);
 	}
 }

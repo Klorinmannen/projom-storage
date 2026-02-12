@@ -12,13 +12,13 @@ use PHPUnit\Framework\TestCase;
 
 use JRF\Tests\Integration\UserRecord;
 
-use JRF\Storage\Engine as EngineObject;
+use JRF\Storage\Manager as EngineObject;
 use JRF\Storage\Facade\Engine;
 use JRF\Storage\Facade\MySQL\Query;
 use JRF\Storage\Query\Format;
-use JRF\Storage\SQL\Util\Join;
-use JRF\Storage\SQL\Util\Operator;
-use JRF\Storage\SQL\Util\Sort;
+use JRF\Storage\Database\Util\Join;
+use JRF\Storage\Database\Util\Operator;
+use JRF\Storage\Database\Util\Sort;
 
 class QueryTest extends TestCase
 {
@@ -38,7 +38,7 @@ class QueryTest extends TestCase
 			]
 		];
 
-		Engine::setInstance(EngineObject::create($config));
+		Engine::setInstance(EngineObject::initialize($config));
 	}
 
 	public static function queryOptionsProvider(): array

@@ -7,8 +7,8 @@ namespace JRF\Tests\Unit\Storage\Engine\Driver\Connection;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Engine\Driver\Connection\Config;
-use JRF\Storage\Engine\Driver\Connection\ConnectionFactory;
+use JRF\Storage\Internal\Engine\Driver\Connection\Config;
+use JRF\Storage\Internal\Engine\Driver\Connection\ConnectionFactory;
 use JRF\Storage\Engine\Driver\Connection\PDOConnection;
 
 class ConnectionFactoryTest extends TestCase

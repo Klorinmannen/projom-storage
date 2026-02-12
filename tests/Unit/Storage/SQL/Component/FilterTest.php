@@ -8,10 +8,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Component\Filter;
-use JRF\Storage\SQL\Util\Filter as QueryFilter;
-use JRF\Storage\SQL\Util\LogicalOperator;
-use JRF\Storage\SQL\Util\Operator;
+use JRF\Storage\Internal\Database\SQL\Component\Filter;
+use JRF\Storage\Database\Util\Filter as QueryFilter;
+use JRF\Storage\Database\Util\LogicalOperator;
+use JRF\Storage\Database\Util\Operator;
 
 class FilterTest extends TestCase
 {

@@ -10,11 +10,11 @@ use PHPUnit\Framework\TestCase;
 
 use JRF\Storage\Query\Action;
 use JRF\Storage\Engine\Driver\Connection\ConnectionInterface;
-use JRF\Storage\Engine\Driver\MySQL;
+use JRF\Storage\Internal\Engine\Driver\MySQL;
 use JRF\Storage\Engine\Driver\Connection\PDOConnection;
 use JRF\Storage\Query\Format;
 use JRF\Storage\SQL\Statement;
-use JRF\Storage\SQL\Statement\DTO;
+use JRF\Storage\Internal\Database\SQL\Statement\DTO;
 
 class FakePDOConnection implements ConnectionInterface
 {
@@ -127,7 +127,7 @@ class MySQLTest extends TestCase
 		$this->expectNotToPerformAssertions();
 		$pdoConnection = $this->createMock(PDOConnection::class);
 		$mysql = MySQL::create($pdoConnection, Statement::create());
-		$mysql->dispatch(Action::QUERY, [['User']]);
+		$mysql->dispatch(Action::QUERY_BUILDER, [['User']]);
 	}
 
 	#[Test]

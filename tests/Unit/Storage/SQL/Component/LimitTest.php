@@ -6,7 +6,7 @@ namespace JRF\Tests\Unit\Storage\SQL\Component;
 
 use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\SQL\Component\Limit;
+use JRF\Storage\Internal\Database\SQL\Component\Limit;
 
 class LimitTest extends TestCase
 {
