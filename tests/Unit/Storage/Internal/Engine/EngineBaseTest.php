@@ -1,0 +1,119 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JRF\Tests\Unit\Storage\Internal\Engine;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+
+use JRF\Storage\Database\Util\Format;
+use JRF\Storage\Database\Util\RecordInterface;
+use JRF\Storage\Internal\Database\Action;
+use JRF\Storage\Internal\Engine\Connection\ConnectionInterface;
+use JRF\Storage\Internal\Engine\EngineBase;
+
+class EngineStub extends EngineBase
+{
+	public function addConnection(ConnectionInterface $connection): void {}
+	public function changeConnection(int|string $name): void {}
+
+	public function dispatch(Action $action, mixed $args): mixed
+	{
+		return null;
+	}
+
+	public function testProcessRecords($records, $format): null|array
+	{
+		return $this->processRecords($records, $format);
+	}
+}
+
+class User implements RecordInterface
+{
+	public string $name;
+	public int $age;
+
+	public function __construct(string $name, int $age)
+	{
+		$this->name = $name;
+		$this->age = $age;
+	}
+
+	public static function fromRecord(array $record): static
+	{
+		$user = new User($record['Name'], $record['Age']);
+		return $user;
+	}
+}
+
+class EngineBaseTest extends TestCase
+{
+	#[Test]
+	public function formatRecords(): void
+	{
+		$engine = new EngineStub();
+
+		$records = [
+			[
+				'Name' => 'John',
+				'Age' => 25
+			]
+		];
+		$actual = $engine->testProcessRecords($records, [Format::ARRAY, null]);
+		$expected = $records;
+		$this->assertEquals($expected, $actual);
+
+		$actual = $engine->testProcessRecords($records, [Format::STD_CLASS, null]);
+		$expected = [(object) $records[0]];
+		$this->assertEquals($expected, $actual);
+
+		$actual = $engine->testProcessRecords($records, [Format::CUSTOM_OBJECT, User::class]);
+		$expected = [User::fromRecord($records[0])];
+		$this->assertEquals($expected, $actual);
+	}
+
+	public static function formatRecordsExceptionProvider(): array
+	{
+		return [
+			[
+				Format::CUSTOM_OBJECT,
+				null,
+				'Class:  does not exist.',
+				400
+			],
+			[
+				Format::CUSTOM_OBJECT,
+				'NonExistentClass',
+				'Class: NonExistentClass does not exist.',
+				400
+			],
+			[
+				Format::CUSTOM_OBJECT,
+				\stdClass::class,
+				'Class: stdClass must implement RecordInterface.',
+				400
+			]
+		];
+	}
+
+	#[Test]
+	#[DataProvider('formatRecordsExceptionProvider')]
+	public function formatRecordsException(Format $format, mixed $className, string $message, int $code): void
+	{
+		$engine = new EngineStub();
+
+		$records = [
+			[
+				'Name' => 'John',
+				'Age' => 25
+			]
+		];
+
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage($message);
+		$this->expectExceptionCode($code);
+		$engine->testProcessRecords($records, [$format, $className]);
+	}
+}

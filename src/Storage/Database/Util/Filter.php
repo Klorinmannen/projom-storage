@@ -1,0 +1,107 @@
+<?php
+
+declare(strict_types=1);
+
+namespace JRF\Storage\Database\Util;
+
+use JRF\Storage\Database\Util\LogicalOperator;
+use JRF\Storage\Database\Util\Operator;
+use JRF\Storage\Internal\Util;
+
+class Filter
+{
+	public static function build(
+		string $field,
+		mixed $value,
+		Operator $operator = Operator::EQ,
+		LogicalOperator $logicalOperator = LogicalOperator::AND
+	): array {
+		return [$field, $operator, $value, $logicalOperator];
+	}
+
+	public static function list(
+		array $fieldsWithValues,
+		Operator $operator = Operator::EQ,
+		LogicalOperator $logicalOperator = LogicalOperator::AND
+	): array {
+		$filter = [];
+		foreach ($fieldsWithValues as $field => $value)
+			$filter[] = static::build($field, $value, $operator, $logicalOperator);
+		return $filter;
+	}
+
+	public static function combine(array ...$filters): array
+	{
+		return Util::merge($filters);
+	}
+
+	public static function eq(string $field, mixed $value): array
+	{
+		return static::build($field, $value, Operator::EQ);
+	}
+
+	public static function ne(string $field, mixed $value): array
+	{
+		return static::build($field, $value, Operator::NE);
+	}
+
+	public static function gt(string $field, mixed $value): array
+	{
+		return static::build($field, $value, Operator::GT);
+	}
+
+	public static function gte(string $field, mixed $value): array
+	{
+		return static::build($field, $value, Operator::GTE);
+	}
+
+	public static function lt(string $field, mixed $value): array
+	{
+		return static::build($field, $value, Operator::LT);
+	}
+
+	public static function lte(string $field, mixed $value): array
+	{
+		return static::build($field, $value, Operator::LTE);
+	}
+
+	public static function like(string $field, mixed $value): array
+	{
+		return static::build($field, $value, Operator::LIKE);
+	}
+
+	public static function notLike(string $field, mixed $value): array
+	{
+		return static::build($field, $value, Operator::NOT_LIKE);
+	}
+
+	public static function in(string $field, array $values): array
+	{
+		return static::build($field, $values, Operator::IN);
+	}
+
+	public static function notIn(string $field, array $values): array
+	{
+		return static::build($field, $values, Operator::NOT_IN);
+	}
+
+	public static function isNull(string $field): array
+	{
+		return static::build($field, null, Operator::IS_NULL);
+	}
+
+	public static function isNotNull(string $field): array
+	{
+		return static::build($field, null, Operator::IS_NOT_NULL);
+	}
+
+	public static function between(string $field, mixed $value1, mixed $value2): array
+	{
+		return static::build($field, [$value1, $value2], Operator::BETWEEN);
+	}
+
+	public static function notBetween(string $field, mixed $value1, mixed $value2): array
+	{
+		return static::build($field, [$value1, $value2], Operator::NOT_BETWEEN);
+	}
+}

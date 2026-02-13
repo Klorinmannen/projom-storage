@@ -1,90 +1,86 @@
 
 
 Code Coverage Report:
-  2026-01-11 21:57:16
+  2026-02-13 21:43:13
 
  Summary:
-  Classes: 67.35% (33/49)
-  Methods: 66.78% (205/307)
-  Lines:   69.63% (800/1149)
+  Classes: 71.11% (32/45)
+  Methods: 78.93% (206/261)
+  Lines:   81.84% (834/1019)
 
-JRF\Storage\Engine\Driver\Config
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  9/  9)
-JRF\Storage\Engine\Driver\Connection\Config
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 12/ 12)
-JRF\Storage\Engine\Driver\Connection\ConnectionFactory
-  Methods:  66.67% ( 2/ 3)   Lines:  94.44% ( 17/ 18)
-JRF\Storage\Engine\Driver\Connection\DSN
-  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 19/ 19)
-JRF\Storage\Engine\Driver\Connection\PDOConnection
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 14/ 14)
-JRF\Storage\Engine\Driver\DriverBase
-  Methods:  42.86% ( 3/ 7)   Lines:  86.96% ( 40/ 46)
-JRF\Storage\Engine\Driver\DriverFactory
-  Methods:  75.00% ( 3/ 4)   Lines:  84.21% ( 16/ 19)
-JRF\Storage\Engine\Driver\MySQL
-  Methods:  87.50% (14/16)   Lines:  97.96% ( 96/ 98)
-JRF\Storage\Facade\Engine
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  8/  8)
-JRF\Storage\MySQL\Util
-  Methods:  54.55% ( 6/11)   Lines:  35.38% ( 23/ 65)
-JRF\Storage\Query\Util
-  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  3/  3)
-JRF\Storage\SQL\Component\Column
-  Methods:  90.91% (10/11)   Lines:  97.22% ( 35/ 36)
-JRF\Storage\SQL\Component\Filter
-  Methods:  90.00% ( 9/10)   Lines:  98.08% ( 51/ 52)
-JRF\Storage\SQL\Component\Filter\Between
-  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 14/ 14)
-JRF\Storage\SQL\Component\Filter\In
-  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 15/ 15)
-JRF\Storage\SQL\Component\Filter\Nullable
-  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  6/  6)
-JRF\Storage\SQL\Component\Filter\Standard
-  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 10/ 10)
-JRF\Storage\SQL\Component\Filter\Util
-  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  9/  9)
-JRF\Storage\SQL\Component\Group
-  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 14/ 14)
-JRF\Storage\SQL\Component\Join
-  Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 24/ 24)
-JRF\Storage\SQL\Component\Limit
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
-JRF\Storage\SQL\Component\Offset
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
-JRF\Storage\SQL\Component\Order
-  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 11/ 11)
-JRF\Storage\SQL\Component\Set
-  Methods: 100.00% (11/11)   Lines: 100.00% ( 33/ 33)
-JRF\Storage\SQL\Component\Table
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  5/  5)
-JRF\Storage\SQL\Statement
-  Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  6/  6)
-JRF\Storage\SQL\Statement\Builder
-  Methods: 100.00% (24/24)   Lines: 100.00% (158/158)
-JRF\Storage\SQL\Statement\DTO
-  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
-JRF\Storage\SQL\Statement\Delete
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 17/ 17)
-JRF\Storage\SQL\Statement\Insert
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 18/ 18)
-JRF\Storage\SQL\Statement\Select
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 30/ 30)
-JRF\Storage\SQL\Statement\Update
-  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 18/ 18)
-JRF\Storage\SQL\Util
-  Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  9/  9)
-JRF\Storage\SQL\Util\Aggregate
+JRF\Storage\Database\Util\Aggregate
   Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  5/  5)
-JRF\Storage\SQL\Util\Filter
+JRF\Storage\Database\Util\Filter
   Methods: 100.00% (17/17)   Lines: 100.00% ( 20/ 20)
-JRF\Storage\SQL\Util\Join
+JRF\Storage\Database\Util\Join
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
-JRF\Storage\SQL\Util\LogicalOperator
+JRF\Storage\Database\Util\LogicalOperator
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
-JRF\Storage\SQL\Util\Operator
+JRF\Storage\Database\Util\Operator
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
-JRF\Storage\SQL\Util\Sort
+JRF\Storage\Database\Util\Sort
   Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
-JRF\Storage\Util
-  Methods: 100.00% (11/11)   Lines: 100.00% ( 21/ 21)
+JRF\Storage\Internal\Database\SQL\Component\Column
+  Methods:  90.91% (10/11)   Lines:  97.22% ( 35/ 36)
+JRF\Storage\Internal\Database\SQL\Component\Filter
+  Methods:  90.00% ( 9/10)   Lines:  98.08% ( 51/ 52)
+JRF\Storage\Internal\Database\SQL\Component\Filter\Between
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 14/ 14)
+JRF\Storage\Internal\Database\SQL\Component\Filter\In
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 15/ 15)
+JRF\Storage\Internal\Database\SQL\Component\Filter\Nullable
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  6/  6)
+JRF\Storage\Internal\Database\SQL\Component\Filter\Standard
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 10/ 10)
+JRF\Storage\Internal\Database\SQL\Component\Filter\Util
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  9/  9)
+JRF\Storage\Internal\Database\SQL\Component\Group
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 14/ 14)
+JRF\Storage\Internal\Database\SQL\Component\Join
+  Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 24/ 24)
+JRF\Storage\Internal\Database\SQL\Component\Limit
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
+JRF\Storage\Internal\Database\SQL\Component\Offset
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  4/  4)
+JRF\Storage\Internal\Database\SQL\Component\Order
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 11/ 11)
+JRF\Storage\Internal\Database\SQL\Component\Set
+  Methods: 100.00% (11/11)   Lines: 100.00% ( 33/ 33)
+JRF\Storage\Internal\Database\SQL\Component\Table
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  5/  5)
+JRF\Storage\Internal\Database\SQL\Statement
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  6/  6)
+JRF\Storage\Internal\Database\SQL\Statement\Builder
+  Methods: 100.00% (24/24)   Lines: 100.00% (158/158)
+JRF\Storage\Internal\Database\SQL\Statement\DTO
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+JRF\Storage\Internal\Database\SQL\Statement\Delete
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 17/ 17)
+JRF\Storage\Internal\Database\SQL\Statement\Insert
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 18/ 18)
+JRF\Storage\Internal\Database\SQL\Statement\Select
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 30/ 30)
+JRF\Storage\Internal\Database\SQL\Statement\Update
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 18/ 18)
+JRF\Storage\Internal\Database\SQL\Util
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  9/  9)
+JRF\Storage\Internal\Database\Util
+  Methods: 100.00% (11/11)   Lines: 100.00% ( 65/ 65)
+JRF\Storage\Internal\Engine\Connection\Config
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 12/ 12)
+JRF\Storage\Internal\Engine\Connection\ConnectionFactory
+  Methods:  66.67% ( 2/ 3)   Lines:  94.44% ( 17/ 18)
+JRF\Storage\Internal\Engine\Connection\DSN
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 19/ 19)
+JRF\Storage\Internal\Engine\Connection\PDOConnection
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 14/ 14)
+JRF\Storage\Internal\Engine\EngineBase
+  Methods:  42.86% ( 3/ 7)   Lines:  86.96% ( 40/ 46)
+JRF\Storage\Internal\Engine\EngineConfig
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% (  9/  9)
+JRF\Storage\Internal\Engine\EngineFactory
+  Methods:  75.00% ( 3/ 4)   Lines:  84.21% ( 16/ 19)
+JRF\Storage\Internal\Engine\MySQL
+  Methods:  87.50% (14/16)   Lines:  97.96% ( 96/ 98)
+JRF\Storage\Internal\Util
+  Methods: 100.00% (12/12)   Lines: 100.00% ( 24/ 24)

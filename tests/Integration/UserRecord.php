@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JRF\Tests\Integration;
 
-use JRF\Storage\Query\RecordInterface;
+use JRF\Storage\Database\Util\RecordInterface;
 
 class UserRecord implements RecordInterface
 {
