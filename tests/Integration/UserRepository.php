@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JRF\Tests\Integration;
 
-use JRF\Storage\MySQL\Repository;
+use JRF\Storage\Database\Repository;
 
 class UserRepository
 {
@@ -17,14 +17,14 @@ class UserRepository
 		$this->data = $record;
 	}
 
-	public function redactFields(): array
+	public static function redactFields(): array
 	{
 		return [
 			'Password'
 		];
 	}
 
-	public function formatFields(): array
+	public static function formatFields(): array
 	{
 		return [
 			'UserID' => 'int',

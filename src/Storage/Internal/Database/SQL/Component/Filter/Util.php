@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JRF\Storage\Internal\Database\SQL\Component\Filter;
 
-use JRF\Storage\SQL\Util as SQLUtil;
+use JRF\Storage\Internal\Database\SQL\Util as SQLUtil;
 
 class Util extends SQLUtil
 {

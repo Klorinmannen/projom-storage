@@ -26,7 +26,7 @@ class Manager
 		foreach ($config as $engineConfiguration) {
 			$engineConfig = new EngineConfig($engineConfiguration);
 			$engine = $engineFactory->createEngine($engineConfig);
-			$manager->setEngine($engine, $engineConfig->engine);
+			$manager->setEngine($engine, $engineConfig->engineType);
 		}
 
 		Registry::set($manager);

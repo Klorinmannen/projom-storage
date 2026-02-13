@@ -6,7 +6,7 @@ namespace JRF\Storage\Database\Util;
 
 use JRF\Storage\Database\Util\LogicalOperator;
 use JRF\Storage\Database\Util\Operator;
-use JRF\Storage\SQL\Util;
+use JRF\Storage\Internal\Util;
 
 class Filter
 {

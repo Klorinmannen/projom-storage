@@ -30,7 +30,7 @@ class EngineFactory
 		if (!$config->hasConnections())
 			throw new \Exception('No connections found in engine configuration', 400);
 
-		$engine = match ($config->engine) {
+		$engine = match ($config->engineType) {
 			EngineType::MySQL => $this->MySQL($config),
 			default => throw new \Exception('Engine is not supported', 400)
 		};
