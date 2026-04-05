@@ -62,26 +62,11 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
-          extensions: mbstring, pdo_mysql, pdo_sqlite
+          extensions: mbstring, pdo_sqlite
           coverage: xdebug
 
       - name: Install dependencies
         run: composer install --no-interaction --no-progress
-
-      - name: Change permissions
-        run: |
-          chmod +x ./tests/Integration/setup.sh
-          chmod +x ./tests/Integration/create_database_with_user.sh
-          chmod +x ./tests/Integration/data.sql
-
-      - name: Installing packages
-        run: ./tests/Integration/setup.sh
-
-      - name: Create database with user
-        run: ./tests/Integration/create_database_with_user.sh JRF JRF Integration
-
-      - name: Creating database tables with mock data
-        run: mysql --user=JRF --password=JRF < ./tests/Integration/data.sql
 
       - name: Run integration test suite
         run: ./vendor/bin/phpunit --testsuite="Integration"

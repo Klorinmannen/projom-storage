@@ -2,247 +2,219 @@
 
 declare(strict_types=1);
 
-namespace JRF\tests\Integration;
+namespace JRF\Tests\Integration;
 
+include_once __DIR__ . '/IntegrationTestCase.php';
 include_once __DIR__ . '/UserRepository.php';
 
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 
-use JRF\Storage\Manager;
 use JRF\Storage\Database\Util\Sort;
-use JRF\Tests\Integration\UserRepository;
 
-class RepositoryTest extends TestCase
+class RepositoryTest extends IntegrationTestCase
 {
-	public function setUp(): void
-	{
-		$config = [
-			[
-				'engine' => 'mysql',
-				'options' => [],
-				'connections' => [
-					[
-						'username' => 'JRF',
-						'password' => 'JRF',
-						'host' => 'localhost',
-						'port' => 3306,
-						'database' => 'Integration'
-					]
-				]
-			]
-		];
+    #[Test]
+    public function crud(): void
+    {
+        $newUser = [
+            'Username'  => 'anya.doe@example.com',
+            'Firstname' => 'Anya',
+            'Lastname'  => 'Doe',
+            'Password'  => 'password'
+        ];
+        $userID = UserRepository::create($newUser);
 
-		Manager::initialize($config);
-	}
+        $userRecord = UserRepository::get('UserID', $userID);
+        $this::assertEquals($newUser['Username'], $userRecord['Username']);
 
-	#[Test]
-	public function crud()
-	{
-		// Create a new user
-		$newUser = [
-			'Username' => 'anya.doe@example.com',
-			'Firstname' => 'Anya',
-			'Lastname' => 'Doe',
-			'Password' => 'password'
-		];
-		$userID = UserRepository::create($newUser);
+        $smith = 'Smith';
+        UserRepository::update($userID, ['Lastname' => $smith]);
 
-		// Check if the new user was created
-		$userRecord = UserRepository::get('UserID', $userID);
-		$this::assertEquals($newUser['Username'], $userRecord['Username']);
+        $userRecord = UserRepository::get('Lastname', $smith);
+        $this::assertNotNull($userRecord);
 
-		// Update the new user
-		$smith = 'Smith';
-		UserRepository::update($userID, ['Lastname' => $smith]);
+        UserRepository::delete($userID);
 
-		// Check if the new user was updated
-		$userRecord = UserRepository::get('Lastname', $smith);
-		$this::assertNotNull($userRecord);
+        $userRecord = UserRepository::find($userID);
+        $this::assertNull($userRecord);
+    }
 
-		// Delete the new user
-		UserRepository::delete($userID);
+    #[Test]
+    public function find(): void
+    {
+        $userRecord = UserRepository::find(1);
+        $this::assertEquals(1, $userRecord['UserID']);
 
-		// Check if the new user was deleted
-		$userRecord = UserRepository::find($userID);
-		$this::assertNull($userRecord);
-	}
+        $userRecord = UserRepository::find(1000);
+        $this::assertNull($userRecord);
+    }
 
-	#[Test]
-	public function find(): void
-	{
-		$userRecord = UserRepository::find(1);
-		$this::assertEquals(1, $userRecord['UserID']);
+    #[Test]
+    public function all(): void
+    {
+        $userRecords = UserRepository::all();
+        $this::assertCount(5, $userRecords);
 
-		$userRecord = UserRepository::find(1000);
-		$this::assertNull($userRecord);
-	}
+        $userRecords = UserRepository::all(['Lastname' => 'Doe']);
+        $this::assertCount(4, $userRecords);
+    }
 
-	#[Test]
-	public function all(): void
-	{
-		$userRecords = UserRepository::all();
-		$this::assertCount(5, $userRecords);
+    #[Test]
+    public function search(): void
+    {
+        $userRecords = UserRepository::search('Lastname', 'D');
+        $this::assertCount(4, $userRecords);
+    }
 
-		$userRecords = UserRepository::all(['Lastname' => 'Doe']);
-		$this::assertCount(4, $userRecords);
-	}
+    #[Test]
+    public function clone(): void
+    {
+        $newUser = [
+            'Username'  => 'jasmine.doe@example.com',
+            'Firstname' => 'Jasmine',
+            'Lastname'  => 'Doe',
+            'Password'  => 'password',
+            'Active'    => 0
+        ];
+        $userID = 1;
+        $newUserRecord = UserRepository::clone($userID, $newUser);
+        $this::assertNotEquals($userID, $newUserRecord['UserID']);
+        $this::assertEquals($newUser['Username'], $newUserRecord['Username']);
 
-	#[Test]
-	public function search(): void
-	{
-		$userRecords = UserRepository::search('Lastname', 'D');
-		$this::assertCount(4, $userRecords);
-	}
+        UserRepository::delete($newUserRecord['UserID']);
+    }
 
-	#[Test]
-	public function clone(): void
-	{
-		$newUser = [
-			'Username' => 'jasmine.doe@example.com',
-			'Firstname' => 'Jasmine',
-			'Lastname' => 'Doe',
-			'Password' => 'password',
-			'Active' => 0
-		];
-		$userID = 1;
-		$newUserRecord = UserRepository::clone($userID, $newUser);
-		$this::assertNotEquals($userID, $newUserRecord['UserID']);
-		$this::assertEquals($newUser['Username'], $newUserRecord['Username']);
+    #[Test]
+    public function sum(): void
+    {
+        $sum = 0;
+        $allUserRecords = UserRepository::all();
+        foreach ($allUserRecords as $userRecord) {
+            $sum += $userRecord['UserID'];
+        }
 
-		// Maintain consistency in the database
-		UserRepository::delete($newUserRecord['UserID']);
-	}
+        $userRecords = UserRepository::sum('UserID');
+        $this::assertCount(1, $userRecords);
 
-	#[Test]
-	public function sum(): void
-	{
-		$sum = 0;
-		$allUserRecords = UserRepository::all();
-		foreach ($allUserRecords as $userRecord)
-			$sum += $userRecord['UserID'];
+        $userRecord = array_pop($userRecords);
+        $this::assertEquals($sum, $userRecord['sum']);
 
-		$userRecords = UserRepository::sum('UserID');
-		$this::assertCount(1, $userRecords);
+        $userRecords = UserRepository::sum('UserID', ['Lastname' => 'Doe']);
+        $this::assertNotNull($userRecords);
 
-		$userRecord = array_pop($userRecords);
-		$this::assertEquals($sum, $userRecord['sum']);
+        $userRecords = UserRepository::sum('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+        $this::assertNotNull($userRecords);
+    }
 
-		$userRecords = UserRepository::sum('UserID', ['Lastname' => 'Doe']);
-		$this::assertNotNull($userRecords);
+    #[Test]
+    public function counts(): void
+    {
+        $userRecords = UserRepository::count();
+        $this::assertCount(1, $userRecords);
 
-		$userRecords = UserRepository::sum('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this::assertNotNull($userRecords);
-	}
+        $userRecord = array_pop($userRecords);
+        $this::assertEquals(5, (int) $userRecord['count']);
 
-	#[Test]
-	public function counts(): void
-	{
-		$userRecords = UserRepository::count();
-		$this::assertCount(1, $userRecords);
+        $userRecords = UserRepository::count('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+        $this::assertCount(1, $userRecords);
 
-		$userRecord = array_pop($userRecords);
-		$this::assertEquals(5, (int) $userRecord['count']);
+        $userRecord = array_pop($userRecords);
+        $this::assertEquals(4, (int) $userRecord['count']);
 
-		$userRecords = UserRepository::count('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this::assertCount(1, $userRecords);
+        $allUserRecords = UserRepository::all();
+        $userRecords = UserRepository::count();
+        $userRecord = array_pop($userRecords);
+        $allUserCount = (int) $userRecord['count'];
+        $this::assertEquals(count($allUserRecords), $allUserCount);
 
-		$userRecord = array_pop($userRecords);
-		$this::assertEquals(4, (int) $userRecord['count']);
+        $results = UserRepository::count('Lastname', ['Lastname' => 'Doe']);
+        $result = array_pop($results);
+        $count = (int) $result['count'];
 
-		$allUserRecords = UserRepository::all();
-		$userRecords = UserRepository::count();
-		$userRecord = array_pop($userRecords);
-		$allUserCount = (int) $userRecord['count'];
-		$this::assertEquals(count($allUserRecords), $allUserCount);
+        $userRecords = UserRepository::all(['Lastname' => 'Doe']);
+        $this::assertCount($count, $userRecords);
+    }
 
-		$results = UserRepository::count('Lastname', ['Lastname' => 'Doe']);
-		$result = array_pop($results);
-		$count = (int) $result['count'];
+    #[Test]
+    public function avg(): void
+    {
+        $sum = 0;
+        $allUserRecords = UserRepository::all();
+        foreach ($allUserRecords as $userRecord) {
+            $sum += $userRecord['UserID'];
+        }
 
-		$userRecords = UserRepository::all(['Lastname' => 'Doe']);
-		$this::assertCount($count, $userRecords);
-	}
+        $userRecords = UserRepository::count();
+        $userRecord = array_pop($userRecords);
+        $allUserCount = (int) $userRecord['count'];
 
-	#[Test]
-	public function avg(): void
-	{
-		$sum = 0;
-		$allUserRecords = UserRepository::all();
-		foreach ($allUserRecords as $userRecord)
-			$sum += $userRecord['UserID'];
+        $userRecords = UserRepository::avg('UserID');
+        $this::assertCount(1, $userRecords);
 
-		$userRecords = UserRepository::count();
-		$userRecord = array_pop($userRecords);
-		$allUserCount = (int) $userRecord['count'];
+        $userRecord = array_pop($userRecords);
+        $this::assertEquals(round($sum / $allUserCount), round((float) $userRecord['avg']));
 
-		$userRecords = UserRepository::avg('UserID');
-		$this::assertCount(1, $userRecords);
+        $userRecords = UserRepository::avg('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+        $this::assertCount(1, $userRecords);
+    }
 
-		$userRecord = array_pop($userRecords);
-		$this::assertEquals(round($sum / $allUserCount), round((float) $userRecord['avg']));
+    #[Test]
+    public function min(): void
+    {
+        $userRecords = UserRepository::min('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+        $this::assertCount(1, $userRecords);
 
-		$userRecords = UserRepository::avg('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this::assertCount(1, $userRecords);
-	}
+        $userRecord = array_pop($userRecords);
+        $this::assertEquals(2, $userRecord['min']);
+    }
 
-	#[Test]
-	public function min(): void
-	{
-		$userRecords = UserRepository::min('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this::assertCount(1, $userRecords);
+    #[Test]
+    public function max(): void
+    {
+        $userRecords = UserRepository::max('UserID', ['Lastname' => 'Doe'], ['Lastname']);
+        $this::assertCount(1, $userRecords);
 
-		$userRecord = array_pop($userRecords);
-		$this::assertEquals(2, $userRecord['min']);
-	}
+        $userRecord = array_pop($userRecords);
+        $this::assertEquals(5, $userRecord['max']);
+    }
 
-	#[Test]
-	public function max(): void
-	{
-		$userRecords = UserRepository::max('UserID', ['Lastname' => 'Doe'], ['Lastname']);
-		$this::assertCount(1, $userRecords);
+    #[Test]
+    public function paginate(): void
+    {
+        $userRecords = UserRepository::paginate(2, 2, ['Lastname' => Sort::ASC], ['Lastname' => 'Doe']);
+        $this::assertCount(2, $userRecords);
+    }
 
-		$userRecord = array_pop($userRecords);
-		$this::assertEquals(5, $userRecord['max']);
-	}
+    #[Test]
+    public function redactFields(): void
+    {
+        $userRecord = UserRepository::find(1);
+        $this::assertEquals('__REDACTED__', $userRecord['Password']);
+    }
 
-	#[Test]
-	public function paginate(): void
-	{
-		$userRecords = UserRepository::paginate(2, 2, ['Lastname' => Sort::ASC], ['Lastname' => 'Doe']);
-		$this::assertCount(2, $userRecords);
-	}
+    #[Test]
+    public function formatFields(): void
+    {
+        $userRecord = UserRepository::find(1);
+        $this::assertIsInt($userRecord['UserID']);
+        $this::assertIsString($userRecord['Lastname']);
+        $this::assertIsString($userRecord['Username']);
+        $this::assertIsString($userRecord['Password']);
+        $this::assertIsBool($userRecord['Active']);
+    }
 
-	#[Test]
-	public function redactFields(): void
-	{
-		$userRecord = UserRepository::find(1);
-		$this::assertEquals('__REDACTED__', $userRecord['Password']);
-	}
+    #[Test]
+    public function selectFields(): void
+    {
+        $userRecord = UserRepository::find(1);
+        $this::assertArrayHasKey('UserID', $userRecord);
+        $this::assertArrayHasKey('Username', $userRecord);
+        $this::assertArrayHasKey('Lastname', $userRecord);
+        $this::assertArrayHasKey('Password', $userRecord);
+        $this::assertArrayHasKey('Active', $userRecord);
+        $this::assertArrayHasKey('Updated', $userRecord);
 
-	#[Test]
-	public function formatFields(): void
-	{
-		$userRecord = UserRepository::find(1);
-		$this::assertIsInt($userRecord['UserID']);
-		$this::assertIsString($userRecord['Lastname']);
-		$this::assertIsString($userRecord['Username']);
-		$this::assertIsString($userRecord['Password']);
-		$this::assertIsBool($userRecord['Active']);
-	}
-
-	#[Test]
-	public function selectFields(): void
-	{
-		$userRecord = UserRepository::find(1);
-		$this::assertArrayHasKey('UserID', $userRecord);
-		$this::assertArrayHasKey('Username', $userRecord);
-		$this::assertArrayHasKey('Lastname', $userRecord);
-		$this::assertArrayHasKey('Password', $userRecord);
-		$this::assertArrayHasKey('Active', $userRecord);
-		$this::assertArrayHasKey('Updated', $userRecord);
-
-		$this::assertArrayNotHasKey('Firstname', $userRecord);
-		$this::assertArrayNotHasKey('Created', $userRecord);
-	}
+        $this::assertArrayNotHasKey('Firstname', $userRecord);
+        $this::assertArrayNotHasKey('Created', $userRecord);
+    }
 }
