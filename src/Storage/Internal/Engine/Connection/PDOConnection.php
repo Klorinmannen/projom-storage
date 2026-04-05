@@ -23,7 +23,7 @@ class PDOConnection extends PDO implements ConnectionInterface
 		string $dsn,
 		#[SensitiveParameter] null|string $username = null,
 		#[SensitiveParameter] null|string $password = null,
-		null|array $options = null
+		null|array $options = []
 	) {
 
 		$this->name = $name;
