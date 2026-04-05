@@ -11,6 +11,7 @@
 !psalm.xml
 !coverage.txt
 !phpunit-coverage-badge.svg
+!CLAUDE.md
 
 # White-list entire directories.
 !src/
